@@ -1,0 +1,27 @@
+<script setup lang="ts">
+import SideBarComponent from './components/menu/SideBarComponent.vue'
+import HeaderComponent from './components/menu/HeaderComponent.vue'
+import { RouterView } from 'vue-router'
+</script>
+
+<template>
+  <div
+    class="grid min-h-screen w-full md:grid-cols-[220px_minmax(220px,1fr)] lg:grid-cols-[280px_minmax(280px,1fr)]"
+  >
+    <div class="hidden border-r border-stone-200/70 bg-stone-50/70 md:block">
+      <SideBarComponent />
+    </div>
+
+    <div class="flex flex-col">
+      <header
+        class="flex h-14 items-center gap-4 border-b border-stone-200/70 bg-stone-50/70 px-4 lg:h-[60px] lg:px-6"
+      >
+        <HeaderComponent />
+      </header>
+
+      <main class="flex flex-1 flex-col gap-4 p-4 lg:gap-10 lg:p-10">
+        <RouterView />
+      </main>
+    </div>
+  </div>
+</template>

@@ -5,6 +5,7 @@ type Column = {
   sortable: boolean
   class?: string
   filterable: boolean
+  underlyingField?: string
 }
 
 export type { Column }

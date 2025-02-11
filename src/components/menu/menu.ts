@@ -9,6 +9,7 @@ const mainMenu = [
     items: [
       {
         label: 'Roles',
+        route: '/roles',
       },
       {
         label: 'Permissions',

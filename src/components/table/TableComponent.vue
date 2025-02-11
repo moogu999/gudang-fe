@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Toast position="top-center" />
+    <Toast position="top-center" :group="toastGroup" />
     <DataTable
       ref="dt"
       selection-mode="single"
       paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      current-page-report-template="Showing {first} to {last} of {totalRecords} products"
+      current-page-report-template="Showing {first} to {last} of {totalRecords}"
       filter-display="menu"
       :value="items"
       :paginator="true"
@@ -24,7 +24,7 @@
       striped-rows
     >
       <template #header>
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
           <IconField>
             <InputIcon>
               <i class="pi pi-search" />
@@ -54,6 +54,11 @@
         :exportable="col.exportable"
         :class="col.class"
         :show-filter-match-modes="false"
+        :pt="{
+          filterButtonbar: {
+            class: '!justify-end',
+          },
+        }"
       >
         <template #header>
           <Button
@@ -62,25 +67,21 @@
             rounded
             text
             severity="secondary"
-            @click="clearFilter(() => {}, col.field)"
-            v-if="isFiltered(col.field)"
+            @click="clearFilter(() => {}, col)"
+            v-if="isFiltered(col)"
           ></Button>
         </template>
-        <template #filter="{ filterModel }" v-if="isFilterable(col.filterable, col.field)">
+        <template #filter="{ filterModel }" v-if="isFilterable(col)">
           <InputText v-model="filterModel.value" disabled />
         </template>
-        <template #filterclear="{ field, filterCallback }">
-          <Button size="small" variant="outlined" @click="clearFilter(filterCallback, field)"
-            >Clear</Button
-          >
-        </template>
-        <template #filterapply="{ field, filterCallback }">
-          <Button size="small" @click="applyFilter(filterCallback, field)">Apply</Button>
+        <template #filterclear />
+        <template #filterapply="{ filterCallback }">
+          <Button size="small" @click="applyFilter(filterCallback, col)">Apply</Button>
         </template>
 
         <template #body="slotProps">
           <slot name="content" :col="col" :data="slotProps.data">
-            {{ slotProps.data[col.field] }}
+            {{ getNestedValue(slotProps.data, col.field) }}
           </slot>
         </template>
       </Column>
@@ -110,7 +111,10 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import { FilterMatchMode } from '@primevue/core/api'
 import FilterOperator from '@/common/enum/filterOperator'
+import ToastLife from '@/common/enum/toastLife'
+import { getNestedValue } from '@/common/objectHelper'
 
+const toastGroup = 'tableComponent'
 const toast = useToast()
 
 type Sort = {
@@ -154,6 +158,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+defineExpose({ clearSearch })
 
 onMounted(async () => await fetchData(currPage))
 
@@ -204,8 +210,8 @@ for (const col of props.columns) {
   }
 }
 
-async function clearFilter(callback: () => void, field: string) {
-  currFilters.value.delete(field)
+async function clearFilter(callback: () => void, col: ColumnType) {
+  currFilters.value.delete(col.underlyingField ? col.underlyingField : col.field)
   resetToFirstPage()
   callback()
   await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
@@ -217,38 +223,53 @@ async function clearFilters() {
   await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
 }
 
-async function applyFilter(callback: () => void, field: string) {
-  for (const key in filters) {
-    if (key === field) {
-      const filter = filters[key] as DataTableFilterMetaData
-      if (filter.value) {
-        currFilters.value.set(field, filter.value)
-      }
+async function applyFilter(callback: () => void, col: ColumnType) {
+  let field: string
+  let value: string | number | undefined
+  if (!col.underlyingField) {
+    field = col.field
+    const filter = filters[field] as DataTableFilterMetaData
+    if (filter.value) {
+      value = filter.value
     }
+  } else {
+    field = col.underlyingField
+    value = selectedRow.value[field]
   }
+
+  if (field && value) {
+    currFilters.value.set(field, value)
+  }
+
   resetToFirstPage()
   callback()
   await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
 }
 
 const isFilterable = computed(() => {
-  return function (filterable: boolean, field: string): boolean {
-    return filterable && !isFiltered.value(field)
+  return function (col: ColumnType): boolean {
+    return col.filterable && !isFiltered.value(col)
   }
 })
 
 const isFiltered = computed(() => {
-  return function (field: string): boolean {
-    return currFilters.value.get(field) ? true : false
+  return function (col: ColumnType): boolean {
+    return currFilters.value.get(col.underlyingField ? col.underlyingField : col.field)
+      ? true
+      : false
   }
 })
 
 // Select Row
 const selectedRow = ref()
 watch(selectedRow, (newVal) => {
-  for (const key in newVal) {
-    filters[key] = {
-      value: newVal[key],
+  for (const col of props.columns) {
+    if (!col.filterable) {
+      continue
+    }
+
+    filters[col.field] = {
+      value: getNestedValue(newVal, col.field),
       matchMode: FilterMatchMode.EQUALS,
     }
   }
@@ -290,7 +311,8 @@ async function fetchData(page: number, sort?: Sort, search?: string, filters?: F
       severity: 'error',
       summary: 'Error',
       detail: e,
-      life: 2000,
+      life: ToastLife.TWO_SECONDS,
+      group: toastGroup,
     })
   } finally {
     loading.value = false

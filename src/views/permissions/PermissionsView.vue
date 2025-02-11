@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1 class="text-lg font-semibold md:text-2xl mb-5">Permissions</h1>
+    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Permissions</h1>
+
     <Card>
       <template #content>
         <TableComponent :url="url" :columns="columns">

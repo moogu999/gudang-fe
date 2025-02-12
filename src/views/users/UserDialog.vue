@@ -9,26 +9,31 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex items-start gap-4">
-        <label for="name" class="w-24 font-semibold">Name</label>
+        <label for="email" class="w-24 font-semibold">Email</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="name" name="name" autocomplete="off" />
-          <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
-            $form.name.error.message
+          <InputText id="email" name="email" autocomplete="off" />
+          <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+            $form.email.error.message
           }}</Message>
         </div>
       </div>
 
       <div class="mb-4 flex items-start gap-4">
-        <label for="description" class="w-24 font-semibold">Description</label>
+        <label for="password" class="w-24 font-semibold">Password</label>
         <div class="flex flex-auto flex-col gap-1">
-          <Textarea id="description" name="description" autocomplete="off" />
-          <Message
-            v-if="$form.description?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ $form.description.error.message }}</Message
-          >
+          <Password
+            id="password"
+            name="password"
+            :pt="{
+              pcInputText: {
+                root: '!grow',
+              },
+            }"
+            toggle-mask
+          />
+          <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">{{
+            $form.password.error.message
+          }}</Message>
         </div>
       </div>
 
@@ -53,7 +58,6 @@
 
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
@@ -65,6 +69,7 @@ import { useToast } from 'primevue/usetoast'
 import ApiService from '@/services/api'
 import ToastLife from '@/common/enum/toastLife'
 import { ref } from 'vue'
+import Password from 'primevue/password'
 
 const props = defineProps({
   close: {
@@ -74,22 +79,25 @@ const props = defineProps({
 })
 
 // Toast
-const toastGroup = 'roleDialog'
+const toastGroup = 'userDialog'
 const toast = useToast()
 
 // Form
 const initialValues = reactive({
-  name: '',
-  description: '',
+  email: '',
+  password: '',
 })
 
 const resolver = zodResolver(
   z.object({
-    name: z.string().min(1, { message: 'Name is required.' }),
-    description: z
+    email: z.string().email({ message: 'Please enter a valid email address.' }),
+    password: z
       .string()
-      .min(10, { message: 'Min. description 10 characters.' })
-      .max(50, { message: 'Max. description 50 characters.' }),
+      .min(8, 'Password must be at least 8 characters long.')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+      .regex(/\d/, 'Password must contain at least one number.')
+      .regex(/[@$!%*?&]/, 'Password must contain at least one special character (@$!%*?&).'),
   }),
 )
 
@@ -107,15 +115,15 @@ async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
-    await ApiService.post('/gen/v1/roles', {
-      name: event.states.name.value,
-      description: event.states.description.value,
+    await ApiService.post('/v1/users', {
+      email: event.states.email.value,
+      password: event.states.password.value,
       createdBy: 1,
     })
 
     toast.add({
       severity: 'success',
-      summary: 'Role is created.',
+      summary: 'User is created.',
       life: ToastLife.TWO_SECONDS,
       group: toastGroup,
     })

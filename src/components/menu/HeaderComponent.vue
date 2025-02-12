@@ -1,9 +1,9 @@
 <template>
   <Drawer v-model:visible="isDrawerShown" class="!bg-stone-50">
     <template #header>
-      <a href="/" class="flex items-center gap-2 text-lg font-semibold">
+      <RouterLink to="/" class="flex items-center gap-2 text-lg font-semibold">
         <span>gudang-fe</span>
-      </a>
+      </RouterLink>
     </template>
 
     <nav class="grid gap-2 text-lg font-medium">

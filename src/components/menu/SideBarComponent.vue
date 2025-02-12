@@ -1,9 +1,9 @@
 <template>
   <div class="flex h-full max-h-screen flex-col gap-2">
     <div class="flex h-14 items-center border-b border-stone-200/70 px-4 lg:h-[60px] lg:px-6">
-      <a href="/" class="flex items-center gap-2 font-semibold">
+      <RouterLink to="/" class="flex items-center gap-2 font-semibold">
         <h1>gudang-fe</h1>
-      </a>
+      </RouterLink>
     </div>
 
     <div class="flex-1">

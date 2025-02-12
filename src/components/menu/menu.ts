@@ -2,6 +2,7 @@ const mainMenu = [
   {
     label: 'Users',
     icon: 'pi pi-user',
+    route: '/users',
   },
   {
     label: 'Access Controls',

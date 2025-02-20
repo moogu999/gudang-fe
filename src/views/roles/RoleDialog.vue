@@ -48,6 +48,16 @@
         ></Button>
       </div>
     </Form>
+
+    <Tabs value="0" v-if="mode === DialogMode.EDIT">
+      <TabList>
+        <Tab value="0">Permissions</Tab>
+      </TabList>
+
+      <TabPanels>
+        <PermissionsTab :roleId="role!.id" />
+      </TabPanels>
+    </Tabs>
   </div>
 </template>
 
@@ -58,19 +68,41 @@ import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { reactive } from 'vue'
+import { onBeforeMount, reactive, type PropType } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import ApiService from '@/services/api'
 import ToastLife from '@/common/enum/toastLife'
 import { ref } from 'vue'
+import DialogMode from '@/common/enum/dialogMode'
+import type { Role } from './role.type'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import PermissionsTab from '@/views/roles/PermissionsTab.vue'
+import { commonErrorToast } from '@/services/toast'
 
 const props = defineProps({
-  close: {
-    type: Function,
-    required: true,
+  mode: {
+    type: String as PropType<DialogMode>,
+    default: DialogMode.ADD,
   },
+  role: {
+    type: Object as PropType<Role>,
+  },
+})
+
+const emits = defineEmits(['close'])
+
+onBeforeMount(() => {
+  if (props.mode !== DialogMode.EDIT || !props.role) {
+    return
+  }
+
+  initialValues.name = props.role?.name
+  initialValues.description = props.role?.description
 })
 
 // Toast
@@ -94,7 +126,7 @@ const resolver = zodResolver(
 )
 
 function handleClose() {
-  props.close()
+  emits('close')
 }
 
 const isLoading = ref(false)
@@ -107,30 +139,49 @@ async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
-    await ApiService.post('/gen/v1/roles', {
-      name: event.states.name.value,
-      description: event.states.description.value,
-      createdBy: 1,
-    })
+    if (props.mode === DialogMode.ADD) {
+      await addRole(event)
+    } else {
+      await editRole(event)
+    }
 
-    toast.add({
-      severity: 'success',
-      summary: 'Role is created.',
-      life: ToastLife.TWO_SECONDS,
-      group: toastGroup,
-    })
-
-    props.close()
+    emits('close')
   } catch (e) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: e,
-      life: ToastLife.TWO_SECONDS,
-      group: toastGroup,
-    })
+    toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
   }
+}
+
+async function addRole(event: FormSubmitEvent) {
+  await ApiService.post('/gen/v1/roles', {
+    name: event.states.name.value,
+    description: event.states.description.value,
+    // @TODO update with user id
+    createdBy: 1,
+  })
+
+  toast.add({
+    severity: 'success',
+    summary: 'Role is created.',
+    life: ToastLife.TWO_SECONDS,
+    group: toastGroup,
+  })
+}
+
+async function editRole(event: FormSubmitEvent) {
+  await ApiService.patch(`/gen/v1/roles/${props.role?.id}`, {
+    name: event.states.name.value,
+    description: event.states.description.value,
+    // @TODO update with user id
+    updatedBy: 1,
+  })
+
+  toast.add({
+    severity: 'success',
+    summary: 'Role is updated.',
+    life: ToastLife.TWO_SECONDS,
+    group: toastGroup,
+  })
 }
 </script>

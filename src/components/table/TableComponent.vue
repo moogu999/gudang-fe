@@ -36,8 +36,14 @@
           </IconField>
 
           <div>
-            <Button icon="pi pi-refresh" rounded text @click="refresh"></Button>
-            <Button text @click="clearFilters">Clear Filters</Button>
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              @click="refresh"
+              rounded
+              text
+            ></Button>
+            <Button severity="secondary" @click="clearFilters" text>Clear Filters</Button>
           </div>
         </div>
       </template>
@@ -111,8 +117,8 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import { FilterMatchMode } from '@primevue/core/api'
 import FilterOperator from '@/common/enum/filterOperator'
-import ToastLife from '@/common/enum/toastLife'
 import { getNestedValue } from '@/common/objectHelper'
+import { commonErrorToast } from '@/services/toast'
 
 const toastGroup = 'tableComponent'
 const toast = useToast()
@@ -307,13 +313,7 @@ async function fetchData(page: number, sort?: Sort, search?: string, filters?: F
     items.value = res.data
     total.value = res.meta.total
   } catch (e) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: e,
-      life: ToastLife.TWO_SECONDS,
-      group: toastGroup,
-    })
+    toast.add(commonErrorToast(e, toastGroup))
   } finally {
     loading.value = false
   }
@@ -341,7 +341,9 @@ function buildQuery(page: number, sort?: Sort, search?: string, filters?: Filter
 
   queryString = queryString.withPagination(page + 1, itemsPerPage.value)
 
-  return props.url + '?' + queryString.build()
+  const connector = props.url.includes('?') ? '&' : '?'
+
+  return props.url + connector + queryString.build()
 }
 </script>
 

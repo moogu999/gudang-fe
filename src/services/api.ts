@@ -34,8 +34,8 @@ class ApiService {
     return response.data
   }
 
-  public async put<T>(endpoint: string, data: object): Promise<T> {
-    const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data)
+  public async patch<T>(endpoint: string, data: object): Promise<T> {
+    const response: AxiosResponse<T> = await this.axiosInstance.patch(endpoint, data)
     return response.data
   }
 

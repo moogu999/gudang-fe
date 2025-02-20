@@ -35,7 +35,7 @@
     </Card>
 
     <Dialog class="min-w-100" header="Add User" v-model:visible="isDialogShown" @hide="onHide">
-      <UserDialog :close="toggleDialog" />
+      <UserDialog @close="toggleDialog" />
     </Dialog>
   </div>
 </template>
@@ -57,6 +57,7 @@ import ToastLife from '@/common/enum/toastLife'
 import { useConfirm } from 'primevue/useconfirm'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import UserDialog from './UserDialog.vue'
+import { commonErrorToast } from '@/services/toast'
 
 const overlayGroup = 'usersView'
 
@@ -146,13 +147,7 @@ function deleteUser(id: number) {
         group: overlayGroup,
       })
     } catch (e) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: e,
-        life: ToastLife.TWO_SECONDS,
-        group: overlayGroup,
-      })
+      toast.add(commonErrorToast(e, overlayGroup))
     }
 
     await table.value.clearSearch()

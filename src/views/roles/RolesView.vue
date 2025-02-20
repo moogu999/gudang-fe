@@ -7,7 +7,7 @@
 
     <Toolbar class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="toggleDialog"></Button>
+        <Button label="New" icon="pi pi-plus" @click="addRole"></Button>
       </template>
     </Toolbar>
 
@@ -19,7 +19,16 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.header === 'Actions'">
+              <Button
+                icon="pi pi-pen-to-square"
+                severity="contrast"
+                @click="editRole(data)"
+                text
+                rounded
+                outlined
+              />
+
               <Button
                 icon="pi pi-trash"
                 severity="danger"
@@ -34,8 +43,14 @@
       </template>
     </Card>
 
-    <Dialog class="min-w-100" header="Add Role" v-model:visible="isDialogShown" @hide="onHide">
-      <RoleDialog :close="toggleDialog" />
+    <Dialog
+      class="min-w-100"
+      :header="dialogHeader"
+      @hide="onHide"
+      v-model:visible="isDialogShown"
+      modal
+    >
+      <RoleDialog :mode="dialogMode" :role="role" @close="toggleDialog" />
     </Dialog>
   </div>
 </template>
@@ -57,6 +72,9 @@ import Toast from 'primevue/toast'
 import ToastLife from '@/common/enum/toastLife'
 import { useConfirm } from 'primevue/useconfirm'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
+import type { Role } from './role.type'
+import DialogMode from '@/common/enum/dialogMode'
+import { commonErrorToast } from '@/services/toast'
 
 const overlayGroup = 'rolesView'
 
@@ -66,16 +84,34 @@ const toast = useToast()
 const confirm = useConfirm()
 
 // Dialog
+const dialogHeader = ref('Add Role')
 const isDialogShown = ref(false)
+const dialogMode = ref(DialogMode.ADD)
+const role = ref<Role | undefined>(undefined)
+
+async function addRole() {
+  dialogHeader.value = 'Add Role'
+  dialogMode.value = DialogMode.ADD
+  role.value = undefined
+  await toggleDialog()
+}
+
+async function onHide() {
+  await table.value.clearSearch()
+}
+
+async function editRole(selectedRole: Role) {
+  dialogHeader.value = 'Edit Role'
+  dialogMode.value = DialogMode.EDIT
+  role.value = selectedRole
+  await toggleDialog()
+}
+
 async function toggleDialog() {
   isDialogShown.value = !isDialogShown.value
   if (!isDialogShown.value) {
     await onHide()
   }
-}
-
-async function onHide() {
-  await table.value.clearSearch()
 }
 
 // Table
@@ -148,6 +184,7 @@ function deleteRole(id: number) {
     try {
       await ApiService.delete(`/gen/v1/roles/${id}`)
 
+      // @TODO make common success toast
       toast.add({
         severity: 'success',
         summary: 'Role is deleted.',
@@ -155,13 +192,7 @@ function deleteRole(id: number) {
         group: overlayGroup,
       })
     } catch (e) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: e,
-        life: ToastLife.TWO_SECONDS,
-        group: overlayGroup,
-      })
+      toast.add(commonErrorToast(e, overlayGroup))
     }
 
     await table.value.clearSearch()

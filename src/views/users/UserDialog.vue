@@ -70,13 +70,9 @@ import ApiService from '@/services/api'
 import ToastLife from '@/common/enum/toastLife'
 import { ref } from 'vue'
 import Password from 'primevue/password'
+import { commonErrorToast } from '@/services/toast'
 
-const props = defineProps({
-  close: {
-    type: Function,
-    required: true,
-  },
-})
+const emits = defineEmits(['close'])
 
 // Toast
 const toastGroup = 'userDialog'
@@ -102,7 +98,7 @@ const resolver = zodResolver(
 )
 
 function handleClose() {
-  props.close()
+  emits('close')
 }
 
 const isLoading = ref(false)
@@ -118,6 +114,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
     await ApiService.post('/v1/users', {
       email: event.states.email.value,
       password: event.states.password.value,
+      // @TODO update with user id
       createdBy: 1,
     })
 
@@ -128,15 +125,9 @@ async function onFormSubmit(event: FormSubmitEvent) {
       group: toastGroup,
     })
 
-    props.close()
+    emits('close')
   } catch (e) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: e,
-      life: ToastLife.TWO_SECONDS,
-      group: toastGroup,
-    })
+    toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
   }

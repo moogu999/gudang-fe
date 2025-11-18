@@ -8,6 +8,10 @@ const router = createRouter({
       component: () => import('@/views/home/HomeView.vue'),
     },
     {
+      path: '/superset',
+      component: () => import('@/views/superset/SupersetView.vue'),
+    },
+    {
       path: '/users',
       component: () => import('@/views/users/UsersView.vue'),
     },

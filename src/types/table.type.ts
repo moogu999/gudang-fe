@@ -1,4 +1,4 @@
-type Column = {
+export type Column = {
   field: string
   header: string
   exportable: boolean
@@ -7,5 +7,3 @@ type Column = {
   filterable: boolean
   underlyingField?: string
 }
-
-export type { Column }

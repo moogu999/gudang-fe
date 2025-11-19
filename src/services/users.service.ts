@@ -1,0 +1,88 @@
+import ApiService from './api'
+import type { Base } from '@/types/api.type'
+import type { User, CreateUserDto } from '@/types/user.type'
+import { API_ENDPOINTS } from '@/constants/api'
+
+/**
+ * Service for managing user-related operations
+ * Handles all HTTP requests for user CRUD operations
+ *
+ * @example
+ * ```typescript
+ * // List users with pagination
+ * const users = await UsersService.list('page=1&limit=10')
+ *
+ * // Create a new user
+ * await UsersService.create({
+ *   email: 'user@example.com',
+ *   password: 'securePassword123',
+ *   createdBy: 1
+ * })
+ *
+ * // Delete a user
+ * await UsersService.delete(userId)
+ * ```
+ */
+export class UsersService {
+  private static readonly BASE_URL = API_ENDPOINTS.USERS
+  private static readonly V1_URL = API_ENDPOINTS.USERS_V1
+
+  /**
+   * Fetch paginated list of users
+   * Used primarily by TableComponent for server-side data fetching
+   *
+   * @param queryString - Optional query parameters for filtering, sorting, and pagination
+   *                      Built using GenericQueryBuilder
+   * @returns Promise resolving to paginated user data with metadata
+   *
+   * @example
+   * ```typescript
+   * const query = new GenericQueryBuilder()
+   *   .withPagination(1, 10)
+   *   .withSort('email', 'asc')
+   *   .build()
+   * const result = await UsersService.list(query)
+   * ```
+   */
+  static async list(queryString?: string): Promise<Base<User>> {
+    const url = queryString ? `${this.BASE_URL}?${queryString}` : this.BASE_URL
+    return ApiService.get<Base<User>>(url)
+  }
+
+  /**
+   * Create a new user account
+   *
+   * @param data - User creation data including email, password, and creator ID
+   * @returns Promise resolving to the created user object
+   * @throws Error if email already exists or validation fails
+   *
+   * @example
+   * ```typescript
+   * const newUser = await UsersService.create({
+   *   email: 'john.doe@example.com',
+   *   password: 'SecurePass123!',
+   *   createdBy: currentUserId
+   * })
+   * ```
+   */
+  static async create(data: CreateUserDto): Promise<User> {
+    return ApiService.post<User>(this.V1_URL, data)
+  }
+
+  /**
+   * Delete a user by their ID
+   * This is a hard delete operation
+   *
+   * @param id - The unique identifier of the user to delete
+   * @returns Promise resolving when deletion is complete
+   * @throws Error if user not found or deletion fails
+   *
+   * @example
+   * ```typescript
+   * await UsersService.delete(123)
+   * ```
+   */
+  static async delete(id: number): Promise<void> {
+    return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
+  }
+}

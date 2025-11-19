@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Column } from '@/components/table/table.type'
+import type { Column } from '@/types/table.type'
 import TableComponent from '@/components/table/TableComponent.vue'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
@@ -56,10 +56,10 @@ import Select from 'primevue/select'
 import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
-import ApiService, { type Base } from '@/services/api'
-import { type Permission } from '../permissions/permission.type'
+import { PermissionsService } from '@/services/permissions.service'
+import { type Permission } from '@/types/permission.type'
 import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
-import DateFormat from '@/common/enum/dateFormat'
+import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 
@@ -86,10 +86,9 @@ async function fetchPermissions() {
 
   // @TODO change withPagination
   const query = new GenericQueryBuilder().withPagination(1, 1000).build()
-  const url = `/gen/v1/permissions?${query}`
 
   try {
-    const res = await ApiService.get<Base<Permission>>(url)
+    const res = await PermissionsService.list(query)
     permissionOptions.value = res.data
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
@@ -103,7 +102,7 @@ async function addPermission(id: number) {
   loading.value = true
 
   try {
-    await ApiService.post('/gen/v1/role-permissions', {
+    await PermissionsService.addPermissionToRole({
       roleId: props.roleId,
       permissionId: id,
       // @TODO change to user id
@@ -170,7 +169,7 @@ async function deletePermission(id: number) {
   loading.value = true
 
   try {
-    await ApiService.delete(`/gen/v1/role-permissions/${id}`)
+    await PermissionsService.removePermissionFromRole(id)
 
     await table.value.clearSearch()
   } catch (e) {

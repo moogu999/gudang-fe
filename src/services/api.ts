@@ -45,17 +45,5 @@ class ApiService {
   }
 }
 
-type Base<T> = {
-  data: Array<T>
-  meta: Meta
-}
-
-type Meta = {
-  total: number
-  limit: number
-  offset: number
-}
-
 // Export a singleton instance
 export default new ApiService()
-export type { Base }

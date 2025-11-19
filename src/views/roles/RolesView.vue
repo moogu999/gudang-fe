@@ -56,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import DateFormat from '@/common/enum/dateFormat'
+import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
-import type { Column } from '@/components/table/table.type'
+import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
@@ -66,22 +66,14 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
 import RoleDialog from './RoleDialog.vue'
-import ApiService from '@/services/api'
-import { useToast } from 'primevue/usetoast'
+import { RolesService } from '@/services/roles.service'
 import Toast from 'primevue/toast'
-import ToastLife from '@/common/enum/toastLife'
-import { useConfirm } from 'primevue/useconfirm'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import type { Role } from './role.type'
-import DialogMode from '@/common/enum/dialogMode'
-import { commonErrorToast } from '@/services/toast'
+import type { Role } from '@/types/role.type'
+import DialogMode from '@/constants/dialogMode'
+import { useConfirmDelete } from '@/composables/useConfirmDelete'
 
 const overlayGroup = 'rolesView'
-
-// Toast
-const toast = useToast()
-
-const confirm = useConfirm()
 
 // Dialog
 const dialogHeader = ref('Add Role')
@@ -160,42 +152,16 @@ const columns: Column[] = [
 
 const table = ref()
 
-const deleteAcceptanceHandler = ref(async () => {})
-function onDeleteClick(id: number) {
-  deleteAcceptanceHandler.value = deleteRole(id)
-  confirm.require({
-    group: overlayGroup,
-    message: 'Are you sure you want to delete the role?',
-    header: 'Delete',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'No',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Yes',
-    },
-  })
-}
-
-function deleteRole(id: number) {
-  return async function () {
-    try {
-      await ApiService.delete(`/gen/v1/roles/${id}`)
-
-      // @TODO make common success toast
-      toast.add({
-        severity: 'success',
-        summary: 'Role is deleted.',
-        life: ToastLife.TWO_SECONDS,
-        group: overlayGroup,
-      })
-    } catch (e) {
-      toast.add(commonErrorToast(e, overlayGroup))
-    }
-
+// Delete confirmation
+const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
+  overlayGroup,
+  entityName: 'role',
+  onSuccess: async () => {
     await table.value.clearSearch()
-  }
+  },
+})
+
+function onDeleteClick(id: number) {
+  confirmDelete(() => RolesService.delete(id))
 }
 </script>

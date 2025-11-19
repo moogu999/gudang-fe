@@ -66,11 +66,10 @@ import { reactive } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import ApiService from '@/services/api'
-import ToastLife from '@/common/enum/toastLife'
+import { UsersService } from '@/services/users.service'
 import { ref } from 'vue'
 import Password from 'primevue/password'
-import { commonErrorToast } from '@/services/toast'
+import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 
 const emits = defineEmits(['close'])
 
@@ -111,19 +110,14 @@ async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
-    await ApiService.post('/v1/users', {
+    await UsersService.create({
       email: event.states.email.value,
       password: event.states.password.value,
       // @TODO update with user id
       createdBy: 1,
     })
 
-    toast.add({
-      severity: 'success',
-      summary: 'User is created.',
-      life: ToastLife.TWO_SECONDS,
-      group: toastGroup,
-    })
+    toast.add(commonSuccessToast('User is created.', toastGroup))
 
     emits('close')
   } catch (e) {

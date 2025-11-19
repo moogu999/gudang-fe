@@ -41,30 +41,22 @@
 </template>
 
 <script setup lang="ts">
-import DateFormat from '@/common/enum/dateFormat'
+import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
-import type { Column } from '@/components/table/table.type'
+import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import ApiService from '@/services/api'
-import { useToast } from 'primevue/usetoast'
+import { UsersService } from '@/services/users.service'
 import Toast from 'primevue/toast'
-import ToastLife from '@/common/enum/toastLife'
-import { useConfirm } from 'primevue/useconfirm'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import UserDialog from './UserDialog.vue'
-import { commonErrorToast } from '@/services/toast'
+import { useConfirmDelete } from '@/composables/useConfirmDelete'
 
 const overlayGroup = 'usersView'
-
-// Toast
-const toast = useToast()
-
-const confirm = useConfirm()
 
 // Dialog
 const isDialogShown = ref(false)
@@ -116,41 +108,16 @@ const columns: Column[] = [
 
 const table = ref()
 
-const deleteAcceptanceHandler = ref(async () => {})
-function onDeleteClick(id: number) {
-  deleteAcceptanceHandler.value = deleteUser(id)
-  confirm.require({
-    group: overlayGroup,
-    message: 'Are you sure you want to delete the user?',
-    header: 'Delete',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'No',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Yes',
-    },
-  })
-}
-
-function deleteUser(id: number) {
-  return async function () {
-    try {
-      await ApiService.delete(`/gen/v1/users/${id}`)
-
-      toast.add({
-        severity: 'success',
-        summary: 'User is deleted.',
-        life: ToastLife.TWO_SECONDS,
-        group: overlayGroup,
-      })
-    } catch (e) {
-      toast.add(commonErrorToast(e, overlayGroup))
-    }
-
+// Delete confirmation
+const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
+  overlayGroup,
+  entityName: 'user',
+  onSuccess: async () => {
     await table.value.clearSearch()
-  }
+  },
+})
+
+function onDeleteClick(id: number) {
+  confirmDelete(() => UsersService.delete(id))
 }
 </script>

@@ -72,17 +72,16 @@ import { onBeforeMount, reactive, type PropType } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import ApiService from '@/services/api'
-import ToastLife from '@/common/enum/toastLife'
+import { RolesService } from '@/services/roles.service'
 import { ref } from 'vue'
-import DialogMode from '@/common/enum/dialogMode'
-import type { Role } from './role.type'
+import DialogMode from '@/constants/dialogMode'
+import type { Role } from '@/types/role.type'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import PermissionsTab from '@/views/roles/PermissionsTab.vue'
-import { commonErrorToast } from '@/services/toast'
+import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 
 const props = defineProps({
   mode: {
@@ -154,34 +153,24 @@ async function onFormSubmit(event: FormSubmitEvent) {
 }
 
 async function addRole(event: FormSubmitEvent) {
-  await ApiService.post('/gen/v1/roles', {
+  await RolesService.create({
     name: event.states.name.value,
     description: event.states.description.value,
     // @TODO update with user id
     createdBy: 1,
   })
 
-  toast.add({
-    severity: 'success',
-    summary: 'Role is created.',
-    life: ToastLife.TWO_SECONDS,
-    group: toastGroup,
-  })
+  toast.add(commonSuccessToast('Role is created.', toastGroup))
 }
 
 async function editRole(event: FormSubmitEvent) {
-  await ApiService.patch(`/gen/v1/roles/${props.role?.id}`, {
+  await RolesService.update(props.role!.id, {
     name: event.states.name.value,
     description: event.states.description.value,
     // @TODO update with user id
     updatedBy: 1,
   })
 
-  toast.add({
-    severity: 'success',
-    summary: 'Role is updated.',
-    life: ToastLife.TWO_SECONDS,
-    group: toastGroup,
-  })
+  toast.add(commonSuccessToast('Role is updated.', toastGroup))
 }
 </script>

@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import DateFormat from '@/common/enum/dateFormat'
+import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
-import type { Column } from '@/components/table/table.type'
+import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import Card from 'primevue/card'
 

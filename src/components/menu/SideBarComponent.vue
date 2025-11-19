@@ -1,18 +1,25 @@
 <template>
   <div class="flex h-full max-h-screen flex-col gap-2">
     <div class="flex h-14 items-center border-b border-stone-200/70 px-4 lg:h-[60px] lg:px-6">
-      <RouterLink to="/" class="flex items-center gap-2 font-semibold">
-        <h1>gudang-fe</h1>
+      <RouterLink
+        to="/"
+        :class="[
+          'flex items-center gap-2 font-semibold',
+          sidebarStore.isCollapsed ? 'justify-center w-full' : '',
+        ]"
+      >
+        <h1 v-if="!sidebarStore.isCollapsed">gudang-fe</h1>
+        <i v-else class="pi pi-home text-xl"></i>
       </RouterLink>
     </div>
 
     <div class="flex-1">
       <div class="card flex justify-center p-2">
-        <PanelMenuComponent />
+        <PanelMenuComponent :collapsed="sidebarStore.isCollapsed" />
       </div>
     </div>
 
-    <div class="mt-auto p-4">
+    <div v-if="!sidebarStore.isCollapsed" class="mt-auto p-4">
       <Card>
         <template #title>Upgrade to Pro</template>
         <template #subtitle>
@@ -30,4 +37,7 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import PanelMenuComponent from './PanelMenuComponent.vue'
+import { useSidebarStore } from '@/stores'
+
+const sidebarStore = useSidebarStore()
 </script>

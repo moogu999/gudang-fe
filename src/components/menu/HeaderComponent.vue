@@ -1,4 +1,13 @@
 <template>
+  <Button
+    icon="pi pi-bars"
+    severity="secondary"
+    text
+    @click="toggleSidebar"
+    aria-label="Toggle sidebar"
+    class="hidden md:flex"
+  />
+
   <div class="w-full flex-1">
     <form>
       <div class="relative">
@@ -25,9 +34,17 @@ import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Avatar from 'primevue/avatar'
+import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import { useTemplateRef } from 'vue'
 import { avatarMenu } from './menu'
+import { useSidebarStore } from '@/stores'
+
+// Sidebar
+const sidebarStore = useSidebarStore()
+function toggleSidebar() {
+  sidebarStore.toggle()
+}
 
 // Avatar
 const menu = useTemplateRef('menu')

@@ -2,12 +2,19 @@
 import SideBarComponent from './components/menu/SideBarComponent.vue'
 import HeaderComponent from './components/menu/HeaderComponent.vue'
 import { RouterView } from 'vue-router'
+import { useSidebarStore } from '@/stores'
+import { computed } from 'vue'
+
+const sidebarStore = useSidebarStore()
+const gridClass = computed(() =>
+  sidebarStore.isCollapsed
+    ? 'md:grid-cols-[70px_minmax(220px,1fr)] lg:grid-cols-[70px_minmax(280px,1fr)]'
+    : 'md:grid-cols-[220px_minmax(220px,1fr)] lg:grid-cols-[280px_minmax(280px,1fr)]',
+)
 </script>
 
 <template>
-  <div
-    class="grid min-h-screen w-full md:grid-cols-[220px_minmax(220px,1fr)] lg:grid-cols-[280px_minmax(280px,1fr)]"
-  >
+  <div :class="['grid min-h-screen w-full', gridClass]">
     <div class="hidden border-r border-stone-200/70 bg-stone-50/70 md:block">
       <SideBarComponent />
     </div>

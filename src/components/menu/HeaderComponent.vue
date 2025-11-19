@@ -1,4 +1,6 @@
 <template>
+  <Toast group="headerMenu" />
+
   <Button
     icon="pi pi-bars"
     severity="secondary"
@@ -36,9 +38,15 @@ import InputIcon from 'primevue/inputicon'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
+import Toast from 'primevue/toast'
 import { useTemplateRef } from 'vue'
-import { avatarMenu } from './menu'
-import { useSidebarStore } from '@/stores'
+import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
+import { useAuthStore, useSidebarStore } from '@/stores'
+import { commonErrorToast, commonSuccessToast } from '@/services'
+
+const router = useRouter()
+const toast = useToast()
 
 // Sidebar
 const sidebarStore = useSidebarStore()
@@ -46,7 +54,27 @@ function toggleSidebar() {
   sidebarStore.toggle()
 }
 
-// Avatar
+// Auth
+const authStore = useAuthStore()
+async function handleSignOut() {
+  try {
+    await authStore.signOut()
+    toast.add(commonSuccessToast('Signed out successfully', 'headerMenu'))
+    router.push({ name: 'SignIn' })
+  } catch (error) {
+    toast.add(commonErrorToast(error, 'headerMenu'))
+  }
+}
+
+// Avatar menu
+const avatarMenu = [
+  {
+    label: 'Sign Out',
+    icon: 'pi pi-sign-out',
+    command: handleSignOut,
+  },
+]
+
 const menu = useTemplateRef('menu')
 function toggle(event: Event) {
   menu.value?.toggle(event)

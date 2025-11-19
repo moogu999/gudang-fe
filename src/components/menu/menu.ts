@@ -25,10 +25,4 @@ const mainMenu = [
   },
 ]
 
-const avatarMenu = [
-  {
-    label: 'Sign Out',
-  },
-]
-
-export { mainMenu, avatarMenu }
+export { mainMenu }

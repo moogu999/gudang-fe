@@ -1,4 +1,6 @@
 <template>
+  <Toast group="minimalHeaderMenu" />
+
   <div class="flex w-full items-center justify-between">
     <!-- App Title / Home Button -->
     <h1 class="cursor-pointer font-semibold" @click="goToHome">
@@ -25,17 +27,41 @@
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
-import { useTemplateRef, ref } from 'vue'
+import Toast from 'primevue/toast'
+import { useTemplateRef, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { avatarMenu } from './menu'
+import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from '@/stores'
+import { commonErrorToast, commonSuccessToast } from '@/services'
 
 const router = useRouter()
+const toast = useToast()
+const authStore = useAuthStore()
 const appTitle = 'gudang-fe'
 
-// Hardcoded for now - TODO: Replace with actual auth state
-const isSignedIn = ref(true)
+// Use actual auth state from store
+const isSignedIn = computed(() => authStore.isAuthenticated)
+
+// Sign out handler
+async function handleSignOut() {
+  try {
+    await authStore.signOut()
+    toast.add(commonSuccessToast('Signed out successfully', 'minimalHeaderMenu'))
+    router.push({ name: 'SignIn' })
+  } catch (error) {
+    toast.add(commonErrorToast(error, 'minimalHeaderMenu'))
+  }
+}
 
 // Avatar menu
+const avatarMenu = [
+  {
+    label: 'Sign Out',
+    icon: 'pi pi-sign-out',
+    command: handleSignOut,
+  },
+]
+
 const menu = useTemplateRef('menu')
 function toggle(event: Event) {
   menu.value?.toggle(event)

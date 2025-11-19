@@ -6,6 +6,17 @@
 // API types
 export type { Base, Meta } from './api.type'
 
+// Auth types
+export type {
+  SignInRequest,
+  SignInResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+  AccessTokenPayload,
+  RefreshTokenPayload,
+  MeResponse,
+} from './auth.type'
+
 // Entity types
 export type { User, CreateUserDto } from './user.type'
 export type { Role, CreateRoleDto, UpdateRoleDto } from './role.type'

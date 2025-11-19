@@ -4,6 +4,12 @@
  */
 
 export const API_ENDPOINTS = {
+  // Auth endpoints
+  AUTH_SIGN_IN: '/v1/auth/sign-in',
+  AUTH_SIGN_OUT: '/v1/auth/sign-out',
+  AUTH_REFRESH: '/v1/auth/refresh',
+  AUTH_ME: '/v1/auth/me',
+
   // User endpoints
   USERS: '/gen/v1/users',
   USERS_V1: '/v1/users',

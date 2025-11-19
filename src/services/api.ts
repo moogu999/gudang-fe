@@ -37,58 +37,68 @@ class ApiService {
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
 
-        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-          const requestUrl = originalRequest.url || ''
+        // Only handle 401 errors that haven't been retried yet
+        const is401Error = error.response?.status === 401
+        const isRetryAttempt = originalRequest?._retry
 
-          if (
-            requestUrl.includes(API_ENDPOINTS.AUTH_SIGN_IN) ||
-            requestUrl.includes(API_ENDPOINTS.AUTH_REFRESH) ||
-            requestUrl.includes(API_ENDPOINTS.AUTH_ME)
-          ) {
-            if (!requestUrl.includes(API_ENDPOINTS.AUTH_ME)) {
-              this.handleAuthFailure()
-            }
-            return Promise.reject(error)
-          }
-
-          // If already refreshing, queue this request
-          if (this.isRefreshing) {
-            return new Promise((resolve, reject) => {
-              this.failedQueue.push({ resolve, reject })
-            })
-              .then(() => {
-                return this.axiosInstance(originalRequest)
-              })
-              .catch((err) => {
-                return Promise.reject(err)
-              })
-          }
-
-          // Mark as retry to prevent infinite loops
-          originalRequest._retry = true
-          this.isRefreshing = true
-
-          try {
-            await this.post(API_ENDPOINTS.AUTH_REFRESH, {})
-
-            // Refresh succeeded, retry all queued requests
-            this.processQueue(null)
-            this.isRefreshing = false
-
-            // Retry the original request
-            return this.axiosInstance(originalRequest)
-          } catch (refreshError) {
-            // Refresh failed, reject all queued requests and redirect to sign-in
-            this.processQueue(refreshError)
-            this.isRefreshing = false
-            this.handleAuthFailure()
-            return Promise.reject(refreshError)
-          }
+        if (!is401Error || !originalRequest || isRetryAttempt) {
+          console.error('API error:', error.response?.data || error.message)
+          return Promise.reject(error)
         }
 
-        console.error('API error:', error.response?.data || error.message)
-        return Promise.reject(error)
+        const requestUrl = originalRequest.url || ''
+
+        // Don't attempt token refresh for auth-related endpoints
+        if (this.isAuthEndpoint(requestUrl)) {
+          const isAuthMeEndpoint = requestUrl.includes(API_ENDPOINTS.AUTH_ME)
+          if (!isAuthMeEndpoint) {
+            this.handleAuthFailure()
+          }
+          return Promise.reject(error)
+        }
+
+        // If already refreshing, queue this request
+        if (this.isRefreshing) {
+          return new Promise((resolve, reject) => {
+            this.failedQueue.push({ resolve, reject })
+          })
+            .then(() => {
+              return this.axiosInstance(originalRequest)
+            })
+            .catch((err) => {
+              return Promise.reject(err)
+            })
+        }
+
+        // Mark as retry to prevent infinite loops
+        originalRequest._retry = true
+        this.isRefreshing = true
+
+        try {
+          await this.post(API_ENDPOINTS.AUTH_REFRESH, {})
+
+          // Refresh succeeded, retry all queued requests
+          this.processQueue(null)
+          this.isRefreshing = false
+
+          // Retry the original request
+          return this.axiosInstance(originalRequest)
+        } catch (refreshError) {
+          // Refresh failed, reject all queued requests and redirect to sign-in
+          this.processQueue(refreshError)
+          this.isRefreshing = false
+          this.handleAuthFailure()
+          return Promise.reject(refreshError)
+        }
       },
+    )
+  }
+
+  private isAuthEndpoint(url: string): boolean {
+    return (
+      url.includes(API_ENDPOINTS.AUTH_SIGN_IN) ||
+      url.includes(API_ENDPOINTS.AUTH_REFRESH) ||
+      url.includes(API_ENDPOINTS.AUTH_ME)
     )
   }
 

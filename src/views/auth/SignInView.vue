@@ -68,7 +68,7 @@ function handleKeyPress(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-surface-50 px-4">
+  <div class="bg-surface-50 flex min-h-screen items-center justify-center px-4">
     <Toast group="signInView" />
 
     <Card class="w-full max-w-md">

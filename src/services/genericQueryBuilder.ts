@@ -29,6 +29,17 @@ export class GenericQueryBuilder {
     return this
   }
 
+  withCursor(cursor: string, limit: number): this {
+    this.queryParams.append('cursor', cursor)
+    this.queryParams.append('limit', String(limit))
+    return this
+  }
+
+  withLimit(limit: number): this {
+    this.queryParams.append('limit', String(limit))
+    return this
+  }
+
   build(): string {
     return this.queryParams.toString()
   }

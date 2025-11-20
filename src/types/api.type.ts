@@ -7,4 +7,7 @@ export type Meta = {
   total: number
   limit: number
   offset: number
+  nextCursor?: string | null
+  prevCursor?: string | null
+  hasMore?: boolean
 }

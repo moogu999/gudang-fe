@@ -13,13 +13,15 @@
       <div class="mb-4 flex items-center gap-4">
         <label for="permissions" class="w-30 font-semibold">Add Permission</label>
         <div class="flex flex-auto flex-col gap-1">
-          <Select
+          <InfiniteSelect
             option-label="name"
             option-value="id"
-            :options="permissionOptions"
+            :fetch-fn="(query) => PermissionsService.list(query)"
             @update:model-value="addPermission"
-            filter
             v-model="selectedPermission"
+            sort-by="id"
+            sort-operator="desc"
+            use-cursor
           />
         </div>
       </div>
@@ -52,17 +54,16 @@ import TableComponent from '@/components/table/TableComponent.vue'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
-import Select from 'primevue/select'
-import { onMounted, ref } from 'vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
 import { PermissionsService } from '@/services/permissions.service'
-import { type Permission } from '@/types/permission.type'
-import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores'
+import type { Permission } from '@/types'
 
 // Auth
 const authStore = useAuthStore()
@@ -74,8 +75,6 @@ const props = defineProps({
   },
 })
 
-onMounted(async () => await fetchPermissions())
-
 const loading = ref(false)
 
 // Toast
@@ -83,26 +82,10 @@ const toastGroup = 'permissionsTab'
 const toast = useToast()
 
 // Select
-const permissionOptions = ref<Array<Permission>>([])
-
-async function fetchPermissions() {
-  loading.value = true
-
-  // @TODO change withPagination
-  const query = new GenericQueryBuilder().withPagination(1, 1000).build()
-
-  try {
-    const res = await PermissionsService.list(query)
-    permissionOptions.value = res.data
-  } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
-  } finally {
-    loading.value = false
-  }
-}
-
 const selectedPermission = ref<Permission | undefined>()
-async function addPermission(id: number) {
+async function addPermission(id: unknown) {
+  if (typeof id !== 'number') return
+
   loading.value = true
 
   try {

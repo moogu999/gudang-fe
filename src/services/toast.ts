@@ -32,4 +32,20 @@ function commonSuccessToast(message: string, group: string): ToastMessageOptions
   }
 }
 
-export { commonErrorToast, commonSuccessToast }
+/**
+ * Creates a standard warning toast notification
+ * @param message The warning message to display
+ * @param group The toast group identifier
+ * @returns ToastMessageOptions for warning display
+ */
+function commonWarnToast(message: string, group: string): ToastMessageOptions {
+  return {
+    severity: 'warn',
+    summary: 'Validation Error',
+    detail: message,
+    life: ToastLife.TWO_SECONDS,
+    group: group,
+  }
+}
+
+export { commonErrorToast, commonSuccessToast, commonWarnToast }

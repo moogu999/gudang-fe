@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores'
-import { commonErrorToast, commonSuccessToast } from '@/services'
+import { commonErrorToast, commonSuccessToast, commonWarnToast } from '@/services'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -26,12 +26,7 @@ const isLoading = ref(false)
 async function handleSignIn() {
   // Basic validation
   if (!email.value || !password.value) {
-    toast.add({
-      severity: 'warn',
-      summary: 'Validation Error',
-      detail: 'Please enter both email and password',
-      life: 3000,
-    })
+    toast.add(commonWarnToast('Please enter both email and password', 'signInView'))
     return
   }
 
@@ -68,10 +63,21 @@ function handleKeyPress(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="bg-surface-50 flex min-h-screen items-center justify-center px-4">
+  <div
+    class="before:via-surface-0 relative flex min-h-screen items-center justify-center px-4 before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-50 before:to-indigo-50"
+  >
+    <!-- Background pattern -->
+    <div
+      class="absolute inset-0 opacity-[0.03]"
+      style="
+        background-image: radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0);
+        background-size: 40px 40px;
+      "
+    ></div>
+
     <Toast group="signInView" />
 
-    <Card class="w-full max-w-md">
+    <Card class="relative z-10 w-full max-w-md shadow-lg">
       <template #title>
         <h1 class="text-center text-2xl font-bold">Sign In</h1>
       </template>
@@ -104,6 +110,12 @@ function handleKeyPress(event: KeyboardEvent) {
               toggle-mask
               @keypress="handleKeyPress"
               autocomplete="current-password"
+              input-class="w-full"
+              class="w-full"
+              :pt="{
+                pcInputText: { root: 'w-full' },
+                iconField: { root: 'w-full' },
+              }"
             />
           </div>
 
@@ -120,3 +132,26 @@ function handleKeyPress(event: KeyboardEvent) {
     </Card>
   </div>
 </template>
+
+<style scoped>
+:deep(.p-password) {
+  display: flex;
+  width: 100%;
+}
+
+:deep(.p-password .p-inputtext) {
+  flex: 1;
+  width: 100%;
+}
+
+:deep(.p-password .p-icon-field) {
+  width: 100%;
+}
+
+:deep(.p-password button) {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+</style>

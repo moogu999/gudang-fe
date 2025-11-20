@@ -70,8 +70,12 @@ import { UsersService } from '@/services/users.service'
 import { ref } from 'vue'
 import Password from 'primevue/password'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { useAuthStore } from '@/stores'
 
 const emits = defineEmits(['close'])
+
+// Auth
+const authStore = useAuthStore()
 
 // Toast
 const toastGroup = 'userDialog'
@@ -113,8 +117,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
     await UsersService.create({
       email: event.states.email.value,
       password: event.states.password.value,
-      // @TODO update with user id
-      createdBy: 1,
+      createdBy: authStore.userId!,
     })
 
     toast.add(commonSuccessToast('User is created.', toastGroup))

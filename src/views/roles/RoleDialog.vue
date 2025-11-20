@@ -82,6 +82,10 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import PermissionsTab from '@/views/roles/PermissionsTab.vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { useAuthStore } from '@/stores'
+
+// Auth
+const authStore = useAuthStore()
 
 const props = defineProps({
   mode: {
@@ -156,8 +160,7 @@ async function addRole(event: FormSubmitEvent) {
   await RolesService.create({
     name: event.states.name.value,
     description: event.states.description.value,
-    // @TODO update with user id
-    createdBy: 1,
+    createdBy: authStore.userId!,
   })
 
   toast.add(commonSuccessToast('Role is created.', toastGroup))
@@ -167,8 +170,7 @@ async function editRole(event: FormSubmitEvent) {
   await RolesService.update(props.role!.id, {
     name: event.states.name.value,
     description: event.states.description.value,
-    // @TODO update with user id
-    updatedBy: 1,
+    updatedBy: authStore.userId!,
   })
 
   toast.add(commonSuccessToast('Role is updated.', toastGroup))

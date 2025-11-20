@@ -62,6 +62,10 @@ import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
+import { useAuthStore } from '@/stores'
+
+// Auth
+const authStore = useAuthStore()
 
 const props = defineProps({
   roleId: {
@@ -105,8 +109,7 @@ async function addPermission(id: number) {
     await PermissionsService.addPermissionToRole({
       roleId: props.roleId,
       permissionId: id,
-      // @TODO change to user id
-      createdBy: 1,
+      createdBy: authStore.userId!,
     })
 
     selectedPermission.value = undefined

@@ -7,7 +7,16 @@
     text
     @click="toggleSidebar"
     aria-label="Toggle sidebar"
-    class="hidden md:flex"
+    class="!hidden md:!inline-flex"
+  />
+
+  <Button
+    icon="pi pi-bars"
+    severity="secondary"
+    text
+    @click="toggleDrawer"
+    aria-label="Open menu"
+    class="!inline-flex md:!hidden"
   />
 
   <div class="w-full flex-1">
@@ -52,6 +61,10 @@ const toast = useToast()
 const sidebarStore = useSidebarStore()
 function toggleSidebar() {
   sidebarStore.toggle()
+}
+
+function toggleDrawer() {
+  sidebarStore.toggleDrawer()
 }
 
 // Auth

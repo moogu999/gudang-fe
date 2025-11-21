@@ -25,7 +25,7 @@ import { API_ENDPOINTS } from '@/constants/api'
  * ```
  */
 export class RolesService {
-  private static readonly BASE_URL = API_ENDPOINTS.ROLES
+  private static readonly BASE_URL = API_ENDPOINTS.GEN_ROLES
 
   /**
    * Fetch paginated list of roles

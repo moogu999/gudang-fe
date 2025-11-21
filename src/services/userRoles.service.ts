@@ -24,7 +24,7 @@ import { API_ENDPOINTS } from '@/constants/api'
  * ```
  */
 export class UserRolesService {
-  private static readonly BASE_URL = API_ENDPOINTS.USER_ROLES
+  private static readonly BASE_URL = API_ENDPOINTS.GEN_USER_ROLES
 
   /**
    * Fetch paginated list of user-role associations

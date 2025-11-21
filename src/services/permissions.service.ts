@@ -26,8 +26,8 @@ import { API_ENDPOINTS } from '@/constants/api'
  * ```
  */
 export class PermissionsService {
-  private static readonly BASE_URL = API_ENDPOINTS.PERMISSIONS
-  private static readonly ROLE_PERMISSIONS_URL = API_ENDPOINTS.ROLE_PERMISSIONS
+  private static readonly BASE_URL = API_ENDPOINTS.GEN_PERMISSIONS
+  private static readonly ROLE_PERMISSIONS_URL = API_ENDPOINTS.GEN_ROLE_PERMISSIONS
 
   /**
    * Fetch paginated list of all available permissions

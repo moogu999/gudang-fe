@@ -72,6 +72,7 @@ import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import type { Role } from '@/types/role.type'
 import DialogMode from '@/constants/dialogMode'
 import { useConfirmDelete, useDialog } from '@/composables'
+import { API_ENDPOINTS } from '@/constants/api'
 
 const overlayGroup = 'rolesView'
 
@@ -83,7 +84,11 @@ const dialogHeader = ref('Add Role')
 const dialogMode = ref(DialogMode.ADD)
 const role = ref<Role | undefined>(undefined)
 
-const { isVisible: isDialogShown, open, close } = useDialog({
+const {
+  isVisible: isDialogShown,
+  open,
+  close,
+} = useDialog({
   onClose: async () => {
     await table.value.clearSearch()
   },
@@ -104,7 +109,7 @@ function editRole(selectedRole: Role) {
 }
 
 // Table
-const url = '/gen/v1/roles'
+const url = API_ENDPOINTS.GEN_ROLES
 
 const columns: Column[] = [
   {

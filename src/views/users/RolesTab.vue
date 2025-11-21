@@ -65,6 +65,7 @@ import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores'
 import type { Role } from '@/types'
+import { API_ENDPOINTS } from '@/constants/api'
 
 // Auth
 const authStore = useAuthStore()
@@ -107,7 +108,7 @@ async function addRole(id: unknown) {
 }
 
 // Table
-const url = `/gen/v1/user-roles?filterBy=user_id&filterOperator=0&filterValue=${props.userId}`
+const url = `${API_ENDPOINTS.GEN_USER_ROLES}?filterBy=user_id&filterOperator=0&filterValue=${props.userId}`
 
 const columns: Column[] = [
   {

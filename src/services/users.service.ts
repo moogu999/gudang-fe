@@ -24,7 +24,7 @@ import { API_ENDPOINTS } from '@/constants/api'
  * ```
  */
 export class UsersService {
-  private static readonly BASE_URL = API_ENDPOINTS.USERS
+  private static readonly GEN_URL = API_ENDPOINTS.GEN_USERS
   private static readonly V1_URL = API_ENDPOINTS.USERS_V1
 
   /**
@@ -45,7 +45,7 @@ export class UsersService {
    * ```
    */
   static async list(queryString?: string): Promise<Base<User>> {
-    const url = queryString ? `${this.BASE_URL}?${queryString}` : this.BASE_URL
+    const url = queryString ? `${this.GEN_URL}?${queryString}` : this.GEN_URL
     return ApiService.get<Base<User>>(url)
   }
 
@@ -110,6 +110,6 @@ export class UsersService {
    * ```
    */
   static async delete(id: number): Promise<void> {
-    return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
+    return ApiService.delete<void>(`${this.GEN_URL}/${id}`)
   }
 }

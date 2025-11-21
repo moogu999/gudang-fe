@@ -22,9 +22,10 @@ import TableComponent from '@/components/table/TableComponent.vue'
 import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import Card from 'primevue/card'
+import { API_ENDPOINTS } from '@/constants/api'
 
 // Table
-const url = '/gen/v1/permissions'
+const url = API_ENDPOINTS.GEN_PERMISSIONS
 
 const columns: Column[] = [
   {

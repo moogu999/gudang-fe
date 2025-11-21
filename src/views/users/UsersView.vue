@@ -72,6 +72,7 @@ import UserDialog from './UserDialog.vue'
 import { useConfirmDelete, useDialog } from '@/composables'
 import type { User } from '@/types/user.type'
 import DialogMode from '@/constants/dialogMode'
+import { API_ENDPOINTS } from '@/constants/api'
 
 const overlayGroup = 'usersView'
 
@@ -83,7 +84,11 @@ const dialogHeader = ref('Add User')
 const dialogMode = ref(DialogMode.ADD)
 const user = ref<User | undefined>(undefined)
 
-const { isVisible: isDialogShown, open, close } = useDialog({
+const {
+  isVisible: isDialogShown,
+  open,
+  close,
+} = useDialog({
   onClose: async () => {
     await table.value.clearSearch()
   },
@@ -104,7 +109,7 @@ function editUser(selectedUser: User) {
 }
 
 // Table
-const url = '/gen/v1/users'
+const url = API_ENDPOINTS.GEN_USERS
 
 const columns: Column[] = [
   {

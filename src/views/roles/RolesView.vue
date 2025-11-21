@@ -46,11 +46,11 @@
     <Dialog
       class="min-w-100"
       :header="dialogHeader"
-      @hide="onHide"
+      @hide="close"
       v-model:visible="isDialogShown"
       modal
     >
-      <RoleDialog :mode="dialogMode" :role="role" @close="toggleDialog" />
+      <RoleDialog :mode="dialogMode" :role="role" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -71,39 +71,36 @@ import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import type { Role } from '@/types/role.type'
 import DialogMode from '@/constants/dialogMode'
-import { useConfirmDelete } from '@/composables/useConfirmDelete'
+import { useConfirmDelete, useDialog } from '@/composables'
 
 const overlayGroup = 'rolesView'
 
+// Table
+const table = ref()
+
 // Dialog
 const dialogHeader = ref('Add Role')
-const isDialogShown = ref(false)
 const dialogMode = ref(DialogMode.ADD)
 const role = ref<Role | undefined>(undefined)
 
-async function addRole() {
+const { isVisible: isDialogShown, open, close } = useDialog({
+  onClose: async () => {
+    await table.value.clearSearch()
+  },
+})
+
+function addRole() {
   dialogHeader.value = 'Add Role'
   dialogMode.value = DialogMode.ADD
   role.value = undefined
-  await toggleDialog()
+  open()
 }
 
-async function onHide() {
-  await table.value.clearSearch()
-}
-
-async function editRole(selectedRole: Role) {
+function editRole(selectedRole: Role) {
   dialogHeader.value = 'Edit Role'
   dialogMode.value = DialogMode.EDIT
   role.value = selectedRole
-  await toggleDialog()
-}
-
-async function toggleDialog() {
-  isDialogShown.value = !isDialogShown.value
-  if (!isDialogShown.value) {
-    await onHide()
-  }
+  open()
 }
 
 // Table
@@ -149,8 +146,6 @@ const columns: Column[] = [
     filterable: false,
   },
 ]
-
-const table = ref()
 
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

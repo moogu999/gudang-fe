@@ -46,11 +46,11 @@
     <Dialog
       class="min-w-100"
       :header="dialogHeader"
-      @hide="onHide"
+      @hide="close"
       v-model:visible="isDialogShown"
       modal
     >
-      <UserDialog :mode="dialogMode" :user="user" @close="toggleDialog" />
+      <UserDialog :mode="dialogMode" :user="user" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -69,41 +69,38 @@ import { UsersService } from '@/services/users.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import UserDialog from './UserDialog.vue'
-import { useConfirmDelete } from '@/composables/useConfirmDelete'
+import { useConfirmDelete, useDialog } from '@/composables'
 import type { User } from '@/types/user.type'
 import DialogMode from '@/constants/dialogMode'
 
 const overlayGroup = 'usersView'
 
+// Table
+const table = ref()
+
 // Dialog
 const dialogHeader = ref('Add User')
-const isDialogShown = ref(false)
 const dialogMode = ref(DialogMode.ADD)
 const user = ref<User | undefined>(undefined)
 
-async function addUser() {
+const { isVisible: isDialogShown, open, close } = useDialog({
+  onClose: async () => {
+    await table.value.clearSearch()
+  },
+})
+
+function addUser() {
   dialogHeader.value = 'Add User'
   dialogMode.value = DialogMode.ADD
   user.value = undefined
-  await toggleDialog()
+  open()
 }
 
-async function onHide() {
-  await table.value.clearSearch()
-}
-
-async function editUser(selectedUser: User) {
+function editUser(selectedUser: User) {
   dialogHeader.value = 'Edit User'
   dialogMode.value = DialogMode.EDIT
   user.value = selectedUser
-  await toggleDialog()
-}
-
-async function toggleDialog() {
-  isDialogShown.value = !isDialogShown.value
-  if (!isDialogShown.value) {
-    await onHide()
-  }
+  open()
 }
 
 // Table
@@ -140,8 +137,6 @@ const columns: Column[] = [
     filterable: false,
   },
 ]
-
-const table = ref()
 
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

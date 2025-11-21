@@ -7,7 +7,7 @@
 
     <Toolbar class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="toggleDialog"></Button>
+        <Button label="New" icon="pi pi-plus" @click="addUser"></Button>
       </template>
     </Toolbar>
 
@@ -19,7 +19,16 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.header === 'Actions'">
+              <Button
+                icon="pi pi-pen-to-square"
+                severity="contrast"
+                @click="editUser(data)"
+                text
+                rounded
+                outlined
+              />
+
               <Button
                 icon="pi pi-trash"
                 severity="danger"
@@ -34,8 +43,14 @@
       </template>
     </Card>
 
-    <Dialog class="min-w-100" header="Add User" v-model:visible="isDialogShown" @hide="onHide">
-      <UserDialog @close="toggleDialog" />
+    <Dialog
+      class="min-w-100"
+      :header="dialogHeader"
+      @hide="onHide"
+      v-model:visible="isDialogShown"
+      modal
+    >
+      <UserDialog :mode="dialogMode" :user="user" @close="toggleDialog" />
     </Dialog>
   </div>
 </template>
@@ -55,20 +70,40 @@ import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import UserDialog from './UserDialog.vue'
 import { useConfirmDelete } from '@/composables/useConfirmDelete'
+import type { User } from '@/types/user.type'
+import DialogMode from '@/constants/dialogMode'
 
 const overlayGroup = 'usersView'
 
 // Dialog
+const dialogHeader = ref('Add User')
 const isDialogShown = ref(false)
+const dialogMode = ref(DialogMode.ADD)
+const user = ref<User | undefined>(undefined)
+
+async function addUser() {
+  dialogHeader.value = 'Add User'
+  dialogMode.value = DialogMode.ADD
+  user.value = undefined
+  await toggleDialog()
+}
+
+async function onHide() {
+  await table.value.clearSearch()
+}
+
+async function editUser(selectedUser: User) {
+  dialogHeader.value = 'Edit User'
+  dialogMode.value = DialogMode.EDIT
+  user.value = selectedUser
+  await toggleDialog()
+}
+
 async function toggleDialog() {
   isDialogShown.value = !isDialogShown.value
   if (!isDialogShown.value) {
     await onHide()
   }
-}
-
-async function onHide() {
-  await table.value.clearSearch()
 }
 
 // Table

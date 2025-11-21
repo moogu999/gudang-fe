@@ -22,6 +22,9 @@ export const API_ENDPOINTS = {
 
   // Role-Permission endpoints
   ROLE_PERMISSIONS: '/gen/v1/role-permissions',
+
+  // User-Role endpoints
+  USER_ROLES: '/gen/v1/user-roles',
 } as const
 
 // Type for API endpoints (useful for validation)

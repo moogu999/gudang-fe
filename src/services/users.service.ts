@@ -1,6 +1,6 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type { User, CreateUserDto } from '@/types/user.type'
+import type { User, CreateUserDto, UpdateUserDto } from '@/types/user.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
@@ -67,6 +67,33 @@ export class UsersService {
    */
   static async create(data: CreateUserDto): Promise<User> {
     return ApiService.post<User>(this.V1_URL, data)
+  }
+
+  /**
+   * Update an existing user's email and/or password
+   *
+   * @param id - The unique identifier of the user to update
+   * @param data - User update data (email and/or password)
+   * @returns Promise resolving when update is complete
+   * @throws Error if user not found or validation fails
+   *
+   * @example
+   * ```typescript
+   * await UsersService.update(123, {
+   *   email: 'newemail@example.com',
+   *   password: 'NewSecurePass123!',
+   *   updatedBy: 'admin@example.com'
+   * })
+   * ```
+   */
+  static async update(id: number, data: UpdateUserDto): Promise<void> {
+    const { email, password } = data
+    const payload: { email?: string; password?: string } = {}
+
+    if (email) payload.email = email
+    if (password) payload.password = password
+
+    return ApiService.patch<void>(`${this.V1_URL}/${id}`, payload)
   }
 
   /**

@@ -18,6 +18,7 @@
       :first="first"
       :filters="filters"
       :data-key="dataKey"
+      :key="tableKey"
       @page="handlePageChange"
       @sort="handleSortChange"
       v-model:selection="selectedRow"
@@ -171,6 +172,7 @@ defineExpose({ clearSearch })
 onMounted(async () => await fetchData(currPage))
 
 const loading = ref(false)
+const tableKey = ref(0)
 let currPage = 0 // PrimeVue DataTable page start from 0
 let currSort: Sort | undefined = undefined
 const currFilters = ref(new Map())
@@ -313,6 +315,7 @@ async function fetchData(page: number, sort?: Sort, search?: string, filters?: F
     const res = await ApiService.get<Base<T>>(buildQuery(page, sort, search, filters))
     items.value = res.data
     total.value = res.meta.total
+    tableKey.value++ // Force re-render to ensure slots update properly
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

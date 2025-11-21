@@ -10,3 +10,9 @@ export type CreateUserDto = {
   password: string
   createdBy: number
 }
+
+export type UpdateUserDto = {
+  email?: string
+  password?: string
+  updatedBy: string
+}

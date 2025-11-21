@@ -1,10 +1,5 @@
 const mainMenu = [
   {
-    label: 'Superset',
-    icon: 'pi pi-user',
-    route: '/superset',
-  },
-  {
     label: 'Users',
     icon: 'pi pi-user',
     route: '/users',
@@ -22,6 +17,11 @@ const mainMenu = [
         route: '/permissions',
       },
     ],
+  },
+  {
+    label: 'Superset',
+    icon: 'pi pi-chart-line',
+    route: '/superset',
   },
 ]
 

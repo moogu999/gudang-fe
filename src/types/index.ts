@@ -18,13 +18,14 @@ export type {
 } from './auth.type'
 
 // Entity types
-export type { User, CreateUserDto } from './user.type'
+export type { User, CreateUserDto, UpdateUserDto } from './user.type'
 export type { Role, CreateRoleDto, UpdateRoleDto } from './role.type'
 export type {
   Permission,
   RolePermission,
   CreateRolePermissionDto,
 } from './permission.type'
+export type { UserRole, CreateUserRoleDto } from './userRole.type'
 
 // Component types
 export type { Column } from './table.type'

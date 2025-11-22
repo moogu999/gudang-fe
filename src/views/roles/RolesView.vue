@@ -5,7 +5,7 @@
 
     <h1 class="mb-5 text-lg font-semibold md:text-2xl">Roles</h1>
 
-    <Toolbar class="mb-5">
+    <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
         <Button label="New" icon="pi pi-plus" @click="addRole"></Button>
       </template>
@@ -19,7 +19,7 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
               <Button
                 icon="pi pi-pen-to-square"
                 severity="contrast"
@@ -71,10 +71,13 @@ import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import type { Role } from '@/types/role.type'
 import DialogMode from '@/constants/dialogMode'
-import { useConfirmDelete, useDialog } from '@/composables'
+import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import { API_ENDPOINTS } from '@/constants/api'
 
 const overlayGroup = 'rolesView'
+
+// Permissions
+const { canWrite } = usePermissions('/roles')
 
 // Table
 const table = ref()

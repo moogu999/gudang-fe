@@ -5,7 +5,7 @@
 
     <h1 class="mb-5 text-lg font-semibold md:text-2xl">Users</h1>
 
-    <Toolbar class="mb-5">
+    <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
         <Button label="New" icon="pi pi-plus" @click="addUser"></Button>
       </template>
@@ -19,7 +19,7 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
               <Button
                 icon="pi pi-pen-to-square"
                 severity="contrast"
@@ -69,12 +69,15 @@ import { UsersService } from '@/services/users.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import UserDialog from './UserDialog.vue'
-import { useConfirmDelete, useDialog } from '@/composables'
+import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { User } from '@/types/user.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 
 const overlayGroup = 'usersView'
+
+// Permissions
+const { canWrite } = usePermissions('/users')
 
 // Table
 const table = ref()

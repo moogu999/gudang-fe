@@ -5,7 +5,7 @@
 
     <h1 class="mb-5 text-lg font-semibold md:text-2xl">Branches</h1>
 
-    <Toolbar class="mb-5">
+    <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
         <Button label="New" icon="pi pi-plus" @click="addBranch"></Button>
       </template>
@@ -23,7 +23,7 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
               <Button
                 icon="pi pi-pen-to-square"
                 severity="contrast"
@@ -73,12 +73,15 @@ import { BranchesService } from '@/services/branches.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import BranchDialog from './BranchDialog.vue'
-import { useConfirmDelete, useDialog } from '@/composables'
+import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { Branch } from '@/types/branch.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 
 const overlayGroup = 'branchesView'
+
+// Permissions
+const { canWrite } = usePermissions('/branches')
 
 // Table
 const table = ref()

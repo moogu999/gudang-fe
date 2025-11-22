@@ -10,7 +10,7 @@
         v-if="loading"
       ></ProgressBar>
 
-      <div class="mb-4 flex items-center gap-4">
+      <div v-if="canWrite" class="mb-4 flex items-center gap-4">
         <label for="branches" class="w-30 font-semibold">Add Branch</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
@@ -32,7 +32,7 @@
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)
           }}</span>
 
-          <div class="flex items-center" v-if="col.header === 'Actions'">
+          <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
             <Button
               icon="pi pi-trash"
               severity="danger"
@@ -65,9 +65,13 @@ import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores'
 import type { Branch } from '@/types'
 import { API_ENDPOINTS } from '@/constants/api'
+import { usePermissions } from '@/composables'
 
 // Auth
 const authStore = useAuthStore()
+
+// Permissions
+const { canWrite } = usePermissions('/companies')
 
 const props = defineProps({
   companyId: {

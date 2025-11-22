@@ -28,6 +28,12 @@ export const API_ENDPOINTS = {
 
   // Branch endpoints
   GEN_BRANCHES: '/gen/v1/branches',
+
+  // Company endpoints
+  GEN_COMPANIES: '/gen/v1/companies',
+
+  // Company-Branch endpoints
+  GEN_COMPANY_BRANCHES: '/gen/v1/company-branches',
 } as const
 
 // Type for API endpoints (useful for validation)

@@ -48,6 +48,11 @@ const router = createRouter({
           name: 'Branches',
           component: () => import('@/views/branches/BranchesView.vue'),
         },
+        {
+          path: 'companies',
+          name: 'Companies',
+          component: () => import('@/views/companies/CompaniesView.vue'),
+        },
       ],
     },
 

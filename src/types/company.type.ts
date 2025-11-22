@@ -1,8 +1,9 @@
-export type Branch = {
+export type Company = {
   id: number
   code: string
   name: string
   address?: string
+  taxId?: string
   createdAt?: string
   createdBy?: number
   createdByUser?: {
@@ -12,16 +13,18 @@ export type Branch = {
   updatedBy?: number
 }
 
-export type CreateBranchDto = {
+export type CreateCompanyDto = {
   code: string
   name: string
   address?: string
+  taxId?: string
   createdBy: number
 }
 
-export type UpdateBranchDto = {
+export type UpdateCompanyDto = {
   code?: string
   name?: string
   address?: string
+  taxId?: string
   updatedBy: number
 }

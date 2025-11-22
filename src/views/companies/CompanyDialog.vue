@@ -38,6 +38,16 @@
         </div>
       </div>
 
+      <div class="mb-4 flex items-start gap-4">
+        <label for="taxId" class="w-32 font-semibold">Tax ID</label>
+        <div class="flex flex-auto flex-col gap-1">
+          <InputText id="taxId" name="taxId" autocomplete="off" />
+          <Message v-if="$form.taxId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.taxId.error.message
+          }}</Message>
+        </div>
+      </div>
+
       <div class="flex justify-end gap-2">
         <Button
           type="button"
@@ -54,6 +64,16 @@
         ></Button>
       </div>
     </Form>
+
+    <Tabs value="0" v-if="mode === DialogMode.EDIT">
+      <TabList>
+        <Tab value="0">Branches</Tab>
+      </TabList>
+
+      <TabPanels>
+        <BranchesTab :companyId="company!.id" />
+      </TabPanels>
+    </Tabs>
   </div>
 </template>
 
@@ -68,12 +88,17 @@ import { onBeforeMount, reactive, type PropType } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { BranchesService } from '@/services/branches.service'
+import { CompaniesService } from '@/services/companies.service'
 import { ref } from 'vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
-import type { Branch } from '@/types/branch.type'
+import type { Company } from '@/types/company.type'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import BranchesTab from '@/views/companies/BranchesTab.vue'
 
 // Auth
 const authStore = useAuthStore()
@@ -83,25 +108,26 @@ const props = defineProps({
     type: String as PropType<DialogMode>,
     default: DialogMode.ADD,
   },
-  branch: {
-    type: Object as PropType<Branch>,
+  company: {
+    type: Object as PropType<Company>,
   },
 })
 
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if (props.mode !== DialogMode.EDIT || !props.branch) {
+  if (props.mode !== DialogMode.EDIT || !props.company) {
     return
   }
 
-  initialValues.code = props.branch.code
-  initialValues.name = props.branch.name
-  initialValues.address = props.branch.address || ''
+  initialValues.code = props.company.code
+  initialValues.name = props.company.name
+  initialValues.address = props.company.address || ''
+  initialValues.taxId = props.company.taxId || ''
 })
 
 // Toast
-const toastGroup = 'branchDialog'
+const toastGroup = 'companyDialog'
 const toast = useToast()
 
 // Form
@@ -109,6 +135,7 @@ const initialValues = reactive({
   code: '',
   name: '',
   address: '',
+  taxId: '',
 })
 
 // Validation schema
@@ -117,6 +144,7 @@ const resolver = zodResolver(
     code: z.string().min(1, 'Code is required.'),
     name: z.string().min(1, 'Name is required.'),
     address: z.string().optional(),
+    taxId: z.string().optional(),
   }),
 )
 
@@ -135,9 +163,9 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
   try {
     if (props.mode === DialogMode.ADD) {
-      await addBranch(event)
+      await addCompany(event)
     } else {
-      await editBranch(event)
+      await editCompany(event)
     }
 
     emits('close')
@@ -148,25 +176,27 @@ async function onFormSubmit(event: FormSubmitEvent) {
   }
 }
 
-async function addBranch(event: FormSubmitEvent) {
-  await BranchesService.create({
+async function addCompany(event: FormSubmitEvent) {
+  await CompaniesService.create({
     code: event.states.code.value,
     name: event.states.name.value,
     address: event.states.address.value || undefined,
+    taxId: event.states.taxId.value || undefined,
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Branch is created.', toastGroup))
+  toast.add(commonSuccessToast('Company is created.', toastGroup))
 }
 
-async function editBranch(event: FormSubmitEvent) {
-  await BranchesService.update(props.branch!.id, {
+async function editCompany(event: FormSubmitEvent) {
+  await CompaniesService.update(props.company!.id, {
     code: event.states.code.value,
     name: event.states.name.value,
     address: event.states.address.value || undefined,
+    taxId: event.states.taxId.value || undefined,
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Branch is updated.', toastGroup))
+  toast.add(commonSuccessToast('Company is updated.', toastGroup))
 }
 </script>

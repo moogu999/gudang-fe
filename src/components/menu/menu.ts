@@ -4,6 +4,10 @@ const mainMenu = [
     icon: 'pi pi-building',
     items: [
       {
+        label: 'Companies',
+        route: '/companies',
+      },
+      {
         label: 'Branches',
         route: '/branches',
       },

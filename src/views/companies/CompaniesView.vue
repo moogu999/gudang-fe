@@ -3,11 +3,11 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Branches</h1>
+    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Companies</h1>
 
     <Toolbar class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="addBranch"></Button>
+        <Button label="New" icon="pi pi-plus" @click="addCompany"></Button>
       </template>
     </Toolbar>
 
@@ -27,7 +27,7 @@
               <Button
                 icon="pi pi-pen-to-square"
                 severity="contrast"
-                @click="editBranch(data)"
+                @click="editCompany(data)"
                 text
                 rounded
                 outlined
@@ -48,13 +48,13 @@
     </Card>
 
     <Dialog
-      class="min-w-100"
+      class="w-[90vw] max-w-[1200px]"
       :header="dialogHeader"
       @hide="close"
       v-model:visible="isDialogShown"
       modal
     >
-      <BranchDialog :mode="dialogMode" :branch="branch" @close="close" />
+      <CompanyDialog :mode="dialogMode" :company="company" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -69,24 +69,24 @@ import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import { BranchesService } from '@/services/branches.service'
+import { CompaniesService } from '@/services/companies.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import BranchDialog from './BranchDialog.vue'
+import CompanyDialog from './CompanyDialog.vue'
 import { useConfirmDelete, useDialog } from '@/composables'
-import type { Branch } from '@/types/branch.type'
+import type { Company } from '@/types/company.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 
-const overlayGroup = 'branchesView'
+const overlayGroup = 'companiesView'
 
 // Table
 const table = ref()
 
 // Dialog
-const dialogHeader = ref('Add Branch')
+const dialogHeader = ref('Add Company')
 const dialogMode = ref(DialogMode.ADD)
-const branch = ref<Branch | undefined>(undefined)
+const company = ref<Company | undefined>(undefined)
 
 const {
   isVisible: isDialogShown,
@@ -98,22 +98,22 @@ const {
   },
 })
 
-function addBranch() {
-  dialogHeader.value = 'Add Branch'
+function addCompany() {
+  dialogHeader.value = 'Add Company'
   dialogMode.value = DialogMode.ADD
-  branch.value = undefined
+  company.value = undefined
   open()
 }
 
-function editBranch(selectedBranch: Branch) {
-  dialogHeader.value = 'Edit Branch'
+function editCompany(selectedCompany: Company) {
+  dialogHeader.value = 'Edit Company'
   dialogMode.value = DialogMode.EDIT
-  branch.value = selectedBranch
+  company.value = selectedCompany
   open()
 }
 
 // Table
-const url = API_ENDPOINTS.GEN_BRANCHES
+const url = API_ENDPOINTS.GEN_COMPANIES
 
 const columns: Column[] = [
   {
@@ -133,6 +133,13 @@ const columns: Column[] = [
   {
     field: 'address',
     header: 'Address',
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    field: 'taxId',
+    header: 'Tax ID',
     exportable: true,
     sortable: true,
     filterable: true,
@@ -165,13 +172,13 @@ const columns: Column[] = [
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
   overlayGroup,
-  entityName: 'branch',
+  entityName: 'company',
   onSuccess: async () => {
     await table.value.clearSearch()
   },
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => BranchesService.delete(id))
+  confirmDelete(() => CompaniesService.delete(id))
 }
 </script>

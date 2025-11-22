@@ -11,7 +11,7 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="email" class="w-32 font-semibold">Email</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="email" name="email" autocomplete="off" />
+          <InputText id="email" name="email" autocomplete="off" :disabled="mode === DialogMode.EDIT" />
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
             $form.email.error.message
           }}</Message>

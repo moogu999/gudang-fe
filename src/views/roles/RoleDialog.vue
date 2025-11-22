@@ -11,7 +11,7 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="name" class="w-24 font-semibold">Name</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="name" name="name" autocomplete="off" />
+          <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
             $form.name.error.message
           }}</Message>
@@ -21,7 +21,12 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="description" class="w-24 font-semibold">Description</label>
         <div class="flex flex-auto flex-col gap-1">
-          <Textarea id="description" name="description" autocomplete="off" />
+          <Textarea
+            id="description"
+            name="description"
+            autocomplete="off"
+            :disabled="mode === DialogMode.VIEW"
+          />
           <Message
             v-if="$form.description?.invalid"
             severity="error"
@@ -32,7 +37,7 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
           label="Cancel"
@@ -47,9 +52,12 @@
           :disabled="isLoading"
         ></Button>
       </div>
+      <div class="flex justify-end gap-2" v-else>
+        <Button type="button" label="Close" @click="handleClose"></Button>
+      </div>
     </Form>
 
-    <Tabs value="0" v-if="mode === DialogMode.EDIT">
+    <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
       <TabList>
         <Tab value="0">Permissions</Tab>
       </TabList>
@@ -100,7 +108,7 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if (props.mode !== DialogMode.EDIT || !props.role) {
+  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.role) {
     return
   }
 

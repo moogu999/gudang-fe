@@ -11,7 +11,7 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="code" class="w-32 font-semibold">Code</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="code" name="code" autocomplete="off" />
+          <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">{{
             $form.code.error.message
           }}</Message>
@@ -21,7 +21,7 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="name" class="w-32 font-semibold">Name</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="name" name="name" autocomplete="off" />
+          <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
             $form.name.error.message
           }}</Message>
@@ -31,7 +31,13 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="address" class="w-32 font-semibold">Address</label>
         <div class="flex flex-auto flex-col gap-1">
-          <Textarea id="address" name="address" rows="3" autocomplete="off" />
+          <Textarea
+            id="address"
+            name="address"
+            rows="3"
+            autocomplete="off"
+            :disabled="mode === DialogMode.VIEW"
+          />
           <Message v-if="$form.address?.invalid" severity="error" size="small" variant="simple">{{
             $form.address.error.message
           }}</Message>
@@ -41,14 +47,14 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="taxId" class="w-32 font-semibold">Tax ID</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="taxId" name="taxId" autocomplete="off" />
+          <InputText id="taxId" name="taxId" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.taxId?.invalid" severity="error" size="small" variant="simple">{{
             $form.taxId.error.message
           }}</Message>
         </div>
       </div>
 
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
           label="Cancel"
@@ -63,9 +69,12 @@
           :disabled="isLoading"
         ></Button>
       </div>
+      <div class="flex justify-end gap-2" v-else>
+        <Button type="button" label="Close" @click="handleClose"></Button>
+      </div>
     </Form>
 
-    <Tabs value="0" v-if="mode === DialogMode.EDIT">
+    <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
       <TabList>
         <Tab value="0">Branches</Tab>
       </TabList>
@@ -116,7 +125,7 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if (props.mode !== DialogMode.EDIT || !props.company) {
+  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.company) {
     return
   }
 

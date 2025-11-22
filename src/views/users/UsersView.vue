@@ -19,24 +19,36 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
-              <Button
-                icon="pi pi-pen-to-square"
-                severity="contrast"
-                @click="editUser(data)"
-                text
-                rounded
-                outlined
-              />
+            <div class="flex items-center" v-if="col.header === 'Actions'">
+              <template v-if="canWrite">
+                <Button
+                  icon="pi pi-pen-to-square"
+                  severity="contrast"
+                  @click="editUser(data)"
+                  text
+                  rounded
+                  outlined
+                />
 
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                @click="onDeleteClick(data['id'])"
-                text
-                rounded
-                outlined
-              />
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  @click="onDeleteClick(data['id'])"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
+              <template v-else>
+                <Button
+                  icon="pi pi-eye"
+                  severity="contrast"
+                  @click="viewUser(data)"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
             </div>
           </template>
         </TableComponent>
@@ -107,6 +119,13 @@ function addUser() {
 function editUser(selectedUser: User) {
   dialogHeader.value = 'Edit User'
   dialogMode.value = DialogMode.EDIT
+  user.value = selectedUser
+  open()
+}
+
+function viewUser(selectedUser: User) {
+  dialogHeader.value = 'View User'
+  dialogMode.value = DialogMode.VIEW
   user.value = selectedUser
   open()
 }

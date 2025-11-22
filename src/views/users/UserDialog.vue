@@ -11,14 +11,19 @@
       <div class="mb-4 flex items-start gap-4">
         <label for="email" class="w-32 font-semibold">Email</label>
         <div class="flex flex-auto flex-col gap-1">
-          <InputText id="email" name="email" autocomplete="off" :disabled="mode === DialogMode.EDIT" />
+          <InputText
+            id="email"
+            name="email"
+            autocomplete="off"
+            :disabled="mode === DialogMode.EDIT || mode === DialogMode.VIEW"
+          />
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
             $form.email.error.message
           }}</Message>
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4">
+      <div class="mb-4 flex items-start gap-4" v-if="mode !== DialogMode.VIEW">
         <label for="password" class="w-32 font-semibold">
           {{ mode === DialogMode.EDIT ? 'New Password' : 'Password' }}
         </label>
@@ -64,7 +69,7 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2">
+      <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
           label="Cancel"
@@ -79,9 +84,12 @@
           :disabled="isLoading"
         ></Button>
       </div>
+      <div class="flex justify-end gap-2" v-else>
+        <Button type="button" label="Close" @click="handleClose"></Button>
+      </div>
     </Form>
 
-    <Tabs value="0" v-if="mode === DialogMode.EDIT">
+    <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
       <TabList>
         <Tab value="0">Roles</Tab>
       </TabList>
@@ -150,7 +158,7 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if (props.mode !== DialogMode.EDIT || !props.user) {
+  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.user) {
     return
   }
 
@@ -183,7 +191,9 @@ const resolver = zodResolver(
     .object({
       email: z.string().email({ message: 'Please enter a valid email address.' }),
       password:
-        props.mode === DialogMode.EDIT ? z.string().optional().or(passwordSchema) : passwordSchema,
+        props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW
+          ? z.string().optional().or(passwordSchema)
+          : passwordSchema,
       confirmPassword: z.string().optional(),
     })
     .superRefine((data, ctx) => {

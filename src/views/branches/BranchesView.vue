@@ -23,24 +23,36 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
-              <Button
-                icon="pi pi-pen-to-square"
-                severity="contrast"
-                @click="editBranch(data)"
-                text
-                rounded
-                outlined
-              />
+            <div class="flex items-center" v-if="col.header === 'Actions'">
+              <template v-if="canWrite">
+                <Button
+                  icon="pi pi-pen-to-square"
+                  severity="contrast"
+                  @click="editBranch(data)"
+                  text
+                  rounded
+                  outlined
+                />
 
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                @click="onDeleteClick(data['id'])"
-                text
-                rounded
-                outlined
-              />
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  @click="onDeleteClick(data['id'])"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
+              <template v-else>
+                <Button
+                  icon="pi pi-eye"
+                  severity="contrast"
+                  @click="viewBranch(data)"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
             </div>
           </template>
         </TableComponent>
@@ -111,6 +123,13 @@ function addBranch() {
 function editBranch(selectedBranch: Branch) {
   dialogHeader.value = 'Edit Branch'
   dialogMode.value = DialogMode.EDIT
+  branch.value = selectedBranch
+  open()
+}
+
+function viewBranch(selectedBranch: Branch) {
+  dialogHeader.value = 'View Branch'
+  dialogMode.value = DialogMode.VIEW
   branch.value = selectedBranch
   open()
 }

@@ -23,24 +23,36 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
-              <Button
-                icon="pi pi-pen-to-square"
-                severity="contrast"
-                @click="editCompany(data)"
-                text
-                rounded
-                outlined
-              />
+            <div class="flex items-center" v-if="col.header === 'Actions'">
+              <template v-if="canWrite">
+                <Button
+                  icon="pi pi-pen-to-square"
+                  severity="contrast"
+                  @click="editCompany(data)"
+                  text
+                  rounded
+                  outlined
+                />
 
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                @click="onDeleteClick(data['id'])"
-                text
-                rounded
-                outlined
-              />
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  @click="onDeleteClick(data['id'])"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
+              <template v-else>
+                <Button
+                  icon="pi pi-eye"
+                  severity="contrast"
+                  @click="viewCompany(data)"
+                  text
+                  rounded
+                  outlined
+                />
+              </template>
             </div>
           </template>
         </TableComponent>
@@ -111,6 +123,13 @@ function addCompany() {
 function editCompany(selectedCompany: Company) {
   dialogHeader.value = 'Edit Company'
   dialogMode.value = DialogMode.EDIT
+  company.value = selectedCompany
+  open()
+}
+
+function viewCompany(selectedCompany: Company) {
+  dialogHeader.value = 'View Company'
+  dialogMode.value = DialogMode.VIEW
   company.value = selectedCompany
   open()
 }

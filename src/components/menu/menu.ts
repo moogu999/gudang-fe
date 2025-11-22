@@ -1,5 +1,15 @@
 const mainMenu = [
   {
+    label: 'Organizations',
+    icon: 'pi pi-building',
+    items: [
+      {
+        label: 'Branches',
+        route: '/branches',
+      },
+    ],
+  },
+  {
     label: 'Users',
     icon: 'pi pi-user',
     route: '/users',

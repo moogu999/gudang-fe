@@ -25,6 +25,9 @@ export const API_ENDPOINTS = {
 
   // User-Role endpoints
   GEN_USER_ROLES: '/gen/v1/user-roles',
+
+  // Branch endpoints
+  GEN_BRANCHES: '/gen/v1/branches',
 } as const
 
 // Type for API endpoints (useful for validation)

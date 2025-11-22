@@ -43,6 +43,11 @@ const router = createRouter({
           name: 'Permissions',
           component: () => import('@/views/permissions/PermissionsView.vue'),
         },
+        {
+          path: 'branches',
+          name: 'Branches',
+          component: () => import('@/views/branches/BranchesView.vue'),
+        },
       ],
     },
 

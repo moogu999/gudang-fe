@@ -26,6 +26,7 @@ export type {
   CreateRolePermissionDto,
 } from './permission.type'
 export type { UserRole, CreateUserRoleDto } from './userRole.type'
+export type { Branch, CreateBranchDto, UpdateBranchDto } from './branch.type'
 
 // Component types
 export type { Column } from './table.type'

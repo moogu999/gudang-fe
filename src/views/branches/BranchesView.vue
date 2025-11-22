@@ -137,8 +137,8 @@ const columns: Column[] = [
     field: 'address',
     header: 'Address',
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'createdAt',

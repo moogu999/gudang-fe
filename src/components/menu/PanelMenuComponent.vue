@@ -1,5 +1,11 @@
 <template>
-  <PanelMenu :model="filteredMenu" multiple :class="collapsed ? 'w-full' : 'w-full md:w-80'">
+  <PanelMenu
+    ref="panelMenuRef"
+    v-model:expandedKeys="expandedKeys"
+    :model="filteredMenu"
+    multiple
+    :class="[collapsed ? 'w-full' : 'w-full md:w-80', collapsed ? 'sidebar-collapsed' : '']"
+  >
     <template #item="{ item }">
       <RouterLink v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
         <a
@@ -25,6 +31,7 @@
         ]"
         :href="item.url"
         :target="item.target"
+        @click="handleParentMenuClick(item, !!item.items)"
       >
         <span :class="item.icon" />
         <span v-if="!collapsed" class="ml-2">{{ item.label }}</span>
@@ -35,25 +42,75 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import PanelMenu from 'primevue/panelmenu'
 import { mainMenu } from './menu'
 import { usePermissions } from '@/composables'
+import { useSidebarStore } from '@/stores'
 
-defineProps<{
+const props = defineProps<{
   collapsed?: boolean
 }>()
 
 const { canAccessRoute } = usePermissions()
+const sidebarStore = useSidebarStore()
+
+// Track which menu items are expanded
+const expandedKeys = ref<Record<string, boolean>>({})
+
+// Track which menu was clicked while collapsed (to auto-expand it)
+const pendingExpandKey = ref<string | null>(null)
+
+// Reference to the PanelMenu component
+const panelMenuRef = ref()
+
+/**
+ * Handle click on parent menu items when collapsed
+ * Expands sidebar and marks menu for auto-expansion
+ */
+function handleParentMenuClick(item: { key?: string }, hasItems: boolean) {
+  if (hasItems && sidebarStore.isCollapsed && item.key) {
+    // Store the key of the menu to expand
+    pendingExpandKey.value = item.key
+    sidebarStore.expand()
+  }
+}
+
+/**
+ * Watch for sidebar expansion and auto-expand pending menu
+ */
+watch(
+  () => props.collapsed,
+  (isCollapsed, wasCollapsed) => {
+    // When sidebar transitions from collapsed to expanded
+    if (wasCollapsed && !isCollapsed && pendingExpandKey.value) {
+      const keyToExpand = pendingExpandKey.value
+      // Use setTimeout to allow PrimeVue to fully render before setting expanded state
+      setTimeout(() => {
+        // Force reactivity by creating a new object
+        const newKeys: Record<string, boolean> = {}
+        newKeys[keyToExpand] = true
+        expandedKeys.value = newKeys
+      }, 100) // 100ms delay to let PrimeVue render
+      // Clear pending state
+      pendingExpandKey.value = null
+    }
+  }
+)
 
 /**
  * Filter menu items based on user permissions
  * - Hide menu items user doesn't have READ permission for
  * - Hide entire menu sections if user can't access any items within
+ * - Add unique keys for tracking expansion state
+ * - Keep menu structure intact even when collapsed (hide via CSS)
  */
 const filteredMenu = computed(() => {
   return mainMenu
-    .map((menuItem) => {
+    .map((menuItem, index) => {
+      // Generate a unique key for each menu item
+      const key = menuItem.label?.toLowerCase().replace(/\s+/g, '-') || `menu-${index}`
+
       // If menu has subitems, filter them
       if (menuItem.items) {
         const accessibleItems = menuItem.items.filter((item) => {
@@ -66,6 +123,7 @@ const filteredMenu = computed(() => {
 
         return {
           ...menuItem,
+          key,
           items: accessibleItems,
         }
       }
@@ -74,8 +132,23 @@ const filteredMenu = computed(() => {
         return null
       }
 
-      return menuItem
+      return {
+        ...menuItem,
+        key,
+      }
     })
     .filter((item) => item !== null)
 })
 </script>
+
+<style scoped>
+/* Hide submenu items when sidebar is collapsed */
+.sidebar-collapsed :deep(.p-panelmenu-content) {
+  display: none !important;
+}
+
+/* Prevent menu expansion animation when collapsed */
+.sidebar-collapsed :deep(.p-toggleable-content) {
+  display: none !important;
+}
+</style>

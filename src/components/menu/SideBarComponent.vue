@@ -5,7 +5,7 @@
         to="/"
         :class="[
           'flex items-center gap-2 font-semibold',
-          sidebarStore.isCollapsed ? 'justify-center w-full' : '',
+          sidebarStore.isCollapsed ? 'w-full justify-center' : '',
         ]"
       >
         <h1 v-if="!sidebarStore.isCollapsed">gudang-fe</h1>
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div v-if="!sidebarStore.isCollapsed" class="mt-auto p-4">
+    <!-- <div v-if="!sidebarStore.isCollapsed" class="mt-auto p-4">
       <Card>
         <template #title>Upgrade to Pro</template>
         <template #subtitle>
@@ -29,13 +29,13 @@
           <Button class="w-full"> Upgrade </Button>
         </template>
       </Card>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import Card from 'primevue/card'
-import Button from 'primevue/button'
+// import Card from 'primevue/card'
+// import Button from 'primevue/button'
 import PanelMenuComponent from './PanelMenuComponent.vue'
 import { useSidebarStore } from '@/stores'
 

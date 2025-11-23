@@ -8,14 +8,15 @@
       :resolver="resolver"
       @submit="onFormSubmit"
     >
-      <div class="mb-4 flex items-start gap-4">
-        <label for="email" class="w-32 font-semibold">{{ t('users.fields.email') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="email" class="w-full font-semibold md:w-32">{{ t('users.fields.email') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
           <InputText
             id="email"
             name="email"
             autocomplete="off"
             :disabled="mode === DialogMode.EDIT || mode === DialogMode.VIEW"
+            class="w-full"
           />
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
             $form.email.error.message
@@ -23,18 +24,19 @@
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4" v-if="mode !== DialogMode.VIEW">
-        <label for="password" class="w-32 font-semibold">
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4" v-if="mode !== DialogMode.VIEW">
+        <label for="password" class="w-full font-semibold md:w-32">
           {{ mode === DialogMode.EDIT ? t('users.fields.newPassword') : t('users.fields.password') }}
         </label>
-        <div class="flex flex-auto flex-col gap-1">
+        <div class="flex w-full flex-auto flex-col gap-1">
           <Password
             id="password"
             name="password"
             :placeholder="mode === DialogMode.EDIT ? t('users.placeholders.passwordEditMode') : ''"
             :pt="{
+              root: 'w-full',
               pcInputText: {
-                root: '!grow',
+                root: '!w-full !grow',
               },
             }"
             toggle-mask
@@ -45,15 +47,16 @@
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4" v-if="shouldShowPasswordConfirm($form)">
-        <label for="confirmPassword" class="w-32 font-semibold">{{ t('users.fields.confirmPassword') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4" v-if="shouldShowPasswordConfirm($form)">
+        <label for="confirmPassword" class="w-full font-semibold md:w-32">{{ t('users.fields.confirmPassword') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
           <Password
             id="confirmPassword"
             name="confirmPassword"
             :pt="{
+              root: 'w-full',
               pcInputText: {
-                root: '!grow',
+                root: '!w-full !grow',
               },
             }"
             :feedback="false"
@@ -69,9 +72,9 @@
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4">
-        <label for="department" class="w-32 font-semibold">{{ t('users.fields.department') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="department" class="w-full font-semibold md:w-32">{{ t('users.fields.department') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
             id="department"
             option-label="name"
@@ -83,6 +86,9 @@
             use-cursor
             show-clear
             :disabled="mode === DialogMode.VIEW"
+            :pt="{
+              root: 'w-full'
+            }"
           />
           <Message
             v-if="$form.department?.invalid"

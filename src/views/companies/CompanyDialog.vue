@@ -8,35 +8,36 @@
       :resolver="resolver"
       @submit="onFormSubmit"
     >
-      <div class="mb-4 flex items-start gap-4">
-        <label for="code" class="w-32 font-semibold">{{ t('companies.fields.code') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
-          <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="code" class="w-full font-semibold md:w-32">{{ t('companies.fields.code') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">{{
             $form.code.error.message
           }}</Message>
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4">
-        <label for="name" class="w-32 font-semibold">{{ t('companies.fields.name') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
-          <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="name" class="w-full font-semibold md:w-32">{{ t('companies.fields.name') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
             $form.name.error.message
           }}</Message>
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4">
-        <label for="address" class="w-32 font-semibold">{{ t('companies.fields.address') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="address" class="w-full font-semibold md:w-32">{{ t('companies.fields.address') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
           <Textarea
             id="address"
             name="address"
             rows="3"
             autocomplete="off"
             :disabled="mode === DialogMode.VIEW"
+            class="w-full"
           />
           <Message v-if="$form.address?.invalid" severity="error" size="small" variant="simple">{{
             $form.address.error.message
@@ -44,10 +45,10 @@
         </div>
       </div>
 
-      <div class="mb-4 flex items-start gap-4">
-        <label for="taxId" class="w-32 font-semibold">{{ t('companies.fields.taxId') }}</label>
-        <div class="flex flex-auto flex-col gap-1">
-          <InputText id="taxId" name="taxId" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="taxId" class="w-full font-semibold md:w-32">{{ t('companies.fields.taxId') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InputText id="taxId" name="taxId" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.taxId?.invalid" severity="error" size="small" variant="simple">{{
             $form.taxId.error.message
           }}</Message>

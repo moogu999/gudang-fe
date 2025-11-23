@@ -60,11 +60,15 @@
     </Card>
 
     <Dialog
-      class="min-w-100"
       :header="dialogHeader"
       @hide="close"
       v-model:visible="isDialogShown"
       modal
+      :breakpoints="{
+        '960px': '75vw',
+        '640px': '90vw'
+      }"
+      :style="{ width: '50vw' }"
     >
       <BranchDialog :mode="dialogMode" :branch="branch" @close="close" />
     </Dialog>

@@ -60,11 +60,15 @@
     </Card>
 
     <Dialog
-      class="w-[90vw] max-w-[1200px]"
       :header="dialogHeader"
       @hide="close"
       v-model:visible="isDialogShown"
       modal
+      :breakpoints="{
+        '960px': '75vw',
+        '640px': '90vw'
+      }"
+      :style="{ width: '80vw', maxWidth: '1200px' }"
     >
       <CompanyDialog :mode="dialogMode" :company="company" @close="close" />
     </Dialog>

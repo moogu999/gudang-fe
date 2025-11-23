@@ -30,6 +30,8 @@
     </form>
   </div>
 
+  <LanguageSwitcherComponent />
+
   <Avatar
     icon="pi pi-user"
     class="mr-2"
@@ -53,6 +55,7 @@ import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore, useSidebarStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services'
+import LanguageSwitcherComponent from './LanguageSwitcherComponent.vue'
 
 const router = useRouter()
 const toast = useToast()

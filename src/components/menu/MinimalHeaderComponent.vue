@@ -19,7 +19,7 @@
       <Menu ref="menu" id="account_menu" :model="avatarMenu" :popup="true" />
     </div>
 
-    <Button v-else label="Sign In" @click="goToSignIn" />
+    <Button v-else :label="t('common.actions.signIn')" @click="goToSignIn" />
   </div>
 </template>
 
@@ -33,7 +33,9 @@ import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const authStore = useAuthStore()
@@ -46,7 +48,7 @@ const isSignedIn = computed(() => authStore.isAuthenticated)
 async function handleSignOut() {
   try {
     await authStore.signOut()
-    toast.add(commonSuccessToast('Signed out successfully', 'minimalHeaderMenu'))
+    toast.add(commonSuccessToast(t('common.messages.signedOutSuccess'), 'minimalHeaderMenu'))
     router.push({ name: 'SignIn' })
   } catch (error) {
     toast.add(commonErrorToast(error, 'minimalHeaderMenu'))
@@ -54,13 +56,13 @@ async function handleSignOut() {
 }
 
 // Avatar menu
-const avatarMenu = [
+const avatarMenu = computed(() => [
   {
-    label: 'Sign Out',
+    label: t('common.actions.signOut'),
     icon: 'pi pi-sign-out',
     command: handleSignOut,
   },
-]
+])
 
 const menu = useTemplateRef('menu')
 function toggle(event: Event) {

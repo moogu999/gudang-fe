@@ -9,7 +9,7 @@
     <template #item="{ item }">
       <RouterLink v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
         <a
-          v-tooltip.right="collapsed ? item.label : ''"
+          v-tooltip.right="collapsed ? getTranslatedLabel(item) : ''"
           :class="[
             'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-2',
             collapsed ? 'justify-center px-0' : 'px-4',
@@ -18,13 +18,13 @@
           @click="navigate"
         >
           <span :class="item.icon" />
-          <span v-if="!collapsed" class="ml-2">{{ item.label }}</span>
+          <span v-if="!collapsed" class="ml-2">{{ getTranslatedLabel(item) }}</span>
         </a>
       </RouterLink>
 
       <a
         v-else
-        v-tooltip.right="collapsed ? item.label : ''"
+        v-tooltip.right="collapsed ? getTranslatedLabel(item) : ''"
         :class="[
           'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-2',
           collapsed ? 'justify-center px-0' : 'px-4',
@@ -34,7 +34,7 @@
         @click="handleParentMenuClick(item, !!item.items)"
       >
         <span :class="item.icon" />
-        <span v-if="!collapsed" class="ml-2">{{ item.label }}</span>
+        <span v-if="!collapsed" class="ml-2">{{ getTranslatedLabel(item) }}</span>
         <span v-if="item.items && !collapsed" class="pi pi-angle-down text-primary ml-auto" />
       </a>
     </template>
@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import PanelMenu from 'primevue/panelmenu'
 import { mainMenu } from './menu'
 import { usePermissions } from '@/composables'
@@ -52,8 +53,32 @@ const props = defineProps<{
   collapsed?: boolean
 }>()
 
+const { t } = useI18n()
 const { canAccessRoute } = usePermissions()
 const sidebarStore = useSidebarStore()
+
+/**
+ * Custom menu item type with i18n support
+ */
+interface TranslatableMenuItem {
+  labelKey?: string
+  label?: string | ((...args: unknown[]) => string)
+  [key: string]: unknown
+}
+
+/**
+ * Get translated label for a menu item
+ * Falls back to the static label if translation key is not provided
+ */
+function getTranslatedLabel(item: TranslatableMenuItem): string {
+  if (item.labelKey) {
+    return t(item.labelKey)
+  }
+  if (typeof item.label === 'string') {
+    return item.label
+  }
+  return ''
+}
 
 // Track which menu items are expanded
 const expandedKeys = ref<Record<string, boolean>>({})

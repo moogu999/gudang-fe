@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex items-start gap-4">
-        <label for="email" class="w-32 font-semibold">Email</label>
+        <label for="email" class="w-32 font-semibold">{{ t('users.fields.email') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InputText
             id="email"
@@ -25,13 +25,13 @@
 
       <div class="mb-4 flex items-start gap-4" v-if="mode !== DialogMode.VIEW">
         <label for="password" class="w-32 font-semibold">
-          {{ mode === DialogMode.EDIT ? 'New Password' : 'Password' }}
+          {{ mode === DialogMode.EDIT ? t('users.fields.newPassword') : t('users.fields.password') }}
         </label>
         <div class="flex flex-auto flex-col gap-1">
           <Password
             id="password"
             name="password"
-            :placeholder="mode === DialogMode.EDIT ? 'Leave blank to keep current password' : ''"
+            :placeholder="mode === DialogMode.EDIT ? t('users.placeholders.passwordEditMode') : ''"
             :pt="{
               pcInputText: {
                 root: '!grow',
@@ -46,7 +46,7 @@
       </div>
 
       <div class="mb-4 flex items-start gap-4" v-if="shouldShowPasswordConfirm($form)">
-        <label for="confirmPassword" class="w-32 font-semibold">Confirm Password</label>
+        <label for="confirmPassword" class="w-32 font-semibold">{{ t('users.fields.confirmPassword') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <Password
             id="confirmPassword"
@@ -70,7 +70,7 @@
       </div>
 
       <div class="mb-4 flex items-start gap-4">
-        <label for="department" class="w-32 font-semibold">Department</label>
+        <label for="department" class="w-32 font-semibold">{{ t('users.fields.department') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             id="department"
@@ -97,26 +97,26 @@
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
-          label="Cancel"
+          :label="t('common.actions.cancel')"
           severity="secondary"
           :disabled="isLoading"
           @click="handleClose"
         ></Button>
         <Button
           type="submit"
-          :label="!isLoading ? 'Save' : ''"
+          :label="!isLoading ? t('common.actions.save') : ''"
           :icon="!isLoading ? '' : 'pi pi-spinner pi-spin'"
           :disabled="isLoading"
         ></Button>
       </div>
       <div class="flex justify-end gap-2" v-else>
-        <Button type="button" label="Close" @click="handleClose"></Button>
+        <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
 
     <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
       <TabList>
-        <Tab value="0">Roles</Tab>
+        <Tab value="0">{{ t('users.tabs.roles') }}</Tab>
       </TabList>
 
       <TabPanels>
@@ -127,12 +127,13 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -151,6 +152,8 @@ import RolesTab from '@/views/users/RolesTab.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { DepartmentsService } from '@/services/departments.service'
 import type { Department } from '@/types/department.type'
+
+const { t } = useI18n()
 
 // Types for form context
 type FormField = {
@@ -225,38 +228,42 @@ const initialValues = reactive({
   confirmPassword: '',
 })
 
-// Password validation schema
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters long.')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
-  .regex(/\d/, 'Password must contain at least one number.')
-  .regex(/[@$!%*?&]/, 'Password must contain at least one special character (@$!%*?&).')
-
-// Dynamic resolver based on mode
-const resolver = zodResolver(
+// Password validation schema (computed to support reactive i18n)
+const passwordSchema = computed(() =>
   z
-    .object({
-      email: z.string().email({ message: 'Please enter a valid email address.' }),
-      password:
-        props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW
-          ? z.string().optional().or(passwordSchema)
-          : passwordSchema,
-      confirmPassword: z.string().optional(),
-    })
-    .superRefine((data, ctx) => {
-      // Only validate password confirmation if password is provided
-      if (data.password && data.password.length > 0) {
-        if (data.password !== data.confirmPassword) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Passwords do not match.',
-            path: ['confirmPassword'],
-          })
+    .string()
+    .min(8, t('users.validation.passwordMinLength'))
+    .regex(/[A-Z]/, t('users.validation.passwordUppercase'))
+    .regex(/[a-z]/, t('users.validation.passwordLowercase'))
+    .regex(/\d/, t('users.validation.passwordNumber'))
+    .regex(/[@$!%*?&]/, t('users.validation.passwordSpecialChar'))
+)
+
+// Dynamic resolver based on mode (computed to support reactive i18n)
+const resolver = computed(() =>
+  zodResolver(
+    z
+      .object({
+        email: z.string().email({ message: t('users.validation.emailInvalid') }),
+        password:
+          props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW
+            ? z.string().optional().or(passwordSchema.value)
+            : passwordSchema.value,
+        confirmPassword: z.string().optional(),
+      })
+      .superRefine((data, ctx) => {
+        // Only validate password confirmation if password is provided
+        if (data.password && data.password.length > 0) {
+          if (data.password !== data.confirmPassword) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('users.validation.passwordMismatch'),
+              path: ['confirmPassword'],
+            })
+          }
         }
-      }
-    }),
+      })
+  )
 )
 
 function shouldShowPasswordConfirm($form: UserFormContext) {
@@ -301,7 +308,7 @@ async function addUser(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('User is created.', toastGroup))
+  toast.add(commonSuccessToast(t('users.messages.userCreated'), toastGroup))
 }
 
 async function editUser(event: FormSubmitEvent) {
@@ -326,6 +333,6 @@ async function editUser(event: FormSubmitEvent) {
 
   await UsersService.update(props.user!.id, updateData)
 
-  toast.add(commonSuccessToast('User is updated.', toastGroup))
+  toast.add(commonSuccessToast(t('users.messages.userUpdated'), toastGroup))
 }
 </script>

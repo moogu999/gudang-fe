@@ -1,0 +1,272 @@
+/**
+ * English (US) translations
+ */
+export default {
+  common: {
+    actions: {
+      add: 'Add',
+      edit: 'Edit',
+      delete: 'Delete',
+      save: 'Save',
+      cancel: 'Cancel',
+      search: 'Search',
+      clear: 'Clear',
+      close: 'Close',
+      view: 'View',
+      back: 'Back',
+      confirm: 'Confirm',
+      submit: 'Submit',
+      signIn: 'Sign In',
+      signOut: 'Sign Out',
+    },
+    labels: {
+      actions: 'Actions',
+      createdAt: 'Created At',
+      updatedAt: 'Updated At',
+      createdBy: 'Created By',
+      updatedBy: 'Updated By',
+      status: 'Status',
+      name: 'Name',
+      description: 'Description',
+      email: 'Email',
+      password: 'Password',
+      selectOption: 'Select an option',
+    },
+    messages: {
+      confirmDelete: 'Are you sure you want to delete this {entity}?',
+      deleteSuccess: '{entity} deleted successfully',
+      createSuccess: '{entity} created successfully',
+      updateSuccess: '{entity} updated successfully',
+      error: 'An error occurred',
+      loading: 'Loading...',
+      noData: 'No data available',
+      required: 'This field is required',
+      signedOutSuccess: 'Signed out successfully',
+    },
+    confirmation: {
+      delete: 'Delete',
+      yes: 'Yes',
+      no: 'No',
+    },
+  },
+  navigation: {
+    home: 'Home',
+    organizations: 'Organizations',
+    companies: 'Companies',
+    branches: 'Branches',
+    departments: 'Departments',
+    divisions: 'Divisions',
+    users: 'Users',
+    accessControls: 'Access Controls',
+    roles: 'Roles',
+    permissions: 'Permissions',
+    superset: 'Superset',
+    businessIntelligence: 'Business Intelligence',
+    settings: 'Settings',
+  },
+  table: {
+    search: 'Search',
+    searchPlaceholder: 'Press Enter to search',
+    noResults: 'No data found.',
+    rowsPerPage: 'Rows per page',
+    showing: 'Showing {first} to {last} of {total}',
+    clearFilters: 'Clear Filters',
+    apply: 'Apply',
+    no: 'No.',
+  },
+  users: {
+    title: 'Users',
+    addUser: 'Add User',
+    editUser: 'Edit User',
+    viewUser: 'View User',
+    deleteUser: 'Delete User',
+    fields: {
+      email: 'Email',
+      password: 'Password',
+      newPassword: 'New Password',
+      confirmPassword: 'Confirm Password',
+      name: 'Name',
+      role: 'Role',
+      department: 'Department',
+    },
+    labels: {
+      addRole: 'Add Role',
+    },
+    placeholders: {
+      email: 'Enter email address',
+      password: 'Enter password',
+      passwordEditMode: 'Leave blank to keep current password',
+      name: 'Enter name',
+    },
+    validation: {
+      emailRequired: 'Email is required',
+      emailInvalid: 'Please enter a valid email address.',
+      passwordRequired: 'Password is required',
+      passwordMinLength: 'Password must be at least 8 characters long.',
+      passwordUppercase: 'Password must contain at least one uppercase letter.',
+      passwordLowercase: 'Password must contain at least one lowercase letter.',
+      passwordNumber: 'Password must contain at least one number.',
+      passwordSpecialChar: 'Password must contain at least one special character (@$!%*?&).',
+      passwordMismatch: 'Passwords do not match.',
+    },
+    messages: {
+      userCreated: 'User is created.',
+      userUpdated: 'User is updated.',
+    },
+    tabs: {
+      roles: 'Roles',
+    },
+  },
+  roles: {
+    title: 'Roles',
+    addRole: 'Add Role',
+    editRole: 'Edit Role',
+    viewRole: 'View Role',
+    deleteRole: 'Delete Role',
+    fields: {
+      name: 'Name',
+      description: 'Description',
+      permissions: 'Permissions',
+    },
+    labels: {
+      addPermission: 'Add Permission',
+    },
+    placeholders: {
+      name: 'Enter role name',
+      description: 'Enter role description',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+      descriptionMinLength: 'Min. description 10 characters.',
+      descriptionMaxLength: 'Max. description 50 characters.',
+    },
+    messages: {
+      roleCreated: 'Role is created.',
+      roleUpdated: 'Role is updated.',
+    },
+    tabs: {
+      permissions: 'Permissions',
+    },
+  },
+  permissions: {
+    title: 'Permissions',
+    addPermission: 'Add Permission',
+    editPermission: 'Edit Permission',
+    viewPermission: 'View Permission',
+    deletePermission: 'Delete Permission',
+    fields: {
+      name: 'Permission Name',
+      description: 'Description',
+      resource: 'Resource',
+      action: 'Action',
+    },
+  },
+  departments: {
+    title: 'Departments',
+    addDepartment: 'Add Department',
+    editDepartment: 'Edit Department',
+    viewDepartment: 'View Department',
+    deleteDepartment: 'Delete Department',
+    fields: {
+      name: 'Name',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      departmentCreated: 'Department is created.',
+      departmentUpdated: 'Department is updated.',
+    },
+    tabs: {
+      divisions: 'Divisions',
+    },
+  },
+  divisions: {
+    title: 'Divisions',
+    addDivision: 'Add Division',
+    editDivision: 'Edit Division',
+    viewDivision: 'View Division',
+    deleteDivision: 'Delete Division',
+    fields: {
+      name: 'Name',
+    },
+    labels: {
+      addDivision: 'Add Division',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      divisionCreated: 'Division is created.',
+      divisionUpdated: 'Division is updated.',
+    },
+  },
+  companies: {
+    title: 'Companies',
+    addCompany: 'Add Company',
+    editCompany: 'Edit Company',
+    viewCompany: 'View Company',
+    deleteCompany: 'Delete Company',
+    fields: {
+      code: 'Code',
+      name: 'Name',
+      address: 'Address',
+      taxId: 'Tax ID',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      companyCreated: 'Company is created.',
+      companyUpdated: 'Company is updated.',
+    },
+    tabs: {
+      branches: 'Branches',
+    },
+  },
+  branches: {
+    title: 'Branches',
+    addBranch: 'Add Branch',
+    editBranch: 'Edit Branch',
+    viewBranch: 'View Branch',
+    deleteBranch: 'Delete Branch',
+    fields: {
+      code: 'Code',
+      name: 'Name',
+      address: 'Address',
+    },
+    labels: {
+      addBranch: 'Add Branch',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      branchCreated: 'Branch is created.',
+      branchUpdated: 'Branch is updated.',
+    },
+  },
+  auth: {
+    signIn: {
+      title: 'Sign In',
+      email: 'Email',
+      password: 'Password',
+      emailPlaceholder: 'Enter your email',
+      passwordPlaceholder: 'Enter your password',
+      signInButton: 'Sign In',
+      validation: {
+        requiredFields: 'Please enter both email and password',
+      },
+      messages: {
+        success: 'Sign-in successful! Redirecting...',
+      },
+    },
+  },
+  notFound: {
+    title: 'Page not found',
+    description: "The page you're looking for doesn't exist or has been moved.",
+    goToHome: 'Go to Home',
+  },
+}

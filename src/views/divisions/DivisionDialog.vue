@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex items-start gap-4">
-        <label for="name" class="w-32 font-semibold">Name</label>
+        <label for="name" class="w-32 font-semibold">{{ t('divisions.fields.name') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
@@ -21,32 +21,33 @@
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
-          label="Cancel"
+          :label="t('common.actions.cancel')"
           severity="secondary"
           :disabled="isLoading"
           @click="handleClose"
         ></Button>
         <Button
           type="submit"
-          :label="!isLoading ? 'Save' : ''"
+          :label="!isLoading ? t('common.actions.save') : ''"
           :icon="!isLoading ? '' : 'pi pi-spinner pi-spin'"
           :disabled="isLoading"
         ></Button>
       </div>
       <div class="flex justify-end gap-2" v-else>
-        <Button type="button" label="Close" @click="handleClose"></Button>
+        <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -56,6 +57,8 @@ import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Division } from '@/types/division.type'
+
+const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
@@ -90,10 +93,12 @@ const initialValues = reactive({
 })
 
 // Validation schema
-const resolver = zodResolver(
-  z.object({
-    name: z.string().min(1, 'Name is required.'),
-  }),
+const resolver = computed(() =>
+  zodResolver(
+    z.object({
+      name: z.string().min(1, t('divisions.validation.nameRequired')),
+    })
+  )
 )
 
 function handleClose() {
@@ -130,7 +135,7 @@ async function addDivision(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Division is created.', toastGroup))
+  toast.add(commonSuccessToast(t('divisions.messages.divisionCreated'), toastGroup))
 }
 
 async function editDivision(event: FormSubmitEvent) {
@@ -139,6 +144,6 @@ async function editDivision(event: FormSubmitEvent) {
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Division is updated.', toastGroup))
+  toast.add(commonSuccessToast(t('divisions.messages.divisionUpdated'), toastGroup))
 }
 </script>

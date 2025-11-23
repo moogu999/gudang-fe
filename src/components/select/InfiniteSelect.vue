@@ -7,7 +7,7 @@
     :options="options"
     :loading="loading"
     :filter="filter"
-    :placeholder="placeholder"
+    :placeholder="displayPlaceholder"
     @filter="handleFilter"
     :virtual-scroller-options="virtualScrollerOptions"
     :pt="{
@@ -23,9 +23,12 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import Select from 'primevue/select'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Base } from '@/types/api.type'
 import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
+
+const { t } = useI18n()
 
 interface FilterEvent {
   value: string
@@ -49,10 +52,12 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   filter: true,
-  placeholder: 'Select an option',
+  placeholder: '',
   limit: 10,
   useCursor: false,
 })
+
+const displayPlaceholder = computed(() => props.placeholder || t('common.labels.selectOption'))
 
 const emit = defineEmits<{
   'update:modelValue': [value: SelectValue<T>]

@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { useI18n } from 'vue-i18n'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 
 interface UseConfirmDeleteOptions {
@@ -29,6 +30,7 @@ export function useConfirmDelete(options: UseConfirmDeleteOptions) {
   const { overlayGroup, entityName, onSuccess } = options
   const confirm = useConfirm()
   const toast = useToast()
+  const { t } = useI18n()
   const deleteAcceptanceHandler = ref(async () => {})
 
   /**
@@ -46,7 +48,7 @@ export function useConfirmDelete(options: UseConfirmDeleteOptions) {
         await deleteAction()
 
         toast.add(
-          commonSuccessToast(`${capitalize(entityName)} is deleted.`, overlayGroup)
+          commonSuccessToast(t('common.messages.deleteSuccess', { entity: capitalize(entityName) }), overlayGroup)
         )
 
         onSuccess?.()
@@ -57,16 +59,16 @@ export function useConfirmDelete(options: UseConfirmDeleteOptions) {
 
     confirm.require({
       group: overlayGroup,
-      message: customMessage || `Are you sure you want to delete the ${entityName}?`,
-      header: 'Delete',
+      message: customMessage || t('common.messages.confirmDelete', { entity: entityName }),
+      header: t('common.confirmation.delete'),
       icon: 'pi pi-exclamation-triangle',
       rejectProps: {
-        label: 'No',
+        label: t('common.confirmation.no'),
         severity: 'secondary',
         outlined: true,
       },
       acceptProps: {
-        label: 'Yes',
+        label: t('common.confirmation.yes'),
       },
     })
   }

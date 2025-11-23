@@ -3,11 +3,11 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Roles</h1>
+    <h1 class="mb-5 text-lg font-semibold md:text-2xl">{{ t('roles.title') }}</h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="addRole"></Button>
+        <Button :label="t('common.actions.add')" icon="pi pi-plus" @click="addRole"></Button>
       </template>
     </Toolbar>
 
@@ -15,11 +15,11 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
-            <span v-if="col.header === 'Created At'">{{
+            <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.field === ''">
               <template v-if="canWrite">
                 <Button
                   icon="pi pi-pen-to-square"
@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
 import type { Column } from '@/types/table.type'
@@ -76,7 +77,7 @@ import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import RoleDialog from './RoleDialog.vue'
 import { RolesService } from '@/services/roles.service'
 import Toast from 'primevue/toast'
@@ -85,6 +86,8 @@ import type { Role } from '@/types/role.type'
 import DialogMode from '@/constants/dialogMode'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import { API_ENDPOINTS } from '@/constants/api'
+
+const { t } = useI18n()
 
 const overlayGroup = 'rolesView'
 
@@ -95,9 +98,18 @@ const { canWrite } = usePermissions('/roles')
 const table = ref()
 
 // Dialog
-const dialogHeader = ref('Add Role')
 const dialogMode = ref(DialogMode.ADD)
 const role = ref<Role | undefined>(undefined)
+
+const dialogHeader = computed(() => {
+  if (dialogMode.value === DialogMode.ADD) {
+    return t('roles.addRole')
+  } else if (dialogMode.value === DialogMode.EDIT) {
+    return t('roles.editRole')
+  } else {
+    return t('roles.viewRole')
+  }
+})
 
 const {
   isVisible: isDialogShown,
@@ -110,21 +122,18 @@ const {
 })
 
 function addRole() {
-  dialogHeader.value = 'Add Role'
   dialogMode.value = DialogMode.ADD
   role.value = undefined
   open()
 }
 
 function editRole(selectedRole: Role) {
-  dialogHeader.value = 'Edit Role'
   dialogMode.value = DialogMode.EDIT
   role.value = selectedRole
   open()
 }
 
 function viewRole(selectedRole: Role) {
-  dialogHeader.value = 'View Role'
   dialogMode.value = DialogMode.VIEW
   role.value = selectedRole
   open()
@@ -133,17 +142,17 @@ function viewRole(selectedRole: Role) {
 // Table
 const url = API_ENDPOINTS.GEN_ROLES
 
-const columns: Column[] = [
+const columns = computed<Column[]>(() => [
   {
     field: 'name',
-    header: 'Name',
+    header: t('common.labels.name'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'description',
-    header: 'Description',
+    header: t('common.labels.description'),
     exportable: true,
     sortable: true,
     filterable: false,
@@ -151,7 +160,7 @@ const columns: Column[] = [
   },
   {
     field: 'createdAt',
-    header: 'Created At',
+    header: t('common.labels.createdAt'),
     exportable: true,
     sortable: true,
     filterable: false,
@@ -160,19 +169,19 @@ const columns: Column[] = [
   {
     field: 'createdByUser.email',
     underlyingField: 'createdBy',
-    header: 'Created By',
+    header: t('common.labels.createdBy'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: '',
-    header: 'Actions',
+    header: t('common.labels.actions'),
     exportable: false,
     sortable: false,
     filterable: false,
   },
-]
+])
 
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

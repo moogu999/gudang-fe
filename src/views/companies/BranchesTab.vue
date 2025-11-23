@@ -11,7 +11,7 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="branches" class="w-30 font-semibold">Add Branch</label>
+        <label for="branches" class="w-30 font-semibold">{{ t('branches.labels.addBranch') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"
@@ -28,11 +28,11 @@
 
       <TableComponent ref="table" :numbered="true" :url="url" :columns="columns">
         <template #content="{ col, data }">
-          <span v-if="col.header === 'Created At'">{{
+          <span v-if="col.field === 'createdAt'">{{
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)
           }}</span>
 
-          <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
+          <div class="flex items-center" v-if="col.field === '' && canWrite">
             <Button
               icon="pi pi-trash"
               severity="danger"
@@ -49,13 +49,14 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { Column } from '@/types/table.type'
 import TableComponent from '@/components/table/TableComponent.vue'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
 import { BranchesService, CompanyBranchesService } from '@/services'
@@ -66,6 +67,8 @@ import { useAuthStore } from '@/stores'
 import type { Branch } from '@/types'
 import { API_ENDPOINTS } from '@/constants/api'
 import { usePermissions } from '@/composables'
+
+const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
@@ -113,24 +116,24 @@ async function addBranch(id: unknown) {
 // Table
 const url = `${API_ENDPOINTS.GEN_COMPANY_BRANCHES}?filterBy=company_id&filterOperator=0&filterValue=${props.companyId}`
 
-const columns: Column[] = [
+const columns = computed<Column[]>(() => [
   {
     field: 'branchCode',
-    header: 'Code',
+    header: t('branches.fields.code'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'branchName',
-    header: 'Name',
+    header: t('branches.fields.name'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'branchAddress',
-    header: 'Address',
+    header: t('branches.fields.address'),
     exportable: true,
     sortable: false,
     filterable: false,
@@ -138,7 +141,7 @@ const columns: Column[] = [
   },
   {
     field: 'createdAt',
-    header: 'Created At',
+    header: t('common.labels.createdAt'),
     exportable: true,
     sortable: true,
     filterable: false,
@@ -147,19 +150,19 @@ const columns: Column[] = [
   {
     field: 'userEmail',
     underlyingField: 'createdBy',
-    header: 'Created By',
+    header: t('common.labels.createdBy'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: '',
-    header: 'Actions',
+    header: t('common.labels.actions'),
     exportable: false,
     sortable: false,
     filterable: false,
   },
-]
+])
 
 const table = ref()
 

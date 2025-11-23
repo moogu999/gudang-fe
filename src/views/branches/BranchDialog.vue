@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex items-start gap-4">
-        <label for="code" class="w-32 font-semibold">Code</label>
+        <label for="code" class="w-32 font-semibold">{{ t('branches.fields.code') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">{{
@@ -19,7 +19,7 @@
       </div>
 
       <div class="mb-4 flex items-start gap-4">
-        <label for="name" class="w-32 font-semibold">Name</label>
+        <label for="name" class="w-32 font-semibold">{{ t('branches.fields.name') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
@@ -29,7 +29,7 @@
       </div>
 
       <div class="mb-4 flex items-start gap-4">
-        <label for="address" class="w-32 font-semibold">Address</label>
+        <label for="address" class="w-32 font-semibold">{{ t('branches.fields.address') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <Textarea
             id="address"
@@ -47,33 +47,34 @@
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
-          label="Cancel"
+          :label="t('common.actions.cancel')"
           severity="secondary"
           :disabled="isLoading"
           @click="handleClose"
         ></Button>
         <Button
           type="submit"
-          :label="!isLoading ? 'Save' : ''"
+          :label="!isLoading ? t('common.actions.save') : ''"
           :icon="!isLoading ? '' : 'pi pi-spinner pi-spin'"
           :disabled="isLoading"
         ></Button>
       </div>
       <div class="flex justify-end gap-2" v-else>
-        <Button type="button" label="Close" @click="handleClose"></Button>
+        <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -83,6 +84,8 @@ import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Branch } from '@/types/branch.type'
+
+const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
@@ -121,12 +124,14 @@ const initialValues = reactive({
 })
 
 // Validation schema
-const resolver = zodResolver(
-  z.object({
-    code: z.string().min(1, 'Code is required.'),
-    name: z.string().min(1, 'Name is required.'),
-    address: z.string().optional(),
-  }),
+const resolver = computed(() =>
+  zodResolver(
+    z.object({
+      code: z.string().min(1, t('branches.validation.codeRequired')),
+      name: z.string().min(1, t('branches.validation.nameRequired')),
+      address: z.string().optional(),
+    })
+  )
 )
 
 function handleClose() {
@@ -165,7 +170,7 @@ async function addBranch(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Branch is created.', toastGroup))
+  toast.add(commonSuccessToast(t('branches.messages.branchCreated'), toastGroup))
 }
 
 async function editBranch(event: FormSubmitEvent) {
@@ -176,6 +181,6 @@ async function editBranch(event: FormSubmitEvent) {
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Branch is updated.', toastGroup))
+  toast.add(commonSuccessToast(t('branches.messages.branchUpdated'), toastGroup))
 }
 </script>

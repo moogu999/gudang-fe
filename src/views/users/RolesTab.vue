@@ -11,7 +11,7 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="roles" class="w-30 font-semibold">Add Role</label>
+        <label for="roles" class="w-30 font-semibold">{{ t('users.labels.addRole') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"
@@ -28,11 +28,11 @@
 
       <TableComponent ref="table" :numbered="true" :url="url" :columns="columns">
         <template #content="{ col, data }">
-          <span v-if="col.header === 'Created At'">{{
+          <span v-if="col.header === t('common.labels.createdAt')">{{
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)
           }}</span>
 
-          <div class="flex items-center" v-if="col.header === 'Actions' && canWrite">
+          <div class="flex items-center" v-if="col.header === t('common.labels.actions') && canWrite">
             <Button
               icon="pi pi-trash"
               severity="danger"
@@ -55,7 +55,7 @@ import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
 import { RolesService } from '@/services/roles.service'
@@ -67,6 +67,10 @@ import { useAuthStore } from '@/stores'
 import type { Role } from '@/types'
 import { API_ENDPOINTS } from '@/constants/api'
 import { usePermissions } from '@/composables'
+import { useI18n } from 'vue-i18n'
+
+// i18n
+const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
@@ -114,17 +118,17 @@ async function addRole(id: unknown) {
 // Table
 const url = `${API_ENDPOINTS.GEN_USER_ROLES}?filterBy=user_id&filterOperator=0&filterValue=${props.userId}`
 
-const columns: Column[] = [
+const columns = computed<Column[]>(() => [
   {
     field: 'roleName',
-    header: 'Name',
+    header: t('common.labels.name'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'roleDescription',
-    header: 'Description',
+    header: t('common.labels.description'),
     exportable: true,
     sortable: false,
     filterable: false,
@@ -132,7 +136,7 @@ const columns: Column[] = [
   },
   {
     field: 'createdAt',
-    header: 'Created At',
+    header: t('common.labels.createdAt'),
     exportable: true,
     sortable: true,
     filterable: false,
@@ -141,19 +145,19 @@ const columns: Column[] = [
   {
     field: 'userEmail',
     underlyingField: 'createdBy',
-    header: 'Created By',
+    header: t('common.labels.createdBy'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: '',
-    header: 'Actions',
+    header: t('common.labels.actions'),
     exportable: false,
     sortable: false,
     filterable: false,
   },
-]
+])
 
 const table = ref()
 

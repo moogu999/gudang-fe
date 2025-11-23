@@ -5,9 +5,15 @@
         <span class="mb-2 block text-2xl font-bold">{{ message.header }}</span>
         <p class="mb-0">{{ message.message }}</p>
         <div class="mt-6 flex items-center gap-2">
-          <Button label="No" outlined @click="rejectCallback" class="w-32"></Button>
           <Button
-            :label="!isLoading ? 'Yes' : ''"
+            :label="message.rejectProps?.label"
+            :outlined="message.rejectProps?.outlined"
+            :severity="message.rejectProps?.severity"
+            @click="rejectCallback"
+            class="w-32"
+          ></Button>
+          <Button
+            :label="!isLoading ? message.acceptProps?.label : ''"
             :icon="!isLoading ? '' : 'pi pi-spinner pi-spin'"
             :disabled="isLoading"
             @click="accept(acceptCallback)"

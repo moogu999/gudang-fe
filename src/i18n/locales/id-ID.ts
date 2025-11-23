@@ -1,0 +1,272 @@
+/**
+ * Bahasa Indonesia translations
+ */
+export default {
+  common: {
+    actions: {
+      add: 'Tambah',
+      edit: 'Edit',
+      delete: 'Hapus',
+      save: 'Simpan',
+      cancel: 'Batal',
+      search: 'Cari',
+      clear: 'Hapus',
+      close: 'Tutup',
+      view: 'Lihat',
+      back: 'Kembali',
+      confirm: 'Konfirmasi',
+      submit: 'Kirim',
+      signIn: 'Masuk',
+      signOut: 'Keluar',
+    },
+    labels: {
+      actions: 'Aksi',
+      createdAt: 'Dibuat Pada',
+      updatedAt: 'Diperbarui Pada',
+      createdBy: 'Dibuat Oleh',
+      updatedBy: 'Diperbarui Oleh',
+      status: 'Status',
+      name: 'Nama',
+      description: 'Deskripsi',
+      email: 'Email',
+      password: 'Kata Sandi',
+      selectOption: 'Pilih opsi',
+    },
+    messages: {
+      confirmDelete: 'Apakah Anda yakin ingin menghapus {entity} ini?',
+      deleteSuccess: '{entity} berhasil dihapus',
+      createSuccess: '{entity} berhasil dibuat',
+      updateSuccess: '{entity} berhasil diperbarui',
+      error: 'Terjadi kesalahan',
+      loading: 'Memuat...',
+      noData: 'Tidak ada data',
+      required: 'Kolom ini wajib diisi',
+      signedOutSuccess: 'Berhasil keluar',
+    },
+    confirmation: {
+      delete: 'Hapus',
+      yes: 'Ya',
+      no: 'Tidak',
+    },
+  },
+  navigation: {
+    home: 'Beranda',
+    organizations: 'Organisasi',
+    companies: 'Perusahaan',
+    branches: 'Cabang',
+    departments: 'Departemen',
+    divisions: 'Divisi',
+    users: 'Pengguna',
+    accessControls: 'Kontrol Akses',
+    roles: 'Peran',
+    permissions: 'Izin',
+    superset: 'Superset',
+    businessIntelligence: 'Intelijen Bisnis',
+    settings: 'Pengaturan',
+  },
+  table: {
+    search: 'Cari',
+    searchPlaceholder: 'Tekan Enter untuk mencari',
+    noResults: 'Tidak ada data.',
+    rowsPerPage: 'Baris per halaman',
+    showing: 'Menampilkan {first} hingga {last} dari {total}',
+    clearFilters: 'Hapus Filter',
+    apply: 'Terapkan',
+    no: 'No.',
+  },
+  users: {
+    title: 'Pengguna',
+    addUser: 'Tambah Pengguna',
+    editUser: 'Edit Pengguna',
+    viewUser: 'Lihat Pengguna',
+    deleteUser: 'Hapus Pengguna',
+    fields: {
+      email: 'Email',
+      password: 'Kata Sandi',
+      newPassword: 'Kata Sandi Baru',
+      confirmPassword: 'Konfirmasi Kata Sandi',
+      name: 'Nama',
+      role: 'Peran',
+      department: 'Departemen',
+    },
+    labels: {
+      addRole: 'Tambah Peran',
+    },
+    placeholders: {
+      email: 'Masukkan alamat email',
+      password: 'Masukkan kata sandi',
+      passwordEditMode: 'Biarkan kosong untuk mempertahankan kata sandi saat ini',
+      name: 'Masukkan nama',
+    },
+    validation: {
+      emailRequired: 'Email wajib diisi',
+      emailInvalid: 'Mohon masukkan alamat email yang valid.',
+      passwordRequired: 'Kata sandi wajib diisi',
+      passwordMinLength: 'Kata sandi minimal 8 karakter.',
+      passwordUppercase: 'Kata sandi harus mengandung minimal satu huruf kapital.',
+      passwordLowercase: 'Kata sandi harus mengandung minimal satu huruf kecil.',
+      passwordNumber: 'Kata sandi harus mengandung minimal satu angka.',
+      passwordSpecialChar: 'Kata sandi harus mengandung minimal satu karakter khusus (@$!%*?&).',
+      passwordMismatch: 'Kata sandi tidak cocok.',
+    },
+    messages: {
+      userCreated: 'Pengguna berhasil dibuat.',
+      userUpdated: 'Pengguna berhasil diperbarui.',
+    },
+    tabs: {
+      roles: 'Peran',
+    },
+  },
+  roles: {
+    title: 'Peran',
+    addRole: 'Tambah Peran',
+    editRole: 'Edit Peran',
+    viewRole: 'Lihat Peran',
+    deleteRole: 'Hapus Peran',
+    fields: {
+      name: 'Nama',
+      description: 'Deskripsi',
+      permissions: 'Izin',
+    },
+    labels: {
+      addPermission: 'Tambah Izin',
+    },
+    placeholders: {
+      name: 'Masukkan nama peran',
+      description: 'Masukkan deskripsi peran',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+      descriptionMinLength: 'Deskripsi minimal 10 karakter.',
+      descriptionMaxLength: 'Deskripsi maksimal 50 karakter.',
+    },
+    messages: {
+      roleCreated: 'Peran berhasil dibuat.',
+      roleUpdated: 'Peran berhasil diperbarui.',
+    },
+    tabs: {
+      permissions: 'Izin',
+    },
+  },
+  permissions: {
+    title: 'Izin',
+    addPermission: 'Tambah Izin',
+    editPermission: 'Edit Izin',
+    viewPermission: 'Lihat Izin',
+    deletePermission: 'Hapus Izin',
+    fields: {
+      name: 'Nama Izin',
+      description: 'Deskripsi',
+      resource: 'Sumber Daya',
+      action: 'Aksi',
+    },
+  },
+  departments: {
+    title: 'Departemen',
+    addDepartment: 'Tambah Departemen',
+    editDepartment: 'Edit Departemen',
+    viewDepartment: 'Lihat Departemen',
+    deleteDepartment: 'Hapus Departemen',
+    fields: {
+      name: 'Nama',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      departmentCreated: 'Departemen berhasil dibuat.',
+      departmentUpdated: 'Departemen berhasil diperbarui.',
+    },
+    tabs: {
+      divisions: 'Divisi',
+    },
+  },
+  divisions: {
+    title: 'Divisi',
+    addDivision: 'Tambah Divisi',
+    editDivision: 'Edit Divisi',
+    viewDivision: 'Lihat Divisi',
+    deleteDivision: 'Hapus Divisi',
+    fields: {
+      name: 'Nama',
+    },
+    labels: {
+      addDivision: 'Tambah Divisi',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      divisionCreated: 'Divisi berhasil dibuat.',
+      divisionUpdated: 'Divisi berhasil diperbarui.',
+    },
+  },
+  companies: {
+    title: 'Perusahaan',
+    addCompany: 'Tambah Perusahaan',
+    editCompany: 'Edit Perusahaan',
+    viewCompany: 'Lihat Perusahaan',
+    deleteCompany: 'Hapus Perusahaan',
+    fields: {
+      code: 'Kode',
+      name: 'Nama',
+      address: 'Alamat',
+      taxId: 'NPWP',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      companyCreated: 'Perusahaan berhasil dibuat.',
+      companyUpdated: 'Perusahaan berhasil diperbarui.',
+    },
+    tabs: {
+      branches: 'Cabang',
+    },
+  },
+  branches: {
+    title: 'Cabang',
+    addBranch: 'Tambah Cabang',
+    editBranch: 'Edit Cabang',
+    viewBranch: 'Lihat Cabang',
+    deleteBranch: 'Hapus Cabang',
+    fields: {
+      code: 'Kode',
+      name: 'Nama',
+      address: 'Alamat',
+    },
+    labels: {
+      addBranch: 'Tambah Cabang',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      branchCreated: 'Cabang berhasil dibuat.',
+      branchUpdated: 'Cabang berhasil diperbarui.',
+    },
+  },
+  auth: {
+    signIn: {
+      title: 'Masuk',
+      email: 'Email',
+      password: 'Kata Sandi',
+      emailPlaceholder: 'Masukkan email Anda',
+      passwordPlaceholder: 'Masukkan kata sandi Anda',
+      signInButton: 'Masuk',
+      validation: {
+        requiredFields: 'Mohon masukkan email dan kata sandi',
+      },
+      messages: {
+        success: 'Berhasil masuk! Mengalihkan...',
+      },
+    },
+  },
+  notFound: {
+    title: 'Halaman tidak ditemukan',
+    description: 'Halaman yang Anda cari tidak ada atau telah dipindahkan.',
+    goToHome: 'Kembali ke Beranda',
+  },
+}

@@ -3,11 +3,11 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Branches</h1>
+    <h1 class="mb-5 text-lg font-semibold md:text-2xl">{{ t('branches.title') }}</h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="addBranch"></Button>
+        <Button :label="t('common.actions.add')" icon="pi pi-plus" @click="addBranch"></Button>
       </template>
     </Toolbar>
 
@@ -15,15 +15,15 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
-            <span v-if="col.header === 'Created At'">{{
+            <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <span v-if="col.header === 'Updated At' && data[col.field]">{{
+            <span v-if="col.field === 'updatedAt' && data[col.field]">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.header === 'Actions'">
+            <div class="flex items-center" v-if="col.field === ''">
               <template v-if="canWrite">
                 <Button
                   icon="pi pi-pen-to-square"
@@ -72,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
 import type { Column } from '@/types/table.type'
@@ -80,7 +81,7 @@ import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { BranchesService } from '@/services/branches.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
@@ -89,6 +90,8 @@ import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { Branch } from '@/types/branch.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
+
+const { t } = useI18n()
 
 const overlayGroup = 'branchesView'
 
@@ -99,9 +102,18 @@ const { canWrite } = usePermissions('/branches')
 const table = ref()
 
 // Dialog
-const dialogHeader = ref('Add Branch')
 const dialogMode = ref(DialogMode.ADD)
 const branch = ref<Branch | undefined>(undefined)
+
+const dialogHeader = computed(() => {
+  if (dialogMode.value === DialogMode.ADD) {
+    return t('branches.addBranch')
+  } else if (dialogMode.value === DialogMode.EDIT) {
+    return t('branches.editBranch')
+  } else {
+    return t('branches.viewBranch')
+  }
+})
 
 const {
   isVisible: isDialogShown,
@@ -114,21 +126,18 @@ const {
 })
 
 function addBranch() {
-  dialogHeader.value = 'Add Branch'
   dialogMode.value = DialogMode.ADD
   branch.value = undefined
   open()
 }
 
 function editBranch(selectedBranch: Branch) {
-  dialogHeader.value = 'Edit Branch'
   dialogMode.value = DialogMode.EDIT
   branch.value = selectedBranch
   open()
 }
 
 function viewBranch(selectedBranch: Branch) {
-  dialogHeader.value = 'View Branch'
   dialogMode.value = DialogMode.VIEW
   branch.value = selectedBranch
   open()
@@ -137,31 +146,31 @@ function viewBranch(selectedBranch: Branch) {
 // Table
 const url = API_ENDPOINTS.GEN_BRANCHES
 
-const columns: Column[] = [
+const columns = computed<Column[]>(() => [
   {
     field: 'code',
-    header: 'Code',
+    header: t('branches.fields.code'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'name',
-    header: 'Name',
+    header: t('branches.fields.name'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'address',
-    header: 'Address',
+    header: t('branches.fields.address'),
     exportable: true,
     sortable: false,
     filterable: false,
   },
   {
     field: 'createdAt',
-    header: 'Created At',
+    header: t('common.labels.createdAt'),
     exportable: true,
     sortable: true,
     filterable: false,
@@ -170,19 +179,19 @@ const columns: Column[] = [
   {
     field: 'createdByUser.email',
     underlyingField: 'createdBy',
-    header: 'Created By',
+    header: t('common.labels.createdBy'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: '',
-    header: 'Actions',
+    header: t('common.labels.actions'),
     exportable: false,
     sortable: false,
     filterable: false,
   },
-]
+])
 
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

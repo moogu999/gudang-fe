@@ -43,6 +43,7 @@ npm run format
 - **Router**: Vue Router with lazy-loaded routes
 - **HTTP Client**: Axios (singleton service pattern)
 - **Validation**: Zod
+- **Internationalization**: Vue I18n with English (US) and Bahasa Indonesia support
 - **BI Integration**: Apache Superset embedded SDK
 
 ### Project Structure
@@ -52,7 +53,7 @@ src/
 ├── views/          # Page-level components (UsersView, RolesView, etc.)
 ├── components/     # Reusable UI components
 │   ├── table/     # Generic TableComponent with server-side features
-│   ├── menu/      # Navigation (SideBarComponent, HeaderComponent)
+│   ├── menu/      # Navigation (SideBarComponent, HeaderComponent, LanguageSwitcherComponent)
 │   └── dialog/    # Modal dialogs (ConfirmationDialog)
 ├── composables/    # Reusable composition functions
 │   └── useConfirmDelete.ts      # Delete confirmation pattern
@@ -63,6 +64,11 @@ src/
 │   ├── permissions.service.ts    # Permission & role-permission operations
 │   ├── genericQueryBuilder.ts    # URL query builder for filtering/sorting
 │   └── toast.ts                  # Toast notification helpers
+├── i18n/           # Internationalization
+│   ├── index.ts                  # Vue I18n plugin configuration
+│   └── locales/                  # Translation files
+│       ├── en-US.ts              # English translations
+│       └── id-ID.ts              # Bahasa Indonesia translations
 ├── types/          # TypeScript type definitions
 │   ├── api.type.ts               # Base API response types
 │   ├── user.type.ts              # User and DTOs
@@ -74,7 +80,8 @@ src/
 │   ├── filterOperator.ts         # Filter operators
 │   ├── dialogMode.ts             # Dialog modes (ADD, EDIT)
 │   ├── toastLife.ts              # Toast duration constants
-│   └── dateFormat.ts             # Date format strings
+│   ├── dateFormat.ts             # Date format strings
+│   └── locale.ts                 # i18n locale constants
 ├── utils/          # Utility functions
 │   └── objectHelper.ts           # Object manipulation helpers
 └── stores/         # Pinia state stores
@@ -231,8 +238,88 @@ All routes in `src/router/index.ts` use lazy loading:
 `App.vue` implements a sidebar + header + main layout:
 - Responsive grid: `md:grid-cols-[220px_1fr]`, `lg:grid-cols-[280px_1fr]`
 - `SideBarComponent`: Navigation menu from `src/components/menu/menu.ts`
-- `HeaderComponent`: Top bar with mobile menu toggle
+- `HeaderComponent`: Top bar with mobile menu toggle and language switcher
 - `RouterView`: Main content area
+
+#### 7. Internationalization (i18n) Pattern
+The application supports multiple languages using Vue I18n:
+
+**Supported Locales:**
+- English (US): `en-US`
+- Bahasa Indonesia: `id-ID`
+
+**Configuration** (`src/i18n/index.ts`):
+- Composition API mode enabled
+- Automatic locale detection: localStorage → browser language → default (en-US)
+- Locale preference persisted to localStorage
+- Global functions: `saveLocale()`, `SUPPORTED_LOCALES`, `LOCALE_NAMES`
+
+**Translation Files** (`src/i18n/locales/`):
+- `en-US.ts`: English translations
+- `id-ID.ts`: Bahasa Indonesia translations
+- Organized by domain: `common`, `navigation`, `table`, `users`, `roles`, `permissions`, etc.
+
+**Usage Patterns:**
+
+```vue
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
+
+const { t } = useI18n()
+
+// Simple translation
+const title = t('users.title') // 'Users' or 'Pengguna'
+
+// Translation with interpolation
+const message = t('common.messages.deleteSuccess', { entity: 'User' })
+// 'User deleted successfully' or 'User berhasil dihapus'
+
+// Computed columns for reactive translations
+const columns = computed(() => [
+  { field: 'email', header: t('users.fields.email') },
+  { field: 'name', header: t('common.labels.name') },
+])
+</script>
+
+<template>
+  <!-- In templates -->
+  <h1>{{ t('users.title') }}</h1>
+  <Button :label="t('common.actions.save')" />
+</template>
+```
+
+**Form Validation with i18n:**
+```typescript
+// Use computed() for reactive validation messages
+const resolver = computed(() =>
+  zodResolver(
+    z.object({
+      email: z.string().email({ message: t('users.validation.emailInvalid') }),
+      password: z.string().min(8, t('users.validation.passwordMinLength')),
+    })
+  )
+)
+```
+
+**Language Switcher:**
+- `LanguageSwitcherComponent` in header allows runtime locale switching
+- Changes persist across sessions via localStorage
+- All UI elements update immediately when locale changes
+
+**Translation Key Naming Convention:**
+- Domain-based: `{domain}.{category}.{key}`
+- Examples:
+  - `common.actions.save` → Common actions
+  - `users.fields.email` → User-specific fields
+  - `table.search` → Table component strings
+  - `common.messages.confirmDelete` → Reusable messages
+
+**Adding New Translations:**
+1. Add keys to both `en-US.ts` and `id-ID.ts`
+2. Use `t()` function in components
+3. For dynamic content (table columns, dialogs), use `computed()` for reactivity
+4. For validation schemas, wrap resolver in `computed()`
 
 ### PrimeVue Integration
 - Theme: Aura preset with dark mode disabled

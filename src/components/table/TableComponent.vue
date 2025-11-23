@@ -5,7 +5,7 @@
       ref="dt"
       selection-mode="single"
       paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      current-page-report-template="Showing {first} to {last} of {totalRecords}"
+      :current-page-report-template="paginationTemplate"
       filter-display="menu"
       :value="items"
       :paginator="true"
@@ -30,7 +30,7 @@
             <InputIcon>
               <i class="pi pi-search" />
             </InputIcon>
-            <InputText placeholder="Search" @keypress="handleSearch" v-model="searchQuery" />
+            <InputText :placeholder="t('table.search')" @keypress="handleSearch" v-model="searchQuery" />
             <InputIcon>
               <i v-if="searchQuery" class="pi pi-times cursor-pointer" @click="clearSearch" />
             </InputIcon>
@@ -44,12 +44,12 @@
               rounded
               text
             ></Button>
-            <Button severity="secondary" @click="clearFilters" text>Clear Filters</Button>
+            <Button severity="secondary" @click="clearFilters" text>{{ t('table.clearFilters') }}</Button>
           </div>
         </div>
       </template>
 
-      <Column header="No." v-if="numbered">
+      <Column :header="t('table.no')" v-if="numbered">
         <template #body="slotProps"> {{ slotProps.index + 1 }}</template>
       </Column>
       <Column
@@ -83,7 +83,7 @@
         </template>
         <template #filterclear />
         <template #filterapply="{ filterCallback }">
-          <Button size="small" @click="applyFilter(filterCallback, col)">Apply</Button>
+          <Button size="small" @click="applyFilter(filterCallback, col)">{{ t('table.apply') }}</Button>
         </template>
 
         <template #body="slotProps">
@@ -93,12 +93,13 @@
         </template>
       </Column>
 
-      <template #empty>No data found.</template>
+      <template #empty>{{ t('table.noResults') }}</template>
     </DataTable>
   </div>
 </template>
 
 <script setup lang="ts" generic="T">
+import { useI18n } from 'vue-i18n'
 import DataTable, {
   type DataTablePageEvent,
   type DataTableSortEvent,
@@ -122,8 +123,12 @@ import FilterOperator from '@/constants/filterOperator'
 import { getNestedValue } from '@/utils/objectHelper'
 import { commonErrorToast } from '@/services/toast'
 
+const { t } = useI18n()
+
 const toastGroup = 'tableComponent'
 const toast = useToast()
+
+const paginationTemplate = computed(() => t('table.showing', { first: '{first}', last: '{last}', total: '{totalRecords}' }))
 
 type Sort = {
   field: string

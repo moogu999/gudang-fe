@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex items-start gap-4">
-        <label for="name" class="w-24 font-semibold">Name</label>
+        <label for="name" class="w-24 font-semibold">{{ t('roles.fields.name') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
@@ -19,7 +19,7 @@
       </div>
 
       <div class="mb-4 flex items-start gap-4">
-        <label for="description" class="w-24 font-semibold">Description</label>
+        <label for="description" class="w-24 font-semibold">{{ t('roles.fields.description') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <Textarea
             id="description"
@@ -40,26 +40,26 @@
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
-          label="Cancel"
+          :label="t('common.actions.cancel')"
           severity="secondary"
           :disabled="isLoading"
           @click="handleClose"
         ></Button>
         <Button
           type="submit"
-          :label="!isLoading ? 'Save' : ''"
+          :label="!isLoading ? t('common.actions.save') : ''"
           :icon="!isLoading ? '' : 'pi pi-spinner pi-spin'"
           :disabled="isLoading"
         ></Button>
       </div>
       <div class="flex justify-end gap-2" v-else>
-        <Button type="button" label="Close" @click="handleClose"></Button>
+        <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
 
     <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
       <TabList>
-        <Tab value="0">Permissions</Tab>
+        <Tab value="0">{{ t('roles.tabs.permissions') }}</Tab>
       </TabList>
 
       <TabPanels>
@@ -70,13 +70,14 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -91,6 +92,8 @@ import TabPanels from 'primevue/tabpanels'
 import PermissionsTab from '@/views/roles/PermissionsTab.vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
+
+const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
@@ -126,14 +129,16 @@ const initialValues = reactive({
   description: '',
 })
 
-const resolver = zodResolver(
-  z.object({
-    name: z.string().min(1, { message: 'Name is required.' }),
-    description: z
-      .string()
-      .min(10, { message: 'Min. description 10 characters.' })
-      .max(50, { message: 'Max. description 50 characters.' }),
-  }),
+const resolver = computed(() =>
+  zodResolver(
+    z.object({
+      name: z.string().min(1, { message: t('roles.validation.nameRequired') }),
+      description: z
+        .string()
+        .min(10, { message: t('roles.validation.descriptionMinLength') })
+        .max(50, { message: t('roles.validation.descriptionMaxLength') }),
+    })
+  )
 )
 
 function handleClose() {
@@ -171,7 +176,7 @@ async function addRole(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Role is created.', toastGroup))
+  toast.add(commonSuccessToast(t('roles.messages.roleCreated'), toastGroup))
 }
 
 async function editRole(event: FormSubmitEvent) {
@@ -181,6 +186,6 @@ async function editRole(event: FormSubmitEvent) {
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast('Role is updated.', toastGroup))
+  toast.add(commonSuccessToast(t('roles.messages.roleUpdated'), toastGroup))
 }
 </script>

@@ -9,7 +9,9 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Card from 'primevue/card'
 import Toast from 'primevue/toast'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
@@ -26,7 +28,7 @@ const isLoading = ref(false)
 async function handleSignIn() {
   // Basic validation
   if (!email.value || !password.value) {
-    toast.add(commonWarnToast('Please enter both email and password', 'signInView'))
+    toast.add(commonWarnToast(t('auth.signIn.validation.requiredFields'), 'signInView'))
     return
   }
 
@@ -38,7 +40,7 @@ async function handleSignIn() {
       password: password.value,
     })
 
-    toast.add(commonSuccessToast('Sign-in successful! Redirecting...', 'signInView'))
+    toast.add(commonSuccessToast(t('auth.signIn.messages.success'), 'signInView'))
 
     // Redirect to the page user was trying to access, or home by default
     const redirectPath = (route.query.redirect as string) || '/'
@@ -79,19 +81,19 @@ function handleKeyPress(event: KeyboardEvent) {
 
     <Card class="relative z-10 w-full max-w-md shadow-lg">
       <template #title>
-        <h1 class="text-center text-2xl font-bold">Sign In</h1>
+        <h1 class="text-center text-2xl font-bold">{{ t('auth.signIn.title') }}</h1>
       </template>
 
       <template #content>
         <div class="flex flex-col gap-4">
           <!-- Email Input -->
           <div class="flex flex-col gap-2">
-            <label for="email" class="font-medium">Email</label>
+            <label for="email" class="font-medium">{{ t('auth.signIn.email') }}</label>
             <InputText
               id="email"
               v-model="email"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="t('auth.signIn.emailPlaceholder')"
               :disabled="isLoading"
               @keypress="handleKeyPress"
               autocomplete="email"
@@ -100,11 +102,11 @@ function handleKeyPress(event: KeyboardEvent) {
 
           <!-- Password Input -->
           <div class="flex flex-col gap-2">
-            <label for="password" class="font-medium">Password</label>
+            <label for="password" class="font-medium">{{ t('auth.signIn.password') }}</label>
             <Password
               id="password"
               v-model="password"
-              placeholder="Enter your password"
+              :placeholder="t('auth.signIn.passwordPlaceholder')"
               :disabled="isLoading"
               :feedback="false"
               toggle-mask
@@ -121,7 +123,7 @@ function handleKeyPress(event: KeyboardEvent) {
 
           <!-- Sign In Button -->
           <Button
-            label="Sign In"
+            :label="t('auth.signIn.signInButton')"
             :loading="isLoading"
             @click="handleSignIn"
             class="mt-4 w-full"

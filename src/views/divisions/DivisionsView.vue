@@ -3,11 +3,11 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Users</h1>
+    <h1 class="mb-5 text-lg font-semibold md:text-2xl">Divisions</h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <Button label="New" icon="pi pi-plus" @click="addUser"></Button>
+        <Button label="New" icon="pi pi-plus" @click="addDivision"></Button>
       </template>
     </Toolbar>
 
@@ -19,12 +19,16 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
+            <span v-if="col.header === 'Updated At' && data[col.field]">{{
+              dayjs(data[col.field]).format(DateFormat.DATE_TIME)
+            }}</span>
+
             <div class="flex items-center" v-if="col.header === 'Actions'">
               <template v-if="canWrite">
                 <Button
                   icon="pi pi-pen-to-square"
                   severity="contrast"
-                  @click="editUser(data)"
+                  @click="editDivision(data)"
                   text
                   rounded
                   outlined
@@ -43,7 +47,7 @@
                 <Button
                   icon="pi pi-eye"
                   severity="contrast"
-                  @click="viewUser(data)"
+                  @click="viewDivision(data)"
                   text
                   rounded
                   outlined
@@ -62,7 +66,7 @@
       v-model:visible="isDialogShown"
       modal
     >
-      <UserDialog :mode="dialogMode" :user="user" @close="close" />
+      <DivisionDialog :mode="dialogMode" :division="division" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -77,27 +81,27 @@ import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import { UsersService } from '@/services/users.service'
+import { DivisionsService } from '@/services/divisions.service'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import UserDialog from './UserDialog.vue'
+import DivisionDialog from './DivisionDialog.vue'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
-import type { User } from '@/types/user.type'
+import type { Division } from '@/types/division.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 
-const overlayGroup = 'usersView'
+const overlayGroup = 'divisionsView'
 
 // Permissions
-const { canWrite } = usePermissions('/users')
+const { canWrite } = usePermissions('/divisions')
 
 // Table
 const table = ref()
 
 // Dialog
-const dialogHeader = ref('Add User')
+const dialogHeader = ref('Add Division')
 const dialogMode = ref(DialogMode.ADD)
-const user = ref<User | undefined>(undefined)
+const division = ref<Division | undefined>(undefined)
 
 const {
   isVisible: isDialogShown,
@@ -109,42 +113,34 @@ const {
   },
 })
 
-function addUser() {
-  dialogHeader.value = 'Add User'
+function addDivision() {
+  dialogHeader.value = 'Add Division'
   dialogMode.value = DialogMode.ADD
-  user.value = undefined
+  division.value = undefined
   open()
 }
 
-function editUser(selectedUser: User) {
-  dialogHeader.value = 'Edit User'
+function editDivision(selectedDivision: Division) {
+  dialogHeader.value = 'Edit Division'
   dialogMode.value = DialogMode.EDIT
-  user.value = selectedUser
+  division.value = selectedDivision
   open()
 }
 
-function viewUser(selectedUser: User) {
-  dialogHeader.value = 'View User'
+function viewDivision(selectedDivision: Division) {
+  dialogHeader.value = 'View Division'
   dialogMode.value = DialogMode.VIEW
-  user.value = selectedUser
+  division.value = selectedDivision
   open()
 }
 
 // Table
-const url = API_ENDPOINTS.GEN_USERS
+const url = API_ENDPOINTS.GEN_DIVISIONS
 
 const columns: Column[] = [
   {
-    field: 'email',
-    header: 'Email',
-    exportable: true,
-    sortable: true,
-    filterable: true,
-  },
-  {
-    field: 'department.name',
-    underlyingField: 'departmentId',
-    header: 'Department',
+    field: 'name',
+    header: 'Name',
     exportable: true,
     sortable: true,
     filterable: true,
@@ -158,7 +154,8 @@ const columns: Column[] = [
     class: 'min-w-45',
   },
   {
-    field: 'createdBy',
+    field: 'createdByUser.email',
+    underlyingField: 'createdBy',
     header: 'Created By',
     exportable: true,
     sortable: true,
@@ -176,13 +173,13 @@ const columns: Column[] = [
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
   overlayGroup,
-  entityName: 'user',
+  entityName: 'division',
   onSuccess: async () => {
     await table.value.clearSearch()
   },
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => UsersService.delete(id))
+  confirmDelete(() => DivisionsService.delete(id))
 }
 </script>

@@ -70,10 +70,10 @@ export class UsersService {
   }
 
   /**
-   * Update an existing user's email and/or password
+   * Update an existing user's email, password, and/or department
    *
    * @param id - The unique identifier of the user to update
-   * @param data - User update data (email and/or password)
+   * @param data - User update data (email, password, departmentId, and/or updatedBy)
    * @returns Promise resolving when update is complete
    * @throws Error if user not found or validation fails
    *
@@ -82,16 +82,22 @@ export class UsersService {
    * await UsersService.update(123, {
    *   email: 'newemail@example.com',
    *   password: 'NewSecurePass123!',
+   *   departmentId: 5,
    *   updatedBy: 'admin@example.com'
    * })
    * ```
    */
   static async update(id: number, data: UpdateUserDto): Promise<void> {
-    const { email, password } = data
-    const payload: { email?: string; password?: string } = {}
+    const { password, departmentId, updatedBy } = data
+    const payload: {
+      password?: string
+      departmentId?: number | null
+      updatedBy?: string
+    } = {}
 
-    if (email) payload.email = email
     if (password) payload.password = password
+    if (departmentId !== undefined) payload.departmentId = departmentId
+    if (updatedBy) payload.updatedBy = updatedBy
 
     return ApiService.patch<void>(`${this.V1_URL}/${id}`, payload)
   }

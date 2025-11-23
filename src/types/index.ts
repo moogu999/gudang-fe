@@ -18,7 +18,7 @@ export type {
 } from './auth.type'
 
 // Entity types
-export type { User, CreateUserDto, UpdateUserDto } from './user.type'
+export type { User, CreateUserDto, UpdateUserDto, DepartmentLite } from './user.type'
 export type { Role, CreateRoleDto, UpdateRoleDto } from './role.type'
 export type {
   Permission,
@@ -33,6 +33,16 @@ export type {
   CreateCompanyBranchDto,
   CompanyBranchWithDetails,
 } from './companyBranch.type'
+export type {
+  Department,
+  CreateDepartmentDto,
+  UpdateDepartmentDto,
+} from './department.type'
+export type { Division, CreateDivisionDto, UpdateDivisionDto } from './division.type'
+export type {
+  DepartmentDivision,
+  CreateDepartmentDivisionDto,
+} from './departmentDivision.type'
 
 // Component types
 export type { Column } from './table.type'

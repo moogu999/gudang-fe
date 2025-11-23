@@ -14,6 +14,10 @@ export const PERMISSIONS = {
   BRANCH_WRITE: 7,
   COMPANY_READ: 8,
   COMPANY_WRITE: 9,
+  DEPARTMENT_READ: 10,
+  DEPARTMENT_WRITE: 11,
+  DIVISION_READ: 12,
+  DIVISION_WRITE: 13,
 } as const
 
 /**
@@ -30,6 +34,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/permissions': PERMISSIONS.PERMISSION_READ,
   '/branches': PERMISSIONS.BRANCH_READ,
   '/companies': PERMISSIONS.COMPANY_READ,
+  '/departments': PERMISSIONS.DEPARTMENT_READ,
+  '/divisions': PERMISSIONS.DIVISION_READ,
 }
 
 /**
@@ -40,4 +46,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/roles': PERMISSIONS.ROLE_WRITE,
   '/branches': PERMISSIONS.BRANCH_WRITE,
   '/companies': PERMISSIONS.COMPANY_WRITE,
+  '/departments': PERMISSIONS.DEPARTMENT_WRITE,
+  '/divisions': PERMISSIONS.DIVISION_WRITE,
 }

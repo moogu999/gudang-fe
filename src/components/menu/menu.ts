@@ -11,6 +11,14 @@ const mainMenu = [
         label: 'Branches',
         route: '/branches',
       },
+      {
+        label: 'Departments',
+        route: '/departments',
+      },
+      {
+        label: 'Divisions',
+        route: '/divisions',
+      },
     ],
   },
   {

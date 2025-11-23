@@ -59,6 +59,18 @@ const router = createRouter({
           component: () => import('@/views/companies/CompaniesView.vue'),
           meta: { requiredPermission: PERMISSIONS.COMPANY_READ },
         },
+        {
+          path: 'departments',
+          name: 'Departments',
+          component: () => import('@/views/departments/DepartmentsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DEPARTMENT_READ },
+        },
+        {
+          path: 'divisions',
+          name: 'Divisions',
+          component: () => import('@/views/divisions/DivisionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DIVISION_READ },
+        },
       ],
     },
 

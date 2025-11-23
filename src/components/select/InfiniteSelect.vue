@@ -44,6 +44,7 @@ interface Props {
   sortBy?: string
   sortOperator?: 'asc' | 'desc'
   useCursor?: boolean
+  initialOption?: T
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -143,5 +144,22 @@ function handleSelect(value: SelectValue<T>) {
 
 onMounted(async () => {
   await fetchData()
+
+  // If initialOption is provided and not in the loaded options, add it
+  if (props.initialOption) {
+    const optionValueKey = props.optionValue
+    const initialValue = optionValueKey
+      ? (props.initialOption as Record<string, unknown>)[optionValueKey]
+      : props.initialOption
+
+    const exists = options.value.some(opt => {
+      const optValue = optionValueKey ? (opt as Record<string, unknown>)[optionValueKey] : opt
+      return optValue === initialValue
+    })
+
+    if (!exists) {
+      options.value = [props.initialOption, ...options.value] as T[]
+    }
+  }
 })
 </script>

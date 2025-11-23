@@ -69,6 +69,31 @@
         </div>
       </div>
 
+      <div class="mb-4 flex items-start gap-4">
+        <label for="department" class="w-32 font-semibold">Department</label>
+        <div class="flex flex-auto flex-col gap-1">
+          <InfiniteSelect
+            id="department"
+            option-label="name"
+            :fetch-fn="(query) => DepartmentsService.list(query)"
+            v-model="selectedDepartment"
+            :initial-option="initialDepartment"
+            sort-by="id"
+            sort-operator="desc"
+            use-cursor
+            show-clear
+            :disabled="mode === DialogMode.VIEW"
+          />
+          <Message
+            v-if="$form.department?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.department.error.message }}</Message
+          >
+        </div>
+      </div>
+
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
@@ -123,6 +148,9 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import RolesTab from '@/views/users/RolesTab.vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { DepartmentsService } from '@/services/departments.service'
+import type { Department } from '@/types/department.type'
 
 // Types for form context
 type FormField = {
@@ -157,12 +185,33 @@ const props = defineProps({
 
 const emits = defineEmits(['close'])
 
+// Department selection
+const selectedDepartment = ref<Department | undefined>()
+const initialDepartment = ref<Department | undefined>()
+
+// Helper to extract department ID
+function getDepartmentId(): number | undefined {
+  if (!selectedDepartment.value) return undefined
+  return selectedDepartment.value.id
+}
+
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.user) {
     return
   }
 
   initialValues.email = props.user?.email
+
+  // Set department if exists
+  if (props.user.departmentId && props.user.department) {
+    const dept = {
+      id: props.user.departmentId,
+      name: props.user.department.name,
+    } as Department
+
+    selectedDepartment.value = dept
+    initialDepartment.value = dept
+  }
 })
 
 // Toast
@@ -248,6 +297,7 @@ async function addUser(event: FormSubmitEvent) {
   await UsersService.create({
     email: event.states.email.value,
     password: event.states.password.value,
+    departmentId: getDepartmentId(),
     createdBy: authStore.userId!,
   })
 
@@ -255,18 +305,23 @@ async function addUser(event: FormSubmitEvent) {
 }
 
 async function editUser(event: FormSubmitEvent) {
-  const updateData: { email?: string; password?: string; updatedBy: string } = {
+  const updateData: {
+    password?: string
+    departmentId?: number | null
+    updatedBy: string
+  } = {
     updatedBy: authStore.email!,
-  }
-
-  // Only include email if it changed
-  if (event.states.email.value !== props.user!.email) {
-    updateData.email = event.states.email.value
   }
 
   // Only include password if it was provided
   if (event.states.password.value && event.states.password.value.length > 0) {
     updateData.password = event.states.password.value
+  }
+
+  // Update department if it changed
+  const newDepartmentId = getDepartmentId() ?? null
+  if (newDepartmentId !== props.user!.departmentId) {
+    updateData.departmentId = newDepartmentId
   }
 
   await UsersService.update(props.user!.id, updateData)

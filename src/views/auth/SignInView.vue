@@ -81,14 +81,14 @@ function handleKeyPress(event: KeyboardEvent) {
 
     <Card class="relative z-10 w-full max-w-md shadow-lg">
       <template #title>
-        <h1 class="text-center text-2xl font-bold">{{ t('auth.signIn.title') }}</h1>
+        <h1 class="text-center text-xl font-bold sm:text-2xl">{{ t('auth.signIn.title') }}</h1>
       </template>
 
       <template #content>
         <div class="flex flex-col gap-4">
           <!-- Email Input -->
           <div class="flex flex-col gap-2">
-            <label for="email" class="font-medium">{{ t('auth.signIn.email') }}</label>
+            <label for="email" class="text-sm font-medium sm:text-base">{{ t('auth.signIn.email') }}</label>
             <InputText
               id="email"
               v-model="email"
@@ -102,7 +102,7 @@ function handleKeyPress(event: KeyboardEvent) {
 
           <!-- Password Input -->
           <div class="flex flex-col gap-2">
-            <label for="password" class="font-medium">{{ t('auth.signIn.password') }}</label>
+            <label for="password" class="text-sm font-medium sm:text-base">{{ t('auth.signIn.password') }}</label>
             <Password
               id="password"
               v-model="password"

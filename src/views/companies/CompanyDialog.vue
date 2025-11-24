@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="code" class="w-full font-semibold md:w-32">{{ t('companies.fields.code') }}</label>
+        <label for="code" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.code') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">{{
@@ -19,7 +19,7 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="name" class="w-full font-semibold md:w-32">{{ t('companies.fields.name') }}</label>
+        <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.name') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
@@ -29,7 +29,7 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="address" class="w-full font-semibold md:w-32">{{ t('companies.fields.address') }}</label>
+        <label for="address" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.address') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <Textarea
             id="address"
@@ -46,7 +46,7 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="taxId" class="w-full font-semibold md:w-32">{{ t('companies.fields.taxId') }}</label>
+        <label for="taxId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.taxId') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InputText id="taxId" name="taxId" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.taxId?.invalid" severity="error" size="small" variant="simple">{{

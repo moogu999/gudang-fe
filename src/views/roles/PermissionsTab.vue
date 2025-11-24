@@ -11,7 +11,7 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="permissions" class="w-30 font-semibold">{{ t('roles.labels.addPermission') }}</label>
+        <label for="permissions" class="w-30 text-sm font-semibold sm:text-base">{{ t('roles.labels.addPermission') }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"

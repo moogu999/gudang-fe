@@ -3,7 +3,9 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">{{ t('users.title') }}</h1>
+    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
+      {{ t('users.title') }}
+    </h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
@@ -65,6 +67,9 @@
         '640px': '90vw'
       }"
       :style="{ width: '50vw' }"
+      :pt="{
+        header: 'text-base sm:text-lg md:text-xl'
+      }"
     >
       <UserDialog :mode="dialogMode" :user="user" @close="close" />
     </Dialog>

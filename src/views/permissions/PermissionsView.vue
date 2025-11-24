@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1 class="mb-5 text-lg font-semibold md:text-2xl">{{ t('permissions.title') }}</h1>
+    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
+      {{ t('permissions.title') }}
+    </h1>
 
     <Card>
       <template #content>

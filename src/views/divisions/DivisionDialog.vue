@@ -9,7 +9,7 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="name" class="w-full font-semibold md:w-32">{{ t('divisions.fields.name') }}</label>
+        <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('divisions.fields.name') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{

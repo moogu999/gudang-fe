@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center gap-6 py-12">
-    <h1 class="text-6xl font-bold text-stone-800">404</h1>
+    <h1 class="text-5xl font-bold text-stone-800 sm:text-6xl">404</h1>
     <p class="text-xl text-stone-600">{{ t('notFound.title') }}</p>
     <p class="text-center text-stone-500">
       {{ t('notFound.description') }}

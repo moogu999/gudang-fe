@@ -19,16 +19,45 @@
     class="!inline-flex md:!hidden"
   />
 
-  <div class="w-full flex-1">
+  <!-- Spacer to push mobile elements to the right -->
+  <div class="flex-1 md:hidden"></div>
+
+  <!-- Mobile search button -->
+  <Button
+    icon="pi pi-search"
+    severity="secondary"
+    text
+    @click="openMobileSearchDrawer"
+    :aria-label="t('table.search')"
+    class="md:!hidden"
+  />
+
+  <!-- Desktop search -->
+  <div class="hidden w-full flex-1 md:block">
     <form>
       <div class="relative">
         <IconField>
           <InputIcon class="pi pi-search" />
-          <InputText placeholder="Search" />
+          <InputText :placeholder="t('table.searchPlaceholder')" />
         </IconField>
       </div>
     </form>
   </div>
+
+  <!-- Mobile search drawer -->
+  <Drawer v-model:visible="isSearchDrawerOpen" position="top" :pt="{ root: 'h-auto' }">
+    <template #header>
+      <h3>{{ t('table.search') }}</h3>
+    </template>
+    <IconField class="w-full">
+      <InputIcon class="pi pi-search" />
+      <InputText
+        :placeholder="t('table.searchPlaceholder')"
+        class="w-full"
+        autofocus
+      />
+    </IconField>
+  </Drawer>
 
   <LanguageSwitcherComponent />
 
@@ -50,12 +79,16 @@ import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import Toast from 'primevue/toast'
-import { useTemplateRef } from 'vue'
+import Drawer from 'primevue/drawer'
+import { useTemplateRef, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore, useSidebarStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services'
 import LanguageSwitcherComponent from './LanguageSwitcherComponent.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const toast = useToast()
@@ -68,6 +101,12 @@ function toggleSidebar() {
 
 function toggleDrawer() {
   sidebarStore.toggleDrawer()
+}
+
+// Mobile search drawer
+const isSearchDrawerOpen = ref(false)
+function openMobileSearchDrawer() {
+  isSearchDrawerOpen.value = true
 }
 
 // Auth

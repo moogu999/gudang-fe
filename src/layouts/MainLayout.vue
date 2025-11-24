@@ -47,7 +47,7 @@ watch(
 
     <div class="flex flex-col">
       <header
-        class="flex h-14 items-center gap-4 border-b border-stone-200/70 bg-stone-50/70 px-4 lg:h-[60px] lg:px-6"
+        class="flex h-14 items-center gap-2 border-b border-stone-200/70 bg-stone-50/70 px-2 sm:gap-4 sm:px-4 lg:h-[60px] lg:px-6"
       >
         <HeaderComponent />
       </header>

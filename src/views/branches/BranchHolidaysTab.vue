@@ -2,15 +2,17 @@
   <div>
     <!-- Add Holiday Form -->
     <div v-if="mode !== DialogMode.VIEW" class="mb-6">
-      <h3 class="mb-4 text-base font-semibold sm:text-lg">{{ t('branches.holidays.addHoliday') }}</h3>
+      <h3 class="mb-4 text-base font-semibold sm:text-lg">
+        {{ t('branches.holidays.addHoliday') }}
+      </h3>
       <div class="mb-4 flex flex-col gap-4 md:flex-row">
         <div class="flex flex-1 flex-col gap-2">
-          <label for="startDate" class="text-sm font-semibold sm:text-base">{{ t('branches.holidays.startDate') }}</label>
+          <label for="startDate" class="text-sm font-semibold sm:text-base">{{
+            t('branches.holidays.startDate')
+          }}</label>
           <DatePicker
             id="startDate"
             v-model="newHoliday.startDate"
-            show-time
-            hour-format="24"
             :invalid="!!holidayErrors.startDate"
             class="w-full"
           />
@@ -19,12 +21,12 @@
           }}</Message>
         </div>
         <div class="flex flex-1 flex-col gap-2">
-          <label for="endDate" class="text-sm font-semibold sm:text-base">{{ t('branches.holidays.endDate') }}</label>
+          <label for="endDate" class="text-sm font-semibold sm:text-base">{{
+            t('branches.holidays.endDate')
+          }}</label>
           <DatePicker
             id="endDate"
             v-model="newHoliday.endDate"
-            show-time
-            hour-format="24"
             :invalid="!!holidayErrors.endDate"
             class="w-full"
           />
@@ -45,7 +47,9 @@
 
     <!-- Holidays List -->
     <div>
-      <h3 class="mb-4 text-base font-semibold sm:text-lg">{{ t('branches.holidays.existingHolidays') }}</h3>
+      <h3 class="mb-4 text-base font-semibold sm:text-lg">
+        {{ t('branches.holidays.existingHolidays') }}
+      </h3>
       <div v-if="isLoadingHolidays" class="flex items-center justify-center py-8">
         <i class="pi pi-spinner pi-spin text-2xl"></i>
       </div>
@@ -131,17 +135,23 @@ const holidayErrors = reactive({
 })
 
 // Watch for date changes to clear errors
-watch(() => newHoliday.startDate, () => {
-  if (holidayErrors.startDate) {
-    holidayErrors.startDate = ''
-  }
-})
+watch(
+  () => newHoliday.startDate,
+  () => {
+    if (holidayErrors.startDate) {
+      holidayErrors.startDate = ''
+    }
+  },
+)
 
-watch(() => newHoliday.endDate, () => {
-  if (holidayErrors.endDate) {
-    holidayErrors.endDate = ''
-  }
-})
+watch(
+  () => newHoliday.endDate,
+  () => {
+    if (holidayErrors.endDate) {
+      holidayErrors.endDate = ''
+    }
+  },
+)
 
 onMounted(() => {
   loadHolidays()
@@ -199,16 +209,10 @@ async function handleAddHoliday() {
   isLoadingHolidays.value = true
   try {
     // Set start date to start of day (00:00:00) in UTC
-    const startDateUtc = dayjs(newHoliday.startDate!)
-      .startOf('day')
-      .utc()
-      .format()
+    const startDateUtc = dayjs(newHoliday.startDate!).startOf('day').utc().format()
 
     // Set end date to end of day (23:59:59) in UTC
-    const endDateUtc = dayjs(newHoliday.endDate!)
-      .endOf('day')
-      .utc()
-      .format()
+    const endDateUtc = dayjs(newHoliday.endDate!).endOf('day').utc().format()
 
     await BranchHolidaysService.create({
       branchId: props.branch.id,

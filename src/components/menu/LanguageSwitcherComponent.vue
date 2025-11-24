@@ -7,7 +7,8 @@
     aria-label="Change language"
     aria-controls="language_menu"
     @click="toggle"
-    class="!px-3"
+    :size="buttonSize"
+    class="min-h-[44px] !px-3 sm:min-h-0"
   />
   <Menu ref="menu" id="language_menu" :model="languageMenu" :popup="true" />
 </template>
@@ -32,8 +33,10 @@ import Menu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
 import { SUPPORTED_LOCALES, LOCALE_NAMES } from '@/constants'
 import { saveLocale } from '@/i18n'
+import { useResponsiveSize } from '@/composables'
 
 const { locale } = useI18n()
+const { buttonSize } = useResponsiveSize()
 
 /**
  * Current locale display label

@@ -12,6 +12,7 @@
     :virtual-scroller-options="virtualScrollerOptions"
     :pt="{
       listContainer: '!max-h-[300px]',
+      overlay: 'max-w-[95vw] sm:max-w-full',
     }"
   >
     <template #dropdownicon>

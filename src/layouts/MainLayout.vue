@@ -5,10 +5,12 @@ import PanelMenuComponent from '@/components/menu/PanelMenuComponent.vue'
 import Drawer from 'primevue/drawer'
 import { RouterView, useRoute } from 'vue-router'
 import { useSidebarStore } from '@/stores'
+import { useResponsiveSize } from '@/composables'
 import { computed, watch } from 'vue'
 
 const route = useRoute()
 const sidebarStore = useSidebarStore()
+const { isTablet } = useResponsiveSize()
 const gridClass = computed(() =>
   sidebarStore.isCollapsed
     ? 'md:grid-cols-[70px_minmax(220px,1fr)] lg:grid-cols-[70px_minmax(280px,1fr)]'
@@ -32,6 +34,20 @@ watch(
   () => {
     sidebarStore.closeDrawer()
   },
+)
+
+// Auto-collapse sidebar on tablet for better content space
+watch(
+  isTablet,
+  (newValue) => {
+    if (newValue) {
+      // Collapse sidebar when entering tablet mode
+      sidebarStore.collapse()
+    }
+    // Note: We don't auto-expand on desktop to respect user preference
+    // Users can manually expand if desired
+  },
+  { immediate: true }, // Run on mount to set initial state
 )
 </script>
 

@@ -95,11 +95,7 @@ class ApiService {
   }
 
   private isAuthEndpoint(url: string): boolean {
-    return (
-      url.includes(API_ENDPOINTS.AUTH_SIGN_IN) ||
-      url.includes(API_ENDPOINTS.AUTH_REFRESH) ||
-      url.includes(API_ENDPOINTS.AUTH_ME)
-    )
+    return url.includes(API_ENDPOINTS.AUTH_SIGN_IN) || url.includes(API_ENDPOINTS.AUTH_REFRESH)
   }
 
   private processQueue(error: unknown) {

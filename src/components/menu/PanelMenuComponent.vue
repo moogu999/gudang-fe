@@ -11,7 +11,7 @@
         <a
           v-tooltip.right="collapsed ? getTranslatedLabel(item) : ''"
           :class="[
-            'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-2',
+            'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-3 sm:py-2',
             collapsed ? 'justify-center px-0' : 'px-4',
           ]"
           :href="href"
@@ -26,7 +26,7 @@
         v-else
         v-tooltip.right="collapsed ? getTranslatedLabel(item) : ''"
         :class="[
-          'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-2',
+          'text-surface-700 dark:text-surface-0 flex cursor-pointer items-center py-3 sm:py-2',
           collapsed ? 'justify-center px-0' : 'px-4',
         ]"
         :href="item.url"

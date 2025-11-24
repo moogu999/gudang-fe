@@ -3,6 +3,8 @@ export type Branch = {
   code: string
   name: string
   address?: string
+  openOnSaturday: boolean
+  openOnSunday: boolean
   createdAt?: string
   createdBy?: number
   createdByUser?: {
@@ -16,6 +18,8 @@ export type CreateBranchDto = {
   code: string
   name: string
   address?: string
+  openOnSaturday: boolean
+  openOnSunday: boolean
   createdBy: number
 }
 
@@ -23,5 +27,7 @@ export type UpdateBranchDto = {
   code?: string
   name?: string
   address?: string
+  openOnSaturday?: boolean
+  openOnSunday?: boolean
   updatedBy: number
 }

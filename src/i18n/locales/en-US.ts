@@ -235,6 +235,8 @@ export default {
       code: 'Code',
       name: 'Name',
       address: 'Address',
+      openOnSaturday: 'Open on Saturday',
+      openOnSunday: 'Open on Sunday',
     },
     labels: {
       addBranch: 'Add Branch',

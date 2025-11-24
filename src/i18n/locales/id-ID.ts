@@ -235,6 +235,8 @@ export default {
       code: 'Kode',
       name: 'Nama',
       address: 'Alamat',
+      openOnSaturday: 'Buka Hari Sabtu',
+      openOnSunday: 'Buka Hari Minggu',
     },
     labels: {
       addBranch: 'Tambah Cabang',

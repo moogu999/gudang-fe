@@ -45,6 +45,27 @@
         </div>
       </div>
 
+      <div class="mb-4 flex flex-col gap-3 md:flex-row md:gap-6">
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="openOnSaturday"
+            name="openOnSaturday"
+            :binary="true"
+            :disabled="mode === DialogMode.VIEW"
+          />
+          <label for="openOnSaturday" class="cursor-pointer text-sm font-semibold sm:text-base">{{ t('branches.fields.openOnSaturday') }}</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="openOnSunday"
+            name="openOnSunday"
+            :binary="true"
+            :disabled="mode === DialogMode.VIEW"
+          />
+          <label for="openOnSunday" class="cursor-pointer text-sm font-semibold sm:text-base">{{ t('branches.fields.openOnSunday') }}</label>
+        </div>
+      </div>
+
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
@@ -71,6 +92,7 @@
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
+import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
@@ -111,6 +133,8 @@ onBeforeMount(() => {
   initialValues.code = props.branch.code
   initialValues.name = props.branch.name
   initialValues.address = props.branch.address || ''
+  initialValues.openOnSaturday = props.branch.openOnSaturday
+  initialValues.openOnSunday = props.branch.openOnSunday
 })
 
 // Toast
@@ -122,6 +146,8 @@ const initialValues = reactive({
   code: '',
   name: '',
   address: '',
+  openOnSaturday: false,
+  openOnSunday: false,
 })
 
 // Validation schema
@@ -131,6 +157,8 @@ const resolver = computed(() =>
       code: z.string().min(1, t('branches.validation.codeRequired')),
       name: z.string().min(1, t('branches.validation.nameRequired')),
       address: z.string().optional(),
+      openOnSaturday: z.boolean().optional(),
+      openOnSunday: z.boolean().optional(),
     })
   )
 )
@@ -168,6 +196,8 @@ async function addBranch(event: FormSubmitEvent) {
     code: event.states.code.value,
     name: event.states.name.value,
     address: event.states.address.value || undefined,
+    openOnSaturday: event.states.openOnSaturday.value || false,
+    openOnSunday: event.states.openOnSunday.value || false,
     createdBy: authStore.userId!,
   })
 
@@ -179,6 +209,8 @@ async function editBranch(event: FormSubmitEvent) {
     code: event.states.code.value,
     name: event.states.name.value,
     address: event.states.address.value || undefined,
+    openOnSaturday: event.states.openOnSaturday.value || false,
+    openOnSunday: event.states.openOnSunday.value || false,
     updatedBy: authStore.userId!,
   })
 

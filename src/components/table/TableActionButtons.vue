@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-1">
+  <div class="flex items-center gap-2 sm:gap-1">
     <template v-if="canWrite">
       <!-- Edit button -->
       <Button
@@ -10,7 +10,8 @@
         rounded
         outlined
         :aria-label="t('common.actions.edit')"
-        class="sm:!rounded-md"
+        :size="buttonSize"
+        class="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:!rounded-md"
       />
 
       <!-- Delete button -->
@@ -22,7 +23,8 @@
         rounded
         outlined
         :aria-label="t('common.actions.delete')"
-        class="sm:!rounded-md"
+        :size="buttonSize"
+        class="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:!rounded-md"
       />
     </template>
     <template v-else>
@@ -35,7 +37,8 @@
         rounded
         outlined
         :aria-label="t('common.actions.view')"
-        class="sm:!rounded-md"
+        :size="buttonSize"
+        class="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:!rounded-md"
       />
     </template>
   </div>
@@ -44,6 +47,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import { useResponsiveSize } from '@/composables'
 
 interface Props {
   canWrite: boolean
@@ -58,4 +62,5 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { buttonSize } = useResponsiveSize()
 </script>

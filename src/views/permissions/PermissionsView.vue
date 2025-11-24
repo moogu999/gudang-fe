@@ -4,7 +4,7 @@
       {{ t('permissions.title') }}
     </h1>
 
-    <Card>
+    <ResponsiveCard>
       <template #content>
         <TableComponent :url="url" :columns="columns">
           <template #content="{ col, data }">
@@ -14,7 +14,7 @@
           </template>
         </TableComponent>
       </template>
-    </Card>
+    </ResponsiveCard>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
 import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
-import Card from 'primevue/card'
+import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import { API_ENDPOINTS } from '@/constants/api'
 import { computed } from 'vue'
 

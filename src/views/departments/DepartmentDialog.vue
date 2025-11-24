@@ -38,7 +38,14 @@
       </div>
     </Form>
 
-    <Tabs value="0" v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW">
+    <Tabs
+      value="0"
+      v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW"
+      :pt="{
+        tablist: 'flex-wrap gap-1 sm:gap-2',
+        tab: 'text-sm sm:text-base',
+      }"
+    >
       <TabList>
         <Tab value="0">{{ t('departments.tabs.divisions') }}</Tab>
       </TabList>

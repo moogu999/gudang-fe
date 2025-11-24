@@ -13,7 +13,7 @@
       </template>
     </Toolbar>
 
-    <Card>
+    <ResponsiveCard>
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
@@ -31,7 +31,7 @@
           </template>
         </TableComponent>
       </template>
-    </Card>
+    </ResponsiveCard>
 
     <Dialog
       :header="dialogHeader"
@@ -59,7 +59,7 @@ import TableComponent from '@/components/table/TableComponent.vue'
 import TableActionButtons from '@/components/table/TableActionButtons.vue'
 import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
-import Card from 'primevue/card'
+import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
 import { ref, computed } from 'vue'

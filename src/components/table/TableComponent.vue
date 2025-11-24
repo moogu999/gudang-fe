@@ -29,8 +29,16 @@
             rounded
             text
             :aria-label="t('table.refresh')"
+            :size="buttonSize"
+            class="min-h-[44px] min-w-[44px]"
           />
-          <Button severity="secondary" @click="clearFilters" text size="small">
+          <Button
+            severity="secondary"
+            @click="clearFilters"
+            text
+            :size="buttonSize"
+            class="min-h-[44px]"
+          >
             {{ t('table.clearFilters') }}
           </Button>
         </div>
@@ -42,7 +50,10 @@
       </div>
 
       <!-- Empty state -->
-      <div v-else-if="items.length === 0" class="py-8 text-center text-stone-500">
+      <div
+        v-else-if="items.length === 0"
+        class="py-8 text-center text-sm text-stone-500 sm:text-base"
+      >
         {{ t('table.noResults') }}
       </div>
 
@@ -60,20 +71,20 @@
             <div class="space-y-2">
               <!-- Number column if enabled -->
               <div v-if="numbered" class="flex justify-between">
-                <div class="text-xs font-semibold text-stone-500">
+                <div class="text-xs font-semibold text-stone-500 sm:text-sm">
                   {{ t('table.no') }}
                 </div>
-                <div class="text-sm">
+                <div class="text-sm sm:text-base">
                   {{ first + index + 1 }}
                 </div>
               </div>
 
               <!-- Data columns -->
               <div v-for="col in visibleColumns" :key="col.field" class="flex justify-between">
-                <div class="text-xs font-semibold text-stone-500">
+                <div class="text-xs font-semibold text-stone-500 sm:text-sm">
                   {{ col.header }}
                 </div>
-                <div class="text-right text-sm">
+                <div class="text-right text-sm sm:text-base">
                   <slot name="content" :col="col" :data="item">
                     {{ getNestedValue(item, col.field) }}
                   </slot>
@@ -93,8 +104,10 @@
           severity="secondary"
           text
           :aria-label="t('table.previous')"
+          :size="buttonSize"
+          class="min-h-[44px] min-w-[44px]"
         />
-        <span class="text-sm text-stone-600">
+        <span class="text-xs text-stone-600 sm:text-sm">
           {{
             t('table.showing', {
               first: first + 1,
@@ -110,6 +123,8 @@
           severity="secondary"
           text
           :aria-label="t('table.next')"
+          :size="buttonSize"
+          class="min-h-[44px] min-w-[44px]"
         />
       </div>
     </div>
@@ -156,8 +171,16 @@
           </IconField>
 
           <div class="flex justify-end gap-2">
-            <Button icon="pi pi-refresh" severity="secondary" @click="refresh" rounded text />
-            <Button severity="secondary" @click="clearFilters" text>{{
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              @click="refresh"
+              rounded
+              text
+              :aria-label="t('table.refresh')"
+              class="sm:min-h-0"
+            />
+            <Button severity="secondary" @click="clearFilters" text class="sm:min-h-0">{{
               t('table.clearFilters')
             }}</Button>
           </div>
@@ -241,6 +264,7 @@ import FilterOperator from '@/constants/filterOperator'
 import { getNestedValue } from '@/utils/objectHelper'
 import { commonErrorToast } from '@/services/toast'
 import { useMediaQuery } from '@vueuse/core'
+import { useResponsiveSize } from '@/composables'
 
 const { t } = useI18n()
 
@@ -249,6 +273,7 @@ const toast = useToast()
 
 // Responsive detection
 const isMobile = useMediaQuery('(max-width: 767px)')
+const { buttonSize } = useResponsiveSize()
 
 // Pagination template
 const currentPageReportTemplate = computed(() =>

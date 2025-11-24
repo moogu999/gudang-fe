@@ -7,7 +7,7 @@
     text
     @click="toggleSidebar"
     aria-label="Toggle sidebar"
-    class="!hidden md:!inline-flex"
+    class="!hidden sm:min-h-0 md:!inline-flex"
   />
 
   <Button
@@ -16,7 +16,8 @@
     text
     @click="toggleDrawer"
     aria-label="Open menu"
-    class="!inline-flex md:!hidden"
+    :size="buttonSize"
+    class="!inline-flex min-h-[44px] min-w-[44px] md:!hidden"
   />
 
   <!-- Spacer to push mobile elements to the right -->
@@ -29,7 +30,8 @@
     text
     @click="openMobileSearchDrawer"
     :aria-label="t('table.search')"
-    class="md:!hidden"
+    :size="buttonSize"
+    class="min-h-[44px] min-w-[44px] md:!hidden"
   />
 
   <!-- Desktop search -->
@@ -87,8 +89,10 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore, useSidebarStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services'
 import LanguageSwitcherComponent from './LanguageSwitcherComponent.vue'
+import { useResponsiveSize } from '@/composables'
 
 const { t } = useI18n()
+const { buttonSize } = useResponsiveSize()
 
 const router = useRouter()
 const toast = useToast()

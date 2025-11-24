@@ -9,13 +9,14 @@
     :outlined="outlined"
     :rounded="rounded"
     :disabled="disabled"
-    :size="isMobile ? 'small' : undefined"
+    :size="buttonSize"
+    class="min-h-[44px] sm:min-h-0"
   />
 </template>
 
 <script setup lang="ts">
 import Button from 'primevue/button'
-import { useMediaQuery } from '@vueuse/core'
+import { useResponsiveSize } from '@/composables'
 
 interface Props {
   label: string
@@ -40,7 +41,7 @@ const emit = defineEmits<{
   click: [event: MouseEvent]
 }>()
 
-const isMobile = useMediaQuery('(max-width: 639px)')
+const { isMobile, buttonSize } = useResponsiveSize()
 
 function onClick(event: MouseEvent) {
   emit('click', event)

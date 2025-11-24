@@ -1,11 +1,126 @@
 <template>
   <div>
     <Toast position="top-center" :group="toastGroup" />
+
+    <!-- Mobile: Card list view -->
+    <div v-if="isMobile">
+      <!-- Header controls for mobile -->
+      <div class="mb-4 flex flex-col gap-2">
+        <IconField class="w-full">
+          <InputIcon>
+            <i class="pi pi-search" />
+          </InputIcon>
+          <InputText
+            class="w-full"
+            :placeholder="t('table.search')"
+            @keypress="handleSearch"
+            v-model="searchQuery"
+          />
+          <InputIcon>
+            <i v-if="searchQuery" class="pi pi-times cursor-pointer" @click="clearSearch" />
+          </InputIcon>
+        </IconField>
+
+        <div class="flex justify-end gap-2">
+          <Button
+            icon="pi pi-refresh"
+            severity="secondary"
+            @click="refresh"
+            rounded
+            text
+            :aria-label="t('table.refresh')"
+          />
+          <Button severity="secondary" @click="clearFilters" text size="small">
+            {{ t('table.clearFilters') }}
+          </Button>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div v-if="loading" class="flex justify-center py-8">
+        <i class="pi pi-spinner pi-spin text-2xl"></i>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="items.length === 0" class="py-8 text-center text-stone-500">
+        {{ t('table.noResults') }}
+      </div>
+
+      <!-- Card list -->
+      <div v-else class="space-y-3">
+        <Card
+          v-for="(item, index) in items"
+          :key="item[dataKey]"
+          :pt="{
+            body: 'p-3',
+            content: 'p-0',
+          }"
+        >
+          <template #content>
+            <div class="space-y-2">
+              <!-- Number column if enabled -->
+              <div v-if="numbered" class="flex justify-between">
+                <div class="text-xs font-semibold text-stone-500">
+                  {{ t('table.no') }}
+                </div>
+                <div class="text-sm">
+                  {{ first + index + 1 }}
+                </div>
+              </div>
+
+              <!-- Data columns -->
+              <div v-for="col in visibleColumns" :key="col.field" class="flex justify-between">
+                <div class="text-xs font-semibold text-stone-500">
+                  {{ col.header }}
+                </div>
+                <div class="text-right text-sm">
+                  <slot name="content" :col="col" :data="item">
+                    {{ getNestedValue(item, col.field) }}
+                  </slot>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
+
+      <!-- Mobile pagination -->
+      <div class="mt-4 flex items-center justify-between">
+        <Button
+          icon="pi pi-chevron-left"
+          :disabled="currPage === 0"
+          @click="handlePrevPage"
+          severity="secondary"
+          text
+          :aria-label="t('table.previous')"
+        />
+        <span class="text-sm text-stone-600">
+          {{
+            t('table.showing', {
+              first: first + 1,
+              last: Math.min(first + itemsPerPage, total),
+              total: total,
+            })
+          }}
+        </span>
+        <Button
+          icon="pi pi-chevron-right"
+          :disabled="first + itemsPerPage >= total"
+          @click="handleNextPage"
+          severity="secondary"
+          text
+          :aria-label="t('table.next')"
+        />
+      </div>
+    </div>
+
+    <!-- Desktop: DataTable view -->
     <DataTable
+      v-else
       ref="dt"
       selection-mode="single"
-      paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      :current-page-report-template="paginationTemplate"
+      :paginator-template="paginatorTemplate"
+      :current-page-report-template="currentPageReportTemplate"
       filter-display="menu"
       :value="items"
       :paginator="true"
@@ -25,26 +140,26 @@
       striped-rows
     >
       <template #header>
-        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <IconField>
+        <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <IconField class="w-full sm:w-auto">
             <InputIcon>
               <i class="pi pi-search" />
             </InputIcon>
-            <InputText :placeholder="t('table.search')" @keypress="handleSearch" v-model="searchQuery" />
+            <InputText
+              :placeholder="t('table.search')"
+              @keypress="handleSearch"
+              v-model="searchQuery"
+            />
             <InputIcon>
               <i v-if="searchQuery" class="pi pi-times cursor-pointer" @click="clearSearch" />
             </InputIcon>
           </IconField>
 
-          <div>
-            <Button
-              icon="pi pi-refresh"
-              severity="secondary"
-              @click="refresh"
-              rounded
-              text
-            ></Button>
-            <Button severity="secondary" @click="clearFilters" text>{{ t('table.clearFilters') }}</Button>
+          <div class="flex justify-end gap-2">
+            <Button icon="pi pi-refresh" severity="secondary" @click="refresh" rounded text />
+            <Button severity="secondary" @click="clearFilters" text>{{
+              t('table.clearFilters')
+            }}</Button>
           </div>
         </div>
       </template>
@@ -53,7 +168,7 @@
         <template #body="slotProps"> {{ slotProps.index + 1 }}</template>
       </Column>
       <Column
-        v-for="col in columns"
+        v-for="col in visibleColumns"
         :key="col.header"
         :field="col.field"
         :header="col.header"
@@ -83,7 +198,9 @@
         </template>
         <template #filterclear />
         <template #filterapply="{ filterCallback }">
-          <Button size="small" @click="applyFilter(filterCallback, col)">{{ t('table.apply') }}</Button>
+          <Button size="small" @click="applyFilter(filterCallback, col)">{{
+            t('table.apply')
+          }}</Button>
         </template>
 
         <template #body="slotProps">
@@ -98,7 +215,7 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends Record<string, any>">
 import { useI18n } from 'vue-i18n'
 import DataTable, {
   type DataTablePageEvent,
@@ -107,6 +224,7 @@ import DataTable, {
   type DataTableFilterMetaData,
 } from 'primevue/datatable'
 import Column from 'primevue/column'
+import Card from 'primevue/card'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
@@ -122,13 +240,26 @@ import { FilterMatchMode } from '@primevue/core/api'
 import FilterOperator from '@/constants/filterOperator'
 import { getNestedValue } from '@/utils/objectHelper'
 import { commonErrorToast } from '@/services/toast'
+import { useMediaQuery } from '@vueuse/core'
 
 const { t } = useI18n()
 
 const toastGroup = 'tableComponent'
 const toast = useToast()
 
-const paginationTemplate = computed(() => t('table.showing', { first: '{first}', last: '{last}', total: '{totalRecords}' }))
+// Responsive detection
+const isMobile = useMediaQuery('(max-width: 767px)')
+
+// Pagination template
+const currentPageReportTemplate = computed(() =>
+  t('table.showing', { first: '{first}', last: '{last}', total: '{totalRecords}' }),
+)
+
+const paginatorTemplate = computed(() =>
+  isMobile.value
+    ? 'PrevPageLink NextPageLink'
+    : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown',
+)
 
 type Sort = {
   field: string
@@ -170,6 +301,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
+})
+
+// Visible columns based on screen size
+const visibleColumns = computed(() => {
+  if (isMobile.value) {
+    return props.columns.filter((col) => !col.hideOnMobile)
+  }
+  return props.columns
 })
 
 defineExpose({ clearSearch })
@@ -307,6 +446,23 @@ async function handlePageChange(event: DataTablePageEvent) {
   currPage = event.page
   first.value = event.first
   await fetchData(event.page, currSort, searchQuery.value, currFilters.value)
+}
+
+// Mobile pagination handlers
+async function handlePrevPage() {
+  if (currPage > 0) {
+    currPage--
+    first.value = currPage * itemsPerPage.value
+    await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
+  }
+}
+
+async function handleNextPage() {
+  if (first.value + itemsPerPage.value < total.value) {
+    currPage++
+    first.value = currPage * itemsPerPage.value
+    await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
+  }
 }
 
 function resetToFirstPage() {

@@ -6,4 +6,5 @@ export type Column = {
   class?: string
   filterable: boolean
   underlyingField?: string
+  hideOnMobile?: boolean
 }

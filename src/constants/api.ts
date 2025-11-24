@@ -43,6 +43,9 @@ export const API_ENDPOINTS = {
 
   // Department-Division endpoints
   GEN_DEPARTMENT_DIVISIONS: '/gen/v1/department-divisions',
+
+  // Branch Holiday endpoints
+  GEN_BRANCH_HOLIDAYS: '/gen/v1/branch-holidays',
 } as const
 
 // Type for API endpoints (useful for validation)

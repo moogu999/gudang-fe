@@ -249,6 +249,26 @@ export default {
       branchCreated: 'Branch is created.',
       branchUpdated: 'Branch is updated.',
     },
+    tabs: {
+      details: 'Details',
+      holidays: 'Holidays',
+    },
+    holidays: {
+      addHoliday: 'Add Holiday',
+      existingHolidays: 'Existing Holidays',
+      noHolidays: 'No holidays configured.',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      validation: {
+        startDateRequired: 'Start date is required.',
+        endDateRequired: 'End date is required.',
+        endDateBeforeStartDate: 'End date cannot be before start date.',
+      },
+      messages: {
+        holidayCreated: 'Holiday is created.',
+        holidayDeleted: 'Holiday is deleted.',
+      },
+    },
   },
   auth: {
     signIn: {

@@ -85,6 +85,23 @@
         <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
+
+    <Tabs
+      value="0"
+      v-if="mode === DialogMode.EDIT || mode === DialogMode.VIEW"
+      :pt="{
+        tablist: 'flex-wrap gap-1 sm:gap-2',
+        tab: 'text-sm sm:text-base',
+      }"
+    >
+      <TabList>
+        <Tab value="0">{{ t('branches.tabs.holidays') }}</Tab>
+      </TabList>
+
+      <TabPanels>
+        <BranchHolidaysTab v-if="branch" :branch="branch" :mode="mode" :toast-group="toastGroup" />
+      </TabPanels>
+    </Tabs>
   </div>
 </template>
 
@@ -94,19 +111,23 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType, computed } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { BranchesService } from '@/services/branches.service'
-import { ref } from 'vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Branch } from '@/types/branch.type'
+import BranchHolidaysTab from './BranchHolidaysTab.vue'
 
 const { t } = useI18n()
 

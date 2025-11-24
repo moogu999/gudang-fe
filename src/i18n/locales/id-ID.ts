@@ -249,6 +249,26 @@ export default {
       branchCreated: 'Cabang berhasil dibuat.',
       branchUpdated: 'Cabang berhasil diperbarui.',
     },
+    tabs: {
+      details: 'Detail',
+      holidays: 'Hari Libur',
+    },
+    holidays: {
+      addHoliday: 'Tambah Hari Libur',
+      existingHolidays: 'Daftar Hari Libur',
+      noHolidays: 'Tidak ada hari libur yang dikonfigurasi.',
+      startDate: 'Tanggal Mulai',
+      endDate: 'Tanggal Selesai',
+      validation: {
+        startDateRequired: 'Tanggal mulai wajib diisi.',
+        endDateRequired: 'Tanggal selesai wajib diisi.',
+        endDateBeforeStartDate: 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.',
+      },
+      messages: {
+        holidayCreated: 'Hari libur berhasil dibuat.',
+        holidayDeleted: 'Hari libur berhasil dihapus.',
+      },
+    },
   },
   auth: {
     signIn: {

@@ -31,3 +31,27 @@ export type UpdateBranchDto = {
   openOnSunday?: boolean
   updatedBy: number
 }
+
+export type BranchHoliday = {
+  id: number
+  branchId: number
+  startDate: string
+  endDate: string
+  createdAt: string
+  createdBy: number
+  createdByUser?: {
+    email: string
+  }
+}
+
+export type CreateBranchHolidayDto = {
+  branchId: number
+  startDate: string
+  endDate: string
+  createdBy: number
+}
+
+export type UpdateBranchHolidayDto = {
+  startDate?: string
+  endDate?: string
+}

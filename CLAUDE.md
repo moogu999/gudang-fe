@@ -53,10 +53,18 @@ src/
 ├── views/          # Page-level components (UsersView, RolesView, etc.)
 ├── components/     # Reusable UI components
 │   ├── table/     # Generic TableComponent with server-side features
+│   │   ├── TableComponent.vue          # Responsive table with mobile card view
+│   │   └── TableActionButtons.vue      # Touch-optimized action buttons
+│   ├── button/    # Button components
+│   │   └── ResponsiveButton.vue        # Icon-only on mobile, with label on desktop
+│   ├── card/      # Card components
+│   │   └── ResponsiveCard.vue          # Progressive responsive padding
 │   ├── menu/      # Navigation (SideBarComponent, HeaderComponent, LanguageSwitcherComponent)
 │   └── dialog/    # Modal dialogs (ConfirmationDialog)
 ├── composables/    # Reusable composition functions
-│   └── useConfirmDelete.ts      # Delete confirmation pattern
+│   ├── useConfirmDelete.ts      # Delete confirmation pattern
+│   ├── useDialog.ts             # Dialog visibility state management
+│   └── useResponsiveSize.ts     # Responsive breakpoint detection and button sizing
 ├── services/       # API services and utilities
 │   ├── api.ts                    # Singleton ApiService for HTTP
 │   ├── users.service.ts          # User CRUD operations
@@ -241,7 +249,85 @@ All routes in `src/router/index.ts` use lazy loading:
 - `HeaderComponent`: Top bar with mobile menu toggle and language switcher
 - `RouterView`: Main content area
 
-#### 7. Internationalization (i18n) Pattern
+#### 7. Responsive Design
+The application is fully responsive and optimized for mobile, tablet, and desktop devices using a mobile-first approach with TailwindCSS breakpoints.
+
+**Breakpoints Reference:**
+```
+Mobile:  0px - 639px   (default, no prefix)
+sm:      640px+        (large phones landscape, small tablets)
+md:      768px+        (tablets portrait, large phones landscape)
+lg:      1024px+       (small desktops, tablets landscape)
+xl:      1280px+       (desktops)
+2xl:     1536px+       (large desktops)
+```
+
+**Key Responsive Features:**
+
+1. **Responsive Layout** (`src/layouts/MainLayout.vue`):
+   - Mobile: Full-width drawer navigation
+   - Tablet: Auto-collapsed sidebar for more content space
+   - Desktop: Expanded sidebar navigation
+   - Progressive padding: `p-2` (mobile) → `sm:p-4` → `lg:p-10`
+   - Drawer auto-closes on route change for better mobile UX
+
+2. **Table Component** (`src/components/table/TableComponent.vue`):
+   - Mobile: Card-based list view with stacked data
+   - Desktop: Traditional DataTable with columns
+   - Responsive pagination (simple prev/next on mobile)
+   - Mobile search drawer instead of inline search
+   - Columns support `hideOnMobile` property to hide less important data
+
+3. **Dialogs and Forms**:
+   - Responsive dialog sizing via PrimeVue `:breakpoints` prop
+   - Mobile: 90vw width, full-screen feel
+   - Tablet: 75vw width
+   - Desktop: 50vw or fixed width
+   - Form fields stack vertically on mobile, horizontal on desktop:
+     ```vue
+     <div class="flex flex-col gap-2 md:flex-row md:gap-4">
+       <label class="w-full font-semibold md:w-32">Email</label>
+       <InputText class="w-full" />
+     </div>
+     ```
+
+4. **Responsive Typography**:
+   - Page headers: `text-base sm:text-lg md:text-2xl`
+   - Dialog headers: `text-base sm:text-lg md:text-xl`
+   - Form labels: `text-sm sm:text-base`
+   - Progressive scaling for better readability at all sizes
+
+5. **Touch-Friendly Interactions**:
+   - Minimum 44x44px touch targets on mobile (WCAG 2.1 compliance)
+   - `useResponsiveSize` composable for consistent button sizing
+   - Icon-only buttons on mobile (with aria-labels)
+   - Increased spacing between interactive elements on mobile
+
+6. **Responsive Components**:
+   - **ResponsiveButton** (`src/components/button/ResponsiveButton.vue`): Icon-only on mobile, with label on desktop
+   - **ResponsiveCard** (`src/components/card/ResponsiveCard.vue`): Progressive padding (`p-2` → `sm:p-4` → `md:p-6`)
+   - **TableActionButtons** (`src/components/table/TableActionButtons.vue`): Touch-optimized action buttons
+   - **HeaderComponent**: Mobile search drawer, responsive spacing
+   - **ConfirmationDialog**: Responsive padding, stacked buttons on mobile
+
+7. **Media Query Detection**:
+   ```typescript
+   import { useResponsiveSize } from '@/composables/useResponsiveSize'
+
+   const { isMobile, isTablet, isDesktop, buttonSize } = useResponsiveSize()
+   ```
+
+**Responsive Development Guidelines:**
+
+- Use mobile-first approach: start with mobile styles, enhance for larger screens
+- Test on multiple device sizes (iPhone SE 375px minimum)
+- All interactive elements must have 44x44px minimum touch target on mobile
+- Use Tailwind responsive prefixes: `sm:`, `md:`, `lg:` for breakpoint-specific styles
+- Consider touch vs. mouse interactions (no hover states required on mobile)
+- Stack form fields vertically on mobile, horizontal on desktop
+- Simplify navigation and reduce cognitive load on small screens
+
+#### 8. Internationalization (i18n) Pattern
 The application supports multiple languages using Vue I18n:
 
 **Supported Locales:**

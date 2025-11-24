@@ -9,7 +9,7 @@
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <Button :label="t('common.actions.add')" icon="pi pi-plus" @click="addUser"></Button>
+        <ResponsiveButton :label="t('common.actions.add')" @click="addUser" />
       </template>
     </Toolbar>
 
@@ -21,37 +21,13 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <div class="flex items-center" v-if="col.field === ''">
-              <template v-if="canWrite">
-                <Button
-                  icon="pi pi-pen-to-square"
-                  severity="contrast"
-                  @click="editUser(data)"
-                  text
-                  rounded
-                  outlined
-                />
-
-                <Button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  @click="onDeleteClick(data['id'])"
-                  text
-                  rounded
-                  outlined
-                />
-              </template>
-              <template v-else>
-                <Button
-                  icon="pi pi-eye"
-                  severity="contrast"
-                  @click="viewUser(data)"
-                  text
-                  rounded
-                  outlined
-                />
-              </template>
-            </div>
+            <TableActionButtons
+              v-if="col.field === ''"
+              :can-write="canWrite"
+              @edit="editUser(data)"
+              @delete="onDeleteClick(data['id'])"
+              @view="viewUser(data)"
+            />
           </template>
         </TableComponent>
       </template>
@@ -80,11 +56,11 @@
 import { useI18n } from 'vue-i18n'
 import DateFormat from '@/constants/dateFormat'
 import TableComponent from '@/components/table/TableComponent.vue'
+import TableActionButtons from '@/components/table/TableActionButtons.vue'
 import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
-import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref, computed } from 'vue'
 import { UsersService } from '@/services/users.service'
@@ -95,6 +71,7 @@ import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { User } from '@/types/user.type'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
+import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 
 const { t } = useI18n()
 

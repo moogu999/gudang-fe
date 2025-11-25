@@ -92,6 +92,10 @@ export default {
     },
     labels: {
       addRole: 'Tambah Peran',
+      addBranch: 'Tambah Cabang',
+      assignBy: 'Tetapkan Melalui',
+      selectBranch: 'Pilih Cabang',
+      selectSalesOrganization: 'Pilih Organisasi Penjualan',
     },
     placeholders: {
       email: 'Masukkan alamat email',
@@ -116,6 +120,11 @@ export default {
     },
     tabs: {
       roles: 'Peran',
+      branches: 'Cabang',
+    },
+    assignmentTypes: {
+      branch: 'Cabang Individual',
+      salesOrganization: 'Organisasi Penjualan',
     },
   },
   roles: {

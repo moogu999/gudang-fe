@@ -52,6 +52,9 @@ export const API_ENDPOINTS = {
 
   // Sales Organization-Branch endpoints
   GEN_SALES_ORGANIZATION_BRANCHES: '/gen/v1/sales-organization-branches',
+
+  // User-Branch endpoints
+  GEN_USER_BRANCHES: '/gen/v1/user-branches',
 } as const
 
 // Type for API endpoints (useful for validation)

@@ -130,10 +130,12 @@
     >
       <TabList>
         <Tab value="0">{{ t('users.tabs.roles') }}</Tab>
+        <Tab value="1">{{ t('users.tabs.branches') }}</Tab>
       </TabList>
 
       <TabPanels>
         <RolesTab :userId="user!.id" />
+        <BranchesTab :userId="user!.id" />
       </TabPanels>
     </Tabs>
   </div>
@@ -162,6 +164,7 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import RolesTab from '@/views/users/RolesTab.vue'
+import BranchesTab from '@/views/users/BranchesTab.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { DepartmentsService } from '@/services/departments.service'
 import type { Department } from '@/types/department.type'

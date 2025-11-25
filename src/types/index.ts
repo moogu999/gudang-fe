@@ -52,6 +52,7 @@ export type {
   SalesOrganizationBranch,
   CreateSalesOrganizationBranchDto,
 } from './salesOrganizationBranch.type'
+export type { UserBranch, AssignBranchesDto } from './userBranch.type'
 
 // Component types
 export type { Column } from './table.type'

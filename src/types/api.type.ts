@@ -11,3 +11,7 @@ export type Meta = {
   prevCursor?: string | null
   hasMore?: boolean
 }
+
+export type ErrorResponse = {
+  message: string
+}

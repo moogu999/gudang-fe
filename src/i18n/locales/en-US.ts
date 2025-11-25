@@ -92,6 +92,10 @@ export default {
     },
     labels: {
       addRole: 'Add Role',
+      addBranch: 'Add Branch',
+      assignBy: 'Assign By',
+      selectBranch: 'Select Branch',
+      selectSalesOrganization: 'Select Sales Organization',
     },
     placeholders: {
       email: 'Enter email address',
@@ -116,6 +120,11 @@ export default {
     },
     tabs: {
       roles: 'Roles',
+      branches: 'Branches',
+    },
+    assignmentTypes: {
+      branch: 'Individual Branch',
+      salesOrganization: 'Sales Organization',
     },
   },
   roles: {

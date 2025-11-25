@@ -8,10 +8,13 @@ import type { ToastMessageOptions } from 'primevue'
  * @returns ToastMessageOptions for error display
  */
 function commonErrorToast(e: unknown, group: string): ToastMessageOptions {
+  // Extract error message from Error object or use as-is if it's a string
+  const errorMessage = e instanceof Error ? e.message : String(e)
+
   return {
     severity: 'error',
     summary: 'Error',
-    detail: e,
+    detail: errorMessage,
     life: ToastLife.TWO_SECONDS,
     group: group,
   }

@@ -56,6 +56,7 @@ export default {
     branches: 'Cabang',
     departments: 'Departemen',
     divisions: 'Divisi',
+    salesOrganizations: 'Organisasi Penjualan',
     users: 'Pengguna',
     accessControls: 'Kontrol Akses',
     roles: 'Peran',
@@ -268,6 +269,26 @@ export default {
         holidayCreated: 'Hari libur berhasil dibuat.',
         holidayDeleted: 'Hari libur berhasil dihapus.',
       },
+    },
+  },
+  salesOrganizations: {
+    title: 'Organisasi Penjualan',
+    addSalesOrganization: 'Tambah Organisasi Penjualan',
+    editSalesOrganization: 'Edit Organisasi Penjualan',
+    viewSalesOrganization: 'Lihat Organisasi Penjualan',
+    deleteSalesOrganization: 'Hapus Organisasi Penjualan',
+    fields: {
+      name: 'Nama',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      salesOrganizationCreated: 'Organisasi penjualan berhasil dibuat.',
+      salesOrganizationUpdated: 'Organisasi penjualan berhasil diperbarui.',
+    },
+    tabs: {
+      branches: 'Cabang',
     },
   },
   auth: {

@@ -56,6 +56,7 @@ export default {
     branches: 'Branches',
     departments: 'Departments',
     divisions: 'Divisions',
+    salesOrganizations: 'Sales Organizations',
     users: 'Users',
     accessControls: 'Access Controls',
     roles: 'Roles',
@@ -268,6 +269,26 @@ export default {
         holidayCreated: 'Holiday is created.',
         holidayDeleted: 'Holiday is deleted.',
       },
+    },
+  },
+  salesOrganizations: {
+    title: 'Sales Organizations',
+    addSalesOrganization: 'Add Sales Organization',
+    editSalesOrganization: 'Edit Sales Organization',
+    viewSalesOrganization: 'View Sales Organization',
+    deleteSalesOrganization: 'Delete Sales Organization',
+    fields: {
+      name: 'Name',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      salesOrganizationCreated: 'Sales organization is created.',
+      salesOrganizationUpdated: 'Sales organization is updated.',
+    },
+    tabs: {
+      branches: 'Branches',
     },
   },
   auth: {

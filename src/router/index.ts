@@ -71,6 +71,12 @@ const router = createRouter({
           component: () => import('@/views/divisions/DivisionsView.vue'),
           meta: { requiredPermission: PERMISSIONS.DIVISION_READ },
         },
+        {
+          path: 'sales-organizations',
+          name: 'SalesOrganizations',
+          component: () => import('@/views/salesOrganizations/SalesOrganizationsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORGANIZATION_READ },
+        },
       ],
     },
 

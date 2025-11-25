@@ -43,6 +43,15 @@ export type {
   DepartmentDivision,
   CreateDepartmentDivisionDto,
 } from './departmentDivision.type'
+export type {
+  SalesOrganization,
+  CreateSalesOrganizationDto,
+  UpdateSalesOrganizationDto,
+} from './salesOrganization.type'
+export type {
+  SalesOrganizationBranch,
+  CreateSalesOrganizationBranchDto,
+} from './salesOrganizationBranch.type'
 
 // Component types
 export type { Column } from './table.type'

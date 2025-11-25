@@ -11,16 +11,16 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="divisions" class="w-30 text-sm font-semibold sm:text-base">{{
-          t('divisions.labels.addDivision')
+        <label for="branches" class="w-30 text-sm font-semibold sm:text-base">{{
+          t('branches.labels.addBranch')
         }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"
             option-value="id"
-            :fetch-fn="(query) => DivisionsService.list(query)"
-            @update:model-value="addDivision"
-            v-model="selectedDivision"
+            :fetch-fn="(query) => BranchesService.list(query)"
+            @update:model-value="addBranch"
+            v-model="selectedBranch"
             sort-by="id"
             sort-operator="desc"
             use-cursor
@@ -41,7 +41,7 @@
               text
               rounded
               outlined
-              @click="deleteDivision(data['id'])"
+              @click="deleteBranch(data['id'])"
             />
           </div>
         </template>
@@ -61,12 +61,12 @@ import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { ref, computed } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
-import { DivisionsService, DepartmentDivisionsService } from '@/services'
+import { BranchesService, SalesOrganizationBranchesService } from '@/services'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores'
-import type { Division } from '@/types'
+import type { Branch } from '@/types'
 import { API_ENDPOINTS } from '@/constants/api'
 import { usePermissions } from '@/composables'
 
@@ -76,10 +76,10 @@ const { t } = useI18n()
 const authStore = useAuthStore()
 
 // Permissions
-const { canWrite } = usePermissions('/departments')
+const { canWrite } = usePermissions('/sales-organizations')
 
 const props = defineProps({
-  departmentId: {
+  salesOrganizationId: {
     type: Number,
     required: true,
   },
@@ -88,24 +88,24 @@ const props = defineProps({
 const loading = ref(false)
 
 // Toast
-const toastGroup = 'divisionsTab'
+const toastGroup = 'branchesTab'
 const toast = useToast()
 
 // Select
-const selectedDivision = ref<Division | undefined>()
-async function addDivision(id: unknown) {
+const selectedBranch = ref<Branch | undefined>()
+async function addBranch(id: unknown) {
   if (typeof id !== 'number') return
 
   loading.value = true
 
   try {
-    await DepartmentDivisionsService.addDivisionToDepartment({
-      departmentId: props.departmentId,
-      divisionId: id,
+    await SalesOrganizationBranchesService.addBranchToSalesOrganization({
+      salesOrganizationId: props.salesOrganizationId,
+      branchId: id,
       createdBy: authStore.userId!,
     })
 
-    selectedDivision.value = undefined
+    selectedBranch.value = undefined
 
     await table.value.clearSearch()
   } catch (e) {
@@ -116,12 +116,19 @@ async function addDivision(id: unknown) {
 }
 
 // Table
-const url = `${API_ENDPOINTS.GEN_DEPARTMENT_DIVISIONS}?filterBy=department_id&filterOperator=0&filterValue=${props.departmentId}`
+const url = `${API_ENDPOINTS.GEN_SALES_ORGANIZATION_BRANCHES}?filterBy=sales_organization_id&filterOperator=0&filterValue=${props.salesOrganizationId}`
 
 const columns = computed<Column[]>(() => [
   {
-    field: 'divisionName',
-    header: t('common.labels.name'),
+    field: 'branchCode',
+    header: t('branches.fields.code'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    field: 'branchName',
+    header: t('branches.fields.name'),
     exportable: true,
     sortable: true,
     filterable: true,
@@ -153,11 +160,11 @@ const columns = computed<Column[]>(() => [
 
 const table = ref()
 
-async function deleteDivision(id: number) {
+async function deleteBranch(id: number) {
   loading.value = true
 
   try {
-    await DepartmentDivisionsService.removeDivisionFromDepartment(id)
+    await SalesOrganizationBranchesService.removeBranchFromSalesOrganization(id)
 
     await table.value.clearSearch()
   } catch (e) {

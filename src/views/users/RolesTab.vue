@@ -11,7 +11,9 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="roles" class="w-30 text-sm font-semibold sm:text-base">{{ t('users.labels.addRole') }}</label>
+        <label for="roles" class="w-30 text-sm font-semibold sm:text-base">{{
+          t('users.labels.addRole')
+        }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"
@@ -26,13 +28,16 @@
         </div>
       </div>
 
-      <TableComponent ref="table" :numbered="true" :url="url" :columns="columns">
+      <TableComponent ref="table" :url="url" :columns="columns">
         <template #content="{ col, data }">
           <span v-if="col.header === t('common.labels.createdAt')">{{
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)
           }}</span>
 
-          <div class="flex items-center" v-if="col.header === t('common.labels.actions') && canWrite">
+          <div
+            class="flex items-center"
+            v-if="col.header === t('common.labels.actions') && canWrite"
+          >
             <Button
               icon="pi pi-trash"
               severity="danger"

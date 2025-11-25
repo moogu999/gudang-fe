@@ -11,7 +11,9 @@
       ></ProgressBar>
 
       <div v-if="canWrite" class="mb-4 flex items-center gap-4">
-        <label for="branches" class="w-30 text-sm font-semibold sm:text-base">{{ t('branches.labels.addBranch') }}</label>
+        <label for="branches" class="w-30 text-sm font-semibold sm:text-base">{{
+          t('branches.labels.addBranch')
+        }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
             option-label="name"
@@ -26,7 +28,7 @@
         </div>
       </div>
 
-      <TableComponent ref="table" :numbered="true" :url="url" :columns="columns">
+      <TableComponent ref="table" :url="url" :columns="columns">
         <template #content="{ col, data }">
           <span v-if="col.field === 'createdAt'">{{
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)

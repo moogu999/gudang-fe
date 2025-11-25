@@ -18,6 +18,8 @@ export const PERMISSIONS = {
   DEPARTMENT_WRITE: 11,
   DIVISION_READ: 12,
   DIVISION_WRITE: 13,
+  SALES_ORGANIZATION_READ: 14,
+  SALES_ORGANIZATION_WRITE: 15,
 } as const
 
 /**
@@ -36,6 +38,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/companies': PERMISSIONS.COMPANY_READ,
   '/departments': PERMISSIONS.DEPARTMENT_READ,
   '/divisions': PERMISSIONS.DIVISION_READ,
+  '/sales-organizations': PERMISSIONS.SALES_ORGANIZATION_READ,
 }
 
 /**
@@ -48,4 +51,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/companies': PERMISSIONS.COMPANY_WRITE,
   '/departments': PERMISSIONS.DEPARTMENT_WRITE,
   '/divisions': PERMISSIONS.DIVISION_WRITE,
+  '/sales-organizations': PERMISSIONS.SALES_ORGANIZATION_WRITE,
 }

@@ -30,6 +30,11 @@ const mainMenu = [
         labelKey: 'navigation.divisions',
         route: '/divisions',
       },
+      {
+        label: 'Sales Organizations',
+        labelKey: 'navigation.salesOrganizations',
+        route: '/sales-organizations',
+      },
     ],
   },
   {

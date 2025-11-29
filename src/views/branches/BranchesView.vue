@@ -155,6 +155,14 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
   {
+    field: 'cogsCalculationMethodCode',
+    underlyingField: 'cogsCalculationMethodId',
+    header: t('branches.fields.cogsCalculationMethod'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
     field: 'createdAt',
     header: t('common.labels.createdAt'),
     exportable: true,

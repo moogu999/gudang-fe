@@ -45,6 +45,27 @@
         </div>
       </div>
 
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="cogsCalculationMethodId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('branches.fields.cogsCalculationMethod') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InfiniteSelect
+            id="cogsCalculationMethodId"
+            name="cogsCalculationMethodId"
+            option-label="code"
+            option-value="id"
+            :fetch-fn="(query) => CogsCalculationMethodsService.list(query)"
+            :disabled="mode === DialogMode.VIEW"
+            :placeholder="t('branches.labels.selectCogsCalculationMethod')"
+            :initial-option="initialCogsCalculationMethod"
+            sort-by="code"
+            sort-operator="asc"
+          />
+          <Message v-if="$form.cogsCalculationMethodId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.cogsCalculationMethodId.error.message
+          }}</Message>
+        </div>
+      </div>
+
       <div class="mb-4 flex flex-col gap-3 md:flex-row md:gap-6">
         <div class="flex items-center gap-2">
           <Checkbox
@@ -122,12 +143,13 @@ import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { BranchesService } from '@/services/branches.service'
+import { BranchesService, CogsCalculationMethodsService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Branch } from '@/types/branch.type'
 import BranchHolidaysTab from './BranchHolidaysTab.vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 
 const { t } = useI18n()
 
@@ -146,6 +168,9 @@ const props = defineProps({
 
 const emits = defineEmits(['close'])
 
+// Initial COGS calculation method for the select dropdown
+const initialCogsCalculationMethod = ref()
+
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.branch) {
     return
@@ -156,6 +181,15 @@ onBeforeMount(() => {
   initialValues.address = props.branch.address || ''
   initialValues.openOnSaturday = props.branch.openOnSaturday
   initialValues.openOnSunday = props.branch.openOnSunday
+  initialValues.cogsCalculationMethodId = props.branch.cogsCalculationMethodId
+
+  // Set initial COGS calculation method for the dropdown
+  if (props.branch.cogsCalculationMethodCode) {
+    initialCogsCalculationMethod.value = {
+      id: props.branch.cogsCalculationMethodId,
+      code: props.branch.cogsCalculationMethodCode,
+    }
+  }
 })
 
 // Toast
@@ -169,6 +203,7 @@ const initialValues = reactive({
   address: '',
   openOnSaturday: false,
   openOnSunday: false,
+  cogsCalculationMethodId: undefined as number | undefined,
 })
 
 // Validation schema
@@ -180,6 +215,7 @@ const resolver = computed(() =>
       address: z.string().optional(),
       openOnSaturday: z.boolean().optional(),
       openOnSunday: z.boolean().optional(),
+      cogsCalculationMethodId: z.number({ required_error: t('branches.validation.cogsCalculationMethodRequired') }),
     })
   )
 )
@@ -219,6 +255,7 @@ async function addBranch(event: FormSubmitEvent) {
     address: event.states.address.value || undefined,
     openOnSaturday: event.states.openOnSaturday.value || false,
     openOnSunday: event.states.openOnSunday.value || false,
+    cogsCalculationMethodId: event.states.cogsCalculationMethodId.value,
     createdBy: authStore.userId!,
   })
 
@@ -232,6 +269,7 @@ async function editBranch(event: FormSubmitEvent) {
     address: event.states.address.value || undefined,
     openOnSaturday: event.states.openOnSaturday.value || false,
     openOnSunday: event.states.openOnSunday.value || false,
+    cogsCalculationMethodId: event.states.cogsCalculationMethodId.value,
     updatedBy: authStore.userId!,
   })
 

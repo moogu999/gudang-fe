@@ -5,6 +5,8 @@ export type Branch = {
   address?: string
   openOnSaturday: boolean
   openOnSunday: boolean
+  cogsCalculationMethodId: number
+  cogsCalculationMethodCode?: string
   createdAt?: string
   createdBy?: number
   createdByUser?: {
@@ -20,6 +22,7 @@ export type CreateBranchDto = {
   address?: string
   openOnSaturday: boolean
   openOnSunday: boolean
+  cogsCalculationMethodId: number
   createdBy: number
 }
 
@@ -29,6 +32,7 @@ export type UpdateBranchDto = {
   address?: string
   openOnSaturday?: boolean
   openOnSunday?: boolean
+  cogsCalculationMethodId?: number
   updatedBy: number
 }
 

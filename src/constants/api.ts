@@ -58,6 +58,9 @@ export const API_ENDPOINTS = {
 
   // Currency endpoints
   GEN_CURRENCIES: '/gen/v1/currencies',
+
+  // COGS Calculation Method endpoints
+  GEN_COGS_CALCULATION_METHODS: '/gen/v1/cogs-calculation-methods',
 } as const
 
 // Type for API endpoints (useful for validation)

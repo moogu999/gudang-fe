@@ -34,6 +34,7 @@ export type {
   CreateCurrencyDto,
   UpdateCurrencyDto,
 } from './currency.type'
+export type { CogsCalculationMethod } from './cogsCalculationMethod.type'
 export type {
   CompanyBranch,
   CreateCompanyBranchDto,

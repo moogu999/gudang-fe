@@ -252,13 +252,16 @@ export default {
       address: 'Address',
       openOnSaturday: 'Open on Saturday',
       openOnSunday: 'Open on Sunday',
+      cogsCalculationMethod: 'COGS Calculation Method',
     },
     labels: {
       addBranch: 'Add Branch',
+      selectCogsCalculationMethod: 'Select COGS Calculation Method',
     },
     validation: {
       codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
+      cogsCalculationMethodRequired: 'COGS Calculation Method is required.',
     },
     messages: {
       branchCreated: 'Branch is created.',

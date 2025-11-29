@@ -252,13 +252,16 @@ export default {
       address: 'Alamat',
       openOnSaturday: 'Buka Hari Sabtu',
       openOnSunday: 'Buka Hari Minggu',
+      cogsCalculationMethod: 'Metode Perhitungan HPP',
     },
     labels: {
       addBranch: 'Tambah Cabang',
+      selectCogsCalculationMethod: 'Pilih Metode Perhitungan HPP',
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
       nameRequired: 'Nama wajib diisi.',
+      cogsCalculationMethodRequired: 'Metode Perhitungan HPP wajib diisi.',
     },
     messages: {
       branchCreated: 'Cabang berhasil dibuat.',

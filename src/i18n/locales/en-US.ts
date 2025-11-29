@@ -222,10 +222,15 @@ export default {
       name: 'Name',
       address: 'Address',
       taxId: 'Tax ID',
+      currency: 'Currency',
+    },
+    labels: {
+      selectCurrency: 'Select Currency',
     },
     validation: {
       codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
+      currencyRequired: 'Currency is required.',
     },
     messages: {
       companyCreated: 'Company is created.',

@@ -76,10 +76,11 @@
         <label for="department" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('users.fields.department') }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
-            id="department"
+            id="departmentId"
+            name="departmentId"
             option-label="name"
+            option-value="id"
             :fetch-fn="(query) => DepartmentsService.list(query)"
-            v-model="selectedDepartment"
             :initial-option="initialDepartment"
             sort-by="id"
             sort-operator="desc"
@@ -205,14 +206,7 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 // Department selection
-const selectedDepartment = ref<Department | undefined>()
 const initialDepartment = ref<Department | undefined>()
-
-// Helper to extract department ID
-function getDepartmentId(): number | undefined {
-  if (!selectedDepartment.value) return undefined
-  return selectedDepartment.value.id
-}
 
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.user) {
@@ -223,13 +217,11 @@ onBeforeMount(() => {
 
   // Set department if exists
   if (props.user.departmentId && props.user.department) {
-    const dept = {
+    initialValues.departmentId = props.user.departmentId
+    initialDepartment.value = {
       id: props.user.departmentId,
       name: props.user.department.name,
     } as Department
-
-    selectedDepartment.value = dept
-    initialDepartment.value = dept
   }
 })
 
@@ -242,6 +234,7 @@ const initialValues = reactive({
   email: '',
   password: '',
   confirmPassword: '',
+  departmentId: undefined as number | undefined,
 })
 
 // Password validation schema (computed to support reactive i18n)
@@ -320,7 +313,7 @@ async function addUser(event: FormSubmitEvent) {
   await UsersService.create({
     email: event.states.email.value,
     password: event.states.password.value,
-    departmentId: getDepartmentId(),
+    departmentId: event.states.departmentId.value || undefined,
     createdBy: authStore.userId!,
   })
 
@@ -342,7 +335,7 @@ async function editUser(event: FormSubmitEvent) {
   }
 
   // Update department if it changed
-  const newDepartmentId = getDepartmentId() ?? null
+  const newDepartmentId = event.states.departmentId.value ?? null
   if (newDepartmentId !== props.user!.departmentId) {
     updateData.departmentId = newDepartmentId
   }

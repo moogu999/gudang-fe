@@ -55,6 +55,27 @@
         </div>
       </div>
 
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="currencyId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.currency') }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InfiniteSelect
+            id="currencyId"
+            name="currencyId"
+            option-label="code"
+            option-value="id"
+            :fetch-fn="(query) => CurrenciesService.list(query)"
+            :disabled="mode === DialogMode.VIEW"
+            :placeholder="t('companies.labels.selectCurrency')"
+            :initial-option="initialCurrency"
+            sort-by="code"
+            sort-operator="asc"
+          />
+          <Message v-if="$form.currencyId?.invalid" severity="error" size="small" variant="simple">{{
+            $form.currencyId.error.message
+          }}</Message>
+        </div>
+      </div>
+
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
@@ -107,6 +128,7 @@ import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { CompaniesService } from '@/services/companies.service'
+import { CurrenciesService } from '@/services/currencies.service'
 import { ref } from 'vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
@@ -117,6 +139,7 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import BranchesTab from '@/views/companies/BranchesTab.vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 
 const { t } = useI18n()
 
@@ -135,6 +158,9 @@ const props = defineProps({
 
 const emits = defineEmits(['close'])
 
+// Initial currency for the select dropdown
+const initialCurrency = ref()
+
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.company) {
     return
@@ -144,6 +170,15 @@ onBeforeMount(() => {
   initialValues.name = props.company.name
   initialValues.address = props.company.address || ''
   initialValues.taxId = props.company.taxId || ''
+  initialValues.currencyId = props.company.currencyId
+
+  // Set initial currency for the dropdown
+  if (props.company.currency) {
+    initialCurrency.value = {
+      id: props.company.currencyId,
+      code: props.company.currency.code,
+    }
+  }
 })
 
 // Toast
@@ -156,6 +191,7 @@ const initialValues = reactive({
   name: '',
   address: '',
   taxId: '',
+  currencyId: undefined as number | undefined,
 })
 
 // Validation schema
@@ -166,6 +202,7 @@ const resolver = computed(() =>
       name: z.string().min(1, t('companies.validation.nameRequired')),
       address: z.string().optional(),
       taxId: z.string().optional(),
+      currencyId: z.number({ required_error: t('companies.validation.currencyRequired') }),
     })
   )
 )
@@ -204,6 +241,7 @@ async function addCompany(event: FormSubmitEvent) {
     name: event.states.name.value,
     address: event.states.address.value || undefined,
     taxId: event.states.taxId.value || undefined,
+    currencyId: event.states.currencyId.value,
     createdBy: authStore.userId!,
   })
 
@@ -216,6 +254,7 @@ async function editCompany(event: FormSubmitEvent) {
     name: event.states.name.value,
     address: event.states.address.value || undefined,
     taxId: event.states.taxId.value || undefined,
+    currencyId: event.states.currencyId.value,
     updatedBy: authStore.userId!,
   })
 

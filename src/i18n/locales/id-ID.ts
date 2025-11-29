@@ -222,10 +222,15 @@ export default {
       name: 'Nama',
       address: 'Alamat',
       taxId: 'NPWP',
+      currency: 'Mata Uang',
+    },
+    labels: {
+      selectCurrency: 'Pilih Mata Uang',
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
       nameRequired: 'Nama wajib diisi.',
+      currencyRequired: 'Mata uang wajib diisi.',
     },
     messages: {
       companyCreated: 'Perusahaan berhasil dibuat.',

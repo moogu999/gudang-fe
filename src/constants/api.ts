@@ -55,6 +55,9 @@ export const API_ENDPOINTS = {
 
   // User-Branch endpoints
   GEN_USER_BRANCHES: '/gen/v1/user-branches',
+
+  // Currency endpoints
+  GEN_CURRENCIES: '/gen/v1/currencies',
 } as const
 
 // Type for API endpoints (useful for validation)

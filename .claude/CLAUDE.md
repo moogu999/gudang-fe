@@ -233,6 +233,112 @@ Each CRUD view (e.g., UsersView) follows this pattern:
 - PrimeVue `Toast` and `ConfirmationDialog` with unique `overlayGroup` per view
 - Dialog closes trigger table refresh via `table.value.clearSearch()`
 
+**Form Pattern with InfiniteSelect (Dropdown Fields)**:
+
+When using `InfiniteSelect` for foreign key relationships (e.g., selecting a department, currency, etc.), integrate it with PrimeVue Forms using the `name` attribute:
+
+```vue
+<template>
+  <Form v-slot="$form" :initial-values="initialValues" :resolver="resolver" @submit="onFormSubmit">
+    <!-- Text field example -->
+    <InputText id="code" name="code" />
+
+    <!-- InfiniteSelect example -->
+    <InfiniteSelect
+      id="currencyId"
+      name="currencyId"
+      option-label="code"
+      option-value="id"
+      :fetch-fn="(query) => CurrenciesService.list(query)"
+      :initial-option="initialCurrency"
+      :disabled="mode === DialogMode.VIEW"
+      sort-by="code"
+      sort-operator="asc"
+    />
+
+    <Button type="submit" />
+  </Form>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onBeforeMount, computed } from 'vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { CurrenciesService } from '@/services'
+
+// Initial option for pre-populating the dropdown
+const initialCurrency = ref()
+
+// Form initial values
+const initialValues = reactive({
+  code: '',
+  currencyId: undefined as number | undefined,
+})
+
+// When editing, populate initial values
+onBeforeMount(() => {
+  if (mode === DialogMode.EDIT && props.entity) {
+    initialValues.code = props.entity.code
+    initialValues.currencyId = props.entity.currencyId
+
+    // Set initial option for dropdown display
+    if (props.entity.currency) {
+      initialCurrency.value = {
+        id: props.entity.currencyId,
+        code: props.entity.currency.code,
+      }
+    }
+  }
+})
+
+// Form submission - access value directly from form state
+async function onFormSubmit(event: FormSubmitEvent) {
+  await EntityService.create({
+    code: event.states.code.value,
+    currencyId: event.states.currencyId.value, // ✅ Direct access via form state
+    createdBy: authStore.userId!,
+  })
+}
+</script>
+```
+
+**Key Points:**
+- **Integration**: Add `name="fieldId"` and `option-value="id"` to integrate with PrimeVue Forms
+- **Initial Values**: Add the field to `initialValues` reactive object
+- **Initial Option**: Use `initial-option` prop to pre-populate dropdown when editing
+  - Prevents issues when selected option isn't in the first page of results
+  - Example: Currency "ZAR" would be missing without `initial-option` if dropdown shows only first 10 items
+- **Form Submission**: Access value via `event.states.fieldId.value` (no need for separate refs or helper functions)
+- **Validation**: Add field to Zod schema like any other form field
+
+**❌ Don't use this pattern (overly complex):**
+```typescript
+// Avoid: Separate refs and helper functions
+const selectedCurrency = ref<Currency | undefined>()
+const initialCurrency = ref<Currency | undefined>()
+
+function getCurrencyId(): number | undefined {
+  if (!selectedCurrency.value) return undefined
+  return selectedCurrency.value.id
+}
+
+// In template: v-model="selectedCurrency"
+// In submit: currencyId: getCurrencyId()
+```
+
+**✅ Use this pattern (simple, integrated with forms):**
+```typescript
+// Just one ref for initial option
+const initialCurrency = ref()
+
+// Add to form initial values
+const initialValues = reactive({
+  currencyId: undefined as number | undefined,
+})
+
+// In template: name="currencyId"
+// In submit: currencyId: event.states.currencyId.value
+```
+
 #### 5. Route Structure
 All routes in `src/router/index.ts` use lazy loading:
 ```typescript

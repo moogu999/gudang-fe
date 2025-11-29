@@ -29,6 +29,12 @@ export type { UserRole, CreateUserRoleDto } from './userRole.type'
 export type { Branch, CreateBranchDto, UpdateBranchDto } from './branch.type'
 export type { Company, CreateCompanyDto, UpdateCompanyDto } from './company.type'
 export type {
+  Currency,
+  CurrencyLite,
+  CreateCurrencyDto,
+  UpdateCurrencyDto,
+} from './currency.type'
+export type {
   CompanyBranch,
   CreateCompanyBranchDto,
   CompanyBranchWithDetails,

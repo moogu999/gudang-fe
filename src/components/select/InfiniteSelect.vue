@@ -8,6 +8,7 @@
     :loading="loading"
     :filter="filter"
     :placeholder="displayPlaceholder"
+    :disabled="disabled"
     @filter="handleFilter"
     :virtual-scroller-options="virtualScrollerOptions"
     :pt="{
@@ -24,7 +25,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import Select from 'primevue/select'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Base } from '@/types/api.type'
 import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
@@ -36,6 +37,12 @@ interface FilterEvent {
 }
 
 type SelectValue<T> = string | number | boolean | Date | T | null | undefined
+
+interface CustomFilter {
+  filterBy: string
+  filterOperator: string
+  filterValue: string | number
+}
 
 interface Props {
   modelValue?: SelectValue<T>
@@ -49,6 +56,8 @@ interface Props {
   sortOperator?: 'asc' | 'desc'
   useCursor?: boolean
   initialOption?: T
+  disabled?: boolean
+  customFilters?: CustomFilter[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -56,6 +65,8 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '',
   limit: 10,
   useCursor: false,
+  disabled: false,
+  customFilters: () => [],
 })
 
 const displayPlaceholder = computed(() => props.placeholder || t('common.labels.selectOption'))
@@ -113,6 +124,13 @@ async function fetchData(cursor?: string) {
       queryBuilder.withSort(props.sortBy, props.sortOperator || 'asc')
     }
 
+    // Apply custom filters
+    if (props.customFilters && props.customFilters.length > 0) {
+      props.customFilters.forEach(filter => {
+        queryBuilder.withFilter(filter.filterBy, filter.filterOperator, filter.filterValue)
+      })
+    }
+
     const query = queryBuilder.build()
     const response = await props.fetchFn(query)
 
@@ -168,4 +186,15 @@ onMounted(async () => {
     }
   }
 })
+
+// Watch for changes in customFilters and refetch data
+watch(
+  () => props.customFilters,
+  async () => {
+    nextCursor.value = null
+    hasMore.value = true
+    await fetchData()
+  },
+  { deep: true }
+)
 </script>

@@ -38,6 +38,12 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Customers',
+    labelKey: 'navigation.customers',
+    icon: 'pi pi-users',
+    route: '/customers',
+  },
+  {
     label: 'Users',
     labelKey: 'navigation.users',
     icon: 'pi pi-user',

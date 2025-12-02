@@ -60,6 +60,16 @@ export type {
   CreateSalesOrganizationBranchDto,
 } from './salesOrganizationBranch.type'
 export type { UserBranch, AssignBranchesDto } from './userBranch.type'
+export type {
+  Customer,
+  CreateCustomerDto,
+  UpdateCustomerDto,
+  CountryLite,
+  ProvinceLite,
+  CityLite,
+  DistrictLite,
+  SubDistrictLite,
+} from './customer.type'
 
 // Component types
 export type { Column } from './table.type'

@@ -61,6 +61,16 @@ export const API_ENDPOINTS = {
 
   // COGS Calculation Method endpoints
   GEN_COGS_CALCULATION_METHODS: '/gen/v1/cogs-calculation-methods',
+
+  // Customer endpoints
+  GEN_CUSTOMERS: '/gen/v1/customers',
+
+  // Location endpoints
+  GEN_COUNTRIES: '/gen/v1/countries',
+  GEN_PROVINCES: '/gen/v1/provinces',
+  GEN_CITIES: '/gen/v1/cities',
+  GEN_DISTRICTS: '/gen/v1/districts',
+  GEN_SUB_DISTRICTS: '/gen/v1/sub-districts',
 } as const
 
 // Type for API endpoints (useful for validation)

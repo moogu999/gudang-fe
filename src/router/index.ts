@@ -77,6 +77,30 @@ const router = createRouter({
           component: () => import('@/views/salesOrganizations/SalesOrganizationsView.vue'),
           meta: { requiredPermission: PERMISSIONS.SALES_ORGANIZATION_READ },
         },
+        {
+          path: 'customers',
+          name: 'Customers',
+          component: () => import('@/views/customers/CustomersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.CUSTOMER_READ },
+        },
+        {
+          path: 'customers/create',
+          name: 'CustomerCreate',
+          component: () => import('@/views/customers/CustomerCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.CUSTOMER_WRITE },
+        },
+        {
+          path: 'customers/:id/edit',
+          name: 'CustomerEdit',
+          component: () => import('@/views/customers/CustomerEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.CUSTOMER_WRITE },
+        },
+        {
+          path: 'customers/:id',
+          name: 'CustomerDetail',
+          component: () => import('@/views/customers/CustomerDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.CUSTOMER_READ },
+        },
       ],
     },
 

@@ -679,6 +679,97 @@ All services include comprehensive JSDoc comments with:
 static async create(data: CreateUserDto): Promise<User>
 ```
 
+### TypeScript Best Practices
+
+#### Avoid `any` Type
+**NEVER use `any` type in the codebase.** The `any` type defeats the purpose of TypeScript by disabling type checking and should be avoided at all costs.
+
+**❌ Bad - Using `any`:**
+```typescript
+function processData(data: any) {
+  return data.value // No type safety, runtime errors possible
+}
+
+const response: any = await ApiService.get('/users')
+```
+
+**✅ Good - Use proper types:**
+```typescript
+// Option 1: Use specific types
+function processData(data: { value: string }) {
+  return data.value // Type-safe
+}
+
+// Option 2: Use generics
+function processData<T extends { value: string }>(data: T) {
+  return data.value
+}
+
+// Option 3: Define proper interfaces
+interface UserResponse {
+  id: number
+  email: string
+}
+const response: UserResponse = await ApiService.get<UserResponse>('/users')
+```
+
+**When you don't know the exact type:**
+
+```typescript
+// ❌ Don't use any
+function logValue(value: any) {
+  console.log(value)
+}
+
+// ✅ Use unknown for truly unknown types
+function logValue(value: unknown) {
+  console.log(value)
+}
+
+// ✅ Or use specific union types
+function processInput(value: string | number | boolean) {
+  // Handle each type appropriately
+}
+
+// ✅ Or use generics
+function identity<T>(value: T): T {
+  return value
+}
+```
+
+**For third-party libraries without types:**
+```typescript
+// ❌ Don't use any
+import someLib from 'some-lib'
+const result: any = someLib.doSomething()
+
+// ✅ Create type definitions
+interface SomeLibResult {
+  status: string
+  data: unknown
+}
+const result: SomeLibResult = someLib.doSomething()
+
+// ✅ Or use unknown and type guards
+const result: unknown = someLib.doSomething()
+if (typeof result === 'object' && result !== null && 'status' in result) {
+  // Now TypeScript knows the shape
+}
+```
+
+**Benefits of avoiding `any`:**
+- Catch errors at compile time instead of runtime
+- Enable IDE autocomplete and refactoring tools
+- Self-documenting code through explicit types
+- Easier maintenance and debugging
+
+**If you must disable type checking temporarily (rare cases):**
+```typescript
+// Use @ts-expect-error with explanation (preferred over @ts-ignore)
+// @ts-expect-error: Third-party library has incorrect types, will fix in v2
+const result = someLib.brokenMethod()
+```
+
 ### Testing
 - Test runner: Vitest with jsdom environment
 - Test utils: `@vue/test-utils` for component testing

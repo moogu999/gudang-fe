@@ -101,6 +101,30 @@ const router = createRouter({
           component: () => import('@/views/customers/CustomerDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.CUSTOMER_READ },
         },
+        {
+          path: 'products',
+          name: 'Products',
+          component: () => import('@/views/products/ProductsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRODUCT_READ },
+        },
+        {
+          path: 'unit-of-measurements',
+          name: 'UnitOfMeasurements',
+          component: () => import('@/views/unit-of-measurements/UnitOfMeasurementsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.UNIT_OF_MEASUREMENT_READ },
+        },
+        {
+          path: 'uom-conversions',
+          name: 'UomConversions',
+          component: () => import('@/views/uom-conversions/UomConversionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.UOM_CONVERSION_HEADER_READ },
+        },
+        {
+          path: 'product-base-uoms',
+          name: 'ProductBaseUoms',
+          component: () => import('@/views/product-base-uoms/ProductBaseUomsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRODUCT_BASE_UOM_READ },
+        },
       ],
     },
 

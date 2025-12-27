@@ -44,6 +44,33 @@ const mainMenu = [
     route: '/customers',
   },
   {
+    label: 'Products',
+    labelKey: 'navigation.products',
+    icon: 'pi pi-box',
+    items: [
+      {
+        label: 'Products',
+        labelKey: 'navigation.products',
+        route: '/products',
+      },
+      {
+        label: 'Unit of Measurements',
+        labelKey: 'navigation.unitOfMeasurements',
+        route: '/unit-of-measurements',
+      },
+      {
+        label: 'UOM Conversions',
+        labelKey: 'navigation.uomConversions',
+        route: '/uom-conversions',
+      },
+      {
+        label: 'Base UOM',
+        labelKey: 'navigation.productBaseUoms',
+        route: '/product-base-uoms',
+      },
+    ],
+  },
+  {
     label: 'Users',
     labelKey: 'navigation.users',
     icon: 'pi pi-user',

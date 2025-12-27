@@ -70,6 +70,28 @@ export type {
   DistrictLite,
   SubDistrictLite,
 } from './customer.type'
+export type {
+  UnitOfMeasurement,
+  CreateUnitOfMeasurementDto,
+  UpdateUnitOfMeasurementDto,
+} from './unitOfMeasurement.type'
+export type {
+  UomConversionHeader,
+  CreateUomConversionHeaderDto,
+  UpdateUomConversionHeaderDto,
+} from './uomConversionHeader.type'
+export type {
+  UomConversionDetail,
+  CreateUomConversionDetailDto,
+  UpdateUomConversionDetailDto,
+} from './uomConversionDetail.type'
+export type {
+  ProductBaseUom,
+  CreateProductBaseUomDto,
+  UpdateProductBaseUomDto,
+} from './productBaseUom.type'
+export type { TrackingType, TrackingTypeLite } from './trackingType.type'
+export type { Product, CreateProductDto, UpdateProductDto } from './product.type'
 
 // Component types
 export type { Column } from './table.type'

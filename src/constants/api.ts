@@ -71,6 +71,24 @@ export const API_ENDPOINTS = {
   GEN_CITIES: '/gen/v1/cities',
   GEN_DISTRICTS: '/gen/v1/districts',
   GEN_SUB_DISTRICTS: '/gen/v1/sub-districts',
+
+  // Unit of Measurement endpoints
+  GEN_UNIT_OF_MEASUREMENTS: '/gen/v1/unit-of-measurements',
+
+  // UOM Conversion Header endpoints
+  GEN_UOM_CONVERSION_HEADERS: '/gen/v1/uom-conversion-headers',
+
+  // UOM Conversion Detail endpoints
+  GEN_UOM_CONVERSION_DETAILS: '/gen/v1/uom-conversion-details',
+
+  // Product Base UOM endpoints
+  GEN_PRODUCT_BASE_UOMS: '/gen/v1/product-base-uoms',
+
+  // Tracking Type endpoints
+  GEN_TRACKING_TYPES: '/gen/v1/tracking-types',
+
+  // Product endpoints
+  GEN_PRODUCTS: '/gen/v1/products',
 } as const
 
 // Type for API endpoints (useful for validation)

@@ -89,6 +89,11 @@ export const API_ENDPOINTS = {
 
   // Product endpoints
   GEN_PRODUCTS: '/gen/v1/products',
+
+  // Sales Order endpoints
+  SALES_ORDERS: '/v1/sales-orders', // POST create
+  GEN_SALES_ORDER_HEADERS: '/gen/v1/sales-order-headers', // GET list/byId
+  GEN_SALES_ORDER_DETAILS: '/gen/v1/sales-order-details', // GET list
 } as const
 
 // Type for API endpoints (useful for validation)

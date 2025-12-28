@@ -125,6 +125,11 @@ const router = createRouter({
           component: () => import('@/views/product-base-uoms/ProductBaseUomsView.vue'),
           meta: { requiredPermission: PERMISSIONS.PRODUCT_BASE_UOM_READ },
         },
+        {
+          path: 'sales-orders',
+          name: 'SalesOrders',
+          component: () => import('@/views/sales-orders/SalesOrdersView.vue'),
+        },
       ],
     },
 

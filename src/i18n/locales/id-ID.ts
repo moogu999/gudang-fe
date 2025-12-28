@@ -35,6 +35,8 @@ export default {
       no: 'Tidak',
       active: 'Aktif',
       inactive: 'Tidak Aktif',
+      paid: 'Dibayar',
+      cash: 'Tunai',
     },
     messages: {
       confirmDelete: 'Apakah Anda yakin ingin menghapus {entity} ini?',
@@ -66,6 +68,8 @@ export default {
     unitOfMeasurements: 'Satuan Ukuran',
     uomConversions: 'Konversi Satuan Ukuran',
     productBaseUoms: 'Satuan Dasar',
+    sales: 'Penjualan',
+    salesOrders: 'Pesanan Penjualan',
     users: 'Pengguna',
     accessControls: 'Kontrol Akses',
     roles: 'Peran',
@@ -83,6 +87,9 @@ export default {
     clearFilters: 'Hapus Filter',
     apply: 'Terapkan',
     no: 'No.',
+    details: 'Detail',
+    addRow: 'Tambah Baris',
+    noItems: 'Tidak ada item',
   },
   users: {
     title: 'Pengguna',
@@ -474,6 +481,63 @@ export default {
     messages: {
       productBaseUomCreated: 'Satuan dasar berhasil dibuat.',
       productBaseUomUpdated: 'Satuan dasar berhasil diperbarui.',
+    },
+  },
+  salesOrders: {
+    title: 'Pesanan Penjualan',
+    addSalesOrder: 'Tambah Pesanan',
+    viewSalesOrder: 'Lihat Pesanan',
+
+    sections: {
+      orderInfo: 'Informasi Pesanan',
+      paymentInfo: 'Pembayaran & Keuangan',
+    },
+
+    fields: {
+      no: 'Nomor Pesanan',
+      orderDate: 'Tanggal Pesanan',
+      priceDate: 'Tanggal Harga',
+      deliveryDate: 'Tanggal Pengiriman',
+      expiredDate: 'Tanggal Kadaluarsa',
+      customer: 'Pelanggan',
+      remark: 'Catatan',
+      isCash: 'Penjualan Tunai',
+      discountAmount: 'Diskon',
+      taxAmount: 'Pajak',
+      downPaymentAmount: 'Uang Muka',
+      totalAmount: 'Total',
+    },
+
+    details: {
+      title: 'Detail Pesanan',
+      addDetail: 'Tambah Item',
+      empty: 'Belum ada item',
+      product: 'Produk',
+      quantity: 'Jumlah',
+      price: 'Harga',
+      discount: 'Diskon',
+      subAmount: 'Subtotal',
+    },
+
+    summary: {
+      title: 'Ringkasan Pesanan',
+      subtotal: 'Subtotal',
+      discount: 'Diskon',
+      dpp: 'DPP',
+      tax: 'Pajak',
+      total: 'Total',
+    },
+
+    validation: {
+      noRequired: 'Nomor pesanan wajib diisi',
+      orderDateRequired: 'Tanggal pesanan wajib diisi',
+      customerRequired: 'Pelanggan wajib dipilih',
+      detailsRequired: 'Minimal satu item harus ditambahkan',
+      detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+    },
+
+    messages: {
+      created: 'Pesanan penjualan berhasil dibuat',
     },
   },
   notFound: {

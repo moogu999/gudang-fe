@@ -94,6 +94,18 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Sales',
+    labelKey: 'navigation.sales',
+    icon: 'pi pi-shopping-cart',
+    items: [
+      {
+        label: 'Sales Orders',
+        labelKey: 'navigation.salesOrders',
+        route: '/sales-orders',
+      },
+    ],
+  },
+  {
     label: 'Superset',
     labelKey: 'navigation.superset',
     icon: 'pi pi-chart-line',

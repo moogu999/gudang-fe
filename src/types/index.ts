@@ -92,6 +92,15 @@ export type {
 } from './productBaseUom.type'
 export type { TrackingType, TrackingTypeLite } from './trackingType.type'
 export type { Product, CreateProductDto, UpdateProductDto } from './product.type'
+export type {
+  SalesOrderHeader,
+  SalesOrderDetail,
+  CreateSalesOrderRequest,
+  CreateSalesOrderDetailDto,
+  SalesOrderDetailRow,
+  CustomerLite,
+  ProductLite,
+} from './salesOrder.type'
 
 // Component types
 export type { Column } from './table.type'

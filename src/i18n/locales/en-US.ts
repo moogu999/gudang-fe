@@ -35,6 +35,8 @@ export default {
       no: 'No',
       active: 'Active',
       inactive: 'Inactive',
+      paid: 'Paid',
+      cash: 'Cash',
     },
     messages: {
       confirmDelete: 'Are you sure you want to delete this {entity}?',
@@ -66,6 +68,8 @@ export default {
     unitOfMeasurements: 'Unit of Measurements',
     uomConversions: 'UOM Conversions',
     productBaseUoms: 'Base UOM',
+    sales: 'Sales',
+    salesOrders: 'Sales Orders',
     users: 'Users',
     accessControls: 'Access Controls',
     roles: 'Roles',
@@ -83,6 +87,9 @@ export default {
     clearFilters: 'Clear Filters',
     apply: 'Apply',
     no: 'No.',
+    details: 'Details',
+    addRow: 'Add Row',
+    noItems: 'No items',
   },
   users: {
     title: 'Users',
@@ -474,6 +481,63 @@ export default {
     messages: {
       productBaseUomCreated: 'Base UOM is created.',
       productBaseUomUpdated: 'Base UOM is updated.',
+    },
+  },
+  salesOrders: {
+    title: 'Sales Orders',
+    addSalesOrder: 'Add Sales Order',
+    viewSalesOrder: 'View Sales Order',
+
+    sections: {
+      orderInfo: 'Order Information',
+      paymentInfo: 'Payment & Financial',
+    },
+
+    fields: {
+      no: 'Order Number',
+      orderDate: 'Order Date',
+      priceDate: 'Price Date',
+      deliveryDate: 'Delivery Date',
+      expiredDate: 'Expiry Date',
+      customer: 'Customer',
+      remark: 'Remarks',
+      isCash: 'Cash Sale',
+      discountAmount: 'Discount',
+      taxAmount: 'Tax',
+      downPaymentAmount: 'Down Payment',
+      totalAmount: 'Total',
+    },
+
+    details: {
+      title: 'Order Details',
+      addDetail: 'Add Item',
+      empty: 'No items added',
+      product: 'Product',
+      quantity: 'Quantity',
+      price: 'Price',
+      discount: 'Discount',
+      subAmount: 'Subtotal',
+    },
+
+    summary: {
+      title: 'Order Summary',
+      subtotal: 'Subtotal',
+      discount: 'Discount',
+      dpp: 'DPP',
+      tax: 'Tax',
+      total: 'Total',
+    },
+
+    validation: {
+      noRequired: 'Order number is required',
+      orderDateRequired: 'Order date is required',
+      customerRequired: 'Customer is required',
+      detailsRequired: 'At least one item is required',
+      detailIncomplete: 'Row {row}: Product, quantity, and price are required',
+    },
+
+    messages: {
+      created: 'Sales order created successfully',
     },
   },
   notFound: {

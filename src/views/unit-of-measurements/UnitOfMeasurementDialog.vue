@@ -47,12 +47,7 @@
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <div class="w-full md:w-32"></div>
         <div class="flex items-center gap-2">
-          <Checkbox
-            id="isCustom"
-            name="isCustom"
-            :binary="true"
-            :disabled="true"
-          />
+          <Checkbox id="isCustom" name="isCustom" :binary="true" :disabled="true" />
           <label for="isCustom" class="text-sm font-semibold sm:text-base">{{
             t('unitOfMeasurements.fields.isCustom')
           }}</label>
@@ -118,7 +113,10 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.unitOfMeasurement) {
+  if (
+    (props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) ||
+    !props.unitOfMeasurement
+  ) {
     return
   }
 
@@ -144,8 +142,8 @@ const resolver = computed(() =>
     z.object({
       name: z.string().min(1, t('unitOfMeasurements.validation.nameRequired')),
       symbol: z.string().min(1, t('unitOfMeasurements.validation.symbolRequired')),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {
@@ -184,7 +182,9 @@ async function addUnitOfMeasurement(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementCreated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementCreated'), toastGroup),
+  )
 }
 
 async function editUnitOfMeasurement(event: FormSubmitEvent) {
@@ -193,6 +193,8 @@ async function editUnitOfMeasurement(event: FormSubmitEvent) {
     symbol: event.states.symbol.value,
   })
 
-  toast.add(commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementUpdated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementUpdated'), toastGroup),
+  )
 }
 </script>

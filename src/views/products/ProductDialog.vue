@@ -70,7 +70,12 @@
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <div class="w-full md:w-32"></div>
         <div class="flex items-center gap-2">
-          <Checkbox id="taxable" name="taxable" :binary="true" :disabled="mode === DialogMode.VIEW" />
+          <Checkbox
+            id="taxable"
+            name="taxable"
+            :binary="true"
+            :disabled="mode === DialogMode.VIEW"
+          />
           <label for="taxable" class="text-sm font-semibold sm:text-base">{{
             t('products.fields.taxable')
           }}</label>
@@ -249,8 +254,8 @@ const resolver = computed(() =>
       taxable: z.boolean(),
       trackingTypeId: z.number({ message: t('products.validation.trackingTypeRequired') }),
       productBaseUomId: z.number().optional(),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

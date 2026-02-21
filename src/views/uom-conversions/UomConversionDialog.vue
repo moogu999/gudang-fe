@@ -40,9 +40,13 @@
             class="w-full"
             rows="3"
           />
-          <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{
-            $form.description.error.message
-          }}</Message>
+          <Message
+            v-if="$form.description?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.description.error.message }}</Message
+          >
         </div>
       </div>
 
@@ -90,11 +94,7 @@
             :header="t('uomConversions.details.fields.fromUom')"
             sortable
           />
-          <Column
-            field="toUom.name"
-            :header="t('uomConversions.details.fields.toUom')"
-            sortable
-          />
+          <Column field="toUom.name" :header="t('uomConversions.details.fields.toUom')" sortable />
           <Column
             field="conversionFactor"
             :header="t('uomConversions.details.fields.conversionFactor')"
@@ -155,11 +155,11 @@
       modal
       :breakpoints="{
         '960px': '75vw',
-        '640px': '90vw'
+        '640px': '90vw',
       }"
       :style="{ width: '40vw' }"
       :pt="{
-        header: 'text-base sm:text-lg md:text-xl'
+        header: 'text-base sm:text-lg md:text-xl',
       }"
     >
       <UomConversionDetailDialog
@@ -190,7 +190,11 @@ import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { useToast } from 'primevue/usetoast'
-import { UomConversionHeadersService, UomConversionDetailsService, GenericQueryBuilder } from '@/services'
+import {
+  UomConversionHeadersService,
+  UomConversionDetailsService,
+  GenericQueryBuilder,
+} from '@/services'
 import { ref } from 'vue'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
@@ -249,8 +253,8 @@ const resolver = computed(() =>
     z.object({
       name: z.string().min(1, t('uomConversions.validation.nameRequired')),
       description: z.string().optional(),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {
@@ -310,8 +314,8 @@ async function loadConversionDetails() {
   if (!props.uomConversion?.id) return
 
   const query = new GenericQueryBuilder()
-    .withFilter("header_id", FilterOperator.EQUAL, props.uomConversion.id)
-    .build();
+    .withFilter('header_id', FilterOperator.EQUAL, props.uomConversion.id)
+    .build()
 
   isLoadingDetails.value = true
   try {

@@ -39,16 +39,16 @@ export function useConfirmDelete(options: UseConfirmDeleteOptions) {
    * @param deleteAction Async function that performs the delete operation
    * @param customMessage Optional custom confirmation message
    */
-  function confirmDelete(
-    deleteAction: () => Promise<void>,
-    customMessage?: string
-  ) {
+  function confirmDelete(deleteAction: () => Promise<void>, customMessage?: string) {
     deleteAcceptanceHandler.value = async () => {
       try {
         await deleteAction()
 
         toast.add(
-          commonSuccessToast(t('common.messages.deleteSuccess', { entity: capitalize(entityName) }), overlayGroup)
+          commonSuccessToast(
+            t('common.messages.deleteSuccess', { entity: capitalize(entityName) }),
+            overlayGroup,
+          ),
         )
 
         onSuccess?.()

@@ -27,9 +27,11 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="uomConversionHeaderId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
-          t('productBaseUoms.fields.uomConversionHeader')
-        }}</label>
+        <label
+          for="uomConversionHeaderId"
+          class="w-full text-sm font-semibold sm:text-base md:w-32"
+          >{{ t('productBaseUoms.fields.uomConversionHeader') }}</label
+        >
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
             id="uomConversionHeaderId"
@@ -75,9 +77,11 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="defaultDisplayUomId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
-          t('productBaseUoms.fields.defaultDisplayUom')
-        }}</label>
+        <label
+          for="defaultDisplayUomId"
+          class="w-full text-sm font-semibold sm:text-base md:w-32"
+          >{{ t('productBaseUoms.fields.defaultDisplayUom') }}</label
+        >
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
             id="defaultDisplayUomId"
@@ -222,8 +226,8 @@ const resolver = computed(() =>
       defaultDisplayUomId: z.number({
         required_error: t('productBaseUoms.validation.defaultDisplayUomRequired'),
       }),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

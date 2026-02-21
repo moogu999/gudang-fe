@@ -44,11 +44,11 @@
       modal
       :breakpoints="{
         '960px': '75vw',
-        '640px': '90vw'
+        '640px': '90vw',
       }"
       :style="{ width: '80vw', maxWidth: '1200px' }"
       :pt="{
-        header: 'text-base sm:text-lg md:text-xl'
+        header: 'text-base sm:text-lg md:text-xl',
       }"
     >
       <CompanyDialog :mode="dialogMode" :company="company" @close="close" />

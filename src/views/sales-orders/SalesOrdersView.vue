@@ -6,11 +6,7 @@
       <h1 class="text-base font-bold sm:text-lg md:text-2xl">
         {{ t('salesOrders.title') }}
       </h1>
-      <Button
-        :label="t('salesOrders.addSalesOrder')"
-        icon="pi pi-plus"
-        @click="openAddDialog"
-      />
+      <Button :label="t('salesOrders.addSalesOrder')" icon="pi pi-plus" @click="openAddDialog" />
     </div>
 
     <TableComponent ref="table" :url="url" :columns="columns">
@@ -68,7 +64,11 @@ const table = ref()
 const selectedId = ref<number>()
 const dialogMode = ref<DialogMode>(DialogMode.ADD)
 
-const { isVisible: isDialogVisible, open, close } = useDialog({
+const {
+  isVisible: isDialogVisible,
+  open,
+  close,
+} = useDialog({
   onClose: async () => {
     await table.value.clearSearch()
   },

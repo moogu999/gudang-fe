@@ -50,18 +50,14 @@
       modal
       :breakpoints="{
         '960px': '75vw',
-        '640px': '90vw'
+        '640px': '90vw',
       }"
       :style="{ width: '50vw' }"
       :pt="{
-        header: 'text-base sm:text-lg md:text-xl'
+        header: 'text-base sm:text-lg md:text-xl',
       }"
     >
-      <ProductBaseUomDialog
-        :mode="dialogMode"
-        :product-base-uom="productBaseUom"
-        @close="close"
-      />
+      <ProductBaseUomDialog :mode="dialogMode" :product-base-uom="productBaseUom" @close="close" />
     </Dialog>
   </div>
 </template>

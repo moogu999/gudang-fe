@@ -1,10 +1,6 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type {
-  ProductBaseUom,
-  CreateProductBaseUomDto,
-  UpdateProductBaseUomDto,
-} from '@/types'
+import type { ProductBaseUom, CreateProductBaseUomDto, UpdateProductBaseUomDto } from '@/types'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**

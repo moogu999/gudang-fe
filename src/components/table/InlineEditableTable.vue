@@ -20,12 +20,7 @@
       class="text-sm"
       @row-edit-save="onRowEditSave"
     >
-      <Column
-        v-for="col in columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-      >
+      <Column v-for="col in columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data }">
           <template v-if="col.type === 'computed'">
             {{ col.computeFn ? formatValue(col.computeFn(data)) : formatValue(data[col.field]) }}

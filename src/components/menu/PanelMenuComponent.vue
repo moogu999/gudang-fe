@@ -120,7 +120,7 @@ watch(
       // Clear pending state
       pendingExpandKey.value = null
     }
-  }
+  },
 )
 
 /**

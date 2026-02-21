@@ -53,11 +53,7 @@
     </template>
     <IconField class="w-full">
       <InputIcon class="pi pi-search" />
-      <InputText
-        :placeholder="t('table.searchPlaceholder')"
-        class="w-full"
-        autofocus
-      />
+      <InputText :placeholder="t('table.searchPlaceholder')" class="w-full" autofocus />
     </IconField>
   </Drawer>
 

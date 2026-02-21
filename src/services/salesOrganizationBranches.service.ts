@@ -68,7 +68,7 @@ export class SalesOrganizationBranchesService {
    * ```
    */
   static async addBranchToSalesOrganization(
-    data: CreateSalesOrganizationBranchDto
+    data: CreateSalesOrganizationBranchDto,
   ): Promise<SalesOrganizationBranch> {
     return ApiService.post<SalesOrganizationBranch>(this.BASE_URL, data)
   }

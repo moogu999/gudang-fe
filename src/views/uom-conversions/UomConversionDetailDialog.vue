@@ -67,9 +67,13 @@
             :max-fraction-digits="6"
             class="w-full"
           />
-          <Message v-if="$form.conversionFactor?.invalid" severity="error" size="small" variant="simple">{{
-            $form.conversionFactor.error.message
-          }}</Message>
+          <Message
+            v-if="$form.conversionFactor?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.conversionFactor.error.message }}</Message
+          >
         </div>
       </div>
 
@@ -173,13 +177,15 @@ const initialValues = reactive({
 const resolver = computed(() =>
   zodResolver(
     z.object({
-      fromUomId: z.number({ required_error: t('uomConversions.details.validation.fromUomRequired') }),
+      fromUomId: z.number({
+        required_error: t('uomConversions.details.validation.fromUomRequired'),
+      }),
       toUomId: z.number({ required_error: t('uomConversions.details.validation.toUomRequired') }),
       conversionFactor: z
         .number({ required_error: t('uomConversions.details.validation.conversionFactorRequired') })
         .positive(t('uomConversions.details.validation.conversionFactorPositive')),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

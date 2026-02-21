@@ -87,10 +87,7 @@ export class UnitOfMeasurementsService {
    * })
    * ```
    */
-  static async update(
-    id: number,
-    data: UpdateUnitOfMeasurementDto,
-  ): Promise<UnitOfMeasurement> {
+  static async update(id: number, data: UpdateUnitOfMeasurementDto): Promise<UnitOfMeasurement> {
     return ApiService.patch<UnitOfMeasurement>(`${this.BASE_URL}/${id}`, data)
   }
 

@@ -15,6 +15,11 @@ export type CityLite = {
   name: string
 }
 
+export type CustomerLite = {
+  id: number
+  name: string
+}
+
 export type DistrictLite = {
   id: number
   name: string
@@ -28,6 +33,18 @@ export type SubDistrictLite = {
 export type Customer = {
   id: number
   name: string
+  isActive: boolean
+  sellToId: number
+  sellTo: CustomerLite
+  deliverToId: number
+  deliverTo: CustomerLite
+  invoiceToId: number
+  invoiceTo: CustomerLite
+  joinInvoice: boolean
+  collectToId: number
+  collectTo: CustomerLite
+  areaId: number
+  area: CityLite
   currencyId?: number
   currency?: CurrencyLite
   taxable: boolean
@@ -56,7 +73,14 @@ export type Customer = {
 
 export type CreateCustomerDto = {
   name: string
+  isActive: boolean
   currencyId?: number
+  sellToId?: number
+  deliverToId?: number
+  invoiceToId?: number
+  joinInvoice?: boolean
+  collectToId?: number
+  areaId?: number
   taxable: boolean
   address?: string
   countryId?: number
@@ -72,7 +96,14 @@ export type CreateCustomerDto = {
 
 export type UpdateCustomerDto = {
   name?: string
+  isActive?: boolean
   currencyId?: number
+  sellToId?: number
+  deliverToId?: number
+  invoiceToId?: number
+  joinInvoice?: boolean
+  collectToId?: number
+  areaId?: number
   taxable?: boolean
   address?: string
   countryId?: number
@@ -83,5 +114,4 @@ export type UpdateCustomerDto = {
   zipCode?: string
   longitude?: number
   latitude?: number
-  updatedBy: number
 }

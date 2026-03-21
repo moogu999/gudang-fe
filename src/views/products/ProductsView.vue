@@ -28,8 +28,8 @@
               data['trackingType']?.name || '-'
             }}</span>
 
-            <span v-if="col.field === 'productBaseUom.name'">{{
-              data['productBaseUom']?.name || '-'
+            <span v-if="col.field === 'uomGroup.name'">{{
+              data['uomGroup']?.name || '-'
             }}</span>
 
             <span v-if="col.field === 'createdAt'">{{
@@ -181,8 +181,8 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
   {
-    field: 'productBaseUom.name',
-    header: t('products.fields.productBaseUom'),
+    field: 'uomGroup.name',
+    header: t('products.fields.uomGroup'),
     exportable: true,
     sortable: false,
     filterable: false,

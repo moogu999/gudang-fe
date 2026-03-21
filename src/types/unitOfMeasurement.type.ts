@@ -1,4 +1,13 @@
 /**
+ * Lite version of UnitOfMeasurement used in nested relations
+ */
+export interface UnitOfMeasurementLite {
+  id: number
+  name: string
+  symbol: string
+}
+
+/**
  * Unit of Measurement entity
  */
 export interface UnitOfMeasurement {

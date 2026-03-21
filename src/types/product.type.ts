@@ -1,5 +1,5 @@
 import type { TrackingTypeLite } from './trackingType.type'
-import type { ProductBaseUom } from './productBaseUom.type'
+import type { UomGroup } from './uomGroup.type'
 
 /**
  * Product entity
@@ -14,14 +14,14 @@ export interface Product {
   description?: string
   taxable: boolean
   trackingTypeId: number
-  productBaseUomId?: number
+  uomGroupId?: number
   createdAt: string
   updatedAt: string
   createdBy?: number
 
   // Relations
   trackingType?: TrackingTypeLite
-  productBaseUom?: ProductBaseUom
+  uomGroup?: UomGroup
   createdByUser?: {
     email: string
   }
@@ -36,7 +36,7 @@ export interface CreateProductDto {
   description?: string
   taxable: boolean
   trackingTypeId: number
-  productBaseUomId?: number
+  uomGroupId?: number
   createdBy: number
 }
 
@@ -49,6 +49,6 @@ export interface UpdateProductDto {
   description?: string
   taxable?: boolean
   trackingTypeId?: number
-  productBaseUomId?: number
+  uomGroupId?: number
   updatedBy: number
 }

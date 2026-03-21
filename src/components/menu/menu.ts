@@ -59,14 +59,9 @@ const mainMenu = [
         route: '/unit-of-measurements',
       },
       {
-        label: 'UOM Conversions',
-        labelKey: 'navigation.uomConversions',
-        route: '/uom-conversions',
-      },
-      {
-        label: 'Base UOM',
-        labelKey: 'navigation.productBaseUoms',
-        route: '/product-base-uoms',
+        label: 'UOM Groups',
+        labelKey: 'navigation.uomGroups',
+        route: '/uom-groups',
       },
     ],
   },

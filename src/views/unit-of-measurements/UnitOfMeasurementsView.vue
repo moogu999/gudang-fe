@@ -126,7 +126,7 @@ function addUnitOfMeasurement() {
 }
 
 function editUnitOfMeasurement(selectedUnitOfMeasurement: UnitOfMeasurement) {
-  dialogMode.value = DialogMode.EDIT
+  dialogMode.value = DialogMode.VIEW
   unitOfMeasurement.value = selectedUnitOfMeasurement
   open()
 }

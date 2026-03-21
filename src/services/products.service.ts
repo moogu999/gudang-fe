@@ -22,7 +22,7 @@ import { API_ENDPOINTS } from '@/constants/api'
  *   description: 'Product description',
  *   taxable: true,
  *   trackingTypeId: 1,
- *   productBaseUomId: 1,
+ *   uomGroupId: 1,
  *   createdBy: 1
  * })
  *
@@ -93,7 +93,7 @@ export class ProductsService {
    *   description: 'A sample product for demonstration',
    *   taxable: true,
    *   trackingTypeId: 1, // Non-tracking
-   *   productBaseUomId: 1, // Optional UOM configuration
+   *   uomGroupId: 1, // Optional UOM group
    *   createdBy: 1
    * })
    * ```

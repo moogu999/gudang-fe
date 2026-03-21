@@ -105,28 +105,28 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="productBaseUomId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
-          t('products.fields.productBaseUom')
+        <label for="uomGroupId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('products.fields.uomGroup')
         }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
-            id="productBaseUomId"
-            name="productBaseUomId"
+            id="uomGroupId"
+            name="uomGroupId"
             option-label="name"
             option-value="id"
-            :fetch-fn="(query) => ProductBaseUomsService.list(query)"
-            :initial-option="initialProductBaseUom"
+            :fetch-fn="(query) => UomGroupsService.list(query)"
+            :initial-option="initialUomGroup"
             :disabled="mode === DialogMode.VIEW"
-            :placeholder="t('products.labels.selectProductBaseUom')"
+            :placeholder="t('products.labels.selectUomGroup')"
             sort-by="name"
             sort-operator="asc"
           />
           <Message
-            v-if="$form.productBaseUomId?.invalid"
+            v-if="$form.uomGroupId?.invalid"
             severity="error"
             size="small"
             variant="simple"
-            >{{ $form.productBaseUomId.error.message }}</Message
+            >{{ $form.uomGroupId.error.message }}</Message
           >
         </div>
       </div>
@@ -166,7 +166,7 @@ import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { ProductsService, TrackingTypesService, ProductBaseUomsService } from '@/services'
+import { ProductsService, TrackingTypesService, UomGroupsService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
@@ -192,7 +192,7 @@ const emits = defineEmits(['close'])
 
 // Initial options for dropdowns
 const initialTrackingType = ref()
-const initialProductBaseUom = ref()
+const initialUomGroup = ref()
 
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.product) {
@@ -206,7 +206,7 @@ onBeforeMount(() => {
   initialValues.description = props.product.description || ''
   initialValues.taxable = props.product.taxable
   initialValues.trackingTypeId = props.product.trackingTypeId
-  initialValues.productBaseUomId = props.product.productBaseUomId
+  initialValues.uomGroupId = props.product.uomGroupId
 
   // Set initial options for dropdowns
   if (props.product.trackingType) {
@@ -217,10 +217,10 @@ onBeforeMount(() => {
     }
   }
 
-  if (props.product.productBaseUom) {
-    initialProductBaseUom.value = {
-      id: props.product.productBaseUomId,
-      name: props.product.productBaseUom.name,
+  if (props.product.uomGroup) {
+    initialUomGroup.value = {
+      id: props.product.uomGroupId,
+      name: props.product.uomGroup.name,
     }
   }
 })
@@ -236,7 +236,7 @@ const initialValues = reactive({
   description: '',
   taxable: true,
   trackingTypeId: 1 as number | undefined,
-  productBaseUomId: undefined as number | undefined,
+  uomGroupId: undefined as number | undefined,
 })
 
 // Validation schema
@@ -248,7 +248,7 @@ const resolver = computed(() =>
       description: z.string().optional(),
       taxable: z.boolean(),
       trackingTypeId: z.number({ message: t('products.validation.trackingTypeRequired') }),
-      productBaseUomId: z.number().optional(),
+      uomGroupId: z.number().optional(),
     })
   )
 )
@@ -288,7 +288,7 @@ async function addProduct(event: FormSubmitEvent) {
     description: event.states.description.value || undefined,
     taxable: event.states.taxable.value,
     trackingTypeId: event.states.trackingTypeId.value,
-    productBaseUomId: event.states.productBaseUomId.value || undefined,
+    uomGroupId: event.states.uomGroupId.value || undefined,
     createdBy: authStore.userId!,
   })
 
@@ -302,7 +302,7 @@ async function editProduct(event: FormSubmitEvent) {
     description: event.states.description.value || undefined,
     taxable: event.states.taxable.value,
     trackingTypeId: event.states.trackingTypeId.value,
-    productBaseUomId: event.states.productBaseUomId.value || undefined,
+    uomGroupId: event.states.uomGroupId.value || undefined,
     updatedBy: authStore.userId!,
   })
 

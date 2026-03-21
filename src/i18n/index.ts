@@ -62,7 +62,7 @@ const DEFAULT_LOCALE = SUPPORTED_LOCALES.EN_US
 function getInitialLocale(): string {
   // Check localStorage first
   const savedLocale = localStorage.getItem(LOCALE_STORAGE_KEY)
-  if (savedLocale && Object.values(SUPPORTED_LOCALES).includes(savedLocale as any)) {
+  if (savedLocale && (Object.values(SUPPORTED_LOCALES) as string[]).includes(savedLocale)) {
     return savedLocale
   }
 

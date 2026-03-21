@@ -75,14 +75,11 @@ export const API_ENDPOINTS = {
   // Unit of Measurement endpoints
   GEN_UNIT_OF_MEASUREMENTS: '/gen/v1/unit-of-measurements',
 
-  // UOM Conversion Header endpoints
-  GEN_UOM_CONVERSION_HEADERS: '/gen/v1/uom-conversion-headers',
+  // UOM Conversion Level endpoints
+  GEN_UOM_CONVERSION_LEVELS: '/gen/v1/uom-conversion-levels',
 
-  // UOM Conversion Detail endpoints
-  GEN_UOM_CONVERSION_DETAILS: '/gen/v1/uom-conversion-details',
-
-  // Product Base UOM endpoints
-  GEN_PRODUCT_BASE_UOMS: '/gen/v1/product-base-uoms',
+  // UOM Group endpoints
+  GEN_UOM_GROUPS: '/gen/v1/uom-groups',
 
   // Tracking Type endpoints
   GEN_TRACKING_TYPES: '/gen/v1/tracking-types',

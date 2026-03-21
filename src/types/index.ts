@@ -72,24 +72,16 @@ export type {
 } from './customer.type'
 export type {
   UnitOfMeasurement,
+  UnitOfMeasurementLite,
   CreateUnitOfMeasurementDto,
   UpdateUnitOfMeasurementDto,
 } from './unitOfMeasurement.type'
 export type {
-  UomConversionHeader,
-  CreateUomConversionHeaderDto,
-  UpdateUomConversionHeaderDto,
-} from './uomConversionHeader.type'
-export type {
-  UomConversionDetail,
-  CreateUomConversionDetailDto,
-  UpdateUomConversionDetailDto,
-} from './uomConversionDetail.type'
-export type {
-  ProductBaseUom,
-  CreateProductBaseUomDto,
-  UpdateProductBaseUomDto,
-} from './productBaseUom.type'
+  UomConversionLevel,
+  CreateUomConversionLevelDto,
+  UpdateUomConversionLevelDto,
+} from './uomConversionLevel.type'
+export type { UomGroup, CreateUomGroupDto, UpdateUomGroupDto } from './uomGroup.type'
 export type { TrackingType, TrackingTypeLite } from './trackingType.type'
 export type { Product, CreateProductDto, UpdateProductDto } from './product.type'
 export type {

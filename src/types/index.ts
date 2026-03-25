@@ -84,6 +84,7 @@ export type {
   SalesOrderDetailRow,
   CustomerLite,
   ProductLite,
+  ProductLiteWithUom,
 } from './salesOrder.type'
 
 // Component types

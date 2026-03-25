@@ -561,6 +561,7 @@ export default {
       customerRequired: 'Customer is required',
       detailsRequired: 'At least one item is required',
       detailIncomplete: 'Row {row}: Product, quantity, and price are required',
+      tierSkippingNotAllowed: 'Row {row}: quantity cannot skip tiers (e.g. 0/0/1 is invalid)',
     },
 
     messages: {

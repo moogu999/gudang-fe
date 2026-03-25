@@ -170,7 +170,7 @@ function handleSelect(value: SelectValue<T>) {
       (opt) => (opt as Record<string, unknown>)[props.optionValue!] === value,
     )
     if (fullOption) {
-      emit('select-option', fullOption)
+      emit('select-option', fullOption as T)
     }
   }
 }

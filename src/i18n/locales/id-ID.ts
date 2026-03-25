@@ -561,6 +561,8 @@ export default {
       customerRequired: 'Pelanggan wajib dipilih',
       detailsRequired: 'Minimal satu item harus ditambahkan',
       detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+      tierSkippingNotAllowed:
+        'Baris {row}: jumlah tidak boleh melewati tingkatan (mis. 0/0/1 tidak valid)',
     },
 
     messages: {

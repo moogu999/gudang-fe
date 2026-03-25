@@ -4,12 +4,12 @@
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
     <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
-      {{ t('uomConversions.title') }}
+      {{ t('productLabelDefinitions.title') }}
     </h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="addUomConversion" />
+        <ResponsiveButton :label="t('common.actions.add')" @click="addDefinition" />
       </template>
     </Toolbar>
 
@@ -17,13 +17,6 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
-            <span v-if="col.field === 'isActive'">
-              <Tag
-                :value="data[col.field] ? t('common.labels.active') : t('common.labels.inactive')"
-                :severity="data[col.field] ? 'success' : 'secondary'"
-              />
-            </span>
-
             <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
@@ -31,9 +24,9 @@
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
-              @edit="editUomConversion(data)"
+              @edit="editDefinition(data)"
               @delete="onDeleteClick(data['id'])"
-              @view="viewUomConversion(data)"
+              @view="viewDefinition(data)"
             />
           </template>
         </TableComponent>
@@ -54,7 +47,7 @@
         header: 'text-base sm:text-lg md:text-xl',
       }"
     >
-      <UomConversionDialog :mode="dialogMode" :uom-conversion="uomConversion" @close="close" />
+      <ProductLabelDefinitionDialog :mode="dialogMode" :definition="definition" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -69,39 +62,38 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
-import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
-import { UomConversionHeadersService } from '@/services'
+import { ProductLabelDefinitionsService } from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import UomConversionDialog from './UomConversionDialog.vue'
+import ProductLabelDefinitionDialog from './ProductLabelDefinitionDialog.vue'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
-import type { UomConversionHeader } from '@/types'
+import type { ProductLabelDefinition } from '@/types'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 
 const { t } = useI18n()
 
-const overlayGroup = 'uomConversionsView'
+const overlayGroup = 'productLabelDefinitionsView'
 
 // Permissions
-const { canWrite } = usePermissions('/uom-conversions')
+const { canWrite } = usePermissions('/product-label-definitions')
 
 // Table
 const table = ref()
 
 // Dialog
 const dialogMode = ref(DialogMode.ADD)
-const uomConversion = ref<UomConversionHeader | undefined>(undefined)
+const definition = ref<ProductLabelDefinition | undefined>(undefined)
 
 const dialogHeader = computed(() => {
   if (dialogMode.value === DialogMode.ADD) {
-    return t('uomConversions.addUomConversion')
+    return t('productLabelDefinitions.addDefinition')
   } else if (dialogMode.value === DialogMode.EDIT) {
-    return t('uomConversions.editUomConversion')
+    return t('productLabelDefinitions.editDefinition')
   } else {
-    return t('uomConversions.viewUomConversion')
+    return t('productLabelDefinitions.viewDefinition')
   }
 })
 
@@ -115,45 +107,31 @@ const {
   },
 })
 
-function addUomConversion() {
+function addDefinition() {
   dialogMode.value = DialogMode.ADD
-  uomConversion.value = undefined
+  definition.value = undefined
   open()
 }
 
-function editUomConversion(selectedUomConversion: UomConversionHeader) {
+function editDefinition(selectedDefinition: ProductLabelDefinition) {
   dialogMode.value = DialogMode.EDIT
-  uomConversion.value = selectedUomConversion
+  definition.value = selectedDefinition
   open()
 }
 
-function viewUomConversion(selectedUomConversion: UomConversionHeader) {
+function viewDefinition(selectedDefinition: ProductLabelDefinition) {
   dialogMode.value = DialogMode.VIEW
-  uomConversion.value = selectedUomConversion
+  definition.value = selectedDefinition
   open()
 }
 
 // Table
-const url = API_ENDPOINTS.GEN_UOM_CONVERSION_HEADERS
+const url = API_ENDPOINTS.GEN_PRODUCT_LABEL_DEFINITIONS
 
 const columns = computed<Column[]>(() => [
   {
     field: 'name',
-    header: t('common.labels.name'),
-    exportable: true,
-    sortable: true,
-    filterable: true,
-  },
-  {
-    field: 'description',
-    header: t('common.labels.description'),
-    exportable: true,
-    sortable: true,
-    filterable: true,
-  },
-  {
-    field: 'isActive',
-    header: t('common.labels.status'),
+    header: t('productLabelDefinitions.fields.name'),
     exportable: true,
     sortable: true,
     filterable: true,
@@ -178,13 +156,13 @@ const columns = computed<Column[]>(() => [
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
   overlayGroup,
-  entityName: 'UOM conversion',
+  entityName: 'label definition',
   onSuccess: async () => {
     await table.value.clearSearch()
   },
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => UomConversionHeadersService.delete(id))
+  confirmDelete(() => ProductLabelDefinitionsService.delete(id))
 }
 </script>

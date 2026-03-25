@@ -32,6 +32,14 @@
                 : ''
             }}
           </template>
+          <template v-else-if="col.type === 'uom-quantity'">
+            <template v-if="(col.getUomLevels(data)?.length ?? 0) > 1">
+              {{ decomposeBaseQty(data[col.field] as number, col.getUomLevels(data)!).join(' / ') }}
+            </template>
+            <template v-else>
+              {{ formatValue(data[col.field]) }}
+            </template>
+          </template>
           <template v-else>
             {{ formatValue(data[col.field]) }}
           </template>
@@ -64,7 +72,28 @@
             :fetch-fn="col.fetchFn"
             class="w-full"
             @update:model-value="(value) => onSelectChange(data, field, value)"
+            @select-option="(option) => onSelectOption(data, field, option)"
           />
+
+          <!-- UOM tiered quantity input -->
+          <template v-else-if="col.type === 'uom-quantity'">
+            <template v-if="(col.getUomLevels(data)?.length ?? 0) > 1">
+              <InputText
+                :model-value="getTierString(data, field)"
+                :placeholder="col.getUomLevels(data)!.map((l) => l.uom?.symbol ?? '?').join('/')"
+                class="w-full font-mono"
+                @input="(e) => handleTierInput(data, field, (e.target as HTMLInputElement).value, col.getUomLevels(data)!)"
+              />
+            </template>
+            <!-- Fallback: no UOM group or single level -->
+            <InputNumber
+              v-else
+              v-model="data[field]"
+              :min-fraction-digits="0"
+              :max-fraction-digits="2"
+              class="w-full"
+            />
+          </template>
         </template>
       </Column>
 
@@ -106,7 +135,8 @@ import InputNumber from 'primevue/inputnumber'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { useI18n } from 'vue-i18n'
 import DialogMode from '@/constants/dialogMode'
-import type { Base } from '@/types'
+import type { Base, UomConversionLevel } from '@/types'
+import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
 
 const { t } = useI18n()
 
@@ -135,6 +165,14 @@ export type EditableColumn =
       required?: boolean
       editable?: boolean
       computeFn: (row: Record<string, unknown>) => unknown
+    }
+  | {
+      field: string
+      header: string
+      type: 'uom-quantity'
+      required?: boolean
+      editable?: boolean
+      getUomLevels: (row: Record<string, unknown>) => UomConversionLevel[] | undefined
     }
 
 interface Props {
@@ -178,7 +216,7 @@ function addRow() {
 
   // Initialize fields based on column types
   props.columns.forEach((col) => {
-    if (col.type === 'number') {
+    if (col.type === 'number' || col.type === 'uom-quantity') {
       newRow[col.field] = 0
     } else if (col.type === 'computed') {
       newRow[col.field] = undefined
@@ -211,17 +249,43 @@ function onRowEditSave(event: { newData: Record<string, unknown>; index: number 
   emit('update:modelValue', localRows.value)
 }
 
-// Handle select change to populate related object
 function onSelectChange(
   row: Record<string, unknown>,
   field: string,
   value: string | number | boolean | Date | object | null | undefined,
 ) {
   row[field] = value
+}
 
-  // If this is a select field and we have the selected option data,
-  // populate the related object (e.g., productId -> product)
-  // This will be handled by InfiniteSelect's emit
+// Populate the related object for display (e.g., productId -> product)
+function onSelectOption(row: Record<string, unknown>, field: string, option: object) {
+  const relatedField = field.replace('Id', '')
+  row[relatedField] = option
+}
+
+function getTierString(data: Record<string, unknown>, field: string): string {
+  // Prefer the raw typed string so Vue doesn't overwrite the input mid-edit
+  const raw = data['_' + field + 'TiersRaw'] as string | undefined
+  if (raw !== undefined) return raw
+  const tiers = data['_' + field + 'Tiers'] as number[] | undefined
+  return tiers ? tiers.join('/') : ''
+}
+
+function handleTierInput(
+  data: Record<string, unknown>,
+  field: string,
+  rawValue: string,
+  levels: UomConversionLevel[],
+) {
+  // Store raw string as-is so :model-value stays identical to what the user typed
+  data['_' + field + 'TiersRaw'] = rawValue
+  const parts = rawValue.split('/')
+  const tiers = Array.from({ length: levels.length }, (_, i) => {
+    const n = parseInt((parts[i] ?? '').trim(), 10)
+    return isNaN(n) || n < 0 ? 0 : n
+  })
+  data['_' + field + 'Tiers'] = tiers
+  data[field] = computeBaseQty(tiers, levels)
 }
 
 // Format values for display

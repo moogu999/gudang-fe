@@ -73,6 +73,7 @@ const displayPlaceholder = computed(() => props.placeholder || t('common.labels.
 
 const emit = defineEmits<{
   'update:modelValue': [value: SelectValue<T>]
+  'select-option': [option: T]
 }>()
 
 const options = ref<T[]>([])
@@ -164,6 +165,14 @@ async function handleFilter(event: FilterEvent) {
 
 function handleSelect(value: SelectValue<T>) {
   emit('update:modelValue', value)
+  if (value !== null && value !== undefined && props.optionValue) {
+    const fullOption = options.value.find(
+      (opt) => (opt as Record<string, unknown>)[props.optionValue!] === value,
+    )
+    if (fullOption) {
+      emit('select-option', fullOption as T)
+    }
+  }
 }
 
 onMounted(async () => {

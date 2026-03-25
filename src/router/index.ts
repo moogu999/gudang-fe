@@ -108,22 +108,23 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.PRODUCT_READ },
         },
         {
+          path: 'product-label-definitions',
+          name: 'ProductLabelDefinitions',
+          component: () =>
+            import('@/views/product-label-definitions/ProductLabelDefinitionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRODUCT_LABEL_DEFINITION_READ },
+        },
+        {
           path: 'unit-of-measurements',
           name: 'UnitOfMeasurements',
           component: () => import('@/views/unit-of-measurements/UnitOfMeasurementsView.vue'),
           meta: { requiredPermission: PERMISSIONS.UNIT_OF_MEASUREMENT_READ },
         },
         {
-          path: 'uom-conversions',
-          name: 'UomConversions',
-          component: () => import('@/views/uom-conversions/UomConversionsView.vue'),
-          meta: { requiredPermission: PERMISSIONS.UOM_CONVERSION_HEADER_READ },
-        },
-        {
-          path: 'product-base-uoms',
-          name: 'ProductBaseUoms',
-          component: () => import('@/views/product-base-uoms/ProductBaseUomsView.vue'),
-          meta: { requiredPermission: PERMISSIONS.PRODUCT_BASE_UOM_READ },
+          path: 'uom-groups',
+          name: 'UomGroups',
+          component: () => import('@/views/uom-groups/UomGroupsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.UOM_GROUP_READ },
         },
         {
           path: 'sales-orders',

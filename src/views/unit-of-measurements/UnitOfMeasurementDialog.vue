@@ -160,41 +160,21 @@ async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
-    if (props.mode === DialogMode.ADD) {
-      await addUnitOfMeasurement(event)
-    } else {
-      await editUnitOfMeasurement(event)
-    }
+    await UnitOfMeasurementsService.create({
+      name: event.states.name.value,
+      symbol: event.states.symbol.value,
+      isCustom: event.states.isCustom.value,
+      createdBy: authStore.userId!,
+    })
 
+    toast.add(
+      commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementCreated'), toastGroup),
+    )
     emits('close')
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
   }
-}
-
-async function addUnitOfMeasurement(event: FormSubmitEvent) {
-  await UnitOfMeasurementsService.create({
-    name: event.states.name.value,
-    symbol: event.states.symbol.value,
-    isCustom: event.states.isCustom.value,
-    createdBy: authStore.userId!,
-  })
-
-  toast.add(
-    commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementCreated'), toastGroup),
-  )
-}
-
-async function editUnitOfMeasurement(event: FormSubmitEvent) {
-  await UnitOfMeasurementsService.update(props.unitOfMeasurement!.id, {
-    name: event.states.name.value,
-    symbol: event.states.symbol.value,
-  })
-
-  toast.add(
-    commonSuccessToast(t('unitOfMeasurements.messages.unitOfMeasurementUpdated'), toastGroup),
-  )
 }
 </script>

@@ -4,12 +4,12 @@
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
     <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
-      {{ t('productBaseUoms.title') }}
+      {{ t('uomGroups.title') }}
     </h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="addProductBaseUom" />
+        <ResponsiveButton :label="t('common.actions.add')" @click="addUomGroup" />
       </template>
     </Toolbar>
 
@@ -17,11 +17,12 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
-            <span v-if="col.field === 'uomConversionHeader.name'">{{
-              data.uomConversionHeader?.name || '-'
-            }}</span>
-
-            <span v-if="col.field === 'baseUom.name'">{{ data.baseUom?.name || '-' }}</span>
+            <span v-if="col.field === 'isActive'">
+              <Tag
+                :value="data[col.field] ? t('common.labels.active') : t('common.labels.inactive')"
+                :severity="data[col.field] ? 'success' : 'secondary'"
+              />
+            </span>
 
             <span v-if="col.field === 'defaultDisplayUom.name'">{{
               data.defaultDisplayUom?.name || '-'
@@ -34,9 +35,9 @@
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
-              @edit="editProductBaseUom(data)"
+              @edit="editUomGroup(data)"
               @delete="onDeleteClick(data['id'])"
-              @view="viewProductBaseUom(data)"
+              @view="viewUomGroup(data)"
             />
           </template>
         </TableComponent>
@@ -57,7 +58,7 @@
         header: 'text-base sm:text-lg md:text-xl',
       }"
     >
-      <ProductBaseUomDialog :mode="dialogMode" :product-base-uom="productBaseUom" @close="close" />
+      <UomGroupDialog :mode="dialogMode" :uom-group="uomGroup" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -72,38 +73,39 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
+import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
-import { ProductBaseUomsService } from '@/services'
+import { UomGroupsService } from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import ProductBaseUomDialog from './ProductBaseUomDialog.vue'
+import UomGroupDialog from './UomGroupDialog.vue'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
-import type { ProductBaseUom } from '@/types'
+import type { UomGroup } from '@/types'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 
 const { t } = useI18n()
 
-const overlayGroup = 'productBaseUomsView'
+const overlayGroup = 'uomGroupsView'
 
 // Permissions
-const { canWrite } = usePermissions('/product-base-uoms')
+const { canWrite } = usePermissions('/uom-groups')
 
 // Table
 const table = ref()
 
 // Dialog
 const dialogMode = ref(DialogMode.ADD)
-const productBaseUom = ref<ProductBaseUom | undefined>(undefined)
+const uomGroup = ref<UomGroup | undefined>(undefined)
 
 const dialogHeader = computed(() => {
   if (dialogMode.value === DialogMode.ADD) {
-    return t('productBaseUoms.addProductBaseUom')
+    return t('uomGroups.addUomGroup')
   } else if (dialogMode.value === DialogMode.EDIT) {
-    return t('productBaseUoms.editProductBaseUom')
+    return t('uomGroups.editUomGroup')
   } else {
-    return t('productBaseUoms.viewProductBaseUom')
+    return t('uomGroups.viewUomGroup')
   }
 })
 
@@ -117,26 +119,26 @@ const {
   },
 })
 
-function addProductBaseUom() {
+function addUomGroup() {
   dialogMode.value = DialogMode.ADD
-  productBaseUom.value = undefined
+  uomGroup.value = undefined
   open()
 }
 
-function editProductBaseUom(selectedProductBaseUom: ProductBaseUom) {
+function editUomGroup(selectedUomGroup: UomGroup) {
   dialogMode.value = DialogMode.EDIT
-  productBaseUom.value = selectedProductBaseUom
+  uomGroup.value = selectedUomGroup
   open()
 }
 
-function viewProductBaseUom(selectedProductBaseUom: ProductBaseUom) {
+function viewUomGroup(selectedUomGroup: UomGroup) {
   dialogMode.value = DialogMode.VIEW
-  productBaseUom.value = selectedProductBaseUom
+  uomGroup.value = selectedUomGroup
   open()
 }
 
 // Table
-const url = API_ENDPOINTS.GEN_PRODUCT_BASE_UOMS
+const url = API_ENDPOINTS.GEN_UOM_GROUPS
 
 const columns = computed<Column[]>(() => [
   {
@@ -147,25 +149,18 @@ const columns = computed<Column[]>(() => [
     filterable: true,
   },
   {
-    field: 'uomConversionHeader.name',
-    header: t('productBaseUoms.fields.uomConversionHeader'),
-    exportable: true,
-    sortable: true,
-    filterable: true,
-  },
-  {
-    field: 'baseUom.name',
-    header: t('productBaseUoms.fields.baseUom'),
+    field: 'isActive',
+    header: t('common.labels.status'),
     exportable: true,
     sortable: true,
     filterable: true,
   },
   {
     field: 'defaultDisplayUom.name',
-    header: t('productBaseUoms.fields.defaultDisplayUom'),
+    header: t('uomGroups.fields.defaultDisplayUom'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'createdAt',
@@ -187,13 +182,13 @@ const columns = computed<Column[]>(() => [
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
   overlayGroup,
-  entityName: 'product base UOM',
+  entityName: 'UOM group',
   onSuccess: async () => {
     await table.value.clearSearch()
   },
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => ProductBaseUomsService.delete(id))
+  confirmDelete(() => UomGroupsService.delete(id))
 }
 </script>

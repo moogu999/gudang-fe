@@ -66,8 +66,8 @@ export default {
     customers: 'Customers',
     products: 'Products',
     unitOfMeasurements: 'Unit of Measurements',
-    uomConversions: 'UOM Conversions',
-    productBaseUoms: 'Base UOM',
+    uomGroups: 'UOM Groups',
+    productLabelDefinitions: 'Product Label Definitions',
     sales: 'Sales',
     salesOrders: 'Sales Orders',
     users: 'Users',
@@ -399,11 +399,26 @@ export default {
       description: 'Description',
       taxable: 'Taxable',
       trackingType: 'Tracking Type',
-      productBaseUom: 'Base UOM',
+      uomGroup: 'UOM Group',
+      label: 'Label',
+      value: 'Value',
     },
     labels: {
       selectTrackingType: 'Select Tracking Type',
-      selectProductBaseUom: 'Select Base UOM',
+      selectUomGroup: 'Select UOM Group',
+      title: 'Labels',
+      setLabels: 'Set Labels',
+      labelsUpdated: 'Labels updated.',
+      labelFilters: 'Label Filters',
+      addLabelFilter: 'Add Label Filter',
+      labelFilter: 'Label Filter',
+      selectDefinition: 'Select Label',
+      selectOption: 'Select Value',
+      noDefinitions: 'No label definitions found for this company.',
+      fields: {
+        label: 'Label',
+        value: 'Value',
+      },
     },
     validation: {
       codeRequired: 'Code is required.',
@@ -436,61 +451,73 @@ export default {
       unitOfMeasurementUpdated: 'Unit of measurement is updated.',
     },
   },
-  uomConversions: {
-    title: 'UOM Conversions',
-    addUomConversion: 'Add UOM Conversion',
-    editUomConversion: 'Edit UOM Conversion',
-    viewUomConversion: 'View UOM Conversion',
-    deleteUomConversion: 'Delete UOM Conversion',
-    validation: {
-      nameRequired: 'Name is required.',
-    },
-    messages: {
-      uomConversionCreated: 'UOM conversion is created.',
-      uomConversionUpdated: 'UOM conversion is updated.',
-    },
-    details: {
-      title: 'Conversion Details',
-      addDetail: 'Add Detail',
-      editDetail: 'Edit Detail',
-      viewDetail: 'View Detail',
-      fields: {
-        fromUom: 'From UOM',
-        toUom: 'To UOM',
-        conversionFactor: 'Conversion Factor',
-      },
-      validation: {
-        fromUomRequired: 'From UOM is required.',
-        toUomRequired: 'To UOM is required.',
-        conversionFactorRequired: 'Conversion factor is required.',
-        conversionFactorPositive: 'Conversion factor must be greater than 0.',
-      },
-      messages: {
-        detailCreated: 'Conversion detail is created.',
-        detailUpdated: 'Conversion detail is updated.',
-      },
-    },
-  },
-  productBaseUoms: {
-    title: 'Base UOM',
-    addProductBaseUom: 'Add Base UOM',
-    editProductBaseUom: 'Edit Base UOM',
-    viewProductBaseUom: 'View Base UOM',
-    deleteProductBaseUom: 'Delete Base UOM',
+  uomGroups: {
+    title: 'UOM Groups',
+    addUomGroup: 'Add UOM Group',
+    editUomGroup: 'Edit UOM Group',
+    viewUomGroup: 'View UOM Group',
+    deleteUomGroup: 'Delete UOM Group',
     fields: {
-      uomConversionHeader: 'UOM Conversion Header',
-      baseUom: 'Base UOM',
       defaultDisplayUom: 'Default Display UOM',
     },
     validation: {
       nameRequired: 'Name is required.',
-      uomConversionHeaderRequired: 'UOM Conversion Header is required.',
-      baseUomRequired: 'Base UOM is required.',
-      defaultDisplayUomRequired: 'Default Display UOM is required.',
     },
     messages: {
-      productBaseUomCreated: 'Base UOM is created.',
-      productBaseUomUpdated: 'Base UOM is updated.',
+      uomGroupCreated: 'UOM group is created.',
+      uomGroupUpdated: 'UOM group is updated.',
+    },
+    levels: {
+      title: 'Conversion Levels',
+      addLevel: 'Add Level',
+      editLevel: 'Edit Level',
+      qtyPerParentLevel1Hint: 'Not applicable for level 1',
+      fields: {
+        levelOrder: 'Level',
+        uom: 'Unit of Measurement',
+        symbol: 'Symbol',
+        qtyPerParent: 'Qty Per Parent',
+      },
+      validation: {
+        uomRequired: 'Unit of measurement is required.',
+        qtyPerParentRequired: 'Qty per parent is required for levels above 1.',
+        qtyPerParentPositive: 'Qty per parent must be a positive integer.',
+      },
+      messages: {
+        levelCreated: 'Conversion level is created.',
+        levelUpdated: 'Conversion level is updated.',
+      },
+    },
+  },
+  productLabelDefinitions: {
+    title: 'Product Label Definitions',
+    addDefinition: 'Add Label Definition',
+    editDefinition: 'Edit Label Definition',
+    viewDefinition: 'View Label Definition',
+    fields: {
+      name: 'Name',
+    },
+    options: {
+      title: 'Options',
+      addOption: 'Add Option',
+      editOption: 'Edit Option',
+      fields: {
+        value: 'Value',
+      },
+      validation: {
+        valueRequired: 'Value is required.',
+      },
+      messages: {
+        optionCreated: 'Option is created.',
+        optionUpdated: 'Option is updated.',
+      },
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      definitionCreated: 'Label definition is created.',
+      definitionUpdated: 'Label definition is updated.',
     },
   },
   salesOrders: {
@@ -544,6 +571,7 @@ export default {
       customerRequired: 'Customer is required',
       detailsRequired: 'At least one item is required',
       detailIncomplete: 'Row {row}: Product, quantity, and price are required',
+      tierSkippingNotAllowed: 'Row {row}: quantity cannot skip tiers (e.g. 0/0/1 is invalid)',
     },
 
     messages: {

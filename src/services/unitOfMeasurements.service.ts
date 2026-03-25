@@ -1,10 +1,6 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type {
-  UnitOfMeasurement,
-  CreateUnitOfMeasurementDto,
-  UpdateUnitOfMeasurementDto,
-} from '@/types/unitOfMeasurement.type'
+import type { UnitOfMeasurement, CreateUnitOfMeasurementDto } from '@/types/unitOfMeasurement.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
@@ -69,26 +65,6 @@ export class UnitOfMeasurementsService {
    */
   static async create(data: CreateUnitOfMeasurementDto): Promise<UnitOfMeasurement> {
     return ApiService.post<UnitOfMeasurement>(this.BASE_URL, data)
-  }
-
-  /**
-   * Updates an existing unit of measurement
-   *
-   * @param id - The unit of measurement ID to update
-   * @param data - Unit of measurement update data
-   * @returns Promise resolving to the updated unit of measurement object
-   * @throws Error if unit of measurement not found or validation fails
-   *
-   * @example
-   * ```typescript
-   * const updated = await UnitOfMeasurementsService.update(1, {
-   *   name: 'Kilogram',
-   *   symbol: 'kg'
-   * })
-   * ```
-   */
-  static async update(id: number, data: UpdateUnitOfMeasurementDto): Promise<UnitOfMeasurement> {
-    return ApiService.patch<UnitOfMeasurement>(`${this.BASE_URL}/${id}`, data)
   }
 
   /**

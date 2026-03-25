@@ -7,11 +7,73 @@
       {{ t('products.title') }}
     </h1>
 
-    <Toolbar v-if="canWrite" class="mb-5">
+    <Toolbar class="mb-5">
+      <template #start>
+        <Button
+          :label="t('products.labels.addLabelFilter')"
+          icon="pi pi-filter"
+          severity="secondary"
+          size="small"
+          @click="addLabelFilter"
+        />
+      </template>
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="addProduct" />
+        <ResponsiveButton v-if="canWrite" :label="t('common.actions.add')" @click="addProduct" />
       </template>
     </Toolbar>
+
+    <!-- Label Filters -->
+    <div v-if="labelFilters.length > 0" class="mb-4 rounded border p-3">
+      <div
+        v-for="(filter, index) in labelFilters"
+        :key="index"
+        class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center"
+      >
+        <span class="text-sm font-medium text-gray-600"
+          >{{ t('products.labels.labelFilter') }} {{ index + 1 }}</span
+        >
+        <InfiniteSelect
+          v-model="filter.definitionId"
+          option-label="name"
+          option-value="id"
+          :fetch-fn="(query) => ProductLabelDefinitionsService.list(query)"
+          :placeholder="t('products.labels.selectDefinition')"
+          sort-by="name"
+          sort-operator="asc"
+          class="min-w-40"
+          @update:model-value="onDefinitionChange(index)"
+        />
+        <InfiniteSelect
+          v-model="filter.optionId"
+          option-label="value"
+          option-value="id"
+          :fetch-fn="(query) => ProductLabelOptionsService.list(query)"
+          :custom-filters="
+            filter.definitionId
+              ? [
+                  {
+                    filterBy: 'product_label_definition_id',
+                    filterOperator: FilterOperator.EQUAL,
+                    filterValue: filter.definitionId,
+                  },
+                ]
+              : []
+          "
+          :placeholder="t('products.labels.selectOption')"
+          :disabled="!filter.definitionId"
+          sort-by="value"
+          sort-operator="asc"
+          class="min-w-40"
+        />
+        <Button
+          icon="pi pi-times"
+          severity="secondary"
+          size="small"
+          text
+          @click="removeLabelFilter(index)"
+        />
+      </div>
+    </div>
 
     <ResponsiveCard>
       <template #content>
@@ -28,9 +90,7 @@
               data['trackingType']?.name || '-'
             }}</span>
 
-            <span v-if="col.field === 'productBaseUom.name'">{{
-              data['productBaseUom']?.name || '-'
-            }}</span>
+            <span v-if="col.field === 'uomGroup.name'">{{ data['uomGroup']?.name || '-' }}</span>
 
             <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
@@ -78,8 +138,13 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
 import { ref, computed } from 'vue'
-import { ProductsService } from '@/services'
+import {
+  ProductsService,
+  ProductLabelDefinitionsService,
+  ProductLabelOptionsService,
+} from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import ProductDialog from './ProductDialog.vue'
@@ -87,7 +152,9 @@ import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { Product } from '@/types'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
+import { FilterOperator } from '@/constants'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 
 const { t } = useI18n()
 
@@ -141,8 +208,33 @@ function viewProduct(selectedProduct: Product) {
   open()
 }
 
+// Label filters
+const labelFilters = ref<{ definitionId: number | undefined; optionId: number | undefined }[]>([])
+
+function addLabelFilter() {
+  labelFilters.value.push({ definitionId: undefined, optionId: undefined })
+}
+
+function removeLabelFilter(index: number) {
+  labelFilters.value.splice(index, 1)
+}
+
+function onDefinitionChange(index: number) {
+  labelFilters.value[index].optionId = undefined
+}
+
 // Table
-const url = API_ENDPOINTS.GEN_PRODUCTS
+const url = computed(() => {
+  const activeFilters = labelFilters.value.filter((f) => f.definitionId && f.optionId)
+  if (activeFilters.length === 0) return API_ENDPOINTS.GEN_PRODUCTS
+
+  const params = new URLSearchParams()
+  activeFilters.forEach((f, i) => {
+    params.append(`labelFilter[${i}][definitionId]`, String(f.definitionId))
+    params.append(`labelFilter[${i}][optionId]`, String(f.optionId))
+  })
+  return `${API_ENDPOINTS.PRODUCTS_V1}?${params.toString()}`
+})
 
 const columns = computed<Column[]>(() => [
   {
@@ -181,8 +273,8 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
   {
-    field: 'productBaseUom.name',
-    header: t('products.fields.productBaseUom'),
+    field: 'uomGroup.name',
+    header: t('products.fields.uomGroup'),
     exportable: true,
     sortable: false,
     filterable: false,

@@ -22,7 +22,7 @@ import { API_ENDPOINTS } from '@/constants/api'
  *   description: 'Product description',
  *   taxable: true,
  *   trackingTypeId: 1,
- *   productBaseUomId: 1,
+ *   uomGroupId: 1,
  *   createdBy: 1
  * })
  *
@@ -93,7 +93,7 @@ export class ProductsService {
    *   description: 'A sample product for demonstration',
    *   taxable: true,
    *   trackingTypeId: 1, // Non-tracking
-   *   productBaseUomId: 1, // Optional UOM configuration
+   *   uomGroupId: 1, // Optional UOM group
    *   createdBy: 1
    * })
    * ```
@@ -138,5 +138,21 @@ export class ProductsService {
    */
   static async delete(id: number): Promise<void> {
     return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
+  }
+
+  /**
+   * Set (replace) all label assignments for a product
+   *
+   * Atomically replaces all label assignments. Pass an empty array to clear all labels.
+   * Maximum 20 labels per product.
+   *
+   * @param productId - Product ID
+   * @param labels - Array of label definition + option pairs
+   */
+  static async setLabels(
+    productId: number,
+    labels: { labelDefinitionId: number; labelOptionId: number }[],
+  ): Promise<void> {
+    return ApiService.put<void>(`${API_ENDPOINTS.PRODUCTS_V1}/${productId}/labels`, { labels })
   }
 }

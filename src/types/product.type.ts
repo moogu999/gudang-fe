@@ -1,5 +1,24 @@
 import type { TrackingTypeLite } from './trackingType.type'
-import type { ProductBaseUom } from './productBaseUom.type'
+import type { UomGroup } from './uomGroup.type'
+
+export interface ProductLabelDefinitionLite {
+  id: number
+  name: string
+}
+
+export interface ProductLabelOptionLite {
+  id: number
+  value: string
+}
+
+export interface ProductLabelValue {
+  id: number
+  productId: number
+  labelDefinitionId: number
+  labelOptionId: number
+  definition?: ProductLabelDefinitionLite
+  option?: ProductLabelOptionLite
+}
 
 /**
  * Product entity
@@ -14,17 +33,18 @@ export interface Product {
   description?: string
   taxable: boolean
   trackingTypeId: number
-  productBaseUomId?: number
+  uomGroupId?: number
   createdAt: string
   updatedAt: string
   createdBy?: number
 
   // Relations
   trackingType?: TrackingTypeLite
-  productBaseUom?: ProductBaseUom
+  uomGroup?: UomGroup
   createdByUser?: {
     email: string
   }
+  labels?: ProductLabelValue[]
 }
 
 /**
@@ -36,7 +56,7 @@ export interface CreateProductDto {
   description?: string
   taxable: boolean
   trackingTypeId: number
-  productBaseUomId?: number
+  uomGroupId?: number
   createdBy: number
 }
 
@@ -49,6 +69,6 @@ export interface UpdateProductDto {
   description?: string
   taxable?: boolean
   trackingTypeId?: number
-  productBaseUomId?: number
+  uomGroupId?: number
   updatedBy: number
 }

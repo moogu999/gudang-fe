@@ -314,7 +314,13 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
-import type { SalesOrderDetailRow, CreateSalesOrderRequest, CustomerLite } from '@/types'
+import type {
+  SalesOrderDetailRow,
+  CreateSalesOrderRequest,
+  CustomerLite,
+  UomConversionLevel,
+} from '@/types'
+import { decomposeBaseQty } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
@@ -393,8 +399,12 @@ const detailColumns = computed<EditableColumn[]>(() => [
   {
     field: 'quantity',
     header: t('salesOrders.details.quantity'),
-    type: 'number',
+    type: 'uom-quantity',
     required: true,
+    getUomLevels: (row) => {
+      const product = row.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined
+      return product?.uomGroup?.levels
+    },
   },
   {
     field: 'price',
@@ -454,6 +464,23 @@ function validateDetails(): boolean {
         ),
       )
       return false
+    }
+
+    // Validate no tier skipping (e.g., 0/0/1 is invalid — tier[i]>0 requires a preceding non-zero tier)
+    const tiers = row._quantityTiers
+    const levels = row.product?.uomGroup?.levels
+    if (tiers && levels && levels.length > 1) {
+      for (let i = 1; i < tiers.length; i++) {
+        if ((tiers[i] ?? 0) > 0 && tiers.slice(0, i).every((t) => (t ?? 0) === 0)) {
+          toast.add(
+            commonErrorToast(
+              new Error(t('salesOrders.validation.tierSkippingNotAllowed', { row: index + 1 })),
+              toastGroup,
+            ),
+          )
+          return false
+        }
+      }
     }
   }
 
@@ -536,15 +563,20 @@ async function loadSalesOrder() {
 
     const detailsResponse = await SalesOrderDetailsService.list(query)
 
-    details.value = detailsResponse.data.map((detail) => ({
-      _localId: crypto.randomUUID(),
-      productId: detail.productId,
-      product: detail.product,
-      quantity: parseFloat(detail.quantity),
-      price: parseFloat(detail.price),
-      discount: parseFloat(detail.discount),
-      subAmount: parseFloat(detail.subAmount),
-    }))
+    details.value = detailsResponse.data.map((detail) => {
+      const levels = detail.product?.uomGroup?.levels
+      const qty = parseFloat(detail.quantity)
+      return {
+        _localId: crypto.randomUUID(),
+        productId: detail.productId,
+        product: detail.product,
+        quantity: qty,
+        _quantityTiers: levels?.length ? decomposeBaseQty(qty, levels) : undefined,
+        price: parseFloat(detail.price),
+        discount: parseFloat(detail.discount),
+        subAmount: parseFloat(detail.subAmount),
+      }
+    })
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

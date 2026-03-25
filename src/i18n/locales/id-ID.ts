@@ -66,8 +66,8 @@ export default {
     customers: 'Pelanggan',
     products: 'Produk',
     unitOfMeasurements: 'Satuan Ukuran',
-    uomConversions: 'Konversi Satuan Ukuran',
-    productBaseUoms: 'Satuan Dasar',
+    uomGroups: 'Grup Satuan',
+    productLabelDefinitions: 'Definisi Label Produk',
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
     users: 'Pengguna',
@@ -399,11 +399,26 @@ export default {
       description: 'Deskripsi',
       taxable: 'Kena Pajak',
       trackingType: 'Tipe Pelacakan',
-      productBaseUom: 'Satuan Dasar',
+      uomGroup: 'Grup Satuan',
+      label: 'Label',
+      value: 'Nilai',
     },
     labels: {
       selectTrackingType: 'Pilih Tipe Pelacakan',
-      selectProductBaseUom: 'Pilih Satuan Dasar',
+      selectUomGroup: 'Pilih Grup Satuan',
+      title: 'Label',
+      setLabels: 'Atur Label',
+      labelsUpdated: 'Label berhasil diperbarui.',
+      labelFilters: 'Filter Label',
+      addLabelFilter: 'Tambah Filter Label',
+      labelFilter: 'Filter Label',
+      selectDefinition: 'Pilih Label',
+      selectOption: 'Pilih Nilai',
+      noDefinitions: 'Tidak ada definisi label untuk perusahaan ini.',
+      fields: {
+        label: 'Label',
+        value: 'Nilai',
+      },
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
@@ -436,61 +451,73 @@ export default {
       unitOfMeasurementUpdated: 'Satuan ukuran berhasil diperbarui.',
     },
   },
-  uomConversions: {
-    title: 'Konversi Satuan Ukuran',
-    addUomConversion: 'Tambah Konversi Satuan Ukuran',
-    editUomConversion: 'Edit Konversi Satuan Ukuran',
-    viewUomConversion: 'Lihat Konversi Satuan Ukuran',
-    deleteUomConversion: 'Hapus Konversi Satuan Ukuran',
-    validation: {
-      nameRequired: 'Nama wajib diisi.',
-    },
-    messages: {
-      uomConversionCreated: 'Konversi satuan ukuran berhasil dibuat.',
-      uomConversionUpdated: 'Konversi satuan ukuran berhasil diperbarui.',
-    },
-    details: {
-      title: 'Detail Konversi',
-      addDetail: 'Tambah Detail',
-      editDetail: 'Edit Detail',
-      viewDetail: 'Lihat Detail',
-      fields: {
-        fromUom: 'Dari Satuan',
-        toUom: 'Ke Satuan',
-        conversionFactor: 'Faktor Konversi',
-      },
-      validation: {
-        fromUomRequired: 'Dari satuan wajib diisi.',
-        toUomRequired: 'Ke satuan wajib diisi.',
-        conversionFactorRequired: 'Faktor konversi wajib diisi.',
-        conversionFactorPositive: 'Faktor konversi harus lebih besar dari 0.',
-      },
-      messages: {
-        detailCreated: 'Detail konversi berhasil dibuat.',
-        detailUpdated: 'Detail konversi berhasil diperbarui.',
-      },
-    },
-  },
-  productBaseUoms: {
-    title: 'Satuan Dasar',
-    addProductBaseUom: 'Tambah Satuan Dasar',
-    editProductBaseUom: 'Edit Satuan Dasar',
-    viewProductBaseUom: 'Lihat Satuan Dasar',
-    deleteProductBaseUom: 'Hapus Satuan Dasar',
+  uomGroups: {
+    title: 'Grup Satuan',
+    addUomGroup: 'Tambah Grup Satuan',
+    editUomGroup: 'Edit Grup Satuan',
+    viewUomGroup: 'Lihat Grup Satuan',
+    deleteUomGroup: 'Hapus Grup Satuan',
     fields: {
-      uomConversionHeader: 'Header Konversi Satuan',
-      baseUom: 'Satuan Dasar',
       defaultDisplayUom: 'Satuan Tampilan Default',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
-      uomConversionHeaderRequired: 'Header Konversi Satuan wajib diisi.',
-      baseUomRequired: 'Satuan Dasar wajib diisi.',
-      defaultDisplayUomRequired: 'Satuan Tampilan Default wajib diisi.',
     },
     messages: {
-      productBaseUomCreated: 'Satuan dasar berhasil dibuat.',
-      productBaseUomUpdated: 'Satuan dasar berhasil diperbarui.',
+      uomGroupCreated: 'Grup satuan berhasil dibuat.',
+      uomGroupUpdated: 'Grup satuan berhasil diperbarui.',
+    },
+    levels: {
+      title: 'Level Konversi',
+      addLevel: 'Tambah Level',
+      editLevel: 'Edit Level',
+      qtyPerParentLevel1Hint: 'Tidak berlaku untuk level 1',
+      fields: {
+        levelOrder: 'Level',
+        uom: 'Satuan Ukuran',
+        symbol: 'Simbol',
+        qtyPerParent: 'Jumlah Per Induk',
+      },
+      validation: {
+        uomRequired: 'Satuan ukuran wajib diisi.',
+        qtyPerParentRequired: 'Jumlah per induk wajib diisi untuk level di atas 1.',
+        qtyPerParentPositive: 'Jumlah per induk harus bilangan bulat positif.',
+      },
+      messages: {
+        levelCreated: 'Level konversi berhasil dibuat.',
+        levelUpdated: 'Level konversi berhasil diperbarui.',
+      },
+    },
+  },
+  productLabelDefinitions: {
+    title: 'Definisi Label Produk',
+    addDefinition: 'Tambah Definisi Label',
+    editDefinition: 'Edit Definisi Label',
+    viewDefinition: 'Lihat Definisi Label',
+    fields: {
+      name: 'Nama',
+    },
+    options: {
+      title: 'Opsi',
+      addOption: 'Tambah Opsi',
+      editOption: 'Edit Opsi',
+      fields: {
+        value: 'Nilai',
+      },
+      validation: {
+        valueRequired: 'Nilai wajib diisi.',
+      },
+      messages: {
+        optionCreated: 'Opsi berhasil dibuat.',
+        optionUpdated: 'Opsi berhasil diperbarui.',
+      },
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      definitionCreated: 'Definisi label berhasil dibuat.',
+      definitionUpdated: 'Definisi label berhasil diperbarui.',
     },
   },
   salesOrders: {
@@ -544,6 +571,8 @@ export default {
       customerRequired: 'Pelanggan wajib dipilih',
       detailsRequired: 'Minimal satu item harus ditambahkan',
       detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+      tierSkippingNotAllowed:
+        'Baris {row}: jumlah tidak boleh melewati tingkatan (mis. 0/0/1 tidak valid)',
     },
 
     messages: {

@@ -1,3 +1,16 @@
+import type { UomConversionLevel } from './uomConversionLevel.type'
+
+// Lightweight product type that includes UOM conversion levels (returned by sales order detail API)
+export interface ProductLiteWithUom {
+  code: string
+  name: string
+  uomGroupId?: number | null
+  uomGroup?: {
+    name: string
+    levels: UomConversionLevel[]
+  }
+}
+
 // Sales Order Header Entity
 export interface SalesOrderHeader {
   id: number
@@ -30,7 +43,7 @@ export interface SalesOrderDetail {
   id: number
   salesOrderHeaderId: number
   productId: number
-  product?: ProductLite
+  product?: ProductLiteWithUom
   quantity: string // Decimal as string from backend
   price: string
   subAmount: string
@@ -67,8 +80,9 @@ export interface CreateSalesOrderDetailDto {
 export interface SalesOrderDetailRow {
   _localId: string // Temp ID for tracking new rows
   productId?: number
-  product?: ProductLite
+  product?: ProductLiteWithUom
   quantity?: number
+  _quantityTiers?: number[] // Tier breakdown (frontend-only, not sent to API)
   price?: number
   discount?: number
   subAmount?: number // Computed field

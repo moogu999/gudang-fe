@@ -159,6 +159,11 @@ class ApiService {
     return response.data
   }
 
+  public async put<T>(endpoint: string, data: object): Promise<T> {
+    const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data)
+    return response.data
+  }
+
   public async delete<T>(endpoint: string): Promise<T> {
     const response: AxiosResponse<T> = await this.axiosInstance.delete(endpoint)
     return response.data

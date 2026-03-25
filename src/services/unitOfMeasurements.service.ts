@@ -1,9 +1,6 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type {
-  UnitOfMeasurement,
-  CreateUnitOfMeasurementDto,
-} from '@/types/unitOfMeasurement.type'
+import type { UnitOfMeasurement, CreateUnitOfMeasurementDto } from '@/types/unitOfMeasurement.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**

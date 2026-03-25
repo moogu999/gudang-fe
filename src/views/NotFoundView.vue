@@ -5,12 +5,7 @@
     <p class="text-center text-stone-500">
       {{ t('notFound.description') }}
     </p>
-    <Button
-      :label="t('notFound.goToHome')"
-      icon="pi pi-home"
-      @click="goToHome"
-      class="mt-4"
-    />
+    <Button :label="t('notFound.goToHome')" icon="pi pi-home" @click="goToHome" class="mt-4" />
   </div>
 </template>
 

@@ -9,24 +9,18 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
-          t('divisions.fields.name')
+        <label for="value" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('productLabelDefinitions.options.fields.value')
         }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
-          <InputText
-            id="name"
-            name="name"
-            autocomplete="off"
-            :disabled="mode === DialogMode.VIEW"
-            class="w-full"
-          />
-          <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
-            $form.name.error.message
+          <InputText id="value" name="value" autocomplete="off" class="w-full" />
+          <Message v-if="$form.value?.invalid" severity="error" size="small" variant="simple">{{
+            $form.value.error.message
           }}</Message>
         </div>
       </div>
 
-      <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
+      <div class="flex justify-end gap-2">
         <Button
           type="button"
           :label="t('common.actions.cancel')"
@@ -41,9 +35,6 @@
           :disabled="isLoading"
         ></Button>
       </div>
-      <div class="flex justify-end gap-2" v-else>
-        <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
-      </div>
     </Form>
   </div>
 </template>
@@ -55,20 +46,18 @@ import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { onBeforeMount, reactive, type PropType, computed } from 'vue'
+import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { DivisionsService } from '@/services/divisions.service'
-import { ref } from 'vue'
+import { ProductLabelOptionsService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
-import type { Division } from '@/types/division.type'
+import type { ProductLabelOption } from '@/types'
 
 const { t } = useI18n()
 
-// Auth
 const authStore = useAuthStore()
 
 const props = defineProps({
@@ -76,35 +65,36 @@ const props = defineProps({
     type: String as PropType<DialogMode>,
     default: DialogMode.ADD,
   },
-  division: {
-    type: Object as PropType<Division>,
+  option: {
+    type: Object as PropType<ProductLabelOption>,
+  },
+  definitionId: {
+    type: Number,
+    required: true,
   },
 })
 
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.division) {
+  if (props.mode !== DialogMode.EDIT || !props.option) {
     return
   }
 
-  initialValues.name = props.division.name
+  initialValues.value = props.option.value
 })
 
-// Toast
-const toastGroup = 'divisionDialog'
+const toastGroup = 'productLabelOptionDialog'
 const toast = useToast()
 
-// Form
 const initialValues = reactive({
-  name: '',
+  value: '',
 })
 
-// Validation schema
 const resolver = computed(() =>
   zodResolver(
     z.object({
-      name: z.string().min(1, t('divisions.validation.nameRequired')),
+      value: z.string().min(1, t('productLabelDefinitions.options.validation.valueRequired')),
     }),
   ),
 )
@@ -124,9 +114,9 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
   try {
     if (props.mode === DialogMode.ADD) {
-      await addDivision(event)
+      await addOption(event)
     } else {
-      await editDivision(event)
+      await editOption(event)
     }
 
     emits('close')
@@ -137,21 +127,26 @@ async function onFormSubmit(event: FormSubmitEvent) {
   }
 }
 
-async function addDivision(event: FormSubmitEvent) {
-  await DivisionsService.create({
-    name: event.states.name.value,
+async function addOption(event: FormSubmitEvent) {
+  await ProductLabelOptionsService.create({
+    productLabelDefinitionId: props.definitionId,
+    value: event.states.value.value,
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('divisions.messages.divisionCreated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('productLabelDefinitions.options.messages.optionCreated'), toastGroup),
+  )
 }
 
-async function editDivision(event: FormSubmitEvent) {
-  await DivisionsService.update(props.division!.id, {
-    name: event.states.name.value,
+async function editOption(event: FormSubmitEvent) {
+  await ProductLabelOptionsService.update(props.option!.id, {
+    value: event.states.value.value,
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('divisions.messages.divisionUpdated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('productLabelDefinitions.options.messages.optionUpdated'), toastGroup),
+  )
 }
 </script>

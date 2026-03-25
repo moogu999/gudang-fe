@@ -30,9 +30,7 @@
 
           <!-- Order Number -->
           <div class="flex flex-col gap-1">
-            <label for="no" class="text-sm font-semibold">{{
-              t('salesOrders.fields.no')
-            }}</label>
+            <label for="no" class="text-sm font-semibold">{{ t('salesOrders.fields.no') }}</label>
             <InputText
               id="no"
               name="no"
@@ -269,11 +267,7 @@
 
       <!-- Action Buttons -->
       <div class="mt-6 flex justify-end gap-2">
-        <Button
-          :label="t('common.actions.cancel')"
-          severity="secondary"
-          @click="emit('close')"
-        />
+        <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('close')" />
         <Button
           v-if="mode !== DialogMode.VIEW"
           type="submit"
@@ -320,11 +314,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
-import type {
-  SalesOrderDetailRow,
-  CreateSalesOrderRequest,
-  CustomerLite,
-} from '@/types'
+import type { SalesOrderDetailRow, CreateSalesOrderRequest, CustomerLite } from '@/types'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
@@ -422,7 +412,9 @@ const detailColumns = computed<EditableColumn[]>(() => [
     header: t('salesOrders.details.subAmount'),
     type: 'computed',
     editable: false,
-    computeFn: (row) => ((row.quantity || 0) as number) * ((row.price || 0) as number) - ((row.discount || 0) as number),
+    computeFn: (row) =>
+      ((row.quantity || 0) as number) * ((row.price || 0) as number) -
+      ((row.discount || 0) as number),
   },
 ])
 
@@ -430,7 +422,7 @@ const detailColumns = computed<EditableColumn[]>(() => [
 const calculatedTotals = computed(() => {
   // Calculate subtotal by computing each line's subAmount
   const subtotal = details.value.reduce((sum, row) => {
-    const lineSubAmount = ((row.quantity || 0) * (row.price || 0)) - (row.discount || 0)
+    const lineSubAmount = (row.quantity || 0) * (row.price || 0) - (row.discount || 0)
     return sum + lineSubAmount
   }, 0)
   const dpp = subtotal - headerDiscountAmount.value
@@ -449,9 +441,7 @@ function formatCurrency(value: number): string {
 // Validate details
 function validateDetails(): boolean {
   if (details.value.length === 0) {
-    toast.add(
-      commonErrorToast(new Error(t('salesOrders.validation.detailsRequired')), toastGroup),
-    )
+    toast.add(commonErrorToast(new Error(t('salesOrders.validation.detailsRequired')), toastGroup))
     return false
   }
 

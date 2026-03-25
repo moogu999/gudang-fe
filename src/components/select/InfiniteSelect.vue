@@ -73,6 +73,7 @@ const displayPlaceholder = computed(() => props.placeholder || t('common.labels.
 
 const emit = defineEmits<{
   'update:modelValue': [value: SelectValue<T>]
+  'select-option': [option: T]
 }>()
 
 const options = ref<T[]>([])
@@ -126,7 +127,7 @@ async function fetchData(cursor?: string) {
 
     // Apply custom filters
     if (props.customFilters && props.customFilters.length > 0) {
-      props.customFilters.forEach(filter => {
+      props.customFilters.forEach((filter) => {
         queryBuilder.withFilter(filter.filterBy, filter.filterOperator, filter.filterValue)
       })
     }
@@ -164,6 +165,14 @@ async function handleFilter(event: FilterEvent) {
 
 function handleSelect(value: SelectValue<T>) {
   emit('update:modelValue', value)
+  if (value !== null && value !== undefined && props.optionValue) {
+    const fullOption = options.value.find(
+      (opt) => (opt as Record<string, unknown>)[props.optionValue!] === value,
+    )
+    if (fullOption) {
+      emit('select-option', fullOption)
+    }
+  }
 }
 
 onMounted(async () => {
@@ -176,7 +185,7 @@ onMounted(async () => {
       ? (props.initialOption as Record<string, unknown>)[optionValueKey]
       : props.initialOption
 
-    const exists = options.value.some(opt => {
+    const exists = options.value.some((opt) => {
       const optValue = optionValueKey ? (opt as Record<string, unknown>)[optionValueKey] : opt
       return optValue === initialValue
     })
@@ -195,6 +204,6 @@ watch(
     hasMore.value = true
     await fetchData()
   },
-  { deep: true }
+  { deep: true },
 )
 </script>

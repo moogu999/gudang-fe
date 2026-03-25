@@ -139,4 +139,20 @@ export class ProductsService {
   static async delete(id: number): Promise<void> {
     return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
   }
+
+  /**
+   * Set (replace) all label assignments for a product
+   *
+   * Atomically replaces all label assignments. Pass an empty array to clear all labels.
+   * Maximum 20 labels per product.
+   *
+   * @param productId - Product ID
+   * @param labels - Array of label definition + option pairs
+   */
+  static async setLabels(
+    productId: number,
+    labels: { labelDefinitionId: number; labelOptionId: number }[],
+  ): Promise<void> {
+    return ApiService.put<void>(`${API_ENDPOINTS.PRODUCTS_V1}/${productId}/labels`, { labels })
+  }
 }

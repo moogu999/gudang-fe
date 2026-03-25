@@ -20,12 +20,7 @@
       class="text-sm"
       @row-edit-save="onRowEditSave"
     >
-      <Column
-        v-for="col in columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-      >
+      <Column v-for="col in columns" :key="col.field" :field="col.field" :header="col.header">
         <template #body="{ data }">
           <template v-if="col.type === 'computed'">
             {{ col.computeFn ? formatValue(col.computeFn(data)) : formatValue(data[col.field]) }}
@@ -69,6 +64,7 @@
             :fetch-fn="col.fetchFn"
             class="w-full"
             @update:model-value="(value) => onSelectChange(data, field, value)"
+            @select-option="(option) => onSelectOption(data, field, option)"
           />
         </template>
       </Column>
@@ -216,17 +212,18 @@ function onRowEditSave(event: { newData: Record<string, unknown>; index: number 
   emit('update:modelValue', localRows.value)
 }
 
-// Handle select change to populate related object
 function onSelectChange(
   row: Record<string, unknown>,
   field: string,
   value: string | number | boolean | Date | object | null | undefined,
 ) {
   row[field] = value
+}
 
-  // If this is a select field and we have the selected option data,
-  // populate the related object (e.g., productId -> product)
-  // This will be handled by InfiniteSelect's emit
+// Populate the related object for display (e.g., productId -> product)
+function onSelectOption(row: Record<string, unknown>, field: string, option: object) {
+  const relatedField = field.replace('Id', '')
+  row[relatedField] = option
 }
 
 // Format values for display

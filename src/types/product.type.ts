@@ -1,6 +1,25 @@
 import type { TrackingTypeLite } from './trackingType.type'
 import type { UomGroup } from './uomGroup.type'
 
+export interface ProductLabelDefinitionLite {
+  id: number
+  name: string
+}
+
+export interface ProductLabelOptionLite {
+  id: number
+  value: string
+}
+
+export interface ProductLabelValue {
+  id: number
+  productId: number
+  labelDefinitionId: number
+  labelOptionId: number
+  definition?: ProductLabelDefinitionLite
+  option?: ProductLabelOptionLite
+}
+
 /**
  * Product entity
  *
@@ -25,6 +44,7 @@ export interface Product {
   createdByUser?: {
     email: string
   }
+  labels?: ProductLabelValue[]
 }
 
 /**

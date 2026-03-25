@@ -1,6 +1,10 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type { BranchHoliday, CreateBranchHolidayDto, UpdateBranchHolidayDto } from '@/types/branch.type'
+import type {
+  BranchHoliday,
+  CreateBranchHolidayDto,
+  UpdateBranchHolidayDto,
+} from '@/types/branch.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**

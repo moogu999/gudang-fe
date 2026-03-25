@@ -67,6 +67,7 @@ export default {
     products: 'Products',
     unitOfMeasurements: 'Unit of Measurements',
     uomGroups: 'UOM Groups',
+    productLabelDefinitions: 'Product Label Definitions',
     sales: 'Sales',
     salesOrders: 'Sales Orders',
     users: 'Users',
@@ -389,10 +390,25 @@ export default {
       taxable: 'Taxable',
       trackingType: 'Tracking Type',
       uomGroup: 'UOM Group',
+      label: 'Label',
+      value: 'Value',
     },
     labels: {
       selectTrackingType: 'Select Tracking Type',
       selectUomGroup: 'Select UOM Group',
+      title: 'Labels',
+      setLabels: 'Set Labels',
+      labelsUpdated: 'Labels updated.',
+      labelFilters: 'Label Filters',
+      addLabelFilter: 'Add Label Filter',
+      labelFilter: 'Label Filter',
+      selectDefinition: 'Select Label',
+      selectOption: 'Select Value',
+      noDefinitions: 'No label definitions found for this company.',
+      fields: {
+        label: 'Label',
+        value: 'Value',
+      },
     },
     validation: {
       codeRequired: 'Code is required.',
@@ -461,6 +477,37 @@ export default {
         levelCreated: 'Conversion level is created.',
         levelUpdated: 'Conversion level is updated.',
       },
+    },
+  },
+  productLabelDefinitions: {
+    title: 'Product Label Definitions',
+    addDefinition: 'Add Label Definition',
+    editDefinition: 'Edit Label Definition',
+    viewDefinition: 'View Label Definition',
+    fields: {
+      name: 'Name',
+    },
+    options: {
+      title: 'Options',
+      addOption: 'Add Option',
+      editOption: 'Edit Option',
+      fields: {
+        value: 'Value',
+      },
+      validation: {
+        valueRequired: 'Value is required.',
+      },
+      messages: {
+        optionCreated: 'Option is created.',
+        optionUpdated: 'Option is updated.',
+      },
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      definitionCreated: 'Label definition is created.',
+      definitionUpdated: 'Label definition is updated.',
     },
   },
   salesOrders: {

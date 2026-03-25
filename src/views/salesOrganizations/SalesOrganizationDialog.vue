@@ -106,7 +106,10 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 onBeforeMount(() => {
-  if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.salesOrganization) {
+  if (
+    (props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) ||
+    !props.salesOrganization
+  ) {
     return
   }
 
@@ -127,8 +130,8 @@ const resolver = computed(() =>
   zodResolver(
     z.object({
       name: z.string().min(1, t('salesOrganizations.validation.nameRequired')),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {
@@ -165,7 +168,9 @@ async function addSalesOrganization(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('salesOrganizations.messages.salesOrganizationCreated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('salesOrganizations.messages.salesOrganizationCreated'), toastGroup),
+  )
 }
 
 async function editSalesOrganization(event: FormSubmitEvent) {
@@ -174,6 +179,8 @@ async function editSalesOrganization(event: FormSubmitEvent) {
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('salesOrganizations.messages.salesOrganizationUpdated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('salesOrganizations.messages.salesOrganizationUpdated'), toastGroup),
+  )
 }
 </script>

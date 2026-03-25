@@ -87,6 +87,15 @@ export const API_ENDPOINTS = {
   // Product endpoints
   GEN_PRODUCTS: '/gen/v1/products',
 
+  // Product Label Definition endpoints
+  GEN_PRODUCT_LABEL_DEFINITIONS: '/gen/v1/product-label-definitions',
+
+  // Product Label Option endpoints
+  GEN_PRODUCT_LABEL_OPTIONS: '/gen/v1/product-label-options',
+
+  // Products V1 (custom endpoint for label-filtered search + set labels)
+  PRODUCTS_V1: '/v1/products',
+
   // Sales Order endpoints
   SALES_ORDERS: '/v1/sales-orders', // POST create
   GEN_SALES_ORDER_HEADERS: '/gen/v1/sales-order-headers', // GET list/byId

@@ -63,6 +63,11 @@ const mainMenu = [
         labelKey: 'navigation.uomGroups',
         route: '/uom-groups',
       },
+      {
+        label: 'Product Label Definitions',
+        labelKey: 'navigation.productLabelDefinitions',
+        route: '/product-label-definitions',
+      },
     ],
   },
   {

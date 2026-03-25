@@ -9,9 +9,17 @@
       @submit="onFormSubmit"
     >
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="code" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.code') }}</label>
+        <label for="code" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('companies.fields.code')
+        }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
-          <InputText id="code" name="code" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
+          <InputText
+            id="code"
+            name="code"
+            autocomplete="off"
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
           <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">{{
             $form.code.error.message
           }}</Message>
@@ -19,9 +27,17 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.name') }}</label>
+        <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('companies.fields.name')
+        }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
-          <InputText id="name" name="name" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
+          <InputText
+            id="name"
+            name="name"
+            autocomplete="off"
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
             $form.name.error.message
           }}</Message>
@@ -29,7 +45,9 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="address" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.address') }}</label>
+        <label for="address" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('companies.fields.address')
+        }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <Textarea
             id="address"
@@ -46,9 +64,17 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="taxId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.taxId') }}</label>
+        <label for="taxId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('companies.fields.taxId')
+        }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
-          <InputText id="taxId" name="taxId" autocomplete="off" :disabled="mode === DialogMode.VIEW" class="w-full" />
+          <InputText
+            id="taxId"
+            name="taxId"
+            autocomplete="off"
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
           <Message v-if="$form.taxId?.invalid" severity="error" size="small" variant="simple">{{
             $form.taxId.error.message
           }}</Message>
@@ -56,7 +82,9 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="currencyId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{ t('companies.fields.currency') }}</label>
+        <label for="currencyId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('companies.fields.currency')
+        }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
             id="currencyId"
@@ -70,9 +98,13 @@
             sort-by="code"
             sort-operator="asc"
           />
-          <Message v-if="$form.currencyId?.invalid" severity="error" size="small" variant="simple">{{
-            $form.currencyId.error.message
-          }}</Message>
+          <Message
+            v-if="$form.currencyId?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.currencyId.error.message }}</Message
+          >
         </div>
       </div>
 
@@ -203,8 +235,8 @@ const resolver = computed(() =>
       address: z.string().optional(),
       taxId: z.string().optional(),
       currencyId: z.number({ required_error: t('companies.validation.currencyRequired') }),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

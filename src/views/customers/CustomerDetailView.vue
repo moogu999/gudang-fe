@@ -17,11 +17,7 @@
 
     <ResponsiveCard v-if="customer">
       <template #content>
-        <CustomerForm
-          :mode="DialogMode.VIEW"
-          :customer="customer"
-          @cancel="router.back()"
-        />
+        <CustomerForm :mode="DialogMode.VIEW" :customer="customer" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
 

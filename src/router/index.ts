@@ -108,6 +108,13 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.PRODUCT_READ },
         },
         {
+          path: 'product-label-definitions',
+          name: 'ProductLabelDefinitions',
+          component: () =>
+            import('@/views/product-label-definitions/ProductLabelDefinitionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRODUCT_LABEL_DEFINITION_READ },
+        },
+        {
           path: 'unit-of-measurements',
           name: 'UnitOfMeasurements',
           component: () => import('@/views/unit-of-measurements/UnitOfMeasurementsView.vue'),

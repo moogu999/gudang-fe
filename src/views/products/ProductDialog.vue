@@ -70,7 +70,12 @@
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <div class="w-full md:w-32"></div>
         <div class="flex items-center gap-2">
-          <Checkbox id="taxable" name="taxable" :binary="true" :disabled="mode === DialogMode.VIEW" />
+          <Checkbox
+            id="taxable"
+            name="taxable"
+            :binary="true"
+            :disabled="mode === DialogMode.VIEW"
+          />
           <label for="taxable" class="text-sm font-semibold sm:text-base">{{
             t('products.fields.taxable')
           }}</label>
@@ -131,6 +136,33 @@
         </div>
       </div>
 
+      <!-- Labels Section (EDIT mode only) -->
+      <div v-if="mode === DialogMode.EDIT && props.product" class="mb-4">
+        <Divider />
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="text-sm font-semibold sm:text-base md:text-lg">
+            {{ t('products.labels.title') }}
+          </h3>
+          <Button
+            :label="t('products.labels.setLabels')"
+            icon="pi pi-tag"
+            size="small"
+            @click="openSetLabelsDialog"
+          />
+        </div>
+        <DataTable
+          :value="currentLabels"
+          :loading="isLoadingLabels"
+          striped-rows
+          responsive-layout="scroll"
+          :empty-message="t('table.noResults')"
+          class="text-sm"
+        >
+          <Column field="definition.name" :header="t('products.labels.fields.label')" />
+          <Column field="option.value" :header="t('products.labels.fields.value')" />
+        </DataTable>
+      </div>
+
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
@@ -150,6 +182,24 @@
         <Button type="button" :label="t('common.actions.close')" @click="handleClose"></Button>
       </div>
     </Form>
+
+    <!-- Set Labels Dialog -->
+    <Dialog
+      :header="t('products.labels.setLabels')"
+      @hide="closeSetLabelsDialog"
+      v-model:visible="isSetLabelsDialogShown"
+      modal
+      :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+      :style="{ width: '50vw' }"
+      :pt="{ header: 'text-base sm:text-lg md:text-xl' }"
+    >
+      <ProductSetLabelsDialog
+        v-if="props.product"
+        :product-id="props.product.id"
+        :current-labels="currentLabels"
+        @close="closeSetLabelsDialog"
+      />
+    </Dialog>
   </div>
 </template>
 
@@ -159,6 +209,10 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import Divider from 'primevue/divider'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Dialog from 'primevue/dialog'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
@@ -170,8 +224,9 @@ import { ProductsService, TrackingTypesService, UomGroupsService } from '@/servi
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
-import type { Product } from '@/types'
+import type { Product, ProductLabelValue } from '@/types'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import ProductSetLabelsDialog from './ProductSetLabelsDialog.vue'
 
 const { t } = useI18n()
 
@@ -223,7 +278,38 @@ onBeforeMount(() => {
       name: props.product.uomGroup.name,
     }
   }
+
+  if (props.mode === DialogMode.EDIT && props.product) {
+    currentLabels.value = props.product.labels ?? []
+  }
 })
+
+// Labels state
+const currentLabels = ref<ProductLabelValue[]>([])
+const isLoadingLabels = ref(false)
+const isSetLabelsDialogShown = ref(false)
+
+function openSetLabelsDialog() {
+  isSetLabelsDialogShown.value = true
+}
+
+async function closeSetLabelsDialog() {
+  isSetLabelsDialogShown.value = false
+  await loadCurrentLabels()
+}
+
+async function loadCurrentLabels() {
+  if (!props.product) return
+  isLoadingLabels.value = true
+  try {
+    const fresh = await ProductsService.getById(props.product.id)
+    currentLabels.value = fresh.labels ?? []
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    isLoadingLabels.value = false
+  }
+}
 
 // Toast
 const toastGroup = 'productDialog'
@@ -249,8 +335,8 @@ const resolver = computed(() =>
       taxable: z.boolean(),
       trackingTypeId: z.number({ message: t('products.validation.trackingTypeRequired') }),
       uomGroupId: z.number().optional(),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

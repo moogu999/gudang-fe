@@ -4,12 +4,12 @@
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
     <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
-      {{ t('salesOrganizations.title') }}
+      {{ t('productLabelDefinitions.title') }}
     </h1>
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="addSalesOrganization" />
+        <ResponsiveButton :label="t('common.actions.add')" @click="addDefinition" />
       </template>
     </Toolbar>
 
@@ -21,16 +21,12 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
-            <span v-if="col.field === 'updatedAt' && data[col.field]">{{
-              dayjs(data[col.field]).format(DateFormat.DATE_TIME)
-            }}</span>
-
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
-              @edit="editSalesOrganization(data)"
+              @edit="editDefinition(data)"
               @delete="onDeleteClick(data['id'])"
-              @view="viewSalesOrganization(data)"
+              @view="viewDefinition(data)"
             />
           </template>
         </TableComponent>
@@ -51,11 +47,7 @@
         header: 'text-base sm:text-lg md:text-xl',
       }"
     >
-      <SalesOrganizationDialog
-        :mode="dialogMode"
-        :sales-organization="salesOrganization"
-        @close="close"
-      />
+      <ProductLabelDefinitionDialog :mode="dialogMode" :definition="definition" @close="close" />
     </Dialog>
   </div>
 </template>
@@ -71,37 +63,37 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
 import { ref, computed } from 'vue'
-import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
+import { ProductLabelDefinitionsService } from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import SalesOrganizationDialog from './SalesOrganizationDialog.vue'
+import ProductLabelDefinitionDialog from './ProductLabelDefinitionDialog.vue'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
-import type { SalesOrganization } from '@/types/salesOrganization.type'
+import type { ProductLabelDefinition } from '@/types'
 import DialogMode from '@/constants/dialogMode'
 import { API_ENDPOINTS } from '@/constants/api'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 
 const { t } = useI18n()
 
-const overlayGroup = 'salesOrganizationsView'
+const overlayGroup = 'productLabelDefinitionsView'
 
 // Permissions
-const { canWrite } = usePermissions('/sales-organizations')
+const { canWrite } = usePermissions('/product-label-definitions')
 
 // Table
 const table = ref()
 
 // Dialog
 const dialogMode = ref(DialogMode.ADD)
-const salesOrganization = ref<SalesOrganization | undefined>(undefined)
+const definition = ref<ProductLabelDefinition | undefined>(undefined)
 
 const dialogHeader = computed(() => {
   if (dialogMode.value === DialogMode.ADD) {
-    return t('salesOrganizations.addSalesOrganization')
+    return t('productLabelDefinitions.addDefinition')
   } else if (dialogMode.value === DialogMode.EDIT) {
-    return t('salesOrganizations.editSalesOrganization')
+    return t('productLabelDefinitions.editDefinition')
   } else {
-    return t('salesOrganizations.viewSalesOrganization')
+    return t('productLabelDefinitions.viewDefinition')
   }
 })
 
@@ -115,31 +107,31 @@ const {
   },
 })
 
-function addSalesOrganization() {
+function addDefinition() {
   dialogMode.value = DialogMode.ADD
-  salesOrganization.value = undefined
+  definition.value = undefined
   open()
 }
 
-function editSalesOrganization(selectedSalesOrganization: SalesOrganization) {
+function editDefinition(selectedDefinition: ProductLabelDefinition) {
   dialogMode.value = DialogMode.EDIT
-  salesOrganization.value = selectedSalesOrganization
+  definition.value = selectedDefinition
   open()
 }
 
-function viewSalesOrganization(selectedSalesOrganization: SalesOrganization) {
+function viewDefinition(selectedDefinition: ProductLabelDefinition) {
   dialogMode.value = DialogMode.VIEW
-  salesOrganization.value = selectedSalesOrganization
+  definition.value = selectedDefinition
   open()
 }
 
 // Table
-const url = API_ENDPOINTS.GEN_SALES_ORGANIZATIONS
+const url = API_ENDPOINTS.GEN_PRODUCT_LABEL_DEFINITIONS
 
 const columns = computed<Column[]>(() => [
   {
     field: 'name',
-    header: t('salesOrganizations.fields.name'),
+    header: t('productLabelDefinitions.fields.name'),
     exportable: true,
     sortable: true,
     filterable: true,
@@ -153,14 +145,6 @@ const columns = computed<Column[]>(() => [
     class: 'min-w-45',
   },
   {
-    field: 'createdByUser.email',
-    underlyingField: 'createdBy',
-    header: t('common.labels.createdBy'),
-    exportable: true,
-    sortable: true,
-    filterable: true,
-  },
-  {
     field: '',
     header: t('common.labels.actions'),
     exportable: false,
@@ -172,13 +156,13 @@ const columns = computed<Column[]>(() => [
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
   overlayGroup,
-  entityName: 'sales organization',
+  entityName: 'label definition',
   onSuccess: async () => {
     await table.value.clearSearch()
   },
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => SalesOrganizationsService.delete(id))
+  confirmDelete(() => ProductLabelDefinitionsService.delete(id))
 }
 </script>

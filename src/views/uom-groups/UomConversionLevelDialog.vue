@@ -13,12 +13,7 @@
           t('uomGroups.levels.fields.levelOrder')
         }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
-          <InputNumber
-            id="levelOrder"
-            name="levelOrder"
-            :disabled="true"
-            class="w-full"
-          />
+          <InputNumber id="levelOrder" name="levelOrder" :disabled="true" class="w-full" />
         </div>
       </div>
 
@@ -57,9 +52,13 @@
             :min="1"
             class="w-full"
           />
-          <Message v-if="$form.qtyPerParent?.invalid" severity="error" size="small" variant="simple">{{
-            $form.qtyPerParent.error.message
-          }}</Message>
+          <Message
+            v-if="$form.qtyPerParent?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.qtyPerParent.error.message }}</Message
+          >
         </div>
       </div>
 
@@ -124,7 +123,9 @@ const emits = defineEmits(['close'])
 const initialUom = ref()
 
 const currentLevelOrder = computed(() =>
-  props.mode === DialogMode.EDIT ? (props.level?.levelOrder ?? props.nextLevelOrder) : props.nextLevelOrder
+  props.mode === DialogMode.EDIT
+    ? (props.level?.levelOrder ?? props.nextLevelOrder)
+    : props.nextLevelOrder,
 )
 
 const isLevelOne = computed(() => currentLevelOrder.value === 1)
@@ -166,8 +167,8 @@ const resolver = computed(() =>
             .number({ required_error: t('uomGroups.levels.validation.qtyPerParentRequired') })
             .int()
             .positive(t('uomGroups.levels.validation.qtyPerParentPositive')),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

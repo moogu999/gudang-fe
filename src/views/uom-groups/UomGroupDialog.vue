@@ -44,9 +44,11 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="defaultDisplayUomId" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
-          t('uomGroups.fields.defaultDisplayUom')
-        }}</label>
+        <label
+          for="defaultDisplayUomId"
+          class="w-full text-sm font-semibold sm:text-base md:w-32"
+          >{{ t('uomGroups.fields.defaultDisplayUom') }}</label
+        >
         <div class="flex w-full flex-auto flex-col gap-1">
           <InfiniteSelect
             id="defaultDisplayUomId"
@@ -167,11 +169,11 @@
       modal
       :breakpoints="{
         '960px': '75vw',
-        '640px': '90vw'
+        '640px': '90vw',
       }"
       :style="{ width: '40vw' }"
       :pt="{
-        header: 'text-base sm:text-lg md:text-xl'
+        header: 'text-base sm:text-lg md:text-xl',
       }"
     >
       <UomConversionLevelDialog
@@ -203,7 +205,12 @@ import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { useToast } from 'primevue/usetoast'
-import { UomGroupsService, UnitOfMeasurementsService, UomConversionLevelsService, GenericQueryBuilder } from '@/services'
+import {
+  UomGroupsService,
+  UnitOfMeasurementsService,
+  UomConversionLevelsService,
+  GenericQueryBuilder,
+} from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import { useConfirmDelete } from '@/composables'
@@ -268,8 +275,8 @@ const resolver = computed(() =>
     z.object({
       name: z.string().min(1, t('uomGroups.validation.nameRequired')),
       description: z.string().optional(),
-    })
-  )
+    }),
+  ),
 )
 
 function handleClose() {

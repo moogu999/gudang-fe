@@ -67,6 +67,7 @@ export default {
     products: 'Produk',
     unitOfMeasurements: 'Satuan Ukuran',
     uomGroups: 'Grup Satuan',
+    productLabelDefinitions: 'Definisi Label Produk',
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
     users: 'Pengguna',
@@ -389,10 +390,25 @@ export default {
       taxable: 'Kena Pajak',
       trackingType: 'Tipe Pelacakan',
       uomGroup: 'Grup Satuan',
+      label: 'Label',
+      value: 'Nilai',
     },
     labels: {
       selectTrackingType: 'Pilih Tipe Pelacakan',
       selectUomGroup: 'Pilih Grup Satuan',
+      title: 'Label',
+      setLabels: 'Atur Label',
+      labelsUpdated: 'Label berhasil diperbarui.',
+      labelFilters: 'Filter Label',
+      addLabelFilter: 'Tambah Filter Label',
+      labelFilter: 'Filter Label',
+      selectDefinition: 'Pilih Label',
+      selectOption: 'Pilih Nilai',
+      noDefinitions: 'Tidak ada definisi label untuk perusahaan ini.',
+      fields: {
+        label: 'Label',
+        value: 'Nilai',
+      },
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
@@ -461,6 +477,37 @@ export default {
         levelCreated: 'Level konversi berhasil dibuat.',
         levelUpdated: 'Level konversi berhasil diperbarui.',
       },
+    },
+  },
+  productLabelDefinitions: {
+    title: 'Definisi Label Produk',
+    addDefinition: 'Tambah Definisi Label',
+    editDefinition: 'Edit Definisi Label',
+    viewDefinition: 'Lihat Definisi Label',
+    fields: {
+      name: 'Nama',
+    },
+    options: {
+      title: 'Opsi',
+      addOption: 'Tambah Opsi',
+      editOption: 'Edit Opsi',
+      fields: {
+        value: 'Nilai',
+      },
+      validation: {
+        valueRequired: 'Nilai wajib diisi.',
+      },
+      messages: {
+        optionCreated: 'Opsi berhasil dibuat.',
+        optionUpdated: 'Opsi berhasil diperbarui.',
+      },
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      definitionCreated: 'Definisi label berhasil dibuat.',
+      definitionUpdated: 'Definisi label berhasil diperbarui.',
     },
   },
   salesOrders: {

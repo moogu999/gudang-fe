@@ -88,7 +88,9 @@ function handleKeyPress(event: KeyboardEvent) {
         <div class="flex flex-col gap-4">
           <!-- Email Input -->
           <div class="flex flex-col gap-2">
-            <label for="email" class="text-sm font-medium sm:text-base">{{ t('auth.signIn.email') }}</label>
+            <label for="email" class="text-sm font-medium sm:text-base">{{
+              t('auth.signIn.email')
+            }}</label>
             <InputText
               id="email"
               v-model="email"
@@ -102,7 +104,9 @@ function handleKeyPress(event: KeyboardEvent) {
 
           <!-- Password Input -->
           <div class="flex flex-col gap-2">
-            <label for="password" class="text-sm font-medium sm:text-base">{{ t('auth.signIn.password') }}</label>
+            <label for="password" class="text-sm font-medium sm:text-base">{{
+              t('auth.signIn.password')
+            }}</label>
             <Password
               id="password"
               v-model="password"

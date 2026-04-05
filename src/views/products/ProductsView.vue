@@ -18,7 +18,16 @@
         />
       </template>
       <template #end>
-        <ResponsiveButton v-if="canWrite" :label="t('common.actions.add')" @click="addProduct" />
+        <div class="flex gap-2">
+          <ResponsiveButton
+            v-if="canWrite"
+            :label="t('csv.import')"
+            icon="pi pi-upload"
+            severity="secondary"
+            @click="openCsvDialog"
+          />
+          <ResponsiveButton v-if="canWrite" :label="t('common.actions.add')" @click="addProduct" />
+        </div>
       </template>
     </Toolbar>
 
@@ -124,6 +133,15 @@
     >
       <ProductDialog :mode="dialogMode" :product="product" @close="close" />
     </Dialog>
+
+    <CsvUploadDialog
+      :visible="isCsvDialogShown"
+      entity-name="product"
+      :template-url="`${API_ENDPOINTS.GEN_PRODUCTS}/csv-template`"
+      :upload-url="`${API_ENDPOINTS.GEN_PRODUCTS}/csv-upload`"
+      @close="closeCsvDialog"
+      @success="onCsvSuccess"
+    />
   </div>
 </template>
 
@@ -148,6 +166,7 @@ import {
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import ProductDialog from './ProductDialog.vue'
+import CsvUploadDialog from '@/components/csv/CsvUploadDialog.vue'
 import { useConfirmDelete, useDialog, usePermissions } from '@/composables'
 import type { Product } from '@/types'
 import DialogMode from '@/constants/dialogMode'
@@ -295,6 +314,13 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
 ])
+
+// CSV upload dialog
+const { isVisible: isCsvDialogShown, open: openCsvDialog, close: closeCsvDialog } = useDialog()
+
+async function onCsvSuccess() {
+  await table.value.clearSearch()
+}
 
 // Delete confirmation
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

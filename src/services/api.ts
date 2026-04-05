@@ -168,6 +168,19 @@ class ApiService {
     const response: AxiosResponse<T> = await this.axiosInstance.delete(endpoint)
     return response.data
   }
+
+  public async upload<T>(endpoint: string, file: File): Promise<T> {
+    const formData = new FormData()
+    formData.append('file', file)
+    // Use validateStatus < 500 so that 4xx responses (CSV validation errors, file too large,
+    // invalid headers) are returned as data instead of thrown — the caller checks response.success.
+    const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
+      validateStatus: (status) => status < 500,
+    })
+    return response.data
+  }
 }
 
 // Export a singleton instance

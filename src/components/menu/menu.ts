@@ -71,16 +71,15 @@ const mainMenu = [
     ],
   },
   {
-    label: 'Users',
-    labelKey: 'navigation.users',
-    icon: 'pi pi-user',
-    route: '/users',
-  },
-  {
     label: 'Access Controls',
     labelKey: 'navigation.accessControls',
     icon: 'pi pi-lock',
     items: [
+      {
+        label: 'Users',
+        labelKey: 'navigation.users',
+        route: '/users',
+      },
       {
         label: 'Roles',
         labelKey: 'navigation.roles',

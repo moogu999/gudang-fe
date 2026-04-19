@@ -87,5 +87,8 @@ export type {
   ProductLiteWithUom,
 } from './salesOrder.type'
 
+// CSV upload types
+export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
+
 // Component types
 export type { Column } from './table.type'

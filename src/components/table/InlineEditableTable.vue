@@ -80,9 +80,22 @@
             <template v-if="(col.getUomLevels(data)?.length ?? 0) > 1">
               <InputText
                 :model-value="getTierString(data, field)"
-                :placeholder="col.getUomLevels(data)!.map((l) => l.uom?.symbol ?? '?').join('/')"
+                :placeholder="
+                  col
+                    .getUomLevels(data)!
+                    .map((l) => l.uom?.symbol ?? '?')
+                    .join('/')
+                "
                 class="w-full font-mono"
-                @input="(e) => handleTierInput(data, field, (e.target as HTMLInputElement).value, col.getUomLevels(data)!)"
+                @input="
+                  (e) =>
+                    handleTierInput(
+                      data,
+                      field,
+                      (e.target as HTMLInputElement).value,
+                      col.getUomLevels(data)!,
+                    )
+                "
               />
             </template>
             <!-- Fallback: no UOM group or single level -->

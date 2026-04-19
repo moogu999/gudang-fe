@@ -239,7 +239,7 @@
             </label>
             <div class="flex w-full flex-auto flex-col gap-1">
               <InfiniteSelect
-                v-model="selectedCityId"
+                v-model="selectedAreaId"
                 id="areaId"
                 name="areaId"
                 option-label="name"

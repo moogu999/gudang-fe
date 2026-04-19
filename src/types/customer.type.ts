@@ -34,30 +34,30 @@ export type Customer = {
   id: number
   name: string
   isActive: boolean
-  sellToId: number
+  sellToId: number | null
   sellTo: CustomerLite
-  deliverToId: number
+  deliverToId: number | null
   deliverTo: CustomerLite
-  invoiceToId: number
+  invoiceToId: number | null
   invoiceTo: CustomerLite
   joinInvoice: boolean
-  collectToId: number
+  collectToId: number | null
   collectTo: CustomerLite
-  areaId: number
+  areaId: number | null
   area: CityLite
-  currencyId?: number
+  currencyId?: number | null
   currency?: CurrencyLite
   taxable: boolean
   address?: string
-  countryId?: number
+  countryId?: number | null
   country?: CountryLite
-  provinceId?: number
+  provinceId?: number | null
   province?: ProvinceLite
   cityId?: number
   city?: CityLite
-  districtId?: number
+  districtId?: number | null
   district?: DistrictLite
-  subDistrictId?: number
+  subDistrictId?: number | null
   subDistrict?: SubDistrictLite
   zipCode?: string
   longitude?: number
@@ -74,20 +74,20 @@ export type Customer = {
 export type CreateCustomerDto = {
   name: string
   isActive: boolean
-  currencyId?: number
+  currencyId?: number | null
   sellToId?: number
-  deliverToId?: number
-  invoiceToId?: number
+  deliverToId?: number | null
+  invoiceToId?: number | null
   joinInvoice?: boolean
-  collectToId?: number
-  areaId?: number
+  collectToId?: number | null
+  areaId?: number | null
   taxable: boolean
   address?: string
-  countryId?: number
-  provinceId?: number
-  cityId?: number
-  districtId?: number
-  subDistrictId?: number
+  countryId?: number | null
+  provinceId?: number | null
+  cityId?: number | null
+  districtId?: number | null
+  subDistrictId?: number | null
   zipCode?: string
   longitude?: number
   latitude?: number
@@ -97,20 +97,20 @@ export type CreateCustomerDto = {
 export type UpdateCustomerDto = {
   name?: string
   isActive?: boolean
-  currencyId?: number
-  sellToId?: number
-  deliverToId?: number
-  invoiceToId?: number
+  currencyId?: number | null
+  sellToId?: number | null
+  deliverToId?: number | null
+  invoiceToId?: number | null
   joinInvoice?: boolean
-  collectToId?: number
+  collectToId?: number | null
   areaId?: number
   taxable?: boolean
   address?: string
-  countryId?: number
-  provinceId?: number
-  cityId?: number
-  districtId?: number
-  subDistrictId?: number
+  countryId?: number | null
+  provinceId?: number | null
+  cityId?: number | null
+  districtId?: number | null
+  subDistrictId?: number | null
   zipCode?: string
   longitude?: number
   latitude?: number

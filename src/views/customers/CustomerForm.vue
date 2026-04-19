@@ -239,7 +239,7 @@
             </label>
             <div class="flex w-full flex-auto flex-col gap-1">
               <InfiniteSelect
-                v-model="selectedCityId"
+                v-model="selectedAreaId"
                 id="areaId"
                 name="areaId"
                 option-label="name"
@@ -636,14 +636,6 @@ const subDistrictFilters = computed(() => {
   ]
 })
 
-// currencyId: event.states.currencyId.value,
-// isActive: event.states.isActive.value,
-// sellToId: event.states.sellToId.value,
-// deliverToId: event.states.deliverToId.value,
-// invoiceToId: event.states.invoiceToId.value,
-// joinInvoice: event.states.joinInvoice.value,
-// collectToId: event.states.collectToId.value,
-
 // Form initial values
 const initialValues = reactive({
   name: '',
@@ -857,7 +849,6 @@ const resolver = computed(() =>
 )
 
 function onFormSubmit(event: FormSubmitEvent) {
-  console.log(event)
   if (!event.valid) {
     return
   }

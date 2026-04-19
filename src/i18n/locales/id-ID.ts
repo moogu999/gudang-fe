@@ -602,7 +602,6 @@ export default {
       dateFormat: 'Format Tanggal',
       padding: 'Padding',
       entityType: 'Tipe Entitas',
-      isDefault: 'Default',
       currentNumber: 'Nomor Saat Ini',
     },
     dateFormats: {

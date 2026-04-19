@@ -7,7 +7,6 @@ export interface NumberSeries {
   padding: number
   currentNumber: number
   entityType: string
-  isDefault: boolean
   createdAt: string
   updatedAt?: string
   createdBy?: number
@@ -23,7 +22,6 @@ export interface CreateNumberSeriesDto {
   dateFormat: string
   padding: number
   entityType: string
-  isDefault: boolean
   createdBy: number
 }
 
@@ -33,7 +31,6 @@ export interface UpdateNumberSeriesDto {
   separator?: string
   dateFormat?: string
   padding?: number
-  isDefault?: boolean
   updatedBy: number
 }
 

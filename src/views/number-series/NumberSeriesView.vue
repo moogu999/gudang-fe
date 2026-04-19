@@ -17,13 +17,6 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
-            <span v-if="col.field === 'isDefault'">
-              <Tag
-                :value="data[col.field] ? t('common.labels.yes') : t('common.labels.no')"
-                :severity="data[col.field] ? 'success' : 'secondary'"
-              />
-            </span>
-
             <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
@@ -69,7 +62,6 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
-import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
 import { NumberSeriesService } from '@/services'
 import Toast from 'primevue/toast'
@@ -156,13 +148,6 @@ const columns = computed<Column[]>(() => [
     header: t('numberSeries.fields.entityType'),
     exportable: true,
     sortable: true,
-    filterable: true,
-  },
-  {
-    field: 'isDefault',
-    header: t('numberSeries.fields.isDefault'),
-    exportable: true,
-    sortable: false,
     filterable: true,
   },
   {

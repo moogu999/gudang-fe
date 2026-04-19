@@ -250,7 +250,12 @@ import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { ProductsService, TrackingTypesService, UomGroupsService, NumberSeriesService } from '@/services'
+import {
+  ProductsService,
+  TrackingTypesService,
+  UomGroupsService,
+  NumberSeriesService,
+} from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
@@ -381,7 +386,6 @@ const resolver = computed(() =>
     }),
   ),
 )
-
 
 function handleClose() {
   emits('close')

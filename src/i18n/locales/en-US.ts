@@ -601,7 +601,6 @@ export default {
       dateFormat: 'Date Format',
       padding: 'Padding',
       entityType: 'Entity Type',
-      isDefault: 'Default',
       currentNumber: 'Current #',
     },
     dateFormats: {

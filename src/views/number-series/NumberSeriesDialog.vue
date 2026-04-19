@@ -58,13 +58,9 @@
             class="w-full"
             @input="onSeparatorInput"
           />
-          <Message
-            v-if="$form.separator?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ $form.separator.error.message }}</Message
-          >
+          <Message v-if="$form.separator?.invalid" severity="error" size="small" variant="simple">{{
+            $form.separator.error.message
+          }}</Message>
         </div>
       </div>
 
@@ -124,6 +120,7 @@
             :options="entityTypeOptions"
             option-label="label"
             option-value="value"
+            option-disabled="disabled"
             :disabled="mode === DialogMode.VIEW || mode === DialogMode.EDIT"
             class="w-full"
           />
@@ -137,21 +134,6 @@
         </div>
       </div>
 
-      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-        <div class="w-full md:w-36"></div>
-        <div class="flex items-center gap-2">
-          <Checkbox
-            id="isDefault"
-            name="isDefault"
-            :binary="true"
-            :disabled="mode === DialogMode.VIEW"
-          />
-          <label for="isDefault" class="text-sm font-semibold sm:text-base">{{
-            t('numberSeries.fields.isDefault')
-          }}</label>
-        </div>
-      </div>
-
       <!-- Live Preview -->
       <div
         v-if="mode !== DialogMode.VIEW"
@@ -161,7 +143,8 @@
         <div
           class="rounded border border-dashed border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600"
         >
-          {{ t('numberSeries.preview') }}: <span class="font-mono font-semibold">{{ preview }}</span>
+          {{ t('numberSeries.preview') }}:
+          <span class="font-mono font-semibold">{{ preview }}</span>
         </div>
       </div>
 
@@ -192,7 +175,6 @@ import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
-import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
@@ -234,14 +216,16 @@ const initialValues = reactive({
   dateFormat: '',
   padding: 3,
   entityType: '',
-  isDefault: false,
 })
 
-onBeforeMount(() => {
-  if (
-    (props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) ||
-    !props.numberSeries
-  ) {
+onBeforeMount(async () => {
+  if (props.mode === DialogMode.ADD) {
+    const result = await NumberSeriesService.list()
+    takenEntityTypes.value = new Set(result.data.map((s) => s.entityType))
+    return
+  }
+
+  if (!props.numberSeries) {
     return
   }
 
@@ -251,7 +235,6 @@ onBeforeMount(() => {
   initialValues.dateFormat = props.numberSeries.dateFormat
   initialValues.padding = props.numberSeries.padding
   initialValues.entityType = props.numberSeries.entityType
-  initialValues.isDefault = props.numberSeries.isDefault
 
   previewPrefix.value = props.numberSeries.prefix
   previewSeparator.value = props.numberSeries.separator
@@ -267,9 +250,19 @@ const dateFormatOptions = computed(() => [
   { label: t('numberSeries.dateFormats.yymm'), value: 'YYMM' },
 ])
 
+const takenEntityTypes = ref<Set<string>>(new Set())
+
 const entityTypeOptions = computed(() => [
-  { label: t('numberSeries.entityTypes.products'), value: 'products' },
-  { label: t('numberSeries.entityTypes.customers'), value: 'customers' },
+  {
+    label: t('numberSeries.entityTypes.products'),
+    value: 'products',
+    disabled: takenEntityTypes.value.has('products'),
+  },
+  {
+    label: t('numberSeries.entityTypes.customers'),
+    value: 'customers',
+    disabled: takenEntityTypes.value.has('customers'),
+  },
 ])
 
 // Live preview (client-side only)
@@ -290,8 +283,10 @@ function onDateFormatChange(e: { value: string }) {
   previewDateFormat.value = e.value
 }
 
-function onPaddingInput(e: { value: number }) {
-  previewPadding.value = e.value
+function onPaddingInput(e: { value: string | number | undefined }) {
+  if (typeof e.value === 'number') {
+    previewPadding.value = e.value
+  }
 }
 
 function formatDatePart(format: string): string {
@@ -332,7 +327,6 @@ const resolver = computed(() =>
         .min(1, t('numberSeries.validation.paddingRange'))
         .max(10, t('numberSeries.validation.paddingRange')),
       entityType: z.string().min(1, t('numberSeries.validation.entityTypeRequired')),
-      isDefault: z.boolean(),
     }),
   ),
 )
@@ -373,7 +367,6 @@ async function addNumberSeries(event: FormSubmitEvent) {
     dateFormat: event.states.dateFormat.value,
     padding: event.states.padding.value,
     entityType: event.states.entityType.value,
-    isDefault: event.states.isDefault.value,
     createdBy: authStore.userId!,
   })
 
@@ -387,7 +380,6 @@ async function editNumberSeries(event: FormSubmitEvent) {
     separator: event.states.separator.value,
     dateFormat: event.states.dateFormat.value,
     padding: event.states.padding.value,
-    isDefault: event.states.isDefault.value,
     updatedBy: authStore.userId!,
   })
 

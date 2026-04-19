@@ -101,7 +101,8 @@ onBeforeMount(async () => {
 async function loadDefinitions() {
   isLoadingDefinitions.value = true
   try {
-    const response = await ProductLabelDefinitionsService.list()
+    const query = new GenericQueryBuilder().withSort('id', 'asc').build()
+    const response = await ProductLabelDefinitionsService.list(query)
     definitions.value = response.data
 
     // Load options for each definition in parallel

@@ -77,6 +77,7 @@ export default {
     superset: 'Superset',
     businessIntelligence: 'Business Intelligence',
     settings: 'Settings',
+    numberSeries: 'Number Series',
   },
   table: {
     search: 'Search',
@@ -410,6 +411,11 @@ export default {
         value: 'Value',
       },
     },
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
     validation: {
       codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
@@ -582,6 +588,43 @@ export default {
     errorColumn: 'Column',
     errorValue: 'Value',
     errorMessage: 'Error',
+  },
+  numberSeries: {
+    title: 'Number Series',
+    addNumberSeries: 'Add Number Series',
+    editNumberSeries: 'Edit Number Series',
+    viewNumberSeries: 'View Number Series',
+    preview: 'Preview',
+    fields: {
+      prefix: 'Prefix',
+      separator: 'Separator',
+      dateFormat: 'Date Format',
+      padding: 'Padding',
+      entityType: 'Entity Type',
+      isDefault: 'Default',
+      currentNumber: 'Current #',
+    },
+    dateFormats: {
+      none: 'None',
+      yyyy: 'YYYY (e.g. 2026)',
+      yyyymm: 'YYYYMM (e.g. 202604)',
+      yymm: 'YYMM (e.g. 2604)',
+    },
+    entityTypes: {
+      products: 'Products',
+      customers: 'Customers',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+      prefixRequired: 'Prefix is required.',
+      separatorRequired: 'Separator is required.',
+      paddingRange: 'Padding must be between 1 and 10.',
+      entityTypeRequired: 'Entity type is required.',
+    },
+    messages: {
+      created: 'Number series is created.',
+      updated: 'Number series is updated.',
+    },
   },
   notFound: {
     title: 'Page not found',

@@ -13,7 +13,37 @@
           t('products.fields.code')
         }}</label>
         <div class="flex w-full flex-auto flex-col gap-1">
+          <!-- Auto/Manual toggle only shown in ADD mode -->
+          <div v-if="mode === DialogMode.ADD" class="mb-1 flex gap-2">
+            <Button
+              type="button"
+              :label="t('products.codeMode.auto')"
+              :severity="codeMode === 'auto' ? 'primary' : 'secondary'"
+              size="small"
+              :disabled="!hasDefaultSeries || numberSeriesLoading"
+              @click="codeMode = 'auto'"
+            />
+            <Button
+              type="button"
+              :label="t('products.codeMode.manual')"
+              :severity="codeMode === 'manual' ? 'primary' : 'secondary'"
+              size="small"
+              @click="codeMode = 'manual'"
+            />
+          </div>
+          <!-- Auto mode: read-only preview -->
+          <div v-if="mode === DialogMode.ADD && codeMode === 'auto'" class="flex flex-col gap-1">
+            <InputText
+              :value="numberSeriesLoading ? '' : previewCode"
+              :placeholder="numberSeriesLoading ? t('common.messages.loading') : ''"
+              readonly
+              class="w-full"
+            />
+            <small class="text-surface-500">{{ t('products.codeMode.assignedOnSave') }}</small>
+          </div>
+          <!-- Manual mode or EDIT/VIEW mode: editable -->
           <InputText
+            v-else
             id="code"
             name="code"
             autocomplete="off"
@@ -220,18 +250,28 @@ import { onBeforeMount, reactive, type PropType, computed, ref } from 'vue'
 import Message from 'primevue/message'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { ProductsService, TrackingTypesService, UomGroupsService } from '@/services'
+import { ProductsService, TrackingTypesService, UomGroupsService, NumberSeriesService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Product, ProductLabelValue } from '@/types'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import ProductSetLabelsDialog from './ProductSetLabelsDialog.vue'
+import { useNumberSeries } from '@/composables'
 
 const { t } = useI18n()
 
 // Auth
 const authStore = useAuthStore()
+
+// Number series (only used in ADD mode)
+const {
+  codeMode,
+  previewCode,
+  seriesId: numberSeriesId,
+  loading: numberSeriesLoading,
+  hasDefaultSeries,
+} = useNumberSeries('products')
 
 const props = defineProps({
   mode: {
@@ -325,11 +365,14 @@ const initialValues = reactive({
   uomGroupId: undefined as number | undefined,
 })
 
-// Validation schema
+// Validation schema — code field is optional in ADD+auto mode (generated server-side)
 const resolver = computed(() =>
   zodResolver(
     z.object({
-      code: z.string().min(1, t('products.validation.codeRequired')),
+      code:
+        props.mode === DialogMode.ADD && codeMode.value === 'auto'
+          ? z.string().optional()
+          : z.string().min(1, t('products.validation.codeRequired')),
       name: z.string().min(1, t('products.validation.nameRequired')),
       description: z.string().optional(),
       taxable: z.boolean(),
@@ -338,6 +381,7 @@ const resolver = computed(() =>
     }),
   ),
 )
+
 
 function handleClose() {
   emits('close')
@@ -368,8 +412,16 @@ async function onFormSubmit(event: FormSubmitEvent) {
 }
 
 async function addProduct(event: FormSubmitEvent) {
+  let code: string
+  if (codeMode.value === 'auto' && numberSeriesId.value !== null) {
+    const generated = await NumberSeriesService.generateNext(numberSeriesId.value)
+    code = generated.code
+  } else {
+    code = event.states.code.value
+  }
+
   await ProductsService.create({
-    code: event.states.code.value,
+    code,
     name: event.states.name.value,
     description: event.states.description.value || undefined,
     taxable: event.states.taxable.value,

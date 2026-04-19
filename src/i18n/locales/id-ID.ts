@@ -77,6 +77,7 @@ export default {
     superset: 'Superset',
     businessIntelligence: 'Intelijen Bisnis',
     settings: 'Pengaturan',
+    numberSeries: 'Seri Nomor',
   },
   table: {
     search: 'Cari',
@@ -410,6 +411,11 @@ export default {
         value: 'Nilai',
       },
     },
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat simpan',
+    },
     validation: {
       codeRequired: 'Kode wajib diisi.',
       nameRequired: 'Nama wajib diisi.',
@@ -583,6 +589,43 @@ export default {
     errorColumn: 'Kolom',
     errorValue: 'Nilai',
     errorMessage: 'Kesalahan',
+  },
+  numberSeries: {
+    title: 'Seri Nomor',
+    addNumberSeries: 'Tambah Seri Nomor',
+    editNumberSeries: 'Edit Seri Nomor',
+    viewNumberSeries: 'Lihat Seri Nomor',
+    preview: 'Pratinjau',
+    fields: {
+      prefix: 'Awalan',
+      separator: 'Pemisah',
+      dateFormat: 'Format Tanggal',
+      padding: 'Padding',
+      entityType: 'Tipe Entitas',
+      isDefault: 'Default',
+      currentNumber: 'Nomor Saat Ini',
+    },
+    dateFormats: {
+      none: 'Tidak Ada',
+      yyyy: 'YYYY (mis. 2026)',
+      yyyymm: 'YYYYMM (mis. 202604)',
+      yymm: 'YYMM (mis. 2604)',
+    },
+    entityTypes: {
+      products: 'Produk',
+      customers: 'Pelanggan',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+      prefixRequired: 'Awalan wajib diisi.',
+      separatorRequired: 'Pemisah wajib diisi.',
+      paddingRange: 'Padding harus antara 1 dan 10.',
+      entityTypeRequired: 'Tipe entitas wajib diisi.',
+    },
+    messages: {
+      created: 'Seri nomor berhasil dibuat.',
+      updated: 'Seri nomor berhasil diperbarui.',
+    },
   },
   notFound: {
     title: 'Halaman tidak ditemukan',

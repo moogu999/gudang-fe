@@ -87,6 +87,14 @@ export type {
   ProductLiteWithUom,
 } from './salesOrder.type'
 
+// Number Series types
+export type {
+  NumberSeries,
+  CreateNumberSeriesDto,
+  UpdateNumberSeriesDto,
+  NumberSeriesPreview,
+} from './numberSeries.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

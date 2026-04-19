@@ -105,6 +105,18 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Settings',
+    labelKey: 'navigation.settings',
+    icon: 'pi pi-cog',
+    items: [
+      {
+        label: 'Number Series',
+        labelKey: 'navigation.numberSeries',
+        route: '/number-series',
+      },
+    ],
+  },
+  {
     label: 'Superset',
     labelKey: 'navigation.superset',
     icon: 'pi pi-chart-line',

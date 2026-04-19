@@ -100,6 +100,10 @@ export const API_ENDPOINTS = {
   SALES_ORDERS: '/v1/sales-orders', // POST create
   GEN_SALES_ORDER_HEADERS: '/gen/v1/sales-order-headers', // GET list/byId
   GEN_SALES_ORDER_DETAILS: '/gen/v1/sales-order-details', // GET list
+
+  // Number Series endpoints
+  GEN_NUMBER_SERIES: '/gen/v1/number-series',
+  NUMBER_SERIES: '/v1/number-series',
 } as const
 
 // Type for API endpoints (useful for validation)

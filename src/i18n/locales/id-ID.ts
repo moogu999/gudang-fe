@@ -376,7 +376,7 @@ export default {
       selectCity: 'Pilih Kota',
       selectDistrict: 'Pilih Kecamatan',
       selectSubDistrict: 'Pilih Kelurahan',
-      selectCustomer: 'Pilih Customer',
+      selectCustomer: 'Pilih Pelanggan',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',

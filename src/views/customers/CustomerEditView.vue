@@ -53,7 +53,6 @@ import { useToast } from 'primevue/usetoast'
 import Message from 'primevue/message'
 import { CustomersService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
-import { useAuthStore } from '@/stores'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CustomerForm from './CustomerForm.vue'
 import DialogMode from '@/constants/dialogMode'
@@ -63,7 +62,6 @@ import type { Customer } from '@/types/customer.type'
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const authStore = useAuthStore()
 
 // Toast
 const toastGroup = 'customerEdit'
@@ -100,6 +98,13 @@ async function onFormSubmit(event: FormSubmitEvent) {
     await CustomersService.update(customer.value.id, {
       name: event.states.name.value,
       currencyId: event.states.currencyId.value,
+      isActive: event.states.isActive.value,
+      sellToId: event.states.sellToId.value,
+      deliverToId: event.states.deliverToId.value,
+      invoiceToId: event.states.invoiceToId.value,
+      joinInvoice: event.states.joinInvoice.value,
+      collectToId: event.states.collectToId.value,
+      areaId: event.states.areaId.value,
       taxable: event.states.taxable.value,
       address: event.states.address.value || undefined,
       countryId: event.states.countryId.value,
@@ -110,7 +115,6 @@ async function onFormSubmit(event: FormSubmitEvent) {
       zipCode: event.states.zipCode.value || undefined,
       longitude: event.states.longitude.value,
       latitude: event.states.latitude.value,
-      updatedBy: authStore.userId!,
     })
 
     toast.add(commonSuccessToast(t('customers.messages.customerUpdated'), toastGroup))

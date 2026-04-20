@@ -347,6 +347,8 @@ export default {
     editCustomer: 'Edit Pelanggan',
     viewCustomer: 'Lihat Pelanggan',
     deleteCustomer: 'Hapus Pelanggan',
+    basicInfoCustomer: 'Informasi Dasar Pelanggan',
+    customerAddress: 'Alamat Pelanggan',
     fields: {
       name: 'Nama',
       currency: 'Mata Uang',
@@ -360,6 +362,13 @@ export default {
       zipCode: 'Kode Pos',
       longitude: 'Bujur',
       latitude: 'Lintang',
+      active: 'Aktif',
+      sellTo: 'Pelanggan',
+      deliverTo: 'Pengiriman',
+      invoiceTo: 'Dokumen Penagihan',
+      joinInvoice: 'Gabungkan Faktur',
+      collectTo: 'Penagihan',
+      area: 'Wilayah',
     },
     labels: {
       selectCurrency: 'Pilih Mata Uang',
@@ -368,6 +377,7 @@ export default {
       selectCity: 'Pilih Kota',
       selectDistrict: 'Pilih Kecamatan',
       selectSubDistrict: 'Pilih Kelurahan',
+      selectCustomer: 'Pilih Pelanggan',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',

@@ -347,6 +347,8 @@ export default {
     editCustomer: 'Edit Customer',
     viewCustomer: 'View Customer',
     deleteCustomer: 'Delete Customer',
+    basicInfoCustomer: 'Basic Info Customer',
+    customerAddress: 'Customer Address',
     fields: {
       name: 'Name',
       currency: 'Currency',
@@ -360,6 +362,13 @@ export default {
       zipCode: 'Zip Code',
       longitude: 'Longitude',
       latitude: 'Latitude',
+      active: 'Active',
+      sellTo: 'Sell To',
+      deliverTo: 'Deliver To',
+      invoiceTo: 'Invoice To',
+      joinInvoice: 'Join Invoice',
+      collectTo: 'Collect To',
+      area: 'Area',
     },
     labels: {
       selectCurrency: 'Select Currency',
@@ -368,6 +377,7 @@ export default {
       selectCity: 'Select City',
       selectDistrict: 'Select District',
       selectSubDistrict: 'Select Sub District',
+      selectCustomer: 'Select Customer',
     },
     validation: {
       nameRequired: 'Name is required.',

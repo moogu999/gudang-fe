@@ -15,6 +15,11 @@ export type CityLite = {
   name: string
 }
 
+export type CustomerLite = {
+  id: number
+  name: string
+}
+
 export type DistrictLite = {
   id: number
   name: string
@@ -28,19 +33,31 @@ export type SubDistrictLite = {
 export type Customer = {
   id: number
   name: string
-  currencyId?: number
+  isActive: boolean
+  sellToId: number | null
+  sellTo: CustomerLite
+  deliverToId: number | null
+  deliverTo: CustomerLite
+  invoiceToId: number | null
+  invoiceTo: CustomerLite
+  joinInvoice: boolean
+  collectToId: number | null
+  collectTo: CustomerLite
+  areaId: number | null
+  area: CityLite
+  currencyId?: number | null
   currency?: CurrencyLite
   taxable: boolean
   address?: string
-  countryId?: number
+  countryId?: number | null
   country?: CountryLite
-  provinceId?: number
+  provinceId?: number | null
   province?: ProvinceLite
   cityId?: number
   city?: CityLite
-  districtId?: number
+  districtId?: number | null
   district?: DistrictLite
-  subDistrictId?: number
+  subDistrictId?: number | null
   subDistrict?: SubDistrictLite
   zipCode?: string
   longitude?: number
@@ -56,14 +73,21 @@ export type Customer = {
 
 export type CreateCustomerDto = {
   name: string
-  currencyId?: number
+  isActive: boolean
+  currencyId?: number | null
+  sellToId?: number
+  deliverToId?: number | null
+  invoiceToId?: number | null
+  joinInvoice?: boolean
+  collectToId?: number | null
+  areaId?: number | null
   taxable: boolean
   address?: string
-  countryId?: number
-  provinceId?: number
-  cityId?: number
-  districtId?: number
-  subDistrictId?: number
+  countryId?: number | null
+  provinceId?: number | null
+  cityId?: number | null
+  districtId?: number | null
+  subDistrictId?: number | null
   zipCode?: string
   longitude?: number
   latitude?: number
@@ -72,16 +96,22 @@ export type CreateCustomerDto = {
 
 export type UpdateCustomerDto = {
   name?: string
-  currencyId?: number
+  isActive?: boolean
+  currencyId?: number | null
+  sellToId?: number | null
+  deliverToId?: number | null
+  invoiceToId?: number | null
+  joinInvoice?: boolean
+  collectToId?: number | null
+  areaId?: number
   taxable?: boolean
   address?: string
-  countryId?: number
-  provinceId?: number
-  cityId?: number
-  districtId?: number
-  subDistrictId?: number
+  countryId?: number | null
+  provinceId?: number | null
+  cityId?: number | null
+  districtId?: number | null
+  subDistrictId?: number | null
   zipCode?: string
   longitude?: number
   latitude?: number
-  updatedBy: number
 }

@@ -60,6 +60,13 @@ async function onFormSubmit(event: FormSubmitEvent) {
     await CustomersService.create({
       name: event.states.name.value,
       currencyId: event.states.currencyId.value,
+      isActive: event.states.isActive.value,
+      sellToId: event.states.sellToId.value,
+      deliverToId: event.states.deliverToId.value,
+      invoiceToId: event.states.invoiceToId.value,
+      joinInvoice: event.states.joinInvoice.value,
+      collectToId: event.states.collectToId.value,
+      areaId: event.states.areaId.value,
       taxable: event.states.taxable.value,
       address: event.states.address.value || undefined,
       countryId: event.states.countryId.value,

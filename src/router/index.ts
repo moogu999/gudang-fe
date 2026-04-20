@@ -137,6 +137,30 @@ const router = createRouter({
           component: () => import('@/views/number-series/NumberSeriesView.vue'),
           meta: { requiredPermission: PERMISSIONS.NUMBER_SERIES_READ },
         },
+        {
+          path: 'price-lists',
+          name: 'PriceLists',
+          component: () => import('@/views/price-lists/PriceListsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_LIST_READ },
+        },
+        {
+          path: 'price-lists/create',
+          name: 'PriceListCreate',
+          component: () => import('@/views/price-lists/PriceListCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_LIST_WRITE },
+        },
+        {
+          path: 'price-lists/:id/edit',
+          name: 'PriceListEdit',
+          component: () => import('@/views/price-lists/PriceListEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_LIST_WRITE },
+        },
+        {
+          path: 'price-lists/:id',
+          name: 'PriceListDetail',
+          component: () => import('@/views/price-lists/PriceListDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_LIST_READ },
+        },
       ],
     },
 

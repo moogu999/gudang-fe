@@ -104,6 +104,10 @@ export const API_ENDPOINTS = {
   // Number Series endpoints
   GEN_NUMBER_SERIES: '/gen/v1/number-series',
   NUMBER_SERIES: '/v1/number-series',
+
+  // Price List endpoints
+  GEN_PRICE_LISTS: '/gen/v1/price-lists',
+  PRICE_LISTS: '/v1/price-lists',
 } as const
 
 // Type for API endpoints (useful for validation)

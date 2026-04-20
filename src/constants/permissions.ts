@@ -32,6 +32,8 @@ export const PERMISSIONS = {
   UOM_GROUP_WRITE: 25,
   NUMBER_SERIES_READ: 26,
   NUMBER_SERIES_WRITE: 27,
+  PRICE_LIST_READ: 28,
+  PRICE_LIST_WRITE: 29,
 } as const
 
 /**
@@ -57,6 +59,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/uom-groups': PERMISSIONS.UOM_GROUP_READ,
   '/product-label-definitions': PERMISSIONS.PRODUCT_LABEL_DEFINITION_READ,
   '/number-series': PERMISSIONS.NUMBER_SERIES_READ,
+  '/price-lists': PERMISSIONS.PRICE_LIST_READ,
 }
 
 /**
@@ -76,4 +79,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/uom-groups': PERMISSIONS.UOM_GROUP_WRITE,
   '/product-label-definitions': PERMISSIONS.PRODUCT_LABEL_DEFINITION_WRITE,
   '/number-series': PERMISSIONS.NUMBER_SERIES_WRITE,
+  '/price-lists': PERMISSIONS.PRICE_LIST_WRITE,
 }

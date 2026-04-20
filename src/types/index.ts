@@ -95,6 +95,16 @@ export type {
   NumberSeriesPreview,
 } from './numberSeries.type'
 
+// Price List types
+export type {
+  PriceList,
+  PriceListSummary,
+  PriceListItem,
+  PriceListTier,
+  CreatePriceListDto,
+  UpdatePriceListDto,
+} from './price-list'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

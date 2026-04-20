@@ -68,6 +68,11 @@ const mainMenu = [
         labelKey: 'navigation.productLabelDefinitions',
         route: '/product-label-definitions',
       },
+      {
+        label: 'Price Lists',
+        labelKey: 'navigation.priceLists',
+        route: '/price-lists',
+      },
     ],
   },
   {

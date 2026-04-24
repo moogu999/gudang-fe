@@ -73,6 +73,11 @@ const mainMenu = [
         labelKey: 'navigation.priceLists',
         route: '/price-lists',
       },
+      {
+        label: 'Price Matrices',
+        labelKey: 'navigation.priceMatrices',
+        route: '/price-matrices',
+      },
     ],
   },
   {

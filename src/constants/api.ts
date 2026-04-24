@@ -108,6 +108,13 @@ export const API_ENDPOINTS = {
   // Price List endpoints
   GEN_PRICE_LISTS: '/gen/v1/price-lists',
   PRICE_LISTS: '/v1/price-lists',
+
+  // Criteria Type endpoints
+  GEN_CRITERIA_TYPES: '/gen/v1/criteria-types',
+
+  // Price Matrix endpoints
+  GEN_PRICE_MATRICES: '/gen/v1/price-matrices',
+  PRICE_MATRICES: '/v1/price-matrices',
 } as const
 
 // Type for API endpoints (useful for validation)

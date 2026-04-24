@@ -105,6 +105,18 @@ export type {
   UpdatePriceListDto,
 } from './price-list'
 
+// Price Matrix types
+export type {
+  CriteriaType,
+  PriceMatrixCriterion,
+  PriceMatrixRuleValue,
+  PriceMatrixRule,
+  PriceMatrix,
+  PriceMatrixSummary,
+  CreatePriceMatrixDto,
+  UpdatePriceMatrixDto,
+} from './price-matrix.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

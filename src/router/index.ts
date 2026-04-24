@@ -161,6 +161,30 @@ const router = createRouter({
           component: () => import('@/views/price-lists/PriceListDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.PRICE_LIST_READ },
         },
+        {
+          path: 'price-matrices',
+          name: 'PriceMatrices',
+          component: () => import('@/views/price-matrices/PriceMatricesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+        },
+        {
+          path: 'price-matrices/create',
+          name: 'PriceMatrixCreate',
+          component: () => import('@/views/price-matrices/PriceMatrixCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_WRITE },
+        },
+        {
+          path: 'price-matrices/:id/edit',
+          name: 'PriceMatrixEdit',
+          component: () => import('@/views/price-matrices/PriceMatrixEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_WRITE },
+        },
+        {
+          path: 'price-matrices/:id',
+          name: 'PriceMatrixDetail',
+          component: () => import('@/views/price-matrices/PriceMatrixDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+        },
       ],
     },
 

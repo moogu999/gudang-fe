@@ -18,6 +18,8 @@ export default {
       submit: 'Submit',
       signIn: 'Sign In',
       signOut: 'Sign Out',
+      moveUp: 'Move Up',
+      moveDown: 'Move Down',
     },
     labels: {
       actions: 'Actions',
@@ -79,6 +81,7 @@ export default {
     settings: 'Settings',
     numberSeries: 'Number Series',
     priceLists: 'Price Lists',
+    priceMatrices: 'Price Matrices',
   },
   table: {
     search: 'Search',
@@ -677,6 +680,42 @@ export default {
       created: 'Price list is created.',
       updated: 'Price list is updated.',
       notFound: 'Price list not found.',
+    },
+  },
+  priceMatrix: {
+    title: 'Price Matrices',
+    addPriceMatrix: 'Add Price Matrix',
+    editPriceMatrix: 'Edit Price Matrix',
+    viewPriceMatrix: 'View Price Matrix',
+    fields: {
+      code: 'Code',
+      description: 'Description',
+      criteria: 'Criteria',
+      rules: 'Rules',
+      priceList: 'Price List',
+    },
+    labels: {
+      selectCriteria: 'Select criteria (max 5)',
+      addRule: 'Add Rule',
+      removeRule: 'Remove Rule',
+      wildcard: '— Any —',
+      specify: 'Specify value',
+      setWildcard: 'Set as any (wildcard)',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      criteriaRequired: 'At least one criterion is required.',
+      rulesRequired: 'At least one rule is required.',
+    },
+    errors: {
+      duplicateCombination: 'Duplicate rule combination found. Each row must have a unique set of values.',
+      tooManyCriteria: 'Maximum 5 criteria allowed.',
+      missingValue: 'All rules must have a price list selected.',
+    },
+    messages: {
+      created: 'Price matrix is created.',
+      updated: 'Price matrix is updated.',
+      notFound: 'Price matrix not found.',
     },
   },
 }

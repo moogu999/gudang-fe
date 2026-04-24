@@ -18,6 +18,8 @@ export default {
       submit: 'Kirim',
       signIn: 'Masuk',
       signOut: 'Keluar',
+      moveUp: 'Pindah Ke Atas',
+      moveDown: 'Pindah Ke Bawah',
     },
     labels: {
       actions: 'Aksi',
@@ -79,6 +81,7 @@ export default {
     settings: 'Pengaturan',
     numberSeries: 'Seri Nomor',
     priceLists: 'Daftar Harga',
+    priceMatrices: 'Matriks Harga',
   },
   table: {
     search: 'Cari',
@@ -678,6 +681,42 @@ export default {
       created: 'Daftar harga berhasil dibuat.',
       updated: 'Daftar harga berhasil diperbarui.',
       notFound: 'Daftar harga tidak ditemukan.',
+    },
+  },
+  priceMatrix: {
+    title: 'Matriks Harga',
+    addPriceMatrix: 'Tambah Matriks Harga',
+    editPriceMatrix: 'Edit Matriks Harga',
+    viewPriceMatrix: 'Lihat Matriks Harga',
+    fields: {
+      code: 'Kode',
+      description: 'Deskripsi',
+      criteria: 'Kriteria',
+      rules: 'Aturan',
+      priceList: 'Daftar Harga',
+    },
+    labels: {
+      selectCriteria: 'Pilih kriteria (maks 5)',
+      addRule: 'Tambah Aturan',
+      removeRule: 'Hapus Aturan',
+      wildcard: '— Semua —',
+      specify: 'Tentukan nilai',
+      setWildcard: 'Jadikan sembarang (wildcard)',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      criteriaRequired: 'Minimal satu kriteria diperlukan.',
+      rulesRequired: 'Minimal satu aturan diperlukan.',
+    },
+    errors: {
+      duplicateCombination: 'Kombinasi aturan duplikat ditemukan. Setiap baris harus memiliki kombinasi nilai yang unik.',
+      tooManyCriteria: 'Maksimal 5 kriteria diizinkan.',
+      missingValue: 'Semua aturan harus memiliki daftar harga yang dipilih.',
+    },
+    messages: {
+      created: 'Matriks harga berhasil dibuat.',
+      updated: 'Matriks harga berhasil diperbarui.',
+      notFound: 'Matriks harga tidak ditemukan.',
     },
   },
 }

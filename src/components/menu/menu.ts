@@ -78,6 +78,11 @@ const mainMenu = [
         labelKey: 'navigation.priceMatrices',
         route: '/price-matrices',
       },
+      {
+        label: 'Price Matrix Priority',
+        labelKey: 'navigation.priceMatrixPriorities',
+        route: '/price-matrix-priorities',
+      },
     ],
   },
   {

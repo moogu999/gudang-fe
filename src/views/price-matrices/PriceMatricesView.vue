@@ -9,7 +9,10 @@
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="router.push('/price-matrices/create')" />
+        <ResponsiveButton
+          :label="t('common.actions.add')"
+          @click="router.push('/price-matrices/create')"
+        />
       </template>
     </Toolbar>
 
@@ -61,10 +64,37 @@ const table = ref()
 const url = API_ENDPOINTS.GEN_PRICE_MATRICES
 
 const columns = computed<Column[]>(() => [
-  { field: 'code', header: t('priceMatrix.fields.code'), exportable: true, sortable: true, filterable: true },
-  { field: 'description', header: t('priceMatrix.fields.description'), exportable: true, sortable: false, filterable: false, hideOnMobile: true },
-  { field: 'createdAt', header: t('common.labels.createdAt'), exportable: true, sortable: true, filterable: false, class: 'min-w-45', hideOnMobile: true },
-  { field: '', header: t('common.labels.actions'), exportable: false, sortable: false, filterable: false },
+  {
+    field: 'code',
+    header: t('priceMatrix.fields.code'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    field: 'description',
+    header: t('priceMatrix.fields.description'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
+    field: 'createdAt',
+    header: t('common.labels.createdAt'),
+    exportable: true,
+    sortable: true,
+    filterable: false,
+    class: 'min-w-45',
+    hideOnMobile: true,
+  },
+  {
+    field: '',
+    header: t('common.labels.actions'),
+    exportable: false,
+    sortable: false,
+    filterable: false,
+  },
 ])
 
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

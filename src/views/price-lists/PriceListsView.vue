@@ -9,7 +9,10 @@
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="router.push('/price-lists/create')" />
+        <ResponsiveButton
+          :label="t('common.actions.add')"
+          @click="router.push('/price-lists/create')"
+        />
       </template>
     </Toolbar>
 
@@ -63,12 +66,52 @@ const table = ref()
 const url = API_ENDPOINTS.GEN_PRICE_LISTS
 
 const columns = computed<Column[]>(() => [
-  { field: 'code', header: t('priceLists.fields.code'), exportable: true, sortable: true, filterable: true },
-  { field: 'description', header: t('priceLists.fields.description'), exportable: true, sortable: false, filterable: false, hideOnMobile: true },
-  { field: 'startDate', header: t('priceLists.fields.startDate'), exportable: true, sortable: true, filterable: false },
-  { field: 'endDate', header: t('priceLists.fields.endDate'), exportable: true, sortable: false, filterable: false, hideOnMobile: true },
-  { field: 'createdAt', header: t('common.labels.createdAt'), exportable: true, sortable: true, filterable: false, class: 'min-w-45', hideOnMobile: true },
-  { field: '', header: t('common.labels.actions'), exportable: false, sortable: false, filterable: false },
+  {
+    field: 'code',
+    header: t('priceLists.fields.code'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
+    field: 'description',
+    header: t('priceLists.fields.description'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
+    field: 'startDate',
+    header: t('priceLists.fields.startDate'),
+    exportable: true,
+    sortable: true,
+    filterable: false,
+  },
+  {
+    field: 'endDate',
+    header: t('priceLists.fields.endDate'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
+    field: 'createdAt',
+    header: t('common.labels.createdAt'),
+    exportable: true,
+    sortable: true,
+    filterable: false,
+    class: 'min-w-45',
+    hideOnMobile: true,
+  },
+  {
+    field: '',
+    header: t('common.labels.actions'),
+    exportable: false,
+    sortable: false,
+    filterable: false,
+  },
 ])
 
 const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({

@@ -185,6 +185,12 @@ const router = createRouter({
           component: () => import('@/views/price-matrices/PriceMatrixDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
         },
+        {
+          path: 'price-matrix-priorities',
+          name: 'PriceMatrixPriorities',
+          component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+        },
       ],
     },
 

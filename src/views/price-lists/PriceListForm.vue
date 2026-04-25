@@ -46,7 +46,9 @@
             />
             <div v-if="!isView" class="flex items-center gap-2">
               <Checkbox v-model="noEndDate" :binary="true" input-id="noEndDate" />
-              <label for="noEndDate" class="cursor-pointer text-sm">{{ t('priceLists.fields.noEndDate') }}</label>
+              <label for="noEndDate" class="cursor-pointer text-sm">{{
+                t('priceLists.fields.noEndDate')
+              }}</label>
             </div>
           </div>
         </div>
@@ -65,7 +67,10 @@
           />
         </div>
 
-        <div v-if="form.items.length === 0" class="rounded border p-4 text-center text-sm text-gray-500">
+        <div
+          v-if="form.items.length === 0"
+          class="rounded border p-4 text-center text-sm text-gray-500"
+        >
           {{ t('table.noItems') }}
         </div>
 
@@ -106,13 +111,17 @@
                 sort-operator="asc"
                 @update:model-value="(v) => (item.currencyId = v as number)"
               />
-              <span v-else class="text-sm">{{ item._initialCurrency?.code ?? item.currencyId }}</span>
+              <span v-else class="text-sm">{{
+                item._initialCurrency?.code ?? item.currencyId
+              }}</span>
             </div>
 
             <!-- Tax Included + Remove -->
             <div class="flex items-end justify-between gap-4">
               <div class="flex flex-col gap-1">
-                <label class="text-sm font-semibold">{{ t('priceLists.fields.taxIncluded') }}</label>
+                <label class="text-sm font-semibold">{{
+                  t('priceLists.fields.taxIncluded')
+                }}</label>
                 <Checkbox v-model="item.taxIncluded" :binary="true" :disabled="isView" />
               </div>
               <Button
@@ -129,7 +138,9 @@
           <!-- Tiers sub-table -->
           <div class="ml-0 md:ml-4">
             <div class="mb-2 flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-600">{{ t('priceLists.labels.tiers') }}</span>
+              <span class="text-sm font-medium text-gray-600">{{
+                t('priceLists.labels.tiers')
+              }}</span>
               <Button
                 v-if="!isView"
                 :label="t('priceLists.labels.addTier')"
@@ -179,7 +190,9 @@
                     :aria-label="t('priceLists.labels.removeTier')"
                     @click="removeTier(itemIdx, index)"
                   />
-                  <span v-else class="text-xs text-gray-400">{{ t('priceLists.labels.baseTierNote') }}</span>
+                  <span v-else class="text-xs text-gray-400">{{
+                    t('priceLists.labels.baseTierNote')
+                  }}</span>
                 </template>
               </Column>
             </DataTable>
@@ -190,11 +203,7 @@
       <!-- Actions -->
       <div v-if="!isView" class="flex justify-end gap-3">
         <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('cancel')" />
-        <Button
-          :label="t('common.actions.save')"
-          :loading="isLoading"
-          @click="onSave"
-        />
+        <Button :label="t('common.actions.save')" :loading="isLoading" @click="onSave" />
       </div>
       <div v-else class="flex justify-end gap-3">
         <Button :label="t('common.actions.back')" severity="secondary" @click="emit('cancel')" />

@@ -63,6 +63,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/number-series': PERMISSIONS.NUMBER_SERIES_READ,
   '/price-lists': PERMISSIONS.PRICE_LIST_READ,
   '/price-matrices': PERMISSIONS.PRICE_MATRIX_READ,
+  '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_READ,
 }
 
 /**
@@ -84,4 +85,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/number-series': PERMISSIONS.NUMBER_SERIES_WRITE,
   '/price-lists': PERMISSIONS.PRICE_LIST_WRITE,
   '/price-matrices': PERMISSIONS.PRICE_MATRIX_WRITE,
+  '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_WRITE,
 }

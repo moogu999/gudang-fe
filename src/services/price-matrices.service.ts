@@ -2,6 +2,7 @@ import ApiService from './api'
 import type { Base } from '@/types/api.type'
 import type {
   PriceMatrix,
+  PriceMatrixPriorityItem,
   PriceMatrixSummary,
   CreatePriceMatrixDto,
   UpdatePriceMatrixDto,
@@ -31,5 +32,23 @@ export class PriceMatricesService {
 
   static async delete(id: number): Promise<void> {
     return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
+  }
+
+  static async getPriorities(): Promise<{ data: PriceMatrixPriorityItem[] }> {
+    return ApiService.get<{ data: PriceMatrixPriorityItem[] }>(
+      API_ENDPOINTS.PRICE_MATRIX_PRIORITIES,
+    )
+  }
+
+  static async addToPriorityList(priceMatrixId: number): Promise<void> {
+    return ApiService.post<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST, { priceMatrixId })
+  }
+
+  static async removeFromPriorityList(priceMatrixId: number): Promise<void> {
+    return ApiService.delete<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST_ITEM(priceMatrixId))
+  }
+
+  static async movePriority(id: number, direction: 'up' | 'down'): Promise<void> {
+    return ApiService.patch<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY(id), { direction })
   }
 }

@@ -82,6 +82,7 @@ export default {
     numberSeries: 'Seri Nomor',
     priceLists: 'Daftar Harga',
     priceMatrices: 'Matriks Harga',
+    priceMatrixPriorities: 'Prioritas Matriks Harga',
   },
   table: {
     search: 'Cari',
@@ -709,7 +710,8 @@ export default {
       rulesRequired: 'Minimal satu aturan diperlukan.',
     },
     errors: {
-      duplicateCombination: 'Kombinasi aturan duplikat ditemukan. Setiap baris harus memiliki kombinasi nilai yang unik.',
+      duplicateCombination:
+        'Kombinasi aturan duplikat ditemukan. Setiap baris harus memiliki kombinasi nilai yang unik.',
       tooManyCriteria: 'Maksimal 5 kriteria diizinkan.',
       missingValue: 'Semua aturan harus memiliki daftar harga yang dipilih.',
     },
@@ -717,6 +719,30 @@ export default {
       created: 'Matriks harga berhasil dibuat.',
       updated: 'Matriks harga berhasil diperbarui.',
       notFound: 'Matriks harga tidak ditemukan.',
+    },
+  },
+  priceMatrixPriority: {
+    title: 'Prioritas Matriks Harga',
+    addPlaceholder: 'Pilih matriks harga untuk ditambahkan',
+    columns: {
+      priority: 'Prioritas',
+      code: 'Kode',
+      description: 'Deskripsi',
+    },
+    actions: {
+      add: 'Tambah',
+      moveUp: 'Naikan',
+      moveDown: 'Turunkan',
+      remove: 'Hapus',
+    },
+    messages: {
+      moved: 'Prioritas berhasil diperbarui.',
+      added: 'Matriks harga berhasil ditambahkan ke daftar prioritas.',
+      removed: 'Matriks harga berhasil dihapus dari daftar prioritas.',
+    },
+    errors: {
+      alreadyAtBoundary: 'Sudah berada di batas daftar prioritas.',
+      alreadyInList: 'Matriks harga ini sudah ada dalam daftar prioritas.',
     },
   },
 }

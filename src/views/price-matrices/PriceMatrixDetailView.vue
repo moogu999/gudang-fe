@@ -3,7 +3,13 @@
     <Toast position="top-center" :group="toastGroup" />
 
     <div class="mb-4 flex items-center gap-3">
-      <Button icon="pi pi-arrow-left" severity="secondary" text @click="router.back()" aria-label="Go back" />
+      <Button
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        text
+        @click="router.back()"
+        aria-label="Go back"
+      />
       <h1 class="text-base font-semibold sm:text-lg md:text-2xl">
         {{ t('priceMatrix.viewPriceMatrix') }}
       </h1>

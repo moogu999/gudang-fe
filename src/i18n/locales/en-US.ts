@@ -82,6 +82,7 @@ export default {
     numberSeries: 'Number Series',
     priceLists: 'Price Lists',
     priceMatrices: 'Price Matrices',
+    priceMatrixPriorities: 'Price Matrix Priority',
   },
   table: {
     search: 'Search',
@@ -708,7 +709,8 @@ export default {
       rulesRequired: 'At least one rule is required.',
     },
     errors: {
-      duplicateCombination: 'Duplicate rule combination found. Each row must have a unique set of values.',
+      duplicateCombination:
+        'Duplicate rule combination found. Each row must have a unique set of values.',
       tooManyCriteria: 'Maximum 5 criteria allowed.',
       missingValue: 'All rules must have a price list selected.',
     },
@@ -716,6 +718,30 @@ export default {
       created: 'Price matrix is created.',
       updated: 'Price matrix is updated.',
       notFound: 'Price matrix not found.',
+    },
+  },
+  priceMatrixPriority: {
+    title: 'Price Matrix Priority',
+    addPlaceholder: 'Select a price matrix to add',
+    columns: {
+      priority: 'Priority',
+      code: 'Code',
+      description: 'Description',
+    },
+    actions: {
+      add: 'Add',
+      moveUp: 'Move Up',
+      moveDown: 'Move Down',
+      remove: 'Remove',
+    },
+    messages: {
+      moved: 'Priority updated.',
+      added: 'Price matrix added to priority list.',
+      removed: 'Price matrix removed from priority list.',
+    },
+    errors: {
+      alreadyAtBoundary: 'Already at the boundary of the priority list.',
+      alreadyInList: 'This price matrix is already in the priority list.',
     },
   },
 }

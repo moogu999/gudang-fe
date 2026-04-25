@@ -92,7 +92,10 @@
 
         <small v-if="errors.rules" class="mb-2 block text-red-500">{{ errors.rules }}</small>
 
-        <div v-if="form.rules.length === 0" class="rounded border p-4 text-center text-sm text-gray-500">
+        <div
+          v-if="form.rules.length === 0"
+          class="rounded border p-4 text-center text-sm text-gray-500"
+        >
           {{ t('table.noItems') }}
         </div>
 
@@ -108,8 +111,17 @@
               <template #body="{ index }">
                 <div class="flex items-center gap-1">
                   <!-- Wildcard mode: show "Any" tag + button to specify -->
-                  <template v-if="form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]?.valueId === null">
-                    <Tag :value="t('priceMatrix.labels.wildcard')" severity="secondary" class="text-xs" />
+                  <template
+                    v-if="
+                      form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]
+                        ?.valueId === null
+                    "
+                  >
+                    <Tag
+                      :value="t('priceMatrix.labels.wildcard')"
+                      severity="secondary"
+                      class="text-xs"
+                    />
                     <Button
                       v-if="!isView"
                       icon="pi pi-pencil"
@@ -126,16 +138,27 @@
                       option-label="name"
                       option-value="id"
                       :fetch-fn="(query) => getCriteriaFetchFn(crit.criteriaTypeId)(query)"
-                      :initial-option="form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]?._initialValue"
-                      :model-value="form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]?.valueId"
+                      :initial-option="
+                        form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]
+                          ?._initialValue
+                      "
+                      :model-value="
+                        form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]
+                          ?.valueId
+                      "
                       sort-by="name"
                       sort-operator="asc"
                       class="flex-1"
-                      @update:model-value="(v) => setRuleValue(index, crit.criteriaTypeId, v as number | null)"
+                      @update:model-value="
+                        (v) => setRuleValue(index, crit.criteriaTypeId, v as number | null)
+                      "
                       @select-option="(opt) => setRuleValueOption(index, crit.criteriaTypeId, opt)"
                     />
                     <span v-else class="text-sm">
-                      {{ form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]?._initialValue?.name ?? '—' }}
+                      {{
+                        form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]
+                          ?._initialValue?.name ?? '—'
+                      }}
                     </span>
                     <Button
                       v-if="!isView"
@@ -168,7 +191,11 @@
                   @select-option="(opt) => (form.rules[index]._initialPriceList = opt)"
                 />
                 <span v-else class="text-sm">
-                  {{ form.rules[index]._initialPriceList?.code ?? form.rules[index].priceListId ?? '—' }}
+                  {{
+                    form.rules[index]._initialPriceList?.code ??
+                    form.rules[index].priceListId ??
+                    '—'
+                  }}
                 </span>
               </template>
             </Column>
@@ -221,7 +248,12 @@ import { CompaniesService } from '@/services/companies.service'
 import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
 import ApiService from '@/services/api'
 import type { Base } from '@/types/api.type'
-import type { CriteriaType, PriceMatrix, CreatePriceMatrixDto, UpdatePriceMatrixDto } from '@/types/price-matrix.type'
+import type {
+  CriteriaType,
+  PriceMatrix,
+  CreatePriceMatrixDto,
+  UpdatePriceMatrixDto,
+} from '@/types/price-matrix.type'
 import { commonErrorToast } from '@/services/toast'
 
 type FormMode = 'create' | 'edit' | 'view'
@@ -302,9 +334,8 @@ onMounted(async () => {
         return {
           criteriaTypeId: crit.criteriaTypeId,
           valueId: rv ? rv.valueId : null,
-          _initialValue: rv?.valueId && rv.valueLabel
-            ? { id: rv.valueId, name: rv.valueLabel }
-            : undefined,
+          _initialValue:
+            rv?.valueId && rv.valueLabel ? { id: rv.valueId, name: rv.valueLabel } : undefined,
         }
       }),
     }))
@@ -319,17 +350,26 @@ function getCriteriaType(criteriaTypeId: number): CriteriaType | undefined {
   return criteriaTypes.value.find((c) => c.id === criteriaTypeId)
 }
 
-function getCriteriaFetchFn(criteriaTypeId: number): (query: string) => Promise<Base<{ id: number; name: string; code?: string }>> {
+function getCriteriaFetchFn(
+  criteriaTypeId: number,
+): (query: string) => Promise<Base<{ id: number; name: string; code?: string }>> {
   const ct = getCriteriaType(criteriaTypeId)
-  if (!ct) return (q) => BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+  if (!ct)
+    return (q) =>
+      BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
 
   switch (ct.code) {
     case 'company':
-      return (q) => CompaniesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+      return (q) =>
+        CompaniesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
     case 'branch':
-      return (q) => BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+      return (q) =>
+        BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
     case 'sales_organization':
-      return (q) => SalesOrganizationsService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+      return (q) =>
+        SalesOrganizationsService.list(q) as Promise<
+          Base<{ id: number; name: string; code?: string }>
+        >
     default:
       return (q) => {
         const url = q ? `/gen/v1/${ct.sourceTable}?${q}` : `/gen/v1/${ct.sourceTable}`
@@ -406,10 +446,18 @@ function setRuleValue(ruleIndex: number, criteriaTypeId: number, value: number |
   if (vi !== -1) form.value.rules[ruleIndex].values[vi].valueId = value
 }
 
-function setRuleValueOption(ruleIndex: number, criteriaTypeId: number, opt: { id: number; name: string; code?: string }) {
+function setRuleValueOption(
+  ruleIndex: number,
+  criteriaTypeId: number,
+  opt: { id: number; name: string; code?: string },
+) {
   const vi = getCriteriaValueIndex(ruleIndex, criteriaTypeId)
   if (vi !== -1) {
-    form.value.rules[ruleIndex].values[vi]._initialValue = { id: opt.id, name: opt.name, code: opt.code }
+    form.value.rules[ruleIndex].values[vi]._initialValue = {
+      id: opt.id,
+      name: opt.name,
+      code: opt.code,
+    }
   }
 }
 

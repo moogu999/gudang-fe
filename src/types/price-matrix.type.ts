@@ -48,3 +48,10 @@ export type CreatePriceMatrixDto = {
 }
 
 export type UpdatePriceMatrixDto = CreatePriceMatrixDto
+
+export interface PriceMatrixPriorityItem {
+  id: number
+  priority: number
+  code: string
+  description: string | null
+}

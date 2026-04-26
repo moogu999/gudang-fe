@@ -80,6 +80,7 @@ export default {
     businessIntelligence: 'Business Intelligence',
     settings: 'Settings',
     numberSeries: 'Number Series',
+    pricing: 'Pricing',
     priceLists: 'Price Lists',
     priceMatrices: 'Price Matrices',
     priceMatrixPriorities: 'Price Matrix Priority',
@@ -661,6 +662,7 @@ export default {
       taxIncluded: 'Tax Included',
       minQuantity: 'Min Quantity',
       price: 'Price',
+      uom: 'UOM',
     },
     labels: {
       items: 'Items',
@@ -672,10 +674,12 @@ export default {
       selectProduct: 'Select product',
       selectCurrency: 'Select currency',
       baseTierNote: 'Base tier (min qty 0) cannot be removed',
+      searchProducts: 'Search products...',
     },
     validation: {
       codeRequired: 'Code is required.',
       startDateRequired: 'Start date is required.',
+      priceRequired: 'Price is required.',
     },
     messages: {
       created: 'Price list is created.',

@@ -70,6 +70,7 @@ export default {
     unitOfMeasurements: 'Satuan Ukuran',
     uomGroups: 'Grup Satuan',
     productLabelDefinitions: 'Definisi Label Produk',
+    customerLabelDefinitions: 'Definisi Label Pelanggan',
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
     users: 'Pengguna',
@@ -383,6 +384,18 @@ export default {
       selectDistrict: 'Pilih Kecamatan',
       selectSubDistrict: 'Pilih Kelurahan',
       selectCustomer: 'Pilih Pelanggan',
+      title: 'Label',
+      setLabels: 'Atur Label',
+      labelsUpdated: 'Label berhasil diperbarui.',
+      addLabelFilter: 'Tambah Filter Label',
+      labelFilter: 'Filter Label',
+      selectDefinition: 'Pilih Label',
+      selectOption: 'Pilih Nilai',
+      noDefinitions: 'Tidak ada definisi label untuk perusahaan ini.',
+      fields: {
+        label: 'Label',
+        value: 'Nilai',
+      },
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
@@ -502,6 +515,37 @@ export default {
   },
   productLabelDefinitions: {
     title: 'Definisi Label Produk',
+    addDefinition: 'Tambah Definisi Label',
+    editDefinition: 'Edit Definisi Label',
+    viewDefinition: 'Lihat Definisi Label',
+    fields: {
+      name: 'Nama',
+    },
+    options: {
+      title: 'Opsi',
+      addOption: 'Tambah Opsi',
+      editOption: 'Edit Opsi',
+      fields: {
+        value: 'Nilai',
+      },
+      validation: {
+        valueRequired: 'Nilai wajib diisi.',
+      },
+      messages: {
+        optionCreated: 'Opsi berhasil dibuat.',
+        optionUpdated: 'Opsi berhasil diperbarui.',
+      },
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      definitionCreated: 'Definisi label berhasil dibuat.',
+      definitionUpdated: 'Definisi label berhasil diperbarui.',
+    },
+  },
+  customerLabelDefinitions: {
+    title: 'Definisi Label Pelanggan',
     addDefinition: 'Tambah Definisi Label',
     editDefinition: 'Edit Definisi Label',
     viewDefinition: 'Lihat Definisi Label',

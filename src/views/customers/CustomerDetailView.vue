@@ -21,6 +21,25 @@
       </template>
     </ResponsiveCard>
 
+    <!-- Labels Section (read-only) -->
+    <ResponsiveCard v-if="customer" class="mt-4">
+      <template #content>
+        <h3 class="mb-3 text-sm font-semibold sm:text-base md:text-lg">
+          {{ t('customers.labels.title') }}
+        </h3>
+        <DataTable
+          :value="customer.labels ?? []"
+          striped-rows
+          responsive-layout="scroll"
+          :empty-message="t('table.noResults')"
+          class="text-sm"
+        >
+          <Column field="definition.name" :header="t('customers.labels.fields.label')" />
+          <Column field="option.value" :header="t('customers.labels.fields.value')" />
+        </DataTable>
+      </template>
+    </ResponsiveCard>
+
     <ResponsiveCard v-else-if="!isLoadingCustomer">
       <template #content>
         <Message severity="error">{{ t('customers.messages.customerNotFound') }}</Message>
@@ -45,6 +64,8 @@ import { ref, onMounted } from 'vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import Message from 'primevue/message'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 import { CustomersService } from '@/services'
 import { commonErrorToast } from '@/services/toast'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'

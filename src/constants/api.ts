@@ -65,6 +65,15 @@ export const API_ENDPOINTS = {
   // Customer endpoints
   GEN_CUSTOMERS: '/gen/v1/customers',
 
+  // Customer Label Definition endpoints
+  GEN_CUSTOMER_LABEL_DEFINITIONS: '/gen/v1/customer-label-definitions',
+
+  // Customer Label Option endpoints
+  GEN_CUSTOMER_LABEL_OPTIONS: '/gen/v1/customer-label-options',
+
+  // Customers V1 (custom endpoint for label-filtered search + set labels)
+  CUSTOMERS_V1: '/v1/customers',
+
   // Location endpoints
   GEN_COUNTRIES: '/gen/v1/countries',
   GEN_PROVINCES: '/gen/v1/provinces',

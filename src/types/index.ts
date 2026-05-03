@@ -53,6 +53,9 @@ export type {
   CityLite,
   DistrictLite,
   SubDistrictLite,
+  CustomerLabelDefinitionLite,
+  CustomerLabelOptionLite,
+  CustomerLabelValue,
 } from './customer.type'
 export type {
   UnitOfMeasurement,
@@ -76,6 +79,7 @@ export type {
   ProductLabelValue,
 } from './product.type'
 export * from './productLabelDefinition.type'
+export * from './customerLabelDefinition.type'
 export type {
   SalesOrderHeader,
   SalesOrderDetail,

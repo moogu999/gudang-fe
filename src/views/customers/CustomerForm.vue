@@ -239,12 +239,12 @@
             </label>
             <div class="flex w-full flex-auto flex-col gap-1">
               <InfiniteSelect
-                v-model="selectedAreaId"
                 id="areaId"
                 name="areaId"
                 option-label="name"
                 option-value="id"
                 :fetch-fn="(query) => CitiesService.list(query)"
+                :disabled="mode === DialogMode.VIEW"
                 :placeholder="t('customers.labels.selectCity')"
                 :initial-option="initialArea"
                 sort-by="name"
@@ -591,7 +591,6 @@ const initialArea = ref()
 const selectedCountryId = ref<number | undefined>(undefined)
 const selectedProvinceId = ref<number | undefined>(undefined)
 const selectedCityId = ref<number | undefined>(undefined)
-const selectedAreaId = ref<number | undefined>(undefined)
 const selectedDistrictId = ref<number | undefined>(undefined)
 const selectedSubDistrictId = ref<number | undefined>(undefined)
 
@@ -660,12 +659,11 @@ const initialValues = reactive({
 })
 
 if (props.customer && (props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW)) {
-  selectedCountryId.value = props.customer.countryId
-  selectedProvinceId.value = props.customer.provinceId
-  selectedCityId.value = props.customer.cityId
-  selectedDistrictId.value = props.customer.districtId
-  selectedSubDistrictId.value = props.customer.subDistrictId
-  selectedAreaId.value = props.customer.areaId
+  selectedCountryId.value = props.customer.countryId ?? undefined
+  selectedProvinceId.value = props.customer.provinceId ?? undefined
+  selectedCityId.value = props.customer.cityId ?? undefined
+  selectedDistrictId.value = props.customer.districtId ?? undefined
+  selectedSubDistrictId.value = props.customer.subDistrictId ?? undefined
 }
 
 onBeforeMount(() => {
@@ -675,21 +673,21 @@ onBeforeMount(() => {
 
   // Populate form with existing customer data
   initialValues.name = props.customer.name
-  initialValues.currencyId = props.customer.currencyId
+  initialValues.currencyId = props.customer.currencyId ?? undefined
   initialValues.isActive = props.customer.isActive
-  initialValues.sellToId = props.customer.sellToId
-  initialValues.deliverToId = props.customer.deliverToId
-  initialValues.invoiceToId = props.customer.invoiceToId
+  initialValues.sellToId = props.customer.sellToId ?? undefined
+  initialValues.deliverToId = props.customer.deliverToId ?? undefined
+  initialValues.invoiceToId = props.customer.invoiceToId ?? undefined
   initialValues.joinInvoice = props.customer.joinInvoice
-  initialValues.collectToId = props.customer.collectToId
-  initialValues.areaId = props.customer.areaId
+  initialValues.collectToId = props.customer.collectToId ?? undefined
+  initialValues.areaId = props.customer.areaId ?? undefined
   initialValues.taxable = props.customer.taxable
   initialValues.address = props.customer.address || ''
-  initialValues.countryId = props.customer.countryId
-  initialValues.provinceId = props.customer.provinceId
-  initialValues.cityId = props.customer.cityId
-  initialValues.districtId = props.customer.districtId
-  initialValues.subDistrictId = props.customer.subDistrictId
+  initialValues.countryId = props.customer.countryId ?? undefined
+  initialValues.provinceId = props.customer.provinceId ?? undefined
+  initialValues.cityId = props.customer.cityId ?? undefined
+  initialValues.districtId = props.customer.districtId ?? undefined
+  initialValues.subDistrictId = props.customer.subDistrictId ?? undefined
   initialValues.zipCode = props.customer.zipCode || ''
   initialValues.longitude = props.customer.longitude
   initialValues.latitude = props.customer.latitude

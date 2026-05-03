@@ -79,6 +79,13 @@ const mainMenu = [
         labelKey: 'navigation.productLabelDefinitions',
         route: '/product-label-definitions',
       },
+    ],
+  },
+  {
+    label: 'Pricing',
+    labelKey: 'navigation.pricing',
+    icon: 'pi pi-tag',
+    items: [
       {
         label: 'Price Lists',
         labelKey: 'navigation.priceLists',
@@ -93,6 +100,18 @@ const mainMenu = [
         label: 'Price Matrix Priority',
         labelKey: 'navigation.priceMatrixPriorities',
         route: '/price-matrix-priorities',
+      },
+    ],
+  },
+  {
+    label: 'Sales',
+    labelKey: 'navigation.sales',
+    icon: 'pi pi-shopping-cart',
+    items: [
+      {
+        label: 'Sales Orders',
+        labelKey: 'navigation.salesOrders',
+        route: '/sales-orders',
       },
     ],
   },
@@ -115,18 +134,6 @@ const mainMenu = [
         label: 'Permissions',
         labelKey: 'navigation.permissions',
         route: '/permissions',
-      },
-    ],
-  },
-  {
-    label: 'Sales',
-    labelKey: 'navigation.sales',
-    icon: 'pi pi-shopping-cart',
-    items: [
-      {
-        label: 'Sales Orders',
-        labelKey: 'navigation.salesOrders',
-        route: '/sales-orders',
       },
     ],
   },

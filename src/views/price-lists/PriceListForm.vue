@@ -67,6 +67,18 @@
           />
         </div>
 
+        <div v-if="form.items.length > 0" class="mb-3">
+          <IconField>
+            <InputIcon class="pi pi-search" />
+            <InputText
+              v-model="searchQuery"
+              :placeholder="t('priceLists.labels.searchProducts')"
+              class="w-full"
+              autocomplete="off"
+            />
+          </IconField>
+        </div>
+
         <div
           v-if="form.items.length === 0"
           class="rounded border p-4 text-center text-sm text-gray-500"
@@ -74,9 +86,16 @@
           {{ t('table.noItems') }}
         </div>
 
-        <div v-for="(item, itemIdx) in form.items" :key="itemIdx" class="mb-4 rounded border p-4">
+        <div
+          v-if="form.items.length > 0 && filteredItems.length === 0"
+          class="rounded border p-4 text-center text-sm text-gray-500"
+        >
+          {{ t('table.noItems') }}
+        </div>
+
+        <div v-for="{ item, idx: itemIdx } in filteredItems" :key="itemIdx" class="mb-4 rounded border p-4">
           <!-- Item header row -->
-          <div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-4">
             <!-- Product -->
             <div class="flex flex-col gap-1">
               <label class="text-sm font-semibold">{{ t('priceLists.fields.product') }}</label>
@@ -93,7 +112,13 @@
                 @update:model-value="(v) => (item.productId = v as number)"
                 @select-option="(opt) => onProductSelected(itemIdx, opt)"
               />
-              <span v-else class="text-sm">{{ item._initialProduct?.name ?? item.productId }}</span>
+              <InputText v-else :value="item._initialProduct?.name ?? String(item.productId ?? '')" disabled />
+            </div>
+
+            <!-- UOM -->
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-semibold">{{ t('priceLists.fields.uom') }}</label>
+              <InputText :value="item._smallestUomSymbol ?? ''" disabled />
             </div>
 
             <!-- Currency -->
@@ -111,9 +136,7 @@
                 sort-operator="asc"
                 @update:model-value="(v) => (item.currencyId = v as number)"
               />
-              <span v-else class="text-sm">{{
-                item._initialCurrency?.code ?? item.currencyId
-              }}</span>
+              <InputText v-else :value="item._initialCurrency?.code ?? String(item.currencyId ?? '')" disabled />
             </div>
 
             <!-- Tax Included + Remove -->
@@ -153,10 +176,10 @@
 
             <DataTable :value="item.tiers" size="small">
               <Column :header="t('priceLists.fields.minQuantity')" style="width: 10rem">
-                <template #body="{ index }">
+                <template #body="{ data: tier, index }">
                   <InputText
                     v-if="!isView && index > 0"
-                    v-model="item.tiers[index].minQuantity"
+                    v-model="tier.minQuantity"
                     size="small"
                     class="w-full"
                     autocomplete="off"
@@ -164,19 +187,25 @@
                   <span v-else-if="index === 0">
                     <span class="text-sm text-gray-500">0</span>
                   </span>
-                  <span v-else>{{ item.tiers[index].minQuantity }}</span>
+                  <span v-else>{{ tier.minQuantity }}</span>
                 </template>
               </Column>
               <Column :header="t('priceLists.fields.price')" style="width: 12rem">
-                <template #body="{ index }">
-                  <InputText
-                    v-if="!isView"
-                    v-model="item.tiers[index].price"
-                    size="small"
-                    class="w-full"
-                    autocomplete="off"
-                  />
-                  <span v-else>{{ item.tiers[index].price }}</span>
+                <template #body="{ data: tier, index }">
+                  <div class="flex flex-col gap-1">
+                    <InputText
+                      v-if="!isView"
+                      v-model="tier.price"
+                      size="small"
+                      class="w-full"
+                      :class="{ 'p-invalid': errors.items[itemIdx]?.tiers[index] }"
+                      autocomplete="off"
+                    />
+                    <span v-else>{{ tier.price }}</span>
+                    <small v-if="errors.items[itemIdx]?.tiers[index]" class="text-red-500">
+                      {{ errors.items[itemIdx].tiers[index] }}
+                    </small>
+                  </div>
                 </template>
               </Column>
               <Column v-if="!isView" style="width: 4rem">
@@ -216,6 +245,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import DatePicker from 'primevue/datepicker'
@@ -236,6 +267,7 @@ interface ItemForm {
   tiers: { minQuantity: string; price: string }[]
   _initialProduct?: { id: number; code: string; name: string }
   _initialCurrency?: { id: number; code: string }
+  _smallestUomSymbol?: string
 }
 
 const props = defineProps<{
@@ -262,7 +294,22 @@ const form = ref({
 })
 
 const noEndDate = ref(false)
-const errors = ref({ code: '', startDate: '' })
+const errors = ref<{
+  code: string
+  startDate: string
+  items: { tiers: string[] }[]
+}>({ code: '', startDate: '', items: [] })
+const searchQuery = ref('')
+
+const filteredItems = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  return form.value.items.map((item, idx) => ({ item, idx })).filter(({ item }) => {
+    if (!q) return true
+    const name = item._initialProduct?.name?.toLowerCase() ?? ''
+    const code = item._initialProduct?.code?.toLowerCase() ?? ''
+    return name.includes(q) || code.includes(q)
+  })
+})
 
 onMounted(() => {
   if (props.priceList) {
@@ -288,6 +335,7 @@ onMounted(() => {
       _initialCurrency: item.currency
         ? { id: item.currency.id, code: item.currency.code }
         : undefined,
+      _smallestUomSymbol: item.product?.smallestUom?.symbol,
     }))
   }
 })
@@ -313,8 +361,18 @@ function removeTier(itemIdx: number, tierIdx: number) {
   form.value.items[itemIdx].tiers.splice(tierIdx, 1)
 }
 
-function onProductSelected(itemIdx: number, opt: { id: number; code: string; name: string }) {
+function onProductSelected(
+  itemIdx: number,
+  opt: { id: number; code: string; name: string; uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
+) {
   form.value.items[itemIdx]._initialProduct = opt
+  const levels = opt.uomGroup?.levels
+  if (levels && levels.length > 0) {
+    const smallest = levels[levels.length - 1]
+    form.value.items[itemIdx]._smallestUomSymbol = smallest.uom?.symbol
+  } else {
+    form.value.items[itemIdx]._smallestUomSymbol = undefined
+  }
 }
 
 function formatDate(d: Date): string {
@@ -325,8 +383,9 @@ function formatDate(d: Date): string {
 }
 
 function validate(): boolean {
-  errors.value = { code: '', startDate: '' }
+  errors.value = { code: '', startDate: '', items: [] }
   let valid = true
+
   if (!form.value.code.trim()) {
     errors.value.code = t('priceLists.validation.codeRequired')
     valid = false
@@ -335,6 +394,19 @@ function validate(): boolean {
     errors.value.startDate = t('priceLists.validation.startDateRequired')
     valid = false
   }
+
+  errors.value.items = form.value.items.map((item) => {
+    const tierErrors = item.tiers.map((tier) => {
+      if (!tier.price.trim()) return t('priceLists.validation.priceRequired')
+      return ''
+    })
+    return { tiers: tierErrors }
+  })
+
+  if (errors.value.items.some((item) => item.tiers.some((e) => e))) {
+    valid = false
+  }
+
   return valid
 }
 

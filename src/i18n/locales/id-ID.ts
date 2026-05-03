@@ -81,6 +81,7 @@ export default {
     businessIntelligence: 'Intelijen Bisnis',
     settings: 'Pengaturan',
     numberSeries: 'Seri Nomor',
+    pricing: 'Harga',
     priceLists: 'Daftar Harga',
     priceMatrices: 'Matriks Harga',
     priceMatrixPriorities: 'Prioritas Matriks Harga',
@@ -706,6 +707,7 @@ export default {
       taxIncluded: 'Termasuk Pajak',
       minQuantity: 'Min Kuantitas',
       price: 'Harga',
+      uom: 'Satuan',
     },
     labels: {
       items: 'Item',
@@ -717,10 +719,12 @@ export default {
       selectProduct: 'Pilih produk',
       selectCurrency: 'Pilih mata uang',
       baseTierNote: 'Tingkatan dasar (min qty 0) tidak dapat dihapus',
+      searchProducts: 'Cari produk...',
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
       startDateRequired: 'Tanggal mulai wajib diisi.',
+      priceRequired: 'Harga wajib diisi.',
     },
     messages: {
       created: 'Daftar harga berhasil dibuat.',

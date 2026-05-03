@@ -41,7 +41,18 @@ const mainMenu = [
     label: 'Customers',
     labelKey: 'navigation.customers',
     icon: 'pi pi-users',
-    route: '/customers',
+    items: [
+      {
+        label: 'Customer',
+        labelKey: 'navigation.customers',
+        route: '/customers',
+      },
+      {
+        label: 'Customer Label Definitions',
+        labelKey: 'navigation.customerLabelDefinitions',
+        route: '/customer-label-definitions',
+      },
+    ]
   },
   {
     label: 'Products',

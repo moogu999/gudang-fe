@@ -102,6 +102,11 @@ const mainMenu = [
         labelKey: 'navigation.salesOrders',
         route: '/sales-orders',
       },
+      {
+        label: 'Promotions',
+        labelKey: 'navigation.promotions',
+        route: '/promotions',
+      },
     ],
   },
   {

@@ -121,6 +121,10 @@ export const API_ENDPOINTS = {
   PRICE_MATRIX_PRIORITY_LIST: '/v1/price-matrix-priority-list',
   PRICE_MATRIX_PRIORITY_LIST_ITEM: (id: number) => `/v1/price-matrix-priority-list/${id}`,
   PRICE_MATRIX_PRIORITY: (id: number) => `/v1/price-matrices/${id}/priority`,
+
+  // Promotion endpoints
+  GEN_PROMOTIONS: '/gen/v1/promotions',
+  PROMOTIONS: '/v1/promotions',
 } as const
 
 // Type for API endpoints (useful for validation)

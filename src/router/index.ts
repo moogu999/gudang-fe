@@ -191,6 +191,30 @@ const router = createRouter({
           component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
           meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
         },
+        {
+          path: 'promotions',
+          name: 'Promotions',
+          component: () => import('@/views/promotions/PromotionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_READ },
+        },
+        {
+          path: 'promotions/create',
+          name: 'PromotionCreate',
+          component: () => import('@/views/promotions/PromotionCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_WRITE },
+        },
+        {
+          path: 'promotions/:id/edit',
+          name: 'PromotionEdit',
+          component: () => import('@/views/promotions/PromotionEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_WRITE },
+        },
+        {
+          path: 'promotions/:id',
+          name: 'PromotionDetail',
+          component: () => import('@/views/promotions/PromotionDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_READ },
+        },
       ],
     },
 

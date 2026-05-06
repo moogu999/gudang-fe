@@ -4,7 +4,11 @@
       <!-- Threshold -->
       <div class="flex flex-col gap-1">
         <label class="text-sm font-semibold">
-          {{ thresholdKind === 'min_qty' ? t('promotions.fields.minQty') : t('promotions.fields.minAmount') }}
+          {{
+            thresholdKind === 'min_qty'
+              ? t('promotions.fields.minQty')
+              : t('promotions.fields.minAmount')
+          }}
         </label>
         <InputText
           v-if="!isView"
@@ -34,7 +38,9 @@
     <!-- Pool items -->
     <div>
       <div class="mb-2 flex items-center justify-between">
-        <span class="text-sm font-medium text-gray-600">{{ t('promotions.labels.customerChoicePool') }}</span>
+        <span class="text-sm font-medium text-gray-600">{{
+          t('promotions.labels.customerChoicePool')
+        }}</span>
         <Button
           v-if="!isView"
           :label="t('promotions.labels.addPoolItem')"
@@ -45,7 +51,10 @@
         />
       </div>
 
-      <div v-if="pool.items.length === 0" class="rounded border p-3 text-center text-sm text-gray-500">
+      <div
+        v-if="pool.items.length === 0"
+        class="rounded border p-3 text-center text-sm text-gray-500"
+      >
         {{ t('table.noItems') }}
       </div>
 
@@ -75,7 +84,13 @@
         </Column>
         <Column :header="t('promotions.fields.uom')" style="width: 6rem">
           <template #body="{ data: item }">
-            <InputText v-if="!isView" :value="item._product?.smallestUomSymbol ?? ''" disabled size="small" class="w-full" />
+            <InputText
+              v-if="!isView"
+              :value="item._product?.smallestUomSymbol ?? ''"
+              disabled
+              size="small"
+              class="w-full"
+            />
             <span v-else>{{ item._product?.smallestUomSymbol ?? '—' }}</span>
           </template>
         </Column>
@@ -91,7 +106,9 @@
                 autocomplete="off"
               />
               <span v-else>{{ item.bonusAmount }}</span>
-              <small v-if="errors.items[index]" class="text-red-500">{{ errors.items[index] }}</small>
+              <small v-if="errors.items[index]" class="text-red-500">{{
+                errors.items[index]
+              }}</small>
             </div>
           </template>
         </Column>
@@ -160,7 +177,12 @@ function removeItem(index: number) {
 
 function onProductSelected(
   item: CustomerChoicePoolItemForm,
-  opt: { id: number; code: string; name: string; uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
+  opt: {
+    id: number
+    code: string
+    name: string
+    uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+  },
 ) {
   item._product = {
     id: opt.id,
@@ -170,9 +192,9 @@ function onProductSelected(
   }
 }
 
-function getSmallestUomSymbol(
-  opt: { uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
-): string | undefined {
+function getSmallestUomSymbol(opt: {
+  uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+}): string | undefined {
   const levels = opt.uomGroup?.levels
   if (!levels || levels.length === 0) return undefined
   return levels[levels.length - 1].uom?.symbol

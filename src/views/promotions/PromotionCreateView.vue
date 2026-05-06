@@ -15,7 +15,12 @@
       </h1>
     </div>
 
-    <PromotionForm mode="create" :is-loading="isLoading" @submit="onSubmit" @cancel="router.back()" />
+    <PromotionForm
+      mode="create"
+      :is-loading="isLoading"
+      @submit="onSubmit"
+      @cancel="router.back()"
+    />
   </div>
 </template>
 

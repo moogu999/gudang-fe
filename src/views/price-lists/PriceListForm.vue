@@ -93,7 +93,11 @@
           {{ t('table.noItems') }}
         </div>
 
-        <div v-for="{ item, idx: itemIdx } in filteredItems" :key="itemIdx" class="mb-4 rounded border p-4">
+        <div
+          v-for="{ item, idx: itemIdx } in filteredItems"
+          :key="itemIdx"
+          class="mb-4 rounded border p-4"
+        >
           <!-- Item header row -->
           <div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-4">
             <!-- Product -->
@@ -112,7 +116,11 @@
                 @update:model-value="(v) => (item.productId = v as number)"
                 @select-option="(opt) => onProductSelected(itemIdx, opt)"
               />
-              <InputText v-else :value="item._initialProduct?.name ?? String(item.productId ?? '')" disabled />
+              <InputText
+                v-else
+                :value="item._initialProduct?.name ?? String(item.productId ?? '')"
+                disabled
+              />
             </div>
 
             <!-- UOM -->
@@ -136,7 +144,11 @@
                 sort-operator="asc"
                 @update:model-value="(v) => (item.currencyId = v as number)"
               />
-              <InputText v-else :value="item._initialCurrency?.code ?? String(item.currencyId ?? '')" disabled />
+              <InputText
+                v-else
+                :value="item._initialCurrency?.code ?? String(item.currencyId ?? '')"
+                disabled
+              />
             </div>
 
             <!-- Tax Included + Remove -->
@@ -303,12 +315,14 @@ const searchQuery = ref('')
 
 const filteredItems = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
-  return form.value.items.map((item, idx) => ({ item, idx })).filter(({ item }) => {
-    if (!q) return true
-    const name = item._initialProduct?.name?.toLowerCase() ?? ''
-    const code = item._initialProduct?.code?.toLowerCase() ?? ''
-    return name.includes(q) || code.includes(q)
-  })
+  return form.value.items
+    .map((item, idx) => ({ item, idx }))
+    .filter(({ item }) => {
+      if (!q) return true
+      const name = item._initialProduct?.name?.toLowerCase() ?? ''
+      const code = item._initialProduct?.code?.toLowerCase() ?? ''
+      return name.includes(q) || code.includes(q)
+    })
 })
 
 onMounted(() => {
@@ -363,7 +377,12 @@ function removeTier(itemIdx: number, tierIdx: number) {
 
 function onProductSelected(
   itemIdx: number,
-  opt: { id: number; code: string; name: string; uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
+  opt: {
+    id: number
+    code: string
+    name: string
+    uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+  },
 ) {
   form.value.items[itemIdx]._initialProduct = opt
   const levels = opt.uomGroup?.levels

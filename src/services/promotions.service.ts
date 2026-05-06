@@ -1,10 +1,6 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type {
-  Promotion,
-  PromotionListItem,
-  CreatePromotionDto,
-} from '@/types/promotion.type'
+import type { Promotion, PromotionListItem, CreatePromotionDto } from '@/types/promotion.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 export class PromotionsService {

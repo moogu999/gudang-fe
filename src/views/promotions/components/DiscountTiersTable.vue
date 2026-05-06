@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="mb-2 flex items-center justify-between">
-      <span class="text-sm font-medium text-gray-600">{{ t('promotions.labels.discountTiers') }}</span>
+      <span class="text-sm font-medium text-gray-600">{{
+        t('promotions.labels.discountTiers')
+      }}</span>
       <Button
         v-if="!isView"
         :label="t('promotions.labels.addTier')"
@@ -18,7 +20,11 @@
 
     <DataTable v-else :value="tiers" size="small">
       <Column
-        :header="thresholdKind === 'min_qty' ? t('promotions.fields.minQty') : t('promotions.fields.minAmount')"
+        :header="
+          thresholdKind === 'min_qty'
+            ? t('promotions.fields.minQty')
+            : t('promotions.fields.minAmount')
+        "
         style="width: 10rem"
       >
         <template #body="{ data: tier }">
@@ -44,7 +50,9 @@
             size="small"
           />
           <span v-else>
-            {{ tier.discountType ? t(`promotions.labels.discountTypes.${tier.discountType}`) : '—' }}
+            {{
+              tier.discountType ? t(`promotions.labels.discountTypes.${tier.discountType}`) : '—'
+            }}
           </span>
         </template>
       </Column>

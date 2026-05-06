@@ -104,7 +104,8 @@ const router = createRouter({
         {
           path: 'customer-label-definitions',
           name: 'CustomerLabelDefinitions',
-          component: () => import('@/views/customer-label-definitions/CustomerLabelDefinitionView.vue'),
+          component: () =>
+            import('@/views/customer-label-definitions/CustomerLabelDefinitionView.vue'),
           meta: { requiredPermission: PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ },
         },
         {

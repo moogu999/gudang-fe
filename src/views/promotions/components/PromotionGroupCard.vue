@@ -2,7 +2,9 @@
   <div class="rounded border p-4">
     <!-- Group header -->
     <div class="mb-4 flex items-center justify-between gap-3">
-      <span class="text-sm font-semibold">{{ t('promotions.labels.groups') }} {{ groupIdx + 1 }}</span>
+      <span class="text-sm font-semibold"
+        >{{ t('promotions.labels.groups') }} {{ groupIdx + 1 }}</span
+      >
       <Button
         v-if="!isView"
         icon="pi pi-trash"
@@ -58,7 +60,10 @@
       </div>
       <small v-if="errors.products" class="mb-1 block text-red-500">{{ errors.products }}</small>
 
-      <div v-if="group.products.length === 0" class="rounded border p-3 text-center text-sm text-gray-500">
+      <div
+        v-if="group.products.length === 0"
+        class="rounded border p-3 text-center text-sm text-gray-500"
+      >
         {{ t('table.noItems') }}
       </div>
 
@@ -85,7 +90,11 @@
           </template>
         </Column>
         <Column
-          :header="group.thresholdKind === 'min_qty' ? t('promotions.fields.minQty') : t('promotions.fields.minAmount')"
+          :header="
+            group.thresholdKind === 'min_qty'
+              ? t('promotions.fields.minQty')
+              : t('promotions.fields.minAmount')
+          "
           style="width: 10rem"
         >
           <template #body="{ data: p }">
@@ -134,14 +143,20 @@
       </div>
       <small v-if="errors.labels" class="mb-1 block text-red-500">{{ errors.labels }}</small>
 
-      <div v-if="group.labels.length === 0" class="rounded border p-3 text-center text-sm text-gray-500">
+      <div
+        v-if="group.labels.length === 0"
+        class="rounded border p-3 text-center text-sm text-gray-500"
+      >
         {{ t('table.noItems') }}
       </div>
 
       <DataTable v-else :value="group.labels" size="small">
         <Column :header="t('promotions.fields.label')" style="min-width: 10rem">
           <template #body="{ data: l }">
-            {{ allLabelOptions.find((o) => o.id === l.labelOptionId)?.value ?? String(l.labelOptionId) }}
+            {{
+              allLabelOptions.find((o) => o.id === l.labelOptionId)?.value ??
+              String(l.labelOptionId)
+            }}
           </template>
         </Column>
         <Column :header="t('promotions.fields.mandatory')" style="width: 7rem">
@@ -151,7 +166,11 @@
           </template>
         </Column>
         <Column
-          :header="group.thresholdKind === 'min_qty' ? t('promotions.fields.minQty') : t('promotions.fields.minAmount')"
+          :header="
+            group.thresholdKind === 'min_qty'
+              ? t('promotions.fields.minQty')
+              : t('promotions.fields.minAmount')
+          "
           style="width: 10rem"
         >
           <template #body="{ data: l }">
@@ -193,7 +212,11 @@
           class="w-full md:w-48"
         />
         <span v-else>
-          {{ group.reward.rewardType ? t(`promotions.labels.rewardTypes.${group.reward.rewardType}`) : '—' }}
+          {{
+            group.reward.rewardType
+              ? t(`promotions.labels.rewardTypes.${group.reward.rewardType}`)
+              : '—'
+          }}
         </span>
       </div>
 
@@ -223,7 +246,11 @@
             class="w-full md:w-48"
           />
           <span v-else>
-            {{ group.reward.bonusKind ? t(`promotions.labels.bonusKinds.${group.reward.bonusKind}`) : '—' }}
+            {{
+              group.reward.bonusKind
+                ? t(`promotions.labels.bonusKinds.${group.reward.bonusKind}`)
+                : '—'
+            }}
           </span>
         </div>
 

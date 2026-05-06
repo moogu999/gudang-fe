@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="mb-2 flex items-center justify-between">
-      <span class="text-sm font-medium text-gray-600">{{ t('promotions.labels.fixedBonusTiers') }}</span>
+      <span class="text-sm font-medium text-gray-600">{{
+        t('promotions.labels.fixedBonusTiers')
+      }}</span>
       <Button
         v-if="!isView"
         :label="t('promotions.labels.addTier')"
@@ -21,7 +23,11 @@
       <div class="mb-2 flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <label class="text-sm font-medium text-gray-600">
-            {{ thresholdKind === 'min_qty' ? t('promotions.fields.minQty') : t('promotions.fields.minAmount') }}
+            {{
+              thresholdKind === 'min_qty'
+                ? t('promotions.fields.minQty')
+                : t('promotions.fields.minAmount')
+            }}
           </label>
           <InputText
             v-if="!isView"
@@ -46,7 +52,9 @@
       <!-- Tier items -->
       <div class="ml-0 md:ml-3">
         <div class="mb-1 flex items-center justify-between">
-          <span class="text-xs font-medium text-gray-500">{{ t('promotions.labels.tierItems') }}</span>
+          <span class="text-xs font-medium text-gray-500">{{
+            t('promotions.labels.tierItems')
+          }}</span>
           <Button
             v-if="!isView"
             :label="t('promotions.labels.addTierItem')"
@@ -57,7 +65,10 @@
           />
         </div>
 
-        <div v-if="tier.items.length === 0" class="rounded border p-2 text-center text-xs text-gray-400">
+        <div
+          v-if="tier.items.length === 0"
+          class="rounded border p-2 text-center text-xs text-gray-400"
+        >
           {{ t('table.noItems') }}
         </div>
 
@@ -87,7 +98,13 @@
           </Column>
           <Column :header="t('promotions.fields.uom')" style="width: 6rem">
             <template #body="{ data: item }">
-              <InputText v-if="!isView" :value="item._product?.smallestUomSymbol ?? ''" disabled size="small" class="w-full" />
+              <InputText
+                v-if="!isView"
+                :value="item._product?.smallestUomSymbol ?? ''"
+                disabled
+                size="small"
+                class="w-full"
+              />
               <span v-else>{{ item._product?.smallestUomSymbol ?? '—' }}</span>
             </template>
           </Column>
@@ -175,7 +192,12 @@ function removeItem(tierIdx: number, itemIdx: number) {
 
 function onProductSelected(
   item: FixedBonusTierItemForm,
-  opt: { id: number; code: string; name: string; uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
+  opt: {
+    id: number
+    code: string
+    name: string
+    uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+  },
 ) {
   item._product = {
     id: opt.id,
@@ -185,9 +207,9 @@ function onProductSelected(
   }
 }
 
-function getSmallestUomSymbol(
-  opt: { uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
-): string | undefined {
+function getSmallestUomSymbol(opt: {
+  uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+}): string | undefined {
   const levels = opt.uomGroup?.levels
   if (!levels || levels.length === 0) return undefined
   return levels[levels.length - 1].uom?.symbol

@@ -118,7 +118,11 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import { ref, computed } from 'vue'
-import { CustomersService, CustomerLabelDefinitionsService, CustomerLabelOptionsService } from '@/services'
+import {
+  CustomersService,
+  CustomerLabelDefinitionsService,
+  CustomerLabelOptionsService,
+} from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { useConfirmDelete, usePermissions } from '@/composables'

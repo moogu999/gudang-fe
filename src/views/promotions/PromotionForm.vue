@@ -38,7 +38,11 @@
               sort-operator="asc"
               @update:model-value="(v) => (form.currencyId = v as number)"
             />
-            <InputText v-else :value="initialCurrency?.code ?? String(form.currencyId ?? '')" disabled />
+            <InputText
+              v-else
+              :value="initialCurrency?.code ?? String(form.currencyId ?? '')"
+              disabled
+            />
             <small v-if="errors.currencyId" class="text-red-500">{{ errors.currencyId }}</small>
           </div>
 
@@ -101,7 +105,9 @@
           <div class="flex flex-col gap-1">
             <label class="text-sm font-semibold">{{ t('promotions.fields.active') }}</label>
             <ToggleSwitch v-if="!isView" v-model="form.active" />
-            <span v-else>{{ form.active ? t('common.labels.active') : t('common.labels.inactive') }}</span>
+            <span v-else>{{
+              form.active ? t('common.labels.active') : t('common.labels.inactive')
+            }}</span>
           </div>
         </div>
       </template>
@@ -123,7 +129,10 @@
 
         <small v-if="errors.groups" class="mb-3 block text-red-500">{{ errors.groups }}</small>
 
-        <div v-if="form.groups.length === 0" class="rounded border p-4 text-center text-sm text-gray-500">
+        <div
+          v-if="form.groups.length === 0"
+          class="rounded border p-4 text-center text-sm text-gray-500"
+        >
           {{ t('table.noItems') }}
         </div>
 
@@ -263,22 +272,30 @@ onMounted(() => {
           productId: item.productId,
           qty: item.qty,
           _product: item.product
-            ? { id: item.productId, code: item.product.code, name: item.product.name, smallestUomSymbol: item.product.smallestUomSymbol ?? undefined }
+            ? {
+                id: item.productId,
+                code: item.product.code,
+                name: item.product.name,
+                smallestUomSymbol: item.product.smallestUomSymbol ?? undefined,
+              }
             : undefined,
         })),
       }))
 
       const cc = reward.customerChoice
       const customerChoicePool = {
-        threshold: g.thresholdKind === 'min_qty'
-          ? ''
-          : '',
+        threshold: g.thresholdKind === 'min_qty' ? '' : '',
         pickableCount: cc?.pickableCount ?? 1,
         items: (cc?.poolItems ?? []).map((pi) => ({
           productId: pi.productId,
           bonusAmount: pi.bonusAmount,
           _product: pi.product
-            ? { id: pi.productId, code: pi.product.code, name: pi.product.name, smallestUomSymbol: pi.product.smallestUomSymbol ?? undefined }
+            ? {
+                id: pi.productId,
+                code: pi.product.code,
+                name: pi.product.name,
+                smallestUomSymbol: pi.product.smallestUomSymbol ?? undefined,
+              }
             : undefined,
         })),
       }
@@ -289,9 +306,15 @@ onMounted(() => {
         products: (g.products ?? []).map((gp) => ({
           productId: gp.productId,
           mandatory: gp.mandatory ?? false,
-          productThreshold: g.thresholdKind === 'min_qty' ? (gp.minQty ?? '') : (gp.minAmount ?? ''),
+          productThreshold:
+            g.thresholdKind === 'min_qty' ? (gp.minQty ?? '') : (gp.minAmount ?? ''),
           _product: gp.product
-            ? { id: gp.productId, code: gp.product.code, name: gp.product.name, smallestUomSymbol: gp.product.smallestUomSymbol ?? undefined }
+            ? {
+                id: gp.productId,
+                code: gp.product.code,
+                name: gp.product.name,
+                smallestUomSymbol: gp.product.smallestUomSymbol ?? undefined,
+              }
             : undefined,
         })),
         labels: (g.labels ?? []).map((l) => ({
@@ -441,7 +464,8 @@ function validate(): boolean {
       }
       if (pool.items.length < (pool.pickableCount ?? 1)) {
         ge.customerChoiceErrors.items = pool.items.map(() => '')
-        if (pool.items.length === 0) ge.customerChoiceErrors.threshold = t('promotions.validation.poolRequired')
+        if (pool.items.length === 0)
+          ge.customerChoiceErrors.threshold = t('promotions.validation.poolRequired')
         valid = false
       }
       ge.customerChoiceErrors.items = pool.items.map((item) => {
@@ -462,54 +486,71 @@ function buildGroupDto(group: GroupForm) {
   const rewardDto = {
     rewardType: reward.rewardType as import('@/types/promotion.type').RewardType,
     bonusKind: reward.bonusKind || undefined,
-    discountTiers: reward.rewardType === 'discount'
-      ? reward.discountTiers.map((t) => ({
-          minQty: isMinQty ? (t.threshold || null) : null,
-          minAmount: !isMinQty ? (t.threshold || null) : null,
-          discountType: t.discountType as DiscountType,
-          value: t.value,
-        }))
-      : undefined,
-    fixedBonusTiers: reward.rewardType === 'bonus' && reward.bonusKind === 'fixed'
-      ? reward.fixedBonusTiers.map((ft) => ({
-          minQty: isMinQty ? (ft.threshold || null) : null,
-          minAmount: !isMinQty ? (ft.threshold || null) : null,
-          items: ft.items.map((item) => ({
-            productId: item.productId!,
-            qty: item.qty,
-          })),
-        }))
-      : undefined,
-    customerChoice: reward.rewardType === 'bonus' && reward.bonusKind === 'customer_choice'
-      ? {
-          pickableCount: reward.customerChoicePool.pickableCount,
-          poolItems: reward.customerChoicePool.items.map((item) => ({
-            productId: item.productId!,
-            bonusAmount: item.bonusAmount,
-          })),
-        }
-      : undefined,
+    discountTiers:
+      reward.rewardType === 'discount'
+        ? reward.discountTiers.map((t) => ({
+            minQty: isMinQty ? t.threshold || null : null,
+            minAmount: !isMinQty ? t.threshold || null : null,
+            discountType: t.discountType as DiscountType,
+            value: t.value,
+          }))
+        : undefined,
+    fixedBonusTiers:
+      reward.rewardType === 'bonus' && reward.bonusKind === 'fixed'
+        ? reward.fixedBonusTiers.map((ft) => ({
+            minQty: isMinQty ? ft.threshold || null : null,
+            minAmount: !isMinQty ? ft.threshold || null : null,
+            items: ft.items.map((item) => ({
+              productId: item.productId!,
+              qty: item.qty,
+            })),
+          }))
+        : undefined,
+    customerChoice:
+      reward.rewardType === 'bonus' && reward.bonusKind === 'customer_choice'
+        ? {
+            pickableCount: reward.customerChoicePool.pickableCount,
+            poolItems: reward.customerChoicePool.items.map((item) => ({
+              productId: item.productId!,
+              bonusAmount: item.bonusAmount,
+            })),
+          }
+        : undefined,
   }
 
   return {
     qualifierKind: group.qualifierKind,
     thresholdKind: group.thresholdKind,
-    products: group.qualifierKind === 'products'
-      ? group.products.map((p) => ({
-          productId: p.productId!,
-          mandatory: p.mandatory,
-          minQty: isMinQty ? (p.mandatory && p.productThreshold ? p.productThreshold : null) : null,
-          minAmount: !isMinQty ? (p.mandatory && p.productThreshold ? p.productThreshold : null) : null,
-        }))
-      : undefined,
-    labels: group.qualifierKind === 'labels'
-      ? group.labels.map((l) => ({
-          productLabelOptionId: l.labelOptionId,
-          mandatory: l.mandatory,
-          minQty: isMinQty ? (l.mandatory && l.labelThreshold ? l.labelThreshold : null) : null,
-          minAmount: !isMinQty ? (l.mandatory && l.labelThreshold ? l.labelThreshold : null) : null,
-        }))
-      : undefined,
+    products:
+      group.qualifierKind === 'products'
+        ? group.products.map((p) => ({
+            productId: p.productId!,
+            mandatory: p.mandatory,
+            minQty: isMinQty
+              ? p.mandatory && p.productThreshold
+                ? p.productThreshold
+                : null
+              : null,
+            minAmount: !isMinQty
+              ? p.mandatory && p.productThreshold
+                ? p.productThreshold
+                : null
+              : null,
+          }))
+        : undefined,
+    labels:
+      group.qualifierKind === 'labels'
+        ? group.labels.map((l) => ({
+            productLabelOptionId: l.labelOptionId,
+            mandatory: l.mandatory,
+            minQty: isMinQty ? (l.mandatory && l.labelThreshold ? l.labelThreshold : null) : null,
+            minAmount: !isMinQty
+              ? l.mandatory && l.labelThreshold
+                ? l.labelThreshold
+                : null
+              : null,
+          }))
+        : undefined,
     reward: rewardDto,
   }
 }

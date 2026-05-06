@@ -52,7 +52,7 @@ const mainMenu = [
         labelKey: 'navigation.customerLabelDefinitions',
         route: '/customer-label-definitions',
       },
-    ]
+    ],
   },
   {
     label: 'Products',

@@ -78,7 +78,7 @@ const { t } = useI18n()
 const overlayGroup = 'CustomerLabelDefinitionsView'
 
 // Permissions
-const { canWrite } = usePermissions('/Customer-label-definitions')
+const { canWrite } = usePermissions('/customer-label-definitions')
 
 // Table
 const table = ref()

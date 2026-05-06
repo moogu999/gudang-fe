@@ -54,7 +54,10 @@ export class CustomerLabelOptionsService {
    * @param data - Update data
    * @returns Promise resolving to the updated customer label option
    */
-  static async update(id: number, data: UpdateCustomerLabelOptionDto): Promise<CustomerLabelOption> {
+  static async update(
+    id: number,
+    data: UpdateCustomerLabelOptionDto,
+  ): Promise<CustomerLabelOption> {
     return ApiService.patch<CustomerLabelOption>(`${this.BASE_URL}/${id}`, data)
   }
 

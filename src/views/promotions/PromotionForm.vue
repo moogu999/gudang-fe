@@ -181,7 +181,6 @@ import type {
 import PromotionGroupCard, {
   type GroupForm,
   type GroupErrors,
-  type GroupLabelForm,
 } from './components/PromotionGroupCard.vue'
 import type { DiscountTierForm } from './components/DiscountTiersTable.vue'
 import type { FixedBonusTierForm } from './components/FixedBonusTiersTable.vue'

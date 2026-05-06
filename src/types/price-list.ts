@@ -7,7 +7,12 @@ export type PriceListTier = {
 export type PriceListItem = {
   id?: number
   productId: number
-  product?: { id: number; code: string; name: string; smallestUom?: { id: number; name: string; symbol: string } }
+  product?: {
+    id: number
+    code: string
+    name: string
+    smallestUom?: { id: number; name: string; symbol: string }
+  }
   currencyId: number
   currency?: { id: number; code: string }
   taxIncluded: boolean

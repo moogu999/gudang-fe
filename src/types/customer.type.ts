@@ -1,5 +1,24 @@
 import type { CurrencyLite } from './currency.type'
 
+export type CustomerLabelDefinitionLite = {
+  id: number
+  name: string
+}
+
+export type CustomerLabelOptionLite = {
+  id: number
+  value: string
+}
+
+export type CustomerLabelValue = {
+  id: number
+  customerId: number
+  labelDefinitionId: number
+  labelOptionId: number
+  definition?: CustomerLabelDefinitionLite
+  option?: CustomerLabelOptionLite
+}
+
 export type CountryLite = {
   id: number
   name: string
@@ -69,6 +88,7 @@ export type Customer = {
   }
   updatedAt?: string
   updatedBy?: number
+  labels?: CustomerLabelValue[]
 }
 
 export type CreateCustomerDto = {

@@ -38,6 +38,8 @@ export const PERMISSIONS = {
   PRICE_MATRIX_WRITE: 31,
   PROMOTION_READ: 32,
   PROMOTION_WRITE: 33,
+  CUSTOMER_LABEL_DEFINITION_READ: 34,
+  CUSTOMER_LABEL_DEFINITION_WRITE: 35,
 } as const
 
 /**
@@ -67,6 +69,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/price-matrices': PERMISSIONS.PRICE_MATRIX_READ,
   '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_READ,
   '/promotions': PERMISSIONS.PROMOTION_READ,
+  '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ,
 }
 
 /**
@@ -90,4 +93,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/price-matrices': PERMISSIONS.PRICE_MATRIX_WRITE,
   '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_WRITE,
   '/promotions': PERMISSIONS.PROMOTION_WRITE,
+  '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_WRITE,
 }

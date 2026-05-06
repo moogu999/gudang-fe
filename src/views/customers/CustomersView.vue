@@ -7,11 +7,73 @@
       {{ t('customers.title') }}
     </h1>
 
-    <Toolbar v-if="canWrite" class="mb-5">
+    <Toolbar class="mb-5">
+      <template #start>
+        <Button
+          :label="t('customers.labels.addLabelFilter')"
+          icon="pi pi-filter"
+          severity="secondary"
+          size="small"
+          @click="addLabelFilter"
+        />
+      </template>
       <template #end>
-        <ResponsiveButton :label="t('common.actions.add')" @click="addCustomer" />
+        <ResponsiveButton v-if="canWrite" :label="t('common.actions.add')" @click="addCustomer" />
       </template>
     </Toolbar>
+
+    <!-- Label Filters -->
+    <div v-if="labelFilters.length > 0" class="mb-4 rounded border p-3">
+      <div
+        v-for="(filter, index) in labelFilters"
+        :key="index"
+        class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center"
+      >
+        <span class="text-sm font-medium text-gray-600"
+          >{{ t('customers.labels.labelFilter') }} {{ index + 1 }}</span
+        >
+        <InfiniteSelect
+          v-model="filter.definitionId"
+          option-label="name"
+          option-value="id"
+          :fetch-fn="(query) => CustomerLabelDefinitionsService.list(query)"
+          :placeholder="t('customers.labels.selectDefinition')"
+          sort-by="name"
+          sort-operator="asc"
+          class="min-w-40"
+          @update:model-value="onDefinitionChange(index)"
+        />
+        <InfiniteSelect
+          v-model="filter.optionId"
+          option-label="value"
+          option-value="id"
+          :fetch-fn="(query) => CustomerLabelOptionsService.list(query)"
+          :custom-filters="
+            filter.definitionId
+              ? [
+                  {
+                    filterBy: 'customer_label_definition_id',
+                    filterOperator: FilterOperator.EQUAL,
+                    filterValue: filter.definitionId,
+                  },
+                ]
+              : []
+          "
+          :placeholder="t('customers.labels.selectOption')"
+          :disabled="!filter.definitionId"
+          sort-by="value"
+          sort-operator="asc"
+          class="min-w-40"
+        />
+        <Button
+          icon="pi pi-times"
+          severity="secondary"
+          size="small"
+          text
+          @click="removeLabelFilter(index)"
+        />
+      </div>
+    </div>
 
     <ResponsiveCard>
       <template #content>
@@ -54,13 +116,20 @@ import type { Column } from '@/types/table.type'
 import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
+import Button from 'primevue/button'
 import { ref, computed } from 'vue'
-import { CustomersService } from '@/services/customers.service'
+import {
+  CustomersService,
+  CustomerLabelDefinitionsService,
+  CustomerLabelOptionsService,
+} from '@/services'
 import Toast from 'primevue/toast'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { useConfirmDelete, usePermissions } from '@/composables'
 import { API_ENDPOINTS } from '@/constants/api'
+import { FilterOperator } from '@/constants'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -86,8 +155,35 @@ function viewCustomer(id: number) {
   router.push(`/customers/${id}`)
 }
 
-// Table
-const url = API_ENDPOINTS.GEN_CUSTOMERS
+// Label Filters
+type LabelFilter = { definitionId?: number; optionId?: number }
+const labelFilters = ref<LabelFilter[]>([])
+
+function addLabelFilter() {
+  labelFilters.value.push({})
+}
+
+function removeLabelFilter(index: number) {
+  labelFilters.value.splice(index, 1)
+}
+
+function onDefinitionChange(index: number) {
+  labelFilters.value[index].optionId = undefined
+}
+
+// Table URL — switches to CUSTOMERS_V1 when active label filters exist
+const url = computed(() => {
+  const activeFilters = labelFilters.value.filter((f) => f.definitionId && f.optionId)
+  if (activeFilters.length === 0) return API_ENDPOINTS.GEN_CUSTOMERS
+
+  const params = activeFilters
+    .map(
+      (f, i) =>
+        `labelFilter[${i}][definitionId]=${f.definitionId}&labelFilter[${i}][optionId]=${f.optionId}`,
+    )
+    .join('&')
+  return `${API_ENDPOINTS.CUSTOMERS_V1}?${params}`
+})
 
 const columns = computed<Column[]>(() => [
   {

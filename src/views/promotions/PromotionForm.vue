@@ -56,16 +56,7 @@
               option-label="label"
               option-value="value"
               class="w-full"
-            >
-              <template #option="{ option }">
-                <div class="flex items-center gap-2">
-                  <span>{{ option.label }}</span>
-                  <span v-if="option.value === 'period_based'" class="text-xs text-gray-400">
-                    ({{ t('promotions.labels.comingSoon') }})
-                  </span>
-                </div>
-              </template>
-            </Select>
+            />
             <span v-else>{{ t(`promotions.labels.promoTypes.${form.promoType}`) }}</span>
           </div>
 
@@ -141,6 +132,7 @@
             v-model:group="form.groups[groupIdx]"
             :group-idx="groupIdx"
             :is-view="isView"
+            :promo-type="form.promoType"
             :errors="groupErrors[groupIdx] ?? emptyGroupErrors"
             @remove="removeGroup(groupIdx)"
           />
@@ -232,16 +224,50 @@ const emptyGroupErrors: GroupErrors = {
   discountTierErrors: [],
   fixedBonusTierErrors: [],
   customerChoiceErrors: { threshold: '', pickableCount: '', items: [] },
+  measureKind: '',
+  periodSettingsErrors: { resetCycle: '', voucherValidityDays: '', voucherMinRedeemAmount: '' },
+  voucherTierErrors: [],
+  voucherTierThresholdError: '',
 }
 
 const promoTypeOptions = computed(() => [
   { label: t('promotions.labels.promoTypes.per_transaction'), value: 'per_transaction' },
-  { label: t('promotions.labels.promoTypes.period_based'), value: 'period_based', disabled: true },
+  { label: t('promotions.labels.promoTypes.period_based'), value: 'period_based' },
 ])
+
+function makeEmptyGroup(): GroupForm {
+  return {
+    qualifierKind: 'products',
+    thresholdKind: 'min_qty',
+    products: [],
+    labels: [],
+    reward: {
+      rewardType: '' as RewardType | '',
+      bonusKind: '',
+      discountTiers: [],
+      fixedBonusTiers: [],
+      customerChoicePool: { threshold: '', pickableCount: 1, items: [] },
+    },
+    measureKind: '',
+    periodSettings: {
+      resetCycle: '',
+      voucherApplyOn: 'next_transaction',
+      voucherValidityDays: null,
+      voucherMinRedeemAmount: '',
+      voucherStackable: false,
+    },
+    voucherTiers: [],
+  }
+}
 
 onMounted(() => {
   if (props.promotion) {
     const p = props.promotion
+
+    if (p.currency) {
+      initialCurrency.value = { id: p.currencyId, code: p.currency.code }
+    }
+
     form.value.code = p.code
     form.value.description = p.description ?? ''
     form.value.currencyId = p.currencyId
@@ -257,78 +283,99 @@ onMounted(() => {
     }
 
     form.value.groups = p.groups.map((g) => {
-      const reward = g.reward
+      const base = makeEmptyGroup()
 
-      const discountTiers: DiscountTierForm[] = (reward.discountTiers ?? []).map((dt) => ({
-        threshold: g.thresholdKind === 'min_qty' ? (dt.minQty ?? '') : (dt.minAmount ?? ''),
-        discountType: dt.discountType as DiscountType,
-        value: dt.value,
+      base.qualifierKind = g.qualifierKind
+      base.thresholdKind = g.thresholdKind
+      base.measureKind = g.measureKind ?? ''
+
+      base.products = (g.products ?? []).map((gp) => ({
+        productId: gp.productId,
+        mandatory: gp.mandatory ?? false,
+        productThreshold: g.thresholdKind === 'min_qty' ? (gp.minQty ?? '') : (gp.minAmount ?? ''),
+        _product: gp.product
+          ? {
+              id: gp.productId,
+              code: gp.product.code,
+              name: gp.product.name,
+              smallestUomSymbol: gp.product.smallestUomSymbol ?? undefined,
+            }
+          : undefined,
       }))
 
-      const fixedBonusTiers: FixedBonusTierForm[] = (reward.fixedBonusTiers ?? []).map((ft) => ({
-        threshold: g.thresholdKind === 'min_qty' ? (ft.minQty ?? '') : (ft.minAmount ?? ''),
-        items: ft.items.map((item) => ({
-          productId: item.productId,
-          qty: item.qty,
-          _product: item.product
-            ? {
-                id: item.productId,
-                code: item.product.code,
-                name: item.product.name,
-                smallestUomSymbol: item.product.smallestUomSymbol ?? undefined,
-              }
-            : undefined,
-        })),
+      base.labels = (g.labels ?? []).map((l) => ({
+        labelOptionId: l.productLabelOptionId,
+        mandatory: l.mandatory ?? false,
+        labelThreshold: g.thresholdKind === 'min_qty' ? (l.minQty ?? '') : (l.minAmount ?? ''),
       }))
 
-      const cc = reward.customerChoice
-      const customerChoicePool = {
-        threshold: g.thresholdKind === 'min_qty' ? '' : '',
-        pickableCount: cc?.pickableCount ?? 1,
-        items: (cc?.poolItems ?? []).map((pi) => ({
-          productId: pi.productId,
-          bonusAmount: pi.bonusAmount,
-          _product: pi.product
-            ? {
-                id: pi.productId,
-                code: pi.product.code,
-                name: pi.product.name,
-                smallestUomSymbol: pi.product.smallestUomSymbol ?? undefined,
-              }
-            : undefined,
-        })),
-      }
+      if (p.promoType === 'period_based') {
+        const ps = g.periodSettings
+        base.periodSettings = {
+          resetCycle: ps?.resetCycle ?? '',
+          voucherApplyOn: ps?.voucherApplyOn ?? 'next_transaction',
+          voucherValidityDays: ps?.voucherValidityDays ?? null,
+          voucherMinRedeemAmount: ps?.voucherMinRedeemAmount ?? '',
+          voucherStackable: ps?.voucherStackable ?? false,
+        }
+        base.voucherTiers = (g.voucherTiers ?? []).map((vt) => ({
+          threshold: g.measureKind === 'total_qty' ? (vt.minQty ?? '') : (vt.minAmount ?? ''),
+          voucherDiscountType: vt.voucherDiscountType as DiscountType,
+          voucherValue: vt.voucherValue,
+        }))
+      } else {
+        const reward = g.reward!
 
-      return {
-        qualifierKind: g.qualifierKind,
-        thresholdKind: g.thresholdKind,
-        products: (g.products ?? []).map((gp) => ({
-          productId: gp.productId,
-          mandatory: gp.mandatory ?? false,
-          productThreshold:
-            g.thresholdKind === 'min_qty' ? (gp.minQty ?? '') : (gp.minAmount ?? ''),
-          _product: gp.product
-            ? {
-                id: gp.productId,
-                code: gp.product.code,
-                name: gp.product.name,
-                smallestUomSymbol: gp.product.smallestUomSymbol ?? undefined,
-              }
-            : undefined,
-        })),
-        labels: (g.labels ?? []).map((l) => ({
-          labelOptionId: l.productLabelOptionId,
-          mandatory: l.mandatory ?? false,
-          labelThreshold: g.thresholdKind === 'min_qty' ? (l.minQty ?? '') : (l.minAmount ?? ''),
-        })),
-        reward: {
+        const discountTiers: DiscountTierForm[] = (reward.discountTiers ?? []).map((dt) => ({
+          threshold: g.thresholdKind === 'min_qty' ? (dt.minQty ?? '') : (dt.minAmount ?? ''),
+          discountType: dt.discountType as DiscountType,
+          value: dt.value,
+        }))
+
+        const fixedBonusTiers: FixedBonusTierForm[] = (reward.fixedBonusTiers ?? []).map((ft) => ({
+          threshold: g.thresholdKind === 'min_qty' ? (ft.minQty ?? '') : (ft.minAmount ?? ''),
+          items: ft.items.map((item) => ({
+            productId: item.productId,
+            qty: item.qty,
+            _product: item.product
+              ? {
+                  id: item.productId,
+                  code: item.product.code,
+                  name: item.product.name,
+                  smallestUomSymbol: item.product.smallestUomSymbol ?? undefined,
+                }
+              : undefined,
+          })),
+        }))
+
+        const cc = reward.customerChoice
+        const customerChoicePool = {
+          threshold: '',
+          pickableCount: cc?.pickableCount ?? 1,
+          items: (cc?.poolItems ?? []).map((pi) => ({
+            productId: pi.productId,
+            bonusAmount: pi.bonusAmount,
+            _product: pi.product
+              ? {
+                  id: pi.productId,
+                  code: pi.product.code,
+                  name: pi.product.name,
+                  smallestUomSymbol: pi.product.smallestUomSymbol ?? undefined,
+                }
+              : undefined,
+          })),
+        }
+
+        base.reward = {
           rewardType: reward.rewardType as RewardType,
           bonusKind: (reward.bonusKind ?? '') as BonusKind | '',
           discountTiers,
           fixedBonusTiers,
           customerChoicePool,
-        },
-      } satisfies GroupForm
+        }
+      }
+
+      return base
     })
 
     groupErrors.value = form.value.groups.map(() => ({ ...emptyGroupErrors }))
@@ -336,19 +383,7 @@ onMounted(() => {
 })
 
 function addGroup() {
-  form.value.groups.push({
-    qualifierKind: 'products',
-    thresholdKind: 'min_qty',
-    products: [],
-    labels: [],
-    reward: {
-      rewardType: '' as RewardType | '',
-      bonusKind: '',
-      discountTiers: [],
-      fixedBonusTiers: [],
-      customerChoicePool: { threshold: '', pickableCount: 1, items: [] },
-    },
-  })
+  form.value.groups.push(makeEmptyGroup())
   groupErrors.value.push({ ...emptyGroupErrors })
 }
 
@@ -374,6 +409,10 @@ function validate(): boolean {
     discountTierErrors: [],
     fixedBonusTierErrors: [],
     customerChoiceErrors: { threshold: '', pickableCount: '', items: [] },
+    measureKind: '',
+    periodSettingsErrors: { resetCycle: '', voucherValidityDays: '', voucherMinRedeemAmount: '' },
+    voucherTierErrors: [],
+    voucherTierThresholdError: '',
   }))
 
   if (!form.value.code.trim()) {
@@ -393,10 +432,12 @@ function validate(): boolean {
     valid = false
   }
 
+  const isPeriodBased = form.value.promoType === 'period_based'
+
   form.value.groups.forEach((group, gi) => {
     const ge = groupErrors.value[gi]
 
-    // qualifier validation
+    // qualifier validation (both types)
     if (group.qualifierKind === 'products' && group.products.length === 0) {
       ge.products = t('promotions.validation.productsRequired')
       valid = false
@@ -406,72 +447,126 @@ function validate(): boolean {
       valid = false
     }
 
-    // reward validation
-    const reward = group.reward
-    if (reward.rewardType === 'discount') {
-      if (reward.discountTiers.length === 0) {
+    if (isPeriodBased) {
+      // measure kind required
+      if (!group.measureKind) {
+        ge.measureKind = t('promotions.validation.measureKindRequired')
         valid = false
       }
-      ge.discountTierErrors = reward.discountTiers.map((tier) => {
-        if (!tier.value.trim()) return t('promotions.validation.tierValueRequired')
-        if (tier.discountType === 'percentage') {
-          const v = parseFloat(tier.value)
-          if (isNaN(v) || v < 0 || v > 100) return t('promotions.validation.tierValueRange')
+
+      // period settings validation
+      const ps = group.periodSettings
+      if (!ps.resetCycle) {
+        ge.periodSettingsErrors.resetCycle = t('promotions.validation.resetCycleRequired')
+        valid = false
+      }
+      if (!ps.voucherValidityDays || ps.voucherValidityDays < 1) {
+        ge.periodSettingsErrors.voucherValidityDays = t(
+          'promotions.validation.voucherValidityDaysRequired',
+        )
+        valid = false
+      }
+      if (ps.voucherMinRedeemAmount.trim()) {
+        const v = parseFloat(ps.voucherMinRedeemAmount)
+        if (isNaN(v) || v <= 0) {
+          ge.periodSettingsErrors.voucherMinRedeemAmount = t(
+            'promotions.validation.voucherMinRedeemAmountInvalid',
+          )
+          valid = false
+        }
+      }
+
+      // voucher tiers validation
+      if (group.voucherTiers.length === 0) {
+        ge.voucherTierThresholdError = t('promotions.validation.voucherTiersRequired')
+        valid = false
+      }
+      ge.voucherTierErrors = group.voucherTiers.map((tier) => {
+        if (!tier.voucherValue.trim()) return t('promotions.validation.tierValueRequired')
+        if (tier.voucherDiscountType === 'percentage') {
+          const v = parseFloat(tier.voucherValue)
+          if (isNaN(v) || v < 0 || v > 100) return t('promotions.validation.voucherValueRange')
         }
         return ''
       })
-      if (ge.discountTierErrors.some((e) => e)) valid = false
-      for (let i = 1; i < reward.discountTiers.length; i++) {
-        const prev = parseFloat(reward.discountTiers[i - 1].threshold || '0')
-        const curr = parseFloat(reward.discountTiers[i].threshold || '0')
+      if (ge.voucherTierErrors.some((e) => e)) valid = false
+      for (let i = 1; i < group.voucherTiers.length; i++) {
+        const prev = parseFloat(group.voucherTiers[i - 1].threshold || '0')
+        const curr = parseFloat(group.voucherTiers[i].threshold || '0')
         if (isNaN(curr) || curr <= prev) {
-          ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
+          ge.voucherTierThresholdError = t('promotions.validation.tiersNotAscending')
           valid = false
           break
         }
       }
-    }
-
-    if (reward.rewardType === 'bonus' && reward.bonusKind === 'fixed') {
-      if (reward.fixedBonusTiers.length === 0) {
-        valid = false
-      }
-      ge.fixedBonusTierErrors = reward.fixedBonusTiers.map((tier) => {
-        if (tier.items.length === 0) return [t('promotions.validation.tierItemsRequired')]
-        return tier.items.map((item) => {
-          if (!item.qty.trim()) return t('promotions.validation.tierItemQtyRequired')
+    } else {
+      // per_transaction reward validation
+      const reward = group.reward
+      if (reward.rewardType === 'discount') {
+        if (reward.discountTiers.length === 0) {
+          valid = false
+        }
+        ge.discountTierErrors = reward.discountTiers.map((tier) => {
+          if (!tier.value.trim()) return t('promotions.validation.tierValueRequired')
+          if (tier.discountType === 'percentage') {
+            const v = parseFloat(tier.value)
+            if (isNaN(v) || v < 0 || v > 100) return t('promotions.validation.tierValueRange')
+          }
           return ''
         })
-      })
-      if (ge.fixedBonusTierErrors.some((te) => te.some((e) => e))) valid = false
-      for (let i = 1; i < reward.fixedBonusTiers.length; i++) {
-        const prev = parseFloat(reward.fixedBonusTiers[i - 1].threshold || '0')
-        const curr = parseFloat(reward.fixedBonusTiers[i].threshold || '0')
-        if (isNaN(curr) || curr <= prev) {
-          ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
-          valid = false
-          break
+        if (ge.discountTierErrors.some((e) => e)) valid = false
+        for (let i = 1; i < reward.discountTiers.length; i++) {
+          const prev = parseFloat(reward.discountTiers[i - 1].threshold || '0')
+          const curr = parseFloat(reward.discountTiers[i].threshold || '0')
+          if (isNaN(curr) || curr <= prev) {
+            ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
+            valid = false
+            break
+          }
         }
       }
-    }
 
-    if (reward.rewardType === 'bonus' && reward.bonusKind === 'customer_choice') {
-      const pool = reward.customerChoicePool
-      if (!pool.pickableCount || pool.pickableCount < 1) {
-        ge.customerChoiceErrors.pickableCount = t('promotions.validation.pickableCountRequired')
-        valid = false
+      if (reward.rewardType === 'bonus' && reward.bonusKind === 'fixed') {
+        if (reward.fixedBonusTiers.length === 0) {
+          valid = false
+        }
+        ge.fixedBonusTierErrors = reward.fixedBonusTiers.map((tier) => {
+          if (tier.items.length === 0) return [t('promotions.validation.tierItemsRequired')]
+          return tier.items.map((item) => {
+            if (!item.qty.trim()) return t('promotions.validation.tierItemQtyRequired')
+            return ''
+          })
+        })
+        if (ge.fixedBonusTierErrors.some((te) => te.some((e) => e))) valid = false
+        for (let i = 1; i < reward.fixedBonusTiers.length; i++) {
+          const prev = parseFloat(reward.fixedBonusTiers[i - 1].threshold || '0')
+          const curr = parseFloat(reward.fixedBonusTiers[i].threshold || '0')
+          if (isNaN(curr) || curr <= prev) {
+            ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
+            valid = false
+            break
+          }
+        }
       }
-      if (pool.items.length < (pool.pickableCount ?? 1)) {
-        ge.customerChoiceErrors.items = pool.items.map(() => '')
-        if (pool.items.length === 0)
-          ge.customerChoiceErrors.threshold = t('promotions.validation.poolRequired')
-        valid = false
+
+      if (reward.rewardType === 'bonus' && reward.bonusKind === 'customer_choice') {
+        const pool = reward.customerChoicePool
+        if (!pool.pickableCount || pool.pickableCount < 1) {
+          ge.customerChoiceErrors.pickableCount = t('promotions.validation.pickableCountRequired')
+          valid = false
+        }
+        if (pool.items.length < (pool.pickableCount ?? 1)) {
+          ge.customerChoiceErrors.items = pool.items.map(() => '')
+          if (pool.items.length === 0)
+            ge.customerChoiceErrors.threshold = t('promotions.validation.poolRequired')
+          valid = false
+        }
+        ge.customerChoiceErrors.items = pool.items.map((item) => {
+          if (!item.bonusAmount.trim()) return t('promotions.validation.poolBonusAmountRequired')
+          return ''
+        })
+        if (ge.customerChoiceErrors.items.some((e) => e)) valid = false
       }
-      ge.customerChoiceErrors.items = pool.items.map((item) => {
-        if (!item.bonusAmount.trim()) return t('promotions.validation.poolBonusAmountRequired')
-        return ''
-      })
-      if (ge.customerChoiceErrors.items.some((e) => e)) valid = false
     }
   })
 
@@ -479,9 +574,68 @@ function validate(): boolean {
 }
 
 function buildGroupDto(group: GroupForm) {
-  const reward = group.reward
   const isMinQty = group.thresholdKind === 'min_qty'
+  const isTotalQty = group.measureKind === 'total_qty'
+  const isPeriodBased = form.value.promoType === 'period_based'
 
+  const qualifierFields = {
+    qualifierKind: group.qualifierKind,
+    products:
+      group.qualifierKind === 'products'
+        ? group.products.map((p) => ({
+            productId: p.productId!,
+            mandatory: p.mandatory,
+            minQty: isMinQty
+              ? p.mandatory && p.productThreshold
+                ? p.productThreshold
+                : null
+              : null,
+            minAmount: !isMinQty
+              ? p.mandatory && p.productThreshold
+                ? p.productThreshold
+                : null
+              : null,
+          }))
+        : undefined,
+    labels:
+      group.qualifierKind === 'labels'
+        ? group.labels.map((l) => ({
+            productLabelOptionId: l.labelOptionId,
+            mandatory: l.mandatory,
+            minQty: isMinQty ? (l.mandatory && l.labelThreshold ? l.labelThreshold : null) : null,
+            minAmount: !isMinQty
+              ? l.mandatory && l.labelThreshold
+                ? l.labelThreshold
+                : null
+              : null,
+          }))
+        : undefined,
+  }
+
+  if (isPeriodBased) {
+    const ps = group.periodSettings
+    return {
+      ...qualifierFields,
+      thresholdKind: group.thresholdKind,
+      measureKind: group.measureKind || null,
+      periodSettings: {
+        resetCycle: ps.resetCycle as import('@/types/promotion.type').ResetCycle,
+        voucherApplyOn: ps.voucherApplyOn as import('@/types/promotion.type').VoucherApplyOn,
+        voucherValidityDays: ps.voucherValidityDays!,
+        voucherMinRedeemAmount: ps.voucherMinRedeemAmount.trim() || null,
+        voucherStackable: ps.voucherStackable,
+      },
+      voucherTiers: group.voucherTiers.map((vt) => ({
+        minQty: isTotalQty ? vt.threshold || null : null,
+        minAmount: !isTotalQty ? vt.threshold || null : null,
+        voucherDiscountType:
+          vt.voucherDiscountType as import('@/types/promotion.type').DiscountType,
+        voucherValue: vt.voucherValue,
+      })),
+    }
+  }
+
+  const reward = group.reward
   const rewardDto = {
     rewardType: reward.rewardType as import('@/types/promotion.type').RewardType,
     bonusKind: reward.bonusKind || undefined,
@@ -518,38 +672,8 @@ function buildGroupDto(group: GroupForm) {
   }
 
   return {
-    qualifierKind: group.qualifierKind,
+    ...qualifierFields,
     thresholdKind: group.thresholdKind,
-    products:
-      group.qualifierKind === 'products'
-        ? group.products.map((p) => ({
-            productId: p.productId!,
-            mandatory: p.mandatory,
-            minQty: isMinQty
-              ? p.mandatory && p.productThreshold
-                ? p.productThreshold
-                : null
-              : null,
-            minAmount: !isMinQty
-              ? p.mandatory && p.productThreshold
-                ? p.productThreshold
-                : null
-              : null,
-          }))
-        : undefined,
-    labels:
-      group.qualifierKind === 'labels'
-        ? group.labels.map((l) => ({
-            productLabelOptionId: l.labelOptionId,
-            mandatory: l.mandatory,
-            minQty: isMinQty ? (l.mandatory && l.labelThreshold ? l.labelThreshold : null) : null,
-            minAmount: !isMinQty
-              ? l.mandatory && l.labelThreshold
-                ? l.labelThreshold
-                : null
-              : null,
-          }))
-        : undefined,
     reward: rewardDto,
   }
 }

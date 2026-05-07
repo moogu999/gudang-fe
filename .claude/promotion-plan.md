@@ -187,3 +187,169 @@ fixedBonusTiers, customerChoicePool, addPoolItem, etc.), `validation.*`.
    - Delete via list-row action; row disappears, BE 404s on subsequent GET.
    - Toggle `active` off mid-range; verify the value persists (no eval logic this iteration).
 4. `npm run build` succeeds.
+
+---
+
+# Iteration 2 — Period-Based Promo Type (Frontend)
+
+> See `../../../.claude/PROMOTION_PLAN.md` (Iteration 2 section) for shared context.
+
+## Goal
+
+Enable the currently-disabled "Period-based" option in the promo type selector and render the
+type-specific form sections. Reuse the per-transaction form's qualifier and structural patterns
+wholesale; add only the period-specific bits.
+
+## Types (`src/types/promotion.type.ts`)
+
+Extend existing types:
+
+- `PromoType` — already a union including `period_based`; no change.
+- `PromotionGroup` / `GroupForm`:
+  - Add `measureKind?: 'total_qty' | 'total_amount'`.
+  - Add `periodSettings?: GroupPeriodSettings` (per group).
+  - Add `voucherTiers?: VoucherTier[]`.
+  - `reward` becomes optional (already conceptually optional).
+
+New types:
+
+```ts
+interface GroupPeriodSettings {
+  resetCycle: 'end_of_period' | 'after_redemption' | 'never'
+  voucherApplyOn: 'next_transaction'
+  voucherValidityDays: number
+  voucherMinRedeemAmount: string | null   // decimal-as-string, null = no minimum
+  voucherStackable: boolean
+}
+
+interface VoucherTierForm {
+  threshold: string                       // mapped to minQty or minAmount on submit
+  voucherDiscountType: 'flat' | 'percentage' | ''
+  voucherValue: string
+}
+```
+
+## Service (`src/services/promotions.service.ts`)
+
+No new methods — existing `create`/`update`/`getById` already round-trip the full nested tree.
+Generated DTO types pick up the new fields once the OpenAPI types regenerate.
+
+## Form (`src/views/promotions/components/PromotionForm.vue`)
+
+1. **Enable period_based option.** Remove the `disabled` flag + "Coming soon" tooltip on the
+   period-based promo type entry (line ~239).
+2. **Hydration (`onMounted`)**: when `form.promoType === 'period_based'`, populate each group's
+   `measureKind`, `periodSettings`, and `voucherTiers` from the API response.
+3. **Submit (`buildGroupDto`)**: when `period_based`, for each group omit `reward` and include
+   `measureKind`, `periodSettings`, `voucherTiers`. The header itself gains no new fields.
+4. **Validation (`validate`)**: when `promoType === 'period_based'`, validate per group:
+   - `measureKind` selected.
+   - `periodSettings` required, `validityDays > 0`, `minRedeemAmount` either blank or `> 0`,
+     `resetCycle` and `voucherApplyOn` selected.
+   - `voucherTiers` non-empty; thresholds strictly ascending; percentage values 0–100.
+
+## New components
+
+- `src/views/promotions/components/VoucherTiersTable.vue` (new). Mirror `DiscountTiersTable.vue`'s
+  structure exactly — same `defineModel<VoucherTierForm[]>()` pattern, same add/remove buttons,
+  same per-row error display. Columns: Threshold (label switches via the group's `measureKind`)
+  | Voucher Type (flat/percentage SelectButton) | Value.
+- `src/views/promotions/components/GroupPeriodSettingsBlock.vue` (new). A block (not a separate
+  card) embedded inside `PromotionGroupCard.vue`, rendered only when parent
+  `promoType === 'period_based'`. Fields:
+  - Reset cycle — `Select` with three options.
+  - Voucher apply-on — `Select` (single option `next_transaction` for now).
+  - Voucher validity days — `InputNumber`, min 1.
+  - Voucher minimum redeem amount — `InputText` (decimal-as-string, blank = no minimum).
+  - Voucher stackable — `Checkbox`.
+  - Uses `defineModel<GroupPeriodSettingsForm>()`; receives `errors` and `isView` props.
+
+## Modified components
+
+- `src/views/promotions/components/PromotionGroupCard.vue`:
+  - When parent `promoType === 'period_based'`:
+    - Replace the existing threshold-kind toggle (`min_qty`/`min_amount`) **label** with
+      `total_qty`/`total_amount` (same SelectButton, same underlying enum values bound to
+      `measureKind`). Per-row qualifier inputs (per-product/per-label `min_qty`/`min_amount`) stay
+      visible — they're the per-row gates for the running measure.
+    - Hide the existing reward section (discount tiers / fixed bonus / customer choice).
+    - Show `GroupPeriodSettingsBlock` bound to `group.periodSettings`.
+    - Show `VoucherTiersTable` bound to `group.voucherTiers`.
+- `PromotionDetailView.vue`: render each group's `measureKind`, `periodSettings`, and
+  `voucherTiers` read-only when `promoType === 'period_based'`.
+
+## i18n (`src/i18n/locales/en-US.ts` and `id-ID.ts`)
+
+Extend the `promotions` namespace:
+
+```ts
+promotions: {
+  // ...existing...
+  labels: {
+    // ...existing...
+    measureKinds: { total_qty: 'Total Quantity', total_amount: 'Total Amount' },
+    resetCycles: {
+      end_of_period: 'Reset at end of period',
+      after_redemption: 'Reset after redemption',
+      never: 'Never reset (lifetime)',
+    },
+    voucherApplyOns: { next_transaction: 'Next transaction' },
+    voucherDiscountTypes: { flat: 'Flat', percentage: 'Percentage' },
+  },
+  fields: {
+    // ...existing...
+    resetCycle: 'Reset Cycle',
+    voucherApplyOn: 'Apply Voucher On',
+    voucherValidityDays: 'Voucher Validity (days)',
+    voucherMinRedeemAmount: 'Minimum Spend to Redeem',
+    voucherStackable: 'Stackable with other promos',
+    measureKind: 'Measure',
+    voucherTiers: 'Voucher Tiers',
+    voucherDiscountType: 'Voucher Type',
+    voucherValue: 'Voucher Value',
+  },
+  validation: {
+    // ...existing...
+    periodSettingsRequired: '...',
+    measureKindRequired: '...',
+    voucherTiersRequired: '...',
+    voucherTiersAscending: '...',
+    voucherValueRange: '...',
+  },
+}
+```
+
+Mirror the same keys in `id-ID.ts`.
+
+## Constants / routes / permissions
+
+- `src/constants/api.ts` — no change (same endpoints).
+- `src/constants/permissions.ts` — no change (`PROMOTION_READ`/`PROMOTION_WRITE` cover both).
+- Router — no change (same 4 routes).
+
+## List view (`PromotionsView.vue`)
+
+No change. The `promoType` column already renders both values via the existing
+`labels.promoTypes.{per_transaction,period_based}` i18n entry.
+
+## Verification (FE — iteration 2)
+
+- `npm run type-check` and `npm run lint` clean.
+- `npm run dev`, then in the browser:
+  - Create a `period_based` promo with two groups: one product-qualifier with measure
+    `total_qty`, one label-qualifier with measure `total_amount`. Two voucher tiers per group.
+    Configure period settings on each group with **different reset cycles** to verify per-group
+    independence. Save → loads back identical → edit → delete.
+  - Create a `per_transaction` promo to confirm no regression on the existing flow.
+
+## Files changed (FE)
+
+| File | Change |
+|---|---|
+| `src/types/promotion.type.ts` | Extend types |
+| `src/views/promotions/components/PromotionForm.vue` | Enable period_based; hydration/submit/validate |
+| `src/views/promotions/components/PromotionGroupCard.vue` | Type-conditional rendering; embed period block + voucher tiers |
+| `src/views/promotions/components/VoucherTiersTable.vue` | New ✅ |
+| `src/views/promotions/components/GroupPeriodSettingsBlock.vue` | New ✅ |
+| `src/views/promotions/views/PromotionDetailView.vue` | Render new per-group fields read-only (delegated to PromotionForm view mode) ✅ |
+| `src/i18n/locales/en-US.ts`, `src/i18n/locales/id-ID.ts` | New strings ✅ |

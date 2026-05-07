@@ -763,6 +763,15 @@ export default {
       pickableCount: 'Jumlah Pilihan',
       uom: 'Satuan',
       label: 'Label',
+      measureKind: 'Ukuran',
+      resetCycle: 'Siklus Reset',
+      voucherApplyOn: 'Voucher Berlaku Pada',
+      voucherValidityDays: 'Masa Berlaku Voucher (hari)',
+      voucherMinRedeemAmount: 'Minimal Belanja untuk Redeem',
+      voucherStackable: 'Dapat digabung dengan promo lain',
+      voucherTiers: 'Tingkatan Voucher',
+      voucherDiscountType: 'Tipe Voucher',
+      voucherValue: 'Nilai Voucher',
     },
     labels: {
       groups: 'Grup',
@@ -783,6 +792,9 @@ export default {
       addPoolItem: 'Tambah Item',
       removePoolItem: 'Hapus',
       comingSoon: 'Segera hadir',
+      periodSettings: 'Pengaturan Penukaran Voucher',
+      noMinimum: 'Tidak ada minimum',
+      stackableHint: 'Dapat digabung dengan promo lain',
       promoTypes: {
         per_transaction: 'Per Transaksi',
         period_based: 'Berbasis Periode',
@@ -794,6 +806,18 @@ export default {
       thresholdKinds: {
         min_qty: 'Min Qty',
         min_amount: 'Min Jumlah',
+      },
+      measureKinds: {
+        total_qty: 'Total Kuantitas',
+        total_amount: 'Total Jumlah',
+      },
+      resetCycles: {
+        end_of_period: 'Reset di akhir periode',
+        after_redemption: 'Reset setelah penukaran',
+        never: 'Tidak pernah reset (seumur hidup)',
+      },
+      voucherApplyOns: {
+        next_transaction: 'Transaksi berikutnya',
       },
       rewardTypes: {
         discount: 'Diskon',
@@ -826,6 +850,12 @@ export default {
       pickableCountRequired: 'Jumlah pilihan wajib diisi.',
       poolRequired: 'Kumpulan harus memiliki minimal sebanyak jumlah pilihan.',
       poolBonusAmountRequired: 'Jumlah bonus wajib diisi.',
+      measureKindRequired: 'Ukuran akumulasi wajib dipilih.',
+      resetCycleRequired: 'Siklus reset wajib dipilih.',
+      voucherValidityDaysRequired: 'Masa berlaku voucher minimal 1 hari.',
+      voucherMinRedeemAmountInvalid: 'Minimal belanja harus lebih dari 0.',
+      voucherTiersRequired: 'Minimal satu tingkatan voucher diperlukan.',
+      voucherValueRange: 'Nilai voucher persentase harus antara 0 dan 100.',
     },
     messages: {
       created: 'Promosi berhasil dibuat.',

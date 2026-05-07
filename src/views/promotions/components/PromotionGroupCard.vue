@@ -16,7 +16,7 @@
       />
     </div>
 
-    <!-- Qualifier kind + Threshold kind -->
+    <!-- Qualifier kind + Threshold/Measure kind -->
     <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
       <div class="flex flex-col gap-1">
         <label class="text-sm font-semibold">{{ t('promotions.fields.qualifierKind') }}</label>
@@ -30,7 +30,24 @@
         <span v-else>{{ t(`promotions.labels.qualifierKinds.${group.qualifierKind}`) }}</span>
       </div>
 
-      <div class="flex flex-col gap-1">
+      <!-- Period-based: measure kind -->
+      <div v-if="promoType === 'period_based'" class="flex flex-col gap-1">
+        <label class="text-sm font-semibold">{{ t('promotions.fields.measureKind') }} *</label>
+        <SelectButton
+          v-if="!isView"
+          v-model="group.measureKind"
+          :options="measureKindOptions"
+          option-label="label"
+          option-value="value"
+        />
+        <span v-else>{{
+          group.measureKind ? t(`promotions.labels.measureKinds.${group.measureKind}`) : '—'
+        }}</span>
+        <small v-if="errors.measureKind" class="text-red-500">{{ errors.measureKind }}</small>
+      </div>
+
+      <!-- Per-transaction: threshold kind -->
+      <div v-else class="flex flex-col gap-1">
         <label class="text-sm font-semibold">{{ t('promotions.fields.thresholdKind') }}</label>
         <SelectButton
           v-if="!isView"
@@ -89,14 +106,7 @@
             <span v-else>{{ p.mandatory ? t('common.labels.yes') : t('common.labels.no') }}</span>
           </template>
         </Column>
-        <Column
-          :header="
-            group.thresholdKind === 'min_qty'
-              ? t('promotions.fields.minQty')
-              : t('promotions.fields.minAmount')
-          "
-          style="width: 10rem"
-        >
+        <Column :header="perRowThresholdHeader" style="width: 10rem">
           <template #body="{ data: p }">
             <InputText
               v-if="!isView && p.mandatory"
@@ -165,14 +175,7 @@
             <span v-else>{{ l.mandatory ? t('common.labels.yes') : t('common.labels.no') }}</span>
           </template>
         </Column>
-        <Column
-          :header="
-            group.thresholdKind === 'min_qty'
-              ? t('promotions.fields.minQty')
-              : t('promotions.fields.minAmount')
-          "
-          style="width: 10rem"
-        >
+        <Column :header="perRowThresholdHeader" style="width: 10rem">
           <template #body="{ data: l }">
             <InputText
               v-if="!isView && l.mandatory"
@@ -199,8 +202,30 @@
       </DataTable>
     </div>
 
-    <!-- Reward section -->
-    <div class="border-t pt-4">
+    <!-- Period-based: period settings + voucher tiers -->
+    <template v-if="promoType === 'period_based'">
+      <div class="mb-4 border-t pt-4">
+        <h3 class="mb-3 text-sm font-semibold">{{ t('promotions.labels.periodSettings') }}</h3>
+        <GroupPeriodSettingsBlock
+          v-model="group.periodSettings"
+          :errors="errors.periodSettingsErrors"
+          :is-view="isView"
+        />
+      </div>
+
+      <div class="border-t pt-4">
+        <VoucherTiersTable
+          v-model:tiers="group.voucherTiers"
+          :measure-kind="group.measureKind"
+          :errors="errors.voucherTierErrors"
+          :threshold-error="errors.voucherTierThresholdError"
+          :is-view="isView"
+        />
+      </div>
+    </template>
+
+    <!-- Per-transaction: reward section -->
+    <div v-else class="border-t pt-4">
       <div class="mb-3 flex flex-col gap-1">
         <label class="text-sm font-semibold">{{ t('promotions.labels.reward') }}</label>
         <Select
@@ -291,13 +316,18 @@ import Column from 'primevue/column'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { ProductsService } from '@/services/products.service'
 import { ProductLabelOptionsService } from '@/services/productLabelOptions.service'
-import type { RewardType, BonusKind } from '@/types/promotion.type'
+import type { RewardType, BonusKind, MeasureKind, PromoType } from '@/types/promotion.type'
 import DiscountTiersTable, { type DiscountTierForm } from './DiscountTiersTable.vue'
 import FixedBonusTiersTable, { type FixedBonusTierForm } from './FixedBonusTiersTable.vue'
 import CustomerChoicePoolTable, {
   type CustomerChoicePoolForm,
   type CustomerChoicePoolErrors,
 } from './CustomerChoicePoolTable.vue'
+import VoucherTiersTable, { type VoucherTierForm } from './VoucherTiersTable.vue'
+import GroupPeriodSettingsBlock, {
+  type GroupPeriodSettingsForm,
+  type GroupPeriodSettingsErrors,
+} from './GroupPeriodSettingsBlock.vue'
 
 export interface GroupProductForm {
   productId: number | undefined
@@ -326,6 +356,10 @@ export interface GroupForm {
   products: GroupProductForm[]
   labels: GroupLabelForm[]
   reward: GroupRewardForm
+  // period_based extras
+  measureKind: MeasureKind | ''
+  periodSettings: GroupPeriodSettingsForm
+  voucherTiers: VoucherTierForm[]
 }
 
 export interface GroupErrors {
@@ -335,13 +369,19 @@ export interface GroupErrors {
   discountTierErrors: string[]
   fixedBonusTierErrors: string[][]
   customerChoiceErrors: CustomerChoicePoolErrors
+  // period_based
+  measureKind: string
+  periodSettingsErrors: GroupPeriodSettingsErrors
+  voucherTierErrors: string[]
+  voucherTierThresholdError: string
 }
 
 const group = defineModel<GroupForm>('group', { required: true })
 
-defineProps<{
+const props = defineProps<{
   groupIdx: number
   isView: boolean
+  promoType: PromoType
   errors: GroupErrors
 }>()
 
@@ -362,6 +402,11 @@ const thresholdOptions = computed(() => [
   { label: t('promotions.labels.thresholdKinds.min_amount'), value: 'min_amount' },
 ])
 
+const measureKindOptions = computed(() => [
+  { label: t('promotions.labels.measureKinds.total_qty'), value: 'total_qty' },
+  { label: t('promotions.labels.measureKinds.total_amount'), value: 'total_amount' },
+])
+
 const rewardTypeOptions = computed(() => [
   { label: t('promotions.labels.rewardTypes.discount'), value: 'discount' },
   { label: t('promotions.labels.rewardTypes.bonus'), value: 'bonus' },
@@ -371,6 +416,17 @@ const bonusKindOptions = computed(() => [
   { label: t('promotions.labels.bonusKinds.fixed'), value: 'fixed' },
   { label: t('promotions.labels.bonusKinds.customer_choice'), value: 'customer_choice' },
 ])
+
+const perRowThresholdHeader = computed(() => {
+  if (props.promoType === 'period_based') {
+    return group.value.measureKind === 'total_qty'
+      ? t('promotions.fields.minQty')
+      : t('promotions.fields.minAmount')
+  }
+  return group.value.thresholdKind === 'min_qty'
+    ? t('promotions.fields.minQty')
+    : t('promotions.fields.minAmount')
+})
 
 const availableLabelOptions = computed(() =>
   allLabelOptions.value.filter((o) => !group.value.labels.some((l) => l.labelOptionId === o.id)),

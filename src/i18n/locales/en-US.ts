@@ -799,6 +799,15 @@ export default {
       pickableCount: 'Pickable Count',
       uom: 'UOM',
       label: 'Label',
+      measureKind: 'Measure',
+      resetCycle: 'Reset Cycle',
+      voucherApplyOn: 'Apply Voucher On',
+      voucherValidityDays: 'Voucher Validity (days)',
+      voucherMinRedeemAmount: 'Minimum Spend to Redeem',
+      voucherStackable: 'Stackable with other promos',
+      voucherTiers: 'Voucher Tiers',
+      voucherDiscountType: 'Voucher Type',
+      voucherValue: 'Voucher Value',
     },
     labels: {
       groups: 'Groups',
@@ -819,6 +828,9 @@ export default {
       addPoolItem: 'Add Item',
       removePoolItem: 'Remove',
       comingSoon: 'Coming soon',
+      periodSettings: 'Voucher Redemption Settings',
+      noMinimum: 'No minimum',
+      stackableHint: 'Can stack with other promos',
       promoTypes: {
         per_transaction: 'Per Transaction',
         period_based: 'Period Based',
@@ -830,6 +842,18 @@ export default {
       thresholdKinds: {
         min_qty: 'Min Qty',
         min_amount: 'Min Amount',
+      },
+      measureKinds: {
+        total_qty: 'Total Quantity',
+        total_amount: 'Total Amount',
+      },
+      resetCycles: {
+        end_of_period: 'Reset at end of period',
+        after_redemption: 'Reset after redemption',
+        never: 'Never reset (lifetime)',
+      },
+      voucherApplyOns: {
+        next_transaction: 'Next transaction',
       },
       rewardTypes: {
         discount: 'Discount',
@@ -862,6 +886,12 @@ export default {
       pickableCountRequired: 'Pickable count is required.',
       poolRequired: 'Pool must have at least as many items as the pickable count.',
       poolBonusAmountRequired: 'Bonus amount is required.',
+      measureKindRequired: 'Measure kind is required.',
+      resetCycleRequired: 'Reset cycle is required.',
+      voucherValidityDaysRequired: 'Voucher validity days must be at least 1.',
+      voucherMinRedeemAmountInvalid: 'Minimum redeem amount must be greater than 0.',
+      voucherTiersRequired: 'At least one voucher tier is required.',
+      voucherValueRange: 'Percentage voucher value must be between 0 and 100.',
     },
     messages: {
       created: 'Promotion is created.',

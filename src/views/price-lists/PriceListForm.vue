@@ -52,6 +52,14 @@
             </div>
           </div>
         </div>
+
+        <!-- Active -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-semibold">{{ t('priceLists.fields.active') }}</label>
+          <div class="flex items-center gap-2">
+            <ToggleSwitch v-model="form.active" :disabled="isView" input-id="active" />
+          </div>
+        </div>
       </div>
 
       <!-- Items section -->
@@ -261,6 +269,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
+import ToggleSwitch from 'primevue/toggleswitch'
 import DatePicker from 'primevue/datepicker'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -302,6 +311,7 @@ const form = ref({
   description: '',
   startDate: null as Date | null,
   endDate: null as Date | null,
+  active: true,
   items: [] as ItemForm[],
 })
 
@@ -330,6 +340,7 @@ onMounted(() => {
     form.value.code = props.priceList.code
     form.value.description = props.priceList.description
     form.value.startDate = new Date(props.priceList.startDate)
+    form.value.active = props.priceList.active
 
     if (props.priceList.endDate) {
       form.value.endDate = new Date(props.priceList.endDate)
@@ -437,6 +448,7 @@ function onSave() {
     description: form.value.description,
     startDate: formatDate(form.value.startDate!),
     endDate: noEndDate.value ? null : form.value.endDate ? formatDate(form.value.endDate) : null,
+    active: form.value.active,
     items: form.value.items.map((item) => ({
       productId: item.productId!,
       currencyId: item.currencyId!,

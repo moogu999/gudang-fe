@@ -702,6 +702,7 @@ export default {
       startDate: 'Start Date',
       endDate: 'End Date',
       noEndDate: 'No end date',
+      active: 'Active',
       product: 'Product',
       currency: 'Currency',
       taxIncluded: 'Tax Included',

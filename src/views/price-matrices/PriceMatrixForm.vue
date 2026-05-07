@@ -246,6 +246,8 @@ import { PriceListsService } from '@/services/price-lists.service'
 import { BranchesService } from '@/services/branches.service'
 import { CompaniesService } from '@/services/companies.service'
 import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
+import { ProductLabelDefinitionsService } from '@/services/productLabelDefinitions.service'
+import { CustomerLabelDefinitionsService } from '@/services/customerLabelDefinitions.service'
 import ApiService from '@/services/api'
 import type { Base } from '@/types/api.type'
 import type {
@@ -368,6 +370,16 @@ function getCriteriaFetchFn(
     case 'sales_organization':
       return (q) =>
         SalesOrganizationsService.list(q) as Promise<
+          Base<{ id: number; name: string; code?: string }>
+        >
+    case 'product_label':
+      return (q) =>
+        ProductLabelDefinitionsService.list(q) as Promise<
+          Base<{ id: number; name: string; code?: string }>
+        >
+    case 'customer_label':
+      return (q) =>
+        CustomerLabelDefinitionsService.list(q) as Promise<
           Base<{ id: number; name: string; code?: string }>
         >
     default:

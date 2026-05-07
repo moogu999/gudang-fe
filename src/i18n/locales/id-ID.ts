@@ -703,6 +703,7 @@ export default {
       startDate: 'Tanggal Mulai',
       endDate: 'Tanggal Berakhir',
       noEndDate: 'Tanpa tanggal berakhir',
+      active: 'Aktif',
       product: 'Produk',
       currency: 'Mata Uang',
       taxIncluded: 'Termasuk Pajak',

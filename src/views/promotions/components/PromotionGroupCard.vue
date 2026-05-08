@@ -66,6 +66,7 @@
         <span class="text-sm font-semibold">{{ t('promotions.labels.products') }}</span>
         <InfiniteSelect
           v-if="!isView"
+          class="w-80"
           option-label="code"
           option-value="id"
           :fetch-fn="(query) => ProductsService.list(query)"

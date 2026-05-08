@@ -59,7 +59,7 @@
       </div>
 
       <DataTable v-else :value="pool.items" size="small">
-        <Column :header="t('promotions.fields.productCode')" style="min-width: 10rem">
+        <Column :header="t('promotions.fields.productCode')" style="min-width: 20rem">
           <template #body="{ data: item }">
             <InfiniteSelect
               v-if="!isView"

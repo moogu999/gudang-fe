@@ -7,6 +7,7 @@
     :options="options"
     :loading="loading"
     :filter="filter"
+    filter-match-mode="serverSide"
     :placeholder="displayPlaceholder"
     :disabled="disabled"
     @filter="handleFilter"
@@ -20,15 +21,24 @@
       <i v-if="loading" class="pi pi-spin pi-spinner" />
       <i v-else class="pi pi-chevron-down" />
     </template>
+    <template v-if="$slots.option" #option="slotProps">
+      <slot name="option" v-bind="slotProps" />
+    </template>
   </Select>
 </template>
 
 <script setup lang="ts" generic="T extends object">
 import Select from 'primevue/select'
+import { FilterService } from '@primevue/core/api'
 import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Base } from '@/types/api.type'
 import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
+
+// InfiniteSelect handles all filtering server-side via @filter events.
+// Register a pass-through filter mode so PrimeVue doesn't re-filter the
+// server-returned options client-side, which would cause results to disappear.
+FilterService.register('serverSide', () => true)
 
 const { t } = useI18n()
 

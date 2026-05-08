@@ -73,7 +73,11 @@
           sort-by="code"
           sort-operator="asc"
           @select-option="onAddProduct"
-        />
+        >
+          <template #option="{ option }">
+            {{ option.code }} - {{ option.name }}
+          </template>
+        </InfiniteSelect>
       </div>
       <small v-if="errors.products" class="mb-1 block text-red-500">{{ errors.products }}</small>
 
@@ -135,21 +139,31 @@
 
     <!-- Labels qualifier -->
     <div v-else class="mb-4">
-      <div class="mb-2 flex items-center justify-between">
+      <div class="mb-2 flex items-center justify-between gap-2">
         <span class="text-sm font-semibold">{{ t('promotions.labels.labels') }}</span>
         <div v-if="isLoadingLabelOptions" class="text-sm text-gray-500">
           <i class="pi pi-spinner pi-spin" />
         </div>
-        <Select
-          v-else-if="!isView"
-          :model-value="null"
-          :options="availableLabelOptions"
-          option-label="value"
-          option-value="id"
-          :placeholder="t('promotions.labels.selectLabels')"
-          filter
-          @update:model-value="onAddLabel"
-        />
+        <div v-else-if="!isView" class="flex gap-2">
+          <Select
+            v-model="selectedLabelDefinitionId"
+            :options="allLabelDefinitions"
+            option-label="name"
+            option-value="id"
+            :placeholder="t('promotions.labels.selectLabelCategory')"
+            show-clear
+            class="min-w-36"
+          />
+          <Select
+            :model-value="null"
+            :options="availableLabelOptions"
+            option-label="value"
+            option-value="id"
+            :placeholder="t('promotions.labels.selectLabels')"
+            filter
+            @update:model-value="onAddLabel"
+          />
+        </div>
       </div>
       <small v-if="errors.labels" class="mb-1 block text-red-500">{{ errors.labels }}</small>
 
@@ -316,6 +330,7 @@ import Column from 'primevue/column'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { ProductsService } from '@/services/products.service'
 import { ProductLabelOptionsService } from '@/services/productLabelOptions.service'
+import { ProductLabelDefinitionsService } from '@/services/productLabelDefinitions.service'
 import type { RewardType, BonusKind, MeasureKind, PromoType } from '@/types/promotion.type'
 import DiscountTiersTable, { type DiscountTierForm } from './DiscountTiersTable.vue'
 import FixedBonusTiersTable, { type FixedBonusTierForm } from './FixedBonusTiersTable.vue'
@@ -389,7 +404,9 @@ const emit = defineEmits<{ remove: [] }>()
 
 const { t } = useI18n()
 
-const allLabelOptions = ref<{ id: number; value: string }[]>([])
+const allLabelOptions = ref<{ id: number; value: string; productLabelDefinitionId: number }[]>([])
+const allLabelDefinitions = ref<{ id: number; name: string }[]>([])
+const selectedLabelDefinitionId = ref<number | null>(null)
 const isLoadingLabelOptions = ref(false)
 
 const qualifierOptions = computed(() => [
@@ -428,9 +445,15 @@ const perRowThresholdHeader = computed(() => {
     : t('promotions.fields.minAmount')
 })
 
-const availableLabelOptions = computed(() =>
-  allLabelOptions.value.filter((o) => !group.value.labels.some((l) => l.labelOptionId === o.id)),
-)
+const availableLabelOptions = computed(() => {
+  const notYetAdded = allLabelOptions.value.filter(
+    (o) => !group.value.labels.some((l) => l.labelOptionId === o.id),
+  )
+  if (selectedLabelDefinitionId.value == null) return notYetAdded
+  return notYetAdded.filter(
+    (o) => o.productLabelDefinitionId === selectedLabelDefinitionId.value,
+  )
+})
 
 onMounted(async () => {
   await loadLabelOptions()
@@ -439,8 +462,16 @@ onMounted(async () => {
 async function loadLabelOptions() {
   isLoadingLabelOptions.value = true
   try {
-    const res = await ProductLabelOptionsService.list('limit=500&sort_by=value&sort_operator=asc')
-    allLabelOptions.value = res.data.map((o) => ({ id: o.id, value: o.value }))
+    const [optionsRes, definitionsRes] = await Promise.all([
+      ProductLabelOptionsService.list('limit=500&sort_by=value&sort_operator=asc'),
+      ProductLabelDefinitionsService.list('limit=500&sort_by=name&sort_operator=asc'),
+    ])
+    allLabelOptions.value = optionsRes.data.map((o) => ({
+      id: o.id,
+      value: o.value,
+      productLabelDefinitionId: o.productLabelDefinitionId,
+    }))
+    allLabelDefinitions.value = definitionsRes.data.map((d) => ({ id: d.id, name: d.name }))
   } catch {
     // silently ignore — labels will still show IDs if options fail to load
   } finally {

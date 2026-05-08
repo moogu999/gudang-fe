@@ -818,6 +818,7 @@ export default {
       selectProduct: 'Select product',
       labels: 'Labels',
       selectLabels: 'Select label options',
+      selectLabelCategory: 'Select category',
       reward: 'Reward',
       discountTiers: 'Discount Tiers',
       addTier: 'Add Tier',

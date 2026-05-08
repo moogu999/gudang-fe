@@ -782,6 +782,7 @@ export default {
       selectProduct: 'Pilih produk',
       labels: 'Label',
       selectLabels: 'Pilih opsi label',
+      selectLabelCategory: 'Pilih kategori',
       reward: 'Reward',
       discountTiers: 'Tingkatan Diskon',
       addTier: 'Tambah Tingkatan',

@@ -104,7 +104,8 @@ const router = createRouter({
         {
           path: 'customer-label-definitions',
           name: 'CustomerLabelDefinitions',
-          component: () => import('@/views/customer-label-definitions/CustomerLabelDefinitionView.vue'),
+          component: () =>
+            import('@/views/customer-label-definitions/CustomerLabelDefinitionView.vue'),
           meta: { requiredPermission: PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ },
         },
         {
@@ -196,6 +197,30 @@ const router = createRouter({
           name: 'PriceMatrixPriorities',
           component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
           meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+        },
+        {
+          path: 'promotions',
+          name: 'Promotions',
+          component: () => import('@/views/promotions/PromotionsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_READ },
+        },
+        {
+          path: 'promotions/create',
+          name: 'PromotionCreate',
+          component: () => import('@/views/promotions/PromotionCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_WRITE },
+        },
+        {
+          path: 'promotions/:id/edit',
+          name: 'PromotionEdit',
+          component: () => import('@/views/promotions/PromotionEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_WRITE },
+        },
+        {
+          path: 'promotions/:id',
+          name: 'PromotionDetail',
+          component: () => import('@/views/promotions/PromotionDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PROMOTION_READ },
         },
       ],
     },

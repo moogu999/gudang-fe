@@ -229,7 +229,9 @@ async function addDefinition(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('customerLabelDefinitions.messages.definitionCreated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('customerLabelDefinitions.messages.definitionCreated'), toastGroup),
+  )
 }
 
 async function editDefinition(event: FormSubmitEvent) {
@@ -238,7 +240,9 @@ async function editDefinition(event: FormSubmitEvent) {
     updatedBy: authStore.userId!,
   })
 
-  toast.add(commonSuccessToast(t('customerLabelDefinitions.messages.definitionUpdated'), toastGroup))
+  toast.add(
+    commonSuccessToast(t('customerLabelDefinitions.messages.definitionUpdated'), toastGroup),
+  )
 }
 
 // Options management

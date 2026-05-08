@@ -7,7 +7,12 @@ export type PriceListTier = {
 export type PriceListItem = {
   id?: number
   productId: number
-  product?: { id: number; code: string; name: string; smallestUom?: { id: number; name: string; symbol: string } }
+  product?: {
+    id: number
+    code: string
+    name: string
+    smallestUom?: { id: number; name: string; symbol: string }
+  }
   currencyId: number
   currency?: { id: number; code: string }
   taxIncluded: boolean
@@ -20,6 +25,7 @@ export type PriceList = {
   description: string
   startDate: string
   endDate: string | null
+  active: boolean
   items: PriceListItem[]
   createdBy?: number | null
   updatedBy?: number | null
@@ -33,6 +39,7 @@ export type PriceListSummary = {
   description: string
   startDate: string
   endDate: string | null
+  active: boolean
   createdAt?: string
   updatedAt?: string | null
 }
@@ -42,6 +49,7 @@ export type CreatePriceListDto = {
   description?: string
   startDate: string
   endDate?: string | null
+  active?: boolean
   createdBy?: number | null
   items: {
     productId: number
@@ -56,6 +64,7 @@ export type UpdatePriceListDto = {
   description?: string
   startDate: string
   endDate?: string | null
+  active?: boolean
   updatedBy?: number | null
   items: {
     productId: number

@@ -121,6 +121,37 @@ export type {
   UpdatePriceMatrixDto,
 } from './price-matrix.type'
 
+// Promotion types
+export type {
+  PromoType,
+  QualifierKind,
+  ThresholdKind,
+  RewardType,
+  BonusKind,
+  DiscountType,
+  PromotionDiscountTier,
+  PromotionFixedBonusTierItem,
+  PromotionFixedBonusTier,
+  PromotionCustomerChoicePoolItem,
+  PromotionCustomerChoice,
+  PromotionReward,
+  PromotionGroupProduct,
+  PromotionGroupLabel,
+  PromotionGroup,
+  Promotion,
+  PromotionListItem,
+  CreateDiscountTierDto,
+  CreateFixedBonusTierItemDto,
+  CreateFixedBonusTierDto,
+  CreateCustomerChoicePoolItemDto,
+  CreateCustomerChoiceDto,
+  CreateRewardDto,
+  CreateGroupProductDto,
+  CreateGroupLabelDto,
+  CreateGroupDto,
+  CreatePromotionDto,
+} from './promotion.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

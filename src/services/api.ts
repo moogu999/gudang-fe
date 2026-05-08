@@ -88,10 +88,10 @@ class ApiService {
           // Retry the original request
           return this.axiosInstance(originalRequest)
         } catch (refreshError) {
-          // Refresh failed, reject all queued requests and redirect to sign-in
+          // Refresh failed — handleAuthFailure() was already called by the interceptor
+          // when the /refresh endpoint's 401 was processed, so don't call it again.
           this.processQueue(refreshError)
           this.isRefreshing = false
-          this.handleAuthFailure()
           return Promise.reject(refreshError)
         }
       },

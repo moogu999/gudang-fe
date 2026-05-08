@@ -52,6 +52,14 @@
             </div>
           </div>
         </div>
+
+        <!-- Active -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-semibold">{{ t('priceLists.fields.active') }}</label>
+          <div class="flex items-center gap-2">
+            <ToggleSwitch v-model="form.active" :disabled="isView" input-id="active" />
+          </div>
+        </div>
       </div>
 
       <!-- Items section -->
@@ -93,7 +101,11 @@
           {{ t('table.noItems') }}
         </div>
 
-        <div v-for="{ item, idx: itemIdx } in filteredItems" :key="itemIdx" class="mb-4 rounded border p-4">
+        <div
+          v-for="{ item, idx: itemIdx } in filteredItems"
+          :key="itemIdx"
+          class="mb-4 rounded border p-4"
+        >
           <!-- Item header row -->
           <div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-4">
             <!-- Product -->
@@ -112,7 +124,11 @@
                 @update:model-value="(v) => (item.productId = v as number)"
                 @select-option="(opt) => onProductSelected(itemIdx, opt)"
               />
-              <InputText v-else :value="item._initialProduct?.name ?? String(item.productId ?? '')" disabled />
+              <InputText
+                v-else
+                :value="item._initialProduct?.name ?? String(item.productId ?? '')"
+                disabled
+              />
             </div>
 
             <!-- UOM -->
@@ -136,7 +152,11 @@
                 sort-operator="asc"
                 @update:model-value="(v) => (item.currencyId = v as number)"
               />
-              <InputText v-else :value="item._initialCurrency?.code ?? String(item.currencyId ?? '')" disabled />
+              <InputText
+                v-else
+                :value="item._initialCurrency?.code ?? String(item.currencyId ?? '')"
+                disabled
+              />
             </div>
 
             <!-- Tax Included + Remove -->
@@ -249,6 +269,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
+import ToggleSwitch from 'primevue/toggleswitch'
 import DatePicker from 'primevue/datepicker'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -290,6 +311,7 @@ const form = ref({
   description: '',
   startDate: null as Date | null,
   endDate: null as Date | null,
+  active: true,
   items: [] as ItemForm[],
 })
 
@@ -303,12 +325,14 @@ const searchQuery = ref('')
 
 const filteredItems = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
-  return form.value.items.map((item, idx) => ({ item, idx })).filter(({ item }) => {
-    if (!q) return true
-    const name = item._initialProduct?.name?.toLowerCase() ?? ''
-    const code = item._initialProduct?.code?.toLowerCase() ?? ''
-    return name.includes(q) || code.includes(q)
-  })
+  return form.value.items
+    .map((item, idx) => ({ item, idx }))
+    .filter(({ item }) => {
+      if (!q) return true
+      const name = item._initialProduct?.name?.toLowerCase() ?? ''
+      const code = item._initialProduct?.code?.toLowerCase() ?? ''
+      return name.includes(q) || code.includes(q)
+    })
 })
 
 onMounted(() => {
@@ -316,6 +340,7 @@ onMounted(() => {
     form.value.code = props.priceList.code
     form.value.description = props.priceList.description
     form.value.startDate = new Date(props.priceList.startDate)
+    form.value.active = props.priceList.active
 
     if (props.priceList.endDate) {
       form.value.endDate = new Date(props.priceList.endDate)
@@ -363,7 +388,12 @@ function removeTier(itemIdx: number, tierIdx: number) {
 
 function onProductSelected(
   itemIdx: number,
-  opt: { id: number; code: string; name: string; uomGroup?: { levels: { uom?: { symbol?: string } }[] } },
+  opt: {
+    id: number
+    code: string
+    name: string
+    uomGroup?: { levels: { uom?: { symbol?: string } }[] }
+  },
 ) {
   form.value.items[itemIdx]._initialProduct = opt
   const levels = opt.uomGroup?.levels
@@ -418,6 +448,7 @@ function onSave() {
     description: form.value.description,
     startDate: formatDate(form.value.startDate!),
     endDate: noEndDate.value ? null : form.value.endDate ? formatDate(form.value.endDate) : null,
+    active: form.value.active,
     items: form.value.items.map((item) => ({
       productId: item.productId!,
       currencyId: item.currencyId!,

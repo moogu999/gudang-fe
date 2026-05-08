@@ -52,7 +52,7 @@ const mainMenu = [
         labelKey: 'navigation.customerLabelDefinitions',
         route: '/customer-label-definitions',
       },
-    ]
+    ],
   },
   {
     label: 'Products',
@@ -112,6 +112,11 @@ const mainMenu = [
         label: 'Sales Orders',
         labelKey: 'navigation.salesOrders',
         route: '/sales-orders',
+      },
+      {
+        label: 'Promotions',
+        labelKey: 'navigation.promotions',
+        route: '/promotions',
       },
     ],
   },

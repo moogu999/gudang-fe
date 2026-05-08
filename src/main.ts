@@ -37,6 +37,7 @@ const authStore = useAuthStore()
 ApiService.setAuthFailureHandler(() => {
   authStore.isAuthenticated = false
   authStore.userId = null
+  authStore.email = null
   authStore.permissions = []
 
   const currentPath = window.location.pathname

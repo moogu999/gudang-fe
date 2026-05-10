@@ -18,6 +18,7 @@
     <ResponsiveCard>
       <template #content>
         <CustomerForm
+          ref="customerForm"
           :mode="DialogMode.ADD"
           :is-loading="isLoading"
           @submit="onFormSubmit"
@@ -52,12 +53,16 @@ const toastGroup = 'customerCreate'
 const toast = useToast()
 
 const isLoading = ref(false)
+const customerForm = ref()
 
 async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
+    const code = await customerForm.value.resolveCode(event)
+
     await CustomersService.create({
+      code,
       name: event.states.name.value,
       currencyId: event.states.currencyId.value,
       isActive: event.states.isActive.value,

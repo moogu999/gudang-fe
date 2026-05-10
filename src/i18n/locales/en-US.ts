@@ -358,6 +358,7 @@ export default {
     basicInfoCustomer: 'Basic Info Customer',
     customerAddress: 'Customer Address',
     fields: {
+      code: 'Code',
       name: 'Name',
       currency: 'Currency',
       taxable: 'Taxable',
@@ -377,6 +378,11 @@ export default {
       joinInvoice: 'Join Invoice',
       collectTo: 'Collect To',
       area: 'Area',
+    },
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
     },
     labels: {
       selectCurrency: 'Select Currency',
@@ -400,6 +406,7 @@ export default {
       },
     },
     validation: {
+      codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
     },
     messages: {

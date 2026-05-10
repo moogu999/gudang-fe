@@ -36,6 +36,7 @@ export type CityLite = {
 
 export type CustomerLite = {
   id: number
+  code?: string
   name: string
 }
 
@@ -51,6 +52,7 @@ export type SubDistrictLite = {
 
 export type Customer = {
   id: number
+  code: string
   name: string
   isActive: boolean
   sellToId: number | null
@@ -92,6 +94,7 @@ export type Customer = {
 }
 
 export type CreateCustomerDto = {
+  code?: string
   name: string
   isActive: boolean
   currencyId?: number | null
@@ -115,6 +118,7 @@ export type CreateCustomerDto = {
 }
 
 export type UpdateCustomerDto = {
+  code?: string
   name?: string
   isActive?: boolean
   currencyId?: number | null

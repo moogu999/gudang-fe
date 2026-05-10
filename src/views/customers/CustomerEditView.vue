@@ -18,6 +18,7 @@
     <ResponsiveCard v-if="customer">
       <template #content>
         <CustomerForm
+          ref="customerForm"
           :mode="DialogMode.EDIT"
           :customer="customer"
           :is-loading="isLoading"
@@ -119,6 +120,7 @@ const isLoading = ref(false)
 const isLoadingCustomer = ref(false)
 const customer = ref<Customer | undefined>(undefined)
 const isSetLabelsDialogShown = ref(false)
+const customerForm = ref()
 
 onMounted(async () => {
   const customerId = Number(route.params.id)
@@ -159,7 +161,10 @@ async function onFormSubmit(event: FormSubmitEvent) {
   isLoading.value = true
 
   try {
+    const code = await customerForm.value.resolveCode(event)
+
     await CustomersService.update(customer.value.id, {
+      code,
       name: event.states.name.value,
       currencyId: event.states.currencyId.value,
       isActive: event.states.isActive.value,

@@ -7,6 +7,55 @@
       </TabList>
       <TabPanels>
         <TabPanel value="0">
+          <!-- Code -->
+          <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+            <label for="code" class="w-full text-sm font-semibold sm:text-base md:w-32">
+              {{ t('customers.fields.code') }}
+            </label>
+            <div class="flex w-full flex-auto flex-col gap-1">
+              <!-- Auto/Manual toggle shown in ADD and EDIT modes -->
+              <div v-if="mode !== DialogMode.VIEW" class="mb-1 flex gap-2">
+                <Button
+                  type="button"
+                  :label="t('customers.codeMode.auto')"
+                  :severity="codeMode === 'auto' ? 'primary' : 'secondary'"
+                  size="small"
+                  :disabled="!isEditMode && (!hasDefaultSeries || numberSeriesLoading)"
+                  @click="codeMode = 'auto'"
+                />
+                <Button
+                  type="button"
+                  :label="t('customers.codeMode.manual')"
+                  :severity="codeMode === 'manual' ? 'primary' : 'secondary'"
+                  size="small"
+                  @click="codeMode = 'manual'"
+                />
+              </div>
+              <!-- Auto mode: read-only preview -->
+              <div v-if="codeMode === 'auto'" class="flex flex-col gap-1">
+                <InputText
+                  :value="autoModeDisplayCode"
+                  :placeholder="numberSeriesLoading && !isEditMode ? t('common.messages.loading') : ''"
+                  readonly
+                  class="w-full"
+                />
+                <small v-if="!isEditMode" class="text-surface-500">{{ t('customers.codeMode.assignedOnSave') }}</small>
+              </div>
+              <!-- Manual mode or EDIT/VIEW mode: editable -->
+              <InputText
+                v-else
+                id="code"
+                name="code"
+                autocomplete="off"
+                :disabled="mode === DialogMode.VIEW"
+                class="w-full"
+              />
+              <Message v-if="$form.code?.invalid" severity="error" size="small" variant="simple">
+                {{ $form.code.error.message }}
+              </Message>
+            </div>
+          </div>
+
           <!-- Name -->
           <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
             <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-32">
@@ -546,6 +595,7 @@ import DialogMode from '@/constants/dialogMode'
 import FilterOperator from '@/constants/filterOperator'
 import type { Customer } from '@/types/customer.type'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { useNumberSeries } from '@/composables'
 
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -569,10 +619,31 @@ const props = defineProps({
   },
 })
 
+// Number series — EDIT/VIEW starts in manual to preserve the existing code
+const {
+  codeMode,
+  previewCode,
+  seriesId: numberSeriesId,
+  loading: numberSeriesLoading,
+  hasDefaultSeries,
+  generateCode,
+} = useNumberSeries('customers', {
+  initialMode: props.mode === DialogMode.ADD ? undefined : 'manual',
+})
+
 const emits = defineEmits<{
   submit: [event: FormSubmitEvent]
   cancel: []
 }>()
+
+const isEditMode = computed(() => props.mode === DialogMode.EDIT)
+
+const autoModeDisplayCode = computed(() => {
+  if (isEditMode.value) {
+    return props.customer?.code ?? ''
+  }
+  return numberSeriesLoading.value ? '' : previewCode.value
+})
 
 // Initial options for dropdowns
 const initialCurrency = ref()
@@ -637,6 +708,7 @@ const subDistrictFilters = computed(() => {
 
 // Form initial values
 const initialValues = reactive({
+  code: '',
   name: '',
   currencyId: undefined as number | undefined,
   isActive: false,
@@ -672,6 +744,7 @@ onBeforeMount(() => {
   }
 
   // Populate form with existing customer data
+  initialValues.code = props.customer.code
   initialValues.name = props.customer.name
   initialValues.currencyId = props.customer.currencyId ?? undefined
   initialValues.isActive = props.customer.isActive
@@ -823,6 +896,10 @@ function clearDependentFields(
 const resolver = computed(() =>
   zodResolver(
     z.object({
+      code:
+        codeMode.value === 'auto'
+          ? z.string().optional()
+          : z.string().min(1, t('customers.validation.codeRequired')),
       name: z.string().min(1, t('customers.validation.nameRequired')),
       isActive: z.boolean(),
       currencyId: z.number().nullish(),
@@ -856,4 +933,21 @@ function onFormSubmit(event: FormSubmitEvent) {
 function handleCancel() {
   emits('cancel')
 }
+
+async function resolveCode(event: FormSubmitEvent): Promise<string> {
+  let code: string
+  if (codeMode.value === 'auto' && isEditMode.value) {
+    code = props.customer?.code ?? ''
+  } else if (codeMode.value === 'auto' && numberSeriesId.value !== null) {
+    code = await generateCode()
+  } else {
+    code = (event.states.code.value as string) ?? ''
+  }
+  if (!code.trim()) {
+    throw new Error(t('customers.validation.codeRequired'))
+  }
+  return code
+}
+
+defineExpose({ codeMode, numberSeriesId, resolveCode })
 </script>

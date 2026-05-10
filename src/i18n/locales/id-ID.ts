@@ -358,6 +358,7 @@ export default {
     basicInfoCustomer: 'Informasi Dasar Pelanggan',
     customerAddress: 'Alamat Pelanggan',
     fields: {
+      code: 'Kode',
       name: 'Nama',
       currency: 'Mata Uang',
       taxable: 'Kena Pajak',
@@ -377,6 +378,11 @@ export default {
       joinInvoice: 'Gabungkan Faktur',
       collectTo: 'Penagihan',
       area: 'Wilayah',
+    },
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
     },
     labels: {
       selectCurrency: 'Pilih Mata Uang',
@@ -400,6 +406,7 @@ export default {
       },
     },
     validation: {
+      codeRequired: 'Kode wajib diisi.',
       nameRequired: 'Nama wajib diisi.',
     },
     messages: {

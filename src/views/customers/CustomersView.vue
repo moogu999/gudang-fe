@@ -187,6 +187,13 @@ const url = computed(() => {
 
 const columns = computed<Column[]>(() => [
   {
+    field: 'code',
+    header: t('customers.fields.code'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+  },
+  {
     field: 'name',
     header: t('customers.fields.name'),
     exportable: true,

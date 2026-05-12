@@ -13,14 +13,14 @@
               {{ t('customers.fields.code') }}
             </label>
             <div class="flex w-full flex-auto flex-col gap-1">
-              <!-- Auto/Manual toggle shown in ADD and EDIT modes -->
-              <div v-if="mode !== DialogMode.VIEW" class="mb-1 flex gap-2">
+              <!-- Auto/Manual toggle: ADD only. EDIT keeps the existing code in a plain editable field. -->
+              <div v-if="mode === DialogMode.ADD" class="mb-1 flex gap-2">
                 <Button
                   type="button"
                   :label="t('customers.codeMode.auto')"
                   :severity="codeMode === 'auto' ? 'primary' : 'secondary'"
                   size="small"
-                  :disabled="!isEditMode && (!hasDefaultSeries || numberSeriesLoading)"
+                  :disabled="!hasDefaultSeries || numberSeriesLoading"
                   @click="codeMode = 'auto'"
                 />
                 <Button
@@ -35,11 +35,11 @@
               <div v-if="codeMode === 'auto'" class="flex flex-col gap-1">
                 <InputText
                   :value="autoModeDisplayCode"
-                  :placeholder="numberSeriesLoading && !isEditMode ? t('common.messages.loading') : ''"
+                  :placeholder="numberSeriesLoading ? t('common.messages.loading') : ''"
                   readonly
                   class="w-full"
                 />
-                <small v-if="!isEditMode" class="text-surface-500">{{ t('customers.codeMode.assignedOnSave') }}</small>
+                <small class="text-surface-500">{{ t('customers.codeMode.assignedOnSave') }}</small>
               </div>
               <!-- Manual mode or EDIT/VIEW mode: editable -->
               <InputText
@@ -638,12 +638,9 @@ const emits = defineEmits<{
 
 const isEditMode = computed(() => props.mode === DialogMode.EDIT)
 
-const autoModeDisplayCode = computed(() => {
-  if (isEditMode.value) {
-    return props.customer?.code ?? ''
-  }
-  return numberSeriesLoading.value ? '' : previewCode.value
-})
+const autoModeDisplayCode = computed(() =>
+  numberSeriesLoading.value ? '' : previewCode.value,
+)
 
 // Initial options for dropdowns
 const initialCurrency = ref()
@@ -935,18 +932,13 @@ function handleCancel() {
 }
 
 async function resolveCode(event: FormSubmitEvent): Promise<string> {
-  let code: string
-  if (codeMode.value === 'auto' && isEditMode.value) {
-    code = props.customer?.code ?? ''
-  } else if (codeMode.value === 'auto' && numberSeriesId.value !== null) {
-    code = await generateCode()
-  } else {
-    code = (event.states.code.value as string) ?? ''
+  if (isEditMode.value) {
+    return (event.states.code?.value as string) ?? props.customer?.code ?? ''
   }
-  if (!code.trim()) {
-    throw new Error(t('customers.validation.codeRequired'))
+  if (codeMode.value === 'auto' && numberSeriesId.value !== null) {
+    return await generateCode()
   }
-  return code
+  return (event.states.code?.value as string) ?? ''
 }
 
 defineExpose({ codeMode, numberSeriesId, resolveCode })

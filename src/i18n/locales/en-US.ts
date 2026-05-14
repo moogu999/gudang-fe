@@ -122,12 +122,16 @@ export default {
       assignBy: 'Assign By',
       selectBranch: 'Select Branch',
       selectSalesOrganization: 'Select Sales Organization',
+      primaryBranch: 'Primary Branch',
+      primary: 'Primary',
     },
     placeholders: {
       email: 'Enter email address',
       password: 'Enter password',
       passwordEditMode: 'Leave blank to keep current password',
       name: 'Enter name',
+      selectPrimaryBranch: 'Select primary branch',
+      noBranchesAssigned: 'No branches assigned',
     },
     validation: {
       emailRequired: 'Email is required',
@@ -143,6 +147,7 @@ export default {
     messages: {
       userCreated: 'User is created.',
       userUpdated: 'User is updated.',
+      primaryBranchUpdated: 'Primary branch updated.',
     },
     tabs: {
       roles: 'Roles',

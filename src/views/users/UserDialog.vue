@@ -150,7 +150,7 @@
 
       <TabPanels>
         <RolesTab :userId="user!.id" />
-        <BranchesTab :userId="user!.id" />
+        <BranchesTab :userId="user!.id" :primary-branch-id="user!.primaryBranchId ?? null" />
       </TabPanels>
     </Tabs>
   </div>

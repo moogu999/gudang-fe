@@ -7,6 +7,7 @@ export type User = {
   email: string
   departmentId: number | null
   department: DepartmentLite | null
+  primaryBranchId: number | null
   createdAt: string
   createdBy: string
 }

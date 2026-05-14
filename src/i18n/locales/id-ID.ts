@@ -122,12 +122,16 @@ export default {
       assignBy: 'Tetapkan Melalui',
       selectBranch: 'Pilih Cabang',
       selectSalesOrganization: 'Pilih Organisasi Penjualan',
+      primaryBranch: 'Cabang Utama',
+      primary: 'Utama',
     },
     placeholders: {
       email: 'Masukkan alamat email',
       password: 'Masukkan kata sandi',
       passwordEditMode: 'Biarkan kosong untuk mempertahankan kata sandi saat ini',
       name: 'Masukkan nama',
+      selectPrimaryBranch: 'Pilih cabang utama',
+      noBranchesAssigned: 'Tidak ada cabang yang ditetapkan',
     },
     validation: {
       emailRequired: 'Email wajib diisi',
@@ -143,6 +147,7 @@ export default {
     messages: {
       userCreated: 'Pengguna berhasil dibuat.',
       userUpdated: 'Pengguna berhasil diperbarui.',
+      primaryBranchUpdated: 'Cabang utama berhasil diperbarui.',
     },
     tabs: {
       roles: 'Peran',

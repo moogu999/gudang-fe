@@ -38,9 +38,18 @@ describe('AuditTrailFilters', () => {
         stubs: {
           Select: {
             name: 'Select',
-            props: ['modelValue', 'options', 'optionLabel', 'optionValue', 'placeholder', 'showClear', 'disabled'],
+            props: [
+              'modelValue',
+              'options',
+              'optionLabel',
+              'optionValue',
+              'placeholder',
+              'showClear',
+              'disabled',
+            ],
             emits: ['update:modelValue', 'change'],
-            template: '<select><option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option></select>',
+            template:
+              '<select><option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option></select>',
           },
           DatePicker: {
             name: 'DatePicker',

@@ -638,9 +638,7 @@ const emits = defineEmits<{
 
 const isEditMode = computed(() => props.mode === DialogMode.EDIT)
 
-const autoModeDisplayCode = computed(() =>
-  numberSeriesLoading.value ? '' : previewCode.value,
-)
+const autoModeDisplayCode = computed(() => (numberSeriesLoading.value ? '' : previewCode.value))
 
 // Initial options for dropdowns
 const initialCurrency = ref()

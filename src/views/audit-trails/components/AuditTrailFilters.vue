@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap gap-3 items-end">
+  <div class="flex flex-wrap items-end gap-3">
     <!-- Reference Type -->
     <div class="flex flex-col gap-1">
       <label class="text-sm font-semibold">{{ t('auditTrails.filters.type') }}</label>
@@ -55,11 +55,7 @@
     </div>
 
     <!-- Clear button -->
-    <Button
-      severity="secondary"
-      :label="t('table.clearFilters')"
-      @click="clearAll"
-    />
+    <Button severity="secondary" :label="t('table.clearFilters')" @click="clearAll" />
   </div>
 </template>
 
@@ -76,7 +72,13 @@ import type { AuditReferenceType } from '@/types/auditTrail.type'
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  change: [filters: { referenceType?: AuditReferenceType; referenceId?: number; dateRange?: [string, string] }]
+  change: [
+    filters: {
+      referenceType?: AuditReferenceType
+      referenceId?: number
+      dateRange?: [string, string]
+    },
+  ]
 }>()
 
 const selectedType = ref<AuditReferenceType | undefined>(undefined)
@@ -87,11 +89,11 @@ const typeOptions = computed(() =>
   Object.entries(AUDIT_REFERENCE_TYPES).map(([value, entry]) => ({
     value,
     label: t(entry.labelKey),
-  }))
+  })),
 )
 
 const currentTypeEntry = computed(() =>
-  selectedType.value ? AUDIT_REFERENCE_TYPES[selectedType.value] : undefined
+  selectedType.value ? AUDIT_REFERENCE_TYPES[selectedType.value] : undefined,
 )
 
 function onTypeChange() {
@@ -115,7 +117,11 @@ function clearAll() {
 }
 
 function emitChange() {
-  const filters: { referenceType?: AuditReferenceType; referenceId?: number; dateRange?: [string, string] } = {}
+  const filters: {
+    referenceType?: AuditReferenceType
+    referenceId?: number
+    dateRange?: [string, string]
+  } = {}
 
   if (selectedType.value) {
     filters.referenceType = selectedType.value

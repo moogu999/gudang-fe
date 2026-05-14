@@ -19,11 +19,15 @@
             <span v-if="col.field === 'referenceType'">
               {{ t(`auditTrails.references.${data[col.field]}`) }}
             </span>
-            <span v-if="col.field === 'description'" :title="data[col.field]" class="block max-w-xs truncate">
+            <span
+              v-if="col.field === 'description'"
+              :title="data[col.field]"
+              class="block max-w-xs truncate"
+            >
               {{ data[col.field] }}
             </span>
             <span v-if="col.field === 'createdBy'">
-              {{ (data['createdByUser'] as { email?: string } | undefined)?.email ?? '—' }}
+              {{ getCreatedByEmail(data['createdByUser']) }}
             </span>
             <span v-if="col.field === 'createdAt'">
               {{ dayjs(data[col.field]).format(DateFormat.DATE_TIME) }}
@@ -144,6 +148,18 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
 ])
+
+function getCreatedByEmail(user: unknown): string {
+  if (
+    user &&
+    typeof user === 'object' &&
+    'email' in user &&
+    typeof (user as { email: unknown }).email === 'string'
+  ) {
+    return (user as { email: string }).email
+  }
+  return '—'
+}
 
 async function onFiltersChange(filters: Filters) {
   activeFilters.value = filters

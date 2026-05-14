@@ -883,7 +883,9 @@ export default {
       description: 'Deskripsi',
       criteria: 'Kriteria',
       rules: 'Aturan',
+      result: 'Hasil',
       priceList: 'Daftar Harga',
+      promotion: 'Promosi',
     },
     labels: {
       selectCriteria: 'Pilih kriteria (maks 5)',
@@ -892,6 +894,8 @@ export default {
       wildcard: '— Semua —',
       specify: 'Tentukan nilai',
       setWildcard: 'Jadikan sembarang (wildcard)',
+      resultTypePriceList: 'Daftar Harga',
+      resultTypePromotion: 'Promosi',
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
@@ -900,9 +904,9 @@ export default {
     },
     errors: {
       duplicateCombination:
-        'Kombinasi aturan duplikat ditemukan. Setiap baris harus memiliki kombinasi nilai yang unik.',
+        'Kombinasi aturan duplikat ditemukan. Setiap kombinasi + tipe hasil harus unik.',
       tooManyCriteria: 'Maksimal 5 kriteria diizinkan.',
-      missingValue: 'Semua aturan harus memiliki daftar harga yang dipilih.',
+      missingValue: 'Semua aturan harus memiliki daftar harga atau promosi yang dipilih.',
     },
     messages: {
       created: 'Matriks harga berhasil dibuat.',

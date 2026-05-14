@@ -18,10 +18,15 @@ export type PriceMatrixRuleValue = {
   valueLabel?: string
 }
 
+export type PriceMatrixRuleResultType = 'price_list' | 'promotion'
+
 export type PriceMatrixRule = {
   id?: number
-  priceListId: number
-  priceListCode?: string
+  resultType: PriceMatrixRuleResultType
+  priceListId?: number | null
+  priceListCode?: string | null
+  promotionId?: number | null
+  promotionCode?: string | null
   values: PriceMatrixRuleValue[]
 }
 
@@ -42,7 +47,9 @@ export type CreatePriceMatrixDto = {
   description?: string | null
   criteria: { criteriaTypeId: number; position: number }[]
   rules: {
-    priceListId: number
+    resultType: PriceMatrixRuleResultType
+    priceListId?: number | null
+    promotionId?: number | null
     values: { criteriaTypeId: number; valueId: number | null }[]
   }[]
 }

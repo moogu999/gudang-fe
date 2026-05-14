@@ -751,7 +751,9 @@ export default {
       description: 'Description',
       criteria: 'Criteria',
       rules: 'Rules',
+      result: 'Result',
       priceList: 'Price List',
+      promotion: 'Promotion',
     },
     labels: {
       selectCriteria: 'Select criteria (max 5)',
@@ -760,6 +762,8 @@ export default {
       wildcard: '— Any —',
       specify: 'Specify value',
       setWildcard: 'Set as any (wildcard)',
+      resultTypePriceList: 'Price List',
+      resultTypePromotion: 'Promotion',
     },
     validation: {
       codeRequired: 'Code is required.',
@@ -768,9 +772,9 @@ export default {
     },
     errors: {
       duplicateCombination:
-        'Duplicate rule combination found. Each row must have a unique set of values.',
+        'Duplicate rule combination found. Each combination + result type must be unique.',
       tooManyCriteria: 'Maximum 5 criteria allowed.',
-      missingValue: 'All rules must have a price list selected.',
+      missingValue: 'All rules must have a price list or promotion selected.',
     },
     messages: {
       created: 'Price matrix is created.',

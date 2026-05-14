@@ -803,6 +803,16 @@ export default {
       fixedBonusTiers: 'Tingkatan Bonus Tetap',
       tierItems: 'Item Tingkatan',
       addTierItem: 'Tambah Item',
+      tier: {
+        multiplicative: {
+          label: 'Multiplikatif',
+          discountHelp:
+            'Mengalikan diskon tetap dengan floor(qty / minQty) (atau amount/minAmount). Hanya untuk diskon tetap.',
+          bonusHelp:
+            'Mengalikan kuantitas setiap item bonus dengan floor(qty / minQty) (atau amount/minAmount).',
+          percentageDisabled: 'Tidak tersedia untuk diskon persentase.',
+        },
+      },
       customerChoicePool: 'Kumpulan Pilihan',
       addPoolItem: 'Tambah Item',
       removePoolItem: 'Hapus',

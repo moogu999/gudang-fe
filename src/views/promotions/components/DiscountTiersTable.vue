@@ -48,6 +48,7 @@
             option-value="value"
             class="w-full"
             size="small"
+            @update:model-value="(v) => { if (v === 'percentage') tier.isMultiplicative = false }"
           />
           <span v-else>
             {{
@@ -70,6 +71,16 @@
             <span v-else>{{ tier.value }}</span>
             <small v-if="errors[index]" class="text-red-500">{{ errors[index] }}</small>
           </div>
+        </template>
+      </Column>
+      <Column :header="t('promotions.labels.tier.multiplicative.label')" style="width: 8rem">
+        <template #body="{ data: tier }">
+          <ToggleSwitch
+            v-if="!isView"
+            v-model="tier.isMultiplicative"
+            :disabled="tier.discountType === 'percentage'"
+          />
+          <span v-else>{{ tier.isMultiplicative ? t('common.labels.yes') : t('common.labels.no') }}</span>
         </template>
       </Column>
       <Column v-if="!isView" style="width: 4rem">
@@ -96,12 +107,14 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
+import ToggleSwitch from 'primevue/toggleswitch'
 import type { ThresholdKind, DiscountType } from '@/types/promotion.type'
 
 export interface DiscountTierForm {
   threshold: string
   discountType: DiscountType | ''
   value: string
+  isMultiplicative: boolean
 }
 
 const tiers = defineModel<DiscountTierForm[]>('tiers', { required: true })
@@ -120,7 +133,7 @@ const discountTypeOptions = computed(() => [
 ])
 
 function addTier() {
-  tiers.value.push({ threshold: '', discountType: '', value: '' })
+  tiers.value.push({ threshold: '', discountType: '', value: '', isMultiplicative: false })
 }
 
 function removeTier(index: number) {

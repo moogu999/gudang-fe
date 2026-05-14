@@ -843,6 +843,15 @@ export default {
       fixedBonusTiers: 'Fixed Bonus Tiers',
       tierItems: 'Tier Items',
       addTierItem: 'Add Item',
+      tier: {
+        multiplicative: {
+          label: 'Multiplicative',
+          discountHelp:
+            'Scales the flat discount by floor(qty / minQty) (or amount/minAmount). Flat discounts only.',
+          bonusHelp: 'Scales each bonus item quantity by floor(qty / minQty) (or amount/minAmount).',
+          percentageDisabled: 'Not available for percentage discounts.',
+        },
+      },
       customerChoicePool: 'Choice Pool',
       addPoolItem: 'Add Item',
       removePoolItem: 'Remove',

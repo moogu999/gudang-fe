@@ -86,6 +86,7 @@ export default {
     priceMatrices: 'Matriks Harga',
     priceMatrixPriorities: 'Prioritas Matriks Harga',
     promotions: 'Promosi',
+    auditTrails: 'Jejak Audit',
   },
   table: {
     search: 'Cari',
@@ -907,6 +908,34 @@ export default {
       created: 'Matriks harga berhasil dibuat.',
       updated: 'Matriks harga berhasil diperbarui.',
       notFound: 'Matriks harga tidak ditemukan.',
+    },
+  },
+  auditTrails: {
+    title: 'Jejak Audit',
+    filters: {
+      type: 'Tipe Referensi',
+      reference: 'Referensi',
+      dateRange: 'Rentang Tanggal',
+    },
+    columns: {
+      referenceType: 'Tipe Referensi',
+      referenceId: 'ID Referensi',
+      description: 'Deskripsi',
+      createdBy: 'Diubah Oleh',
+      createdAt: 'Diubah Pada',
+    },
+    detail: {
+      title: 'Detail Jejak Audit',
+      createdAt: 'Diubah Pada',
+      changedBy: 'Diubah Oleh',
+      previous: 'Sebelumnya',
+      current: 'Saat Ini',
+      created: 'Dibuat',
+      deleted: 'Dihapus',
+      notFound: 'Jejak audit tidak ditemukan.',
+    },
+    references: {
+      promotion: 'Promosi',
     },
   },
   priceMatrixPriority: {

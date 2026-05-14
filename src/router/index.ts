@@ -222,6 +222,18 @@ const router = createRouter({
           component: () => import('@/views/promotions/PromotionDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.PROMOTION_READ },
         },
+        {
+          path: 'audit-trails',
+          name: 'AuditTrails',
+          component: () => import('@/views/audit-trails/AuditTrailsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.AUDIT_TRAIL_READ },
+        },
+        {
+          path: 'audit-trails/:id',
+          name: 'AuditTrailDetail',
+          component: () => import('@/views/audit-trails/AuditTrailDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.AUDIT_TRAIL_READ },
+        },
       ],
     },
 

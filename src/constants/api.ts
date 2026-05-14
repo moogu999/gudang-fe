@@ -134,6 +134,10 @@ export const API_ENDPOINTS = {
   // Promotion endpoints
   GEN_PROMOTIONS: '/gen/v1/promotions',
   PROMOTIONS: '/v1/promotions',
+
+  // Audit Trail endpoints
+  GEN_AUDIT_TRAILS: '/gen/v1/audit-trails',
+  AUDIT_TRAILS: '/v1/audit-trails',
 } as const
 
 // Type for API endpoints (useful for validation)

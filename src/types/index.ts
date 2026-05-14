@@ -152,6 +152,9 @@ export type {
   CreatePromotionDto,
 } from './promotion.type'
 
+// Audit Trail types
+export type { AuditReferenceType, AuditTrailListItem, AuditTrail } from './auditTrail.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

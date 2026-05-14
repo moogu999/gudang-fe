@@ -86,6 +86,7 @@ export default {
     priceMatrices: 'Price Matrices',
     priceMatrixPriorities: 'Price Matrix Priority',
     promotions: 'Promotions',
+    auditTrails: 'Audit Trails',
   },
   table: {
     search: 'Search',
@@ -906,6 +907,34 @@ export default {
       created: 'Promotion is created.',
       updated: 'Promotion is updated.',
       notFound: 'Promotion not found.',
+    },
+  },
+  auditTrails: {
+    title: 'Audit Trails',
+    filters: {
+      type: 'Reference Type',
+      reference: 'Reference',
+      dateRange: 'Date Range',
+    },
+    columns: {
+      referenceType: 'Reference Type',
+      referenceId: 'Reference ID',
+      description: 'Description',
+      createdBy: 'Changed By',
+      createdAt: 'Changed At',
+    },
+    detail: {
+      title: 'Audit Trail Detail',
+      createdAt: 'Changed At',
+      changedBy: 'Changed By',
+      previous: 'Previous',
+      current: 'Current',
+      created: 'Created',
+      deleted: 'Deleted',
+      notFound: 'Audit trail not found.',
+    },
+    references: {
+      promotion: 'Promotion',
     },
   },
   priceMatrixPriority: {

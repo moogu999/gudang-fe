@@ -6,6 +6,18 @@
  */
 const mainMenu = [
   {
+    label: 'HR',
+    labelKey: 'navigation.hr',
+    icon: 'pi pi-id-card',
+    items: [
+      {
+        label: 'Employees',
+        labelKey: 'navigation.employees',
+        route: '/employees',
+      },
+    ],
+  },
+  {
     label: 'Organizations',
     labelKey: 'navigation.organizations',
     icon: 'pi pi-building',

@@ -138,6 +138,10 @@ export const API_ENDPOINTS = {
   // Audit Trail endpoints
   GEN_AUDIT_TRAILS: '/gen/v1/audit-trails',
   AUDIT_TRAILS: '/v1/audit-trails',
+
+  // Employee endpoints
+  EMPLOYEES: '/v1/employees',
+  EMPLOYEE_TYPES: '/gen/v1/employee-types',
 } as const
 
 // Type for API endpoints (useful for validation)

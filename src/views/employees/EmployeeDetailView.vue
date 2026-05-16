@@ -3,6 +3,23 @@
     <Toast position="top-center" :group="toastGroup" />
     <ConfirmDialog :group="toastGroup + '-unsaved'" />
 
+    <!-- Full-size photo dialog -->
+    <Dialog
+      v-model:visible="showPhotoDialog"
+      modal
+      :header="employee?.name ?? t('employees.fields.photo')"
+      :style="{ maxWidth: '90vw' }"
+    >
+      <div class="flex justify-center">
+        <img
+          v-if="photoPreview"
+          :src="photoPreview"
+          class="max-h-[75vh] max-w-full rounded object-contain"
+          alt="Employee photo"
+        />
+      </div>
+    </Dialog>
+
     <!-- Header -->
     <div class="mb-4 flex items-center gap-3">
       <Button
@@ -75,18 +92,25 @@
                   <span class="ml-1 text-xs font-normal text-stone-400">{{ t('employees.labels.optional') }}</span>
                 </label>
                 <div class="flex items-center gap-4">
-                  <div class="h-16 w-16 overflow-hidden rounded-full bg-stone-100">
-                    <img
-                      v-if="photoPreview"
-                      :src="photoPreview"
-                      class="h-full w-full object-cover"
-                      alt="Photo preview"
-                    />
-                    <div v-else class="flex h-full w-full items-center justify-center">
+                  <!-- Avatar: clickable to view full size when photo exists -->
+                  <button
+                    v-if="photoPreview"
+                    type="button"
+                    class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full bg-stone-100 ring-2 ring-stone-200 transition-all hover:ring-primary-400 focus:outline-none focus:ring-primary-400"
+                    :title="t('employees.labels.viewPhoto')"
+                    @click="showPhotoDialog = true"
+                  >
+                    <img :src="photoPreview" class="h-full w-full object-cover" alt="Photo preview" />
+                  </button>
+                  <div
+                    v-else
+                    class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-stone-100"
+                  >
                     <i class="pi pi-user text-2xl text-stone-400" />
                   </div>
-                  </div>
-                  <div>
+
+                  <!-- Upload + delete actions -->
+                  <div class="flex flex-col gap-2">
                     <input
                       ref="photoInput"
                       type="file"
@@ -96,11 +120,22 @@
                     />
                     <Button
                       type="button"
-                      :label="t('employees.fields.photo')"
+                      :label="t('employees.labels.uploadPhoto')"
                       icon="pi pi-upload"
                       severity="secondary"
                       size="small"
                       @click="photoInput?.click()"
+                    />
+                    <Button
+                      v-if="photoPreview"
+                      type="button"
+                      :label="t('employees.labels.deletePhoto')"
+                      icon="pi pi-trash"
+                      severity="danger"
+                      outlined
+                      size="small"
+                      :loading="isDeletingPhoto"
+                      @click="onDeletePhoto"
                     />
                   </div>
                 </div>
@@ -362,6 +397,7 @@ import DatePicker from 'primevue/datepicker'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Toast from 'primevue/toast'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Dialog from 'primevue/dialog'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import EmployeeTypeCard from './components/EmployeeTypeCard.vue'
@@ -375,8 +411,8 @@ import {
   DivisionsService,
   SalesOrganizationsService,
 } from '@/services'
-import { commonErrorToast, commonSuccessToast } from '@/services/toast'
-import type { Employee, EmployeeType } from '@/types/employee.type'
+import { commonErrorToast, commonSuccessToast, commonWarnToast } from '@/services/toast'
+import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.type'
 
 
 const { t } = useI18n()
@@ -397,6 +433,8 @@ const isLoading = ref(false)
 const isDirty = ref(false)
 const isSubmitting = ref(false)
 const submittingAsDraft = ref(false)
+const isDeletingPhoto = ref(false)
+const showPhotoDialog = ref(false)
 const employee = ref<Employee | null>(null)
 const formRef = ref()
 const photoInput = ref<HTMLInputElement | null>(null)
@@ -602,6 +640,54 @@ function photoSrc(photoUrl: string): string {
   return `${import.meta.env.VITE_API_BASE_URL ?? ''}${photoUrl}`
 }
 
+// Upload photo and update preview. Shows a warning toast on failure (non-fatal).
+async function tryUploadPhoto(id: number): Promise<void> {
+  if (!pendingPhoto.value) return
+  try {
+    const res = await EmployeesService.uploadPhoto(id, pendingPhoto.value)
+    photoPreview.value = photoSrc(res.photoUrl)
+    pendingPhoto.value = null
+  } catch (e) {
+    toast.add(commonWarnToast(
+      e instanceof Error ? e.message : t('employees.messages.photoUploadFailed'),
+      toastGroup,
+    ))
+  }
+}
+
+// Delete existing (uploaded) photo or just clear a pending (not-yet-uploaded) selection.
+async function onDeletePhoto() {
+  // If there's a pending (unuploaded) photo, just clear the local state.
+  if (pendingPhoto.value) {
+    pendingPhoto.value = null
+    photoPreview.value = employee.value?.photoUrl ? photoSrc(employee.value.photoUrl) : null
+    return
+  }
+
+  // Photo is already saved on the server — ask for confirmation before deleting.
+  confirm.require({
+    group: toastGroup + '-unsaved',
+    header: t('employees.confirm.deletePhotoTitle'),
+    message: t('employees.confirm.deletePhotoMessage'),
+    acceptLabel: t('common.actions.delete'),
+    rejectLabel: t('common.actions.cancel'),
+    accept: async () => {
+      if (!props.id) return
+      isDeletingPhoto.value = true
+      try {
+        await EmployeesService.deletePhoto(props.id)
+        photoPreview.value = null
+        if (employee.value) employee.value = { ...employee.value, photoUrl: undefined }
+        toast.add(commonSuccessToast(t('employees.messages.photoDeleted'), toastGroup))
+      } catch (e) {
+        toast.add(commonErrorToast(e, toastGroup))
+      } finally {
+        isDeletingPhoto.value = false
+      }
+    },
+  })
+}
+
 // Dropdown change handlers
 function onCompanyChange() {
   isDirty.value = true
@@ -654,7 +740,7 @@ async function onSaveDraft() {
       divisionId: (states?.divisionId?.value as number) || undefined,
       salesOrganizationId: (states?.salesOrganizationId?.value as number) || undefined,
       joinDate: toISODate(states?.joinDate?.value),
-      employmentStatus: ((states?.employmentStatus?.value as string) || undefined),
+      employmentStatus: ((states?.employmentStatus?.value as EmploymentStatus) || undefined),
       supervisorId: (states?.supervisorId?.value as number) || undefined,
       isActive: (states?.isActive?.value as boolean) ?? true,
       accessNcommand: (states?.accessNcommand?.value as boolean) ?? false,
@@ -663,9 +749,7 @@ async function onSaveDraft() {
     }
 
     const created = await EmployeesService.create(payload)
-    if (pendingPhoto.value) {
-      try { await EmployeesService.uploadPhoto(created.id, pendingPhoto.value) } catch { /* non-fatal */ }
-    }
+    await tryUploadPhoto(created.id)
     isDirty.value = false
     toast.add(commonSuccessToast(t('employees.messages.draftSaved'), toastGroup))
     setTimeout(() => router.replace(`/employees/${created.id}`), 800)
@@ -709,7 +793,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
       divisionId: s.divisionId?.value,
       salesOrganizationId: s.salesOrganizationId?.value || undefined,
       joinDate: toISODate(s.joinDate?.value),
-      employmentStatus: s.employmentStatus?.value || undefined,
+      employmentStatus: (s.employmentStatus?.value as EmploymentStatus) || undefined,
       supervisorId: s.supervisorId?.value || undefined,
       isActive: s.isActive?.value ?? true,
       accessNcommand: s.accessNcommand?.value ?? false,
@@ -719,27 +803,13 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
     if (props.mode === 'add') {
       const created = await EmployeesService.create(payload)
-      if (pendingPhoto.value) {
-        try {
-          await EmployeesService.uploadPhoto(created.id, pendingPhoto.value)
-        } catch {
-          // non-fatal
-        }
-      }
+      await tryUploadPhoto(created.id)
       isDirty.value = false
       toast.add(commonSuccessToast(t('employees.messages.saved'), toastGroup))
       setTimeout(() => router.replace('/employees'), 800)
     } else {
       await EmployeesService.update(props.id!, payload)
-      if (pendingPhoto.value) {
-        try {
-          const res = await EmployeesService.uploadPhoto(props.id!, pendingPhoto.value)
-          photoPreview.value = photoSrc(res.photoUrl)
-          pendingPhoto.value = null
-        } catch {
-          // non-fatal
-        }
-      }
+      await tryUploadPhoto(props.id!)
       isDirty.value = false
       toast.add(commonSuccessToast(t('employees.messages.saved'), toastGroup))
       setTimeout(() => router.replace('/employees'), 800)

@@ -169,6 +169,19 @@ class ApiService {
     return response.data
   }
 
+  /**
+   * POST a FormData payload as multipart/form-data.
+   * Unlike post(), this explicitly removes the default Content-Type header so the browser
+   * can set the correct multipart boundary automatically.
+   */
+  public async postMultipart<T>(endpoint: string, formData: FormData): Promise<T> {
+    const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, formData, {
+      headers: { 'Content-Type': undefined }, // let browser set multipart + boundary
+      timeout: 60000,
+    })
+    return response.data
+  }
+
   public async upload<T>(endpoint: string, file: File): Promise<T> {
     const formData = new FormData()
     formData.append('file', file)

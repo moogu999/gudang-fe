@@ -1030,6 +1030,12 @@ export default {
       saved: 'Employee saved.',
       draftSaved: 'Draft saved.',
       deleted: 'Employee deleted.',
+      photoUploadFailed: 'Photo upload failed. Please try uploading again from the employee detail page.',
+      photoDeleted: 'Photo deleted.',
+    },
+    confirm: {
+      deletePhotoTitle: 'Delete Photo',
+      deletePhotoMessage: 'Are you sure you want to delete this photo? This action cannot be undone.',
     },
     placeholders: {
       nip: 'Enter NIP',
@@ -1046,6 +1052,9 @@ export default {
       saveDraft: 'Save as Draft',
       selectEmployeeType: 'Select employee type',
       optional: 'optional',
+      uploadPhoto: 'Upload Photo',
+      viewPhoto: 'View full size',
+      deletePhoto: 'Delete Photo',
     },
     filter: {
       statusAll: 'All Status',

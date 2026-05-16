@@ -963,6 +963,7 @@ export default {
     },
     references: {
       promotion: 'Promosi',
+      employee: 'Karyawan',
     },
   },
   employees: {
@@ -1069,6 +1070,9 @@ export default {
       type: 'Tipe',
       branch: 'Cabang',
       status: 'Status',
+    },
+    actions: {
+      viewAuditTrail: 'Lihat Riwayat Perubahan',
     },
   },
   priceMatrixPriority: {

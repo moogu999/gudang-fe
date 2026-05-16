@@ -29,7 +29,7 @@
         aria-label="Back"
         @click="handleBack"
       />
-      <div>
+      <div class="flex-1">
         <h1 class="text-base font-semibold sm:text-lg md:text-2xl">
           {{
             mode === 'add'
@@ -41,6 +41,15 @@
           {{ t('employees.status.draft') }} — {{ t('employees.status.draftTooltip') }}
         </p>
       </div>
+      <Button
+        v-if="mode === 'view' && hasPermission(PERMISSIONS.AUDIT_TRAIL_READ)"
+        icon="pi pi-history"
+        :label="t('employees.actions.viewAuditTrail')"
+        severity="secondary"
+        outlined
+        size="small"
+        @click="goToAuditTrail"
+      />
     </div>
 
     <!-- Loading state -->
@@ -382,8 +391,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { onBeforeRouteLeave } from 'vue-router'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
@@ -413,12 +421,15 @@ import {
 } from '@/services'
 import { commonErrorToast, commonSuccessToast, commonWarnToast } from '@/services/toast'
 import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.type'
+import { usePermissions } from '@/composables'
+import { PERMISSIONS } from '@/constants'
 
 
 const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
 const toast = useToast()
+const { hasPermission } = usePermissions()
 
 const toastGroup = 'employeeDetail'
 
@@ -820,6 +831,16 @@ async function onFormSubmit(event: FormSubmitEvent) {
     isLoading.value = false
     isSubmitting.value = false
   }
+}
+
+function goToAuditTrail() {
+  router.push({
+    path: '/audit-trails',
+    query: {
+      referenceType: 'employee',
+      referenceId: String(props.id),
+    },
+  })
 }
 
 // Back navigation

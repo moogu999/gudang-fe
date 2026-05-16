@@ -961,6 +961,7 @@ export default {
     },
     references: {
       promotion: 'Promotion',
+      employee: 'Employee',
     },
   },
   employees: {
@@ -1067,6 +1068,9 @@ export default {
       type: 'Type',
       branch: 'Branch',
       status: 'Status',
+    },
+    actions: {
+      viewAuditTrail: 'View Audit Trail',
     },
   },
   priceMatrixPriority: {

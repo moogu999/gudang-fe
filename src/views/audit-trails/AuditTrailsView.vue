@@ -8,7 +8,7 @@
 
     <ResponsiveCard class="mb-4">
       <template #content>
-        <AuditTrailFilters @change="onFiltersChange" />
+        <AuditTrailFilters :initial-filters="initialFiltersFromQuery" @change="onFiltersChange" />
       </template>
     </ResponsiveCard>
 
@@ -32,6 +32,21 @@
             <span v-if="col.field === 'createdAt'">
               {{ dayjs(data[col.field]).format(DateFormat.DATE_TIME) }}
             </span>
+            <a
+              v-if="col.field === 'referenceId' && data['referenceType'] === 'employee'"
+              class="cursor-pointer text-primary-500 hover:underline"
+              @click.prevent="router.push(`/employees/${data['referenceId']}`)"
+            >
+              #{{ data['referenceId'] }}
+            </a>
+            <a
+              v-else-if="col.field === 'referenceId' && data['referenceType'] === 'promotion'"
+              class="cursor-pointer text-primary-500 hover:underline"
+              @click.prevent="router.push(`/promotions/${data['referenceId']}`)"
+            >
+              #{{ data['referenceId'] }}
+            </a>
+            <span v-else-if="col.field === 'referenceId'">{{ data['referenceId'] }}</span>
             <Button
               v-if="col.field === ''"
               icon="pi pi-eye"
@@ -52,7 +67,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import Button from 'primevue/button'
@@ -69,6 +84,7 @@ import type { AuditReferenceType } from '@/types/auditTrail.type'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const { buttonSize } = useResponsiveSize()
 
 const overlayGroup = 'auditTrailsView'
@@ -80,7 +96,20 @@ type Filters = {
   dateRange?: [string, string]
 }
 
-const activeFilters = ref<Filters>({})
+const initialFiltersFromQuery = computed(() => {
+  const { referenceType, referenceId } = route.query
+  if (typeof referenceType === 'string') {
+    return {
+      referenceType: referenceType as AuditReferenceType,
+      referenceId: referenceId ? Number(referenceId) : undefined,
+    }
+  }
+  return undefined
+})
+
+const activeFilters = ref<Filters>(
+  initialFiltersFromQuery.value ?? {},
+)
 
 const url = computed(() => {
   const base = API_ENDPOINTS.GEN_AUDIT_TRAILS
@@ -163,6 +192,5 @@ function getCreatedByEmail(user: unknown): string {
 
 async function onFiltersChange(filters: Filters) {
   activeFilters.value = filters
-  await table.value?.clearSearch()
 }
 </script>

@@ -14,6 +14,7 @@ export type PromotionDiscountTier = {
   minAmount?: string | null
   discountType: DiscountType
   value: string
+  isMultiplicative?: boolean | null
 }
 
 export type PromotionFixedBonusTierItem = {
@@ -28,6 +29,7 @@ export type PromotionFixedBonusTier = {
   minQty?: string | null
   minAmount?: string | null
   items: PromotionFixedBonusTierItem[]
+  isMultiplicative?: boolean | null
 }
 
 export type PromotionCustomerChoicePoolItem = {
@@ -144,6 +146,7 @@ export type CreateDiscountTierDto = {
   minAmount?: string | null
   discountType: DiscountType
   value: string
+  isMultiplicative: boolean
 }
 
 export type CreateFixedBonusTierItemDto = {
@@ -155,6 +158,7 @@ export type CreateFixedBonusTierDto = {
   minQty?: string | null
   minAmount?: string | null
   items: CreateFixedBonusTierItemDto[]
+  isMultiplicative: boolean
 }
 
 export type CreateCustomerChoicePoolItemDto = {

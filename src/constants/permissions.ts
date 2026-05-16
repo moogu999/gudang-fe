@@ -40,6 +40,7 @@ export const PERMISSIONS = {
   PROMOTION_WRITE: 33,
   CUSTOMER_LABEL_DEFINITION_READ: 34,
   CUSTOMER_LABEL_DEFINITION_WRITE: 35,
+  AUDIT_TRAIL_READ: 36,
 } as const
 
 /**
@@ -70,6 +71,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_READ,
   '/promotions': PERMISSIONS.PROMOTION_READ,
   '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ,
+  '/audit-trails': PERMISSIONS.AUDIT_TRAIL_READ,
 }
 
 /**

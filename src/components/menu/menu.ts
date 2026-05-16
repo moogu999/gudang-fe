@@ -140,6 +140,11 @@ const mainMenu = [
         labelKey: 'navigation.permissions',
         route: '/permissions',
       },
+      {
+        label: 'Audit Trails',
+        labelKey: 'navigation.auditTrails',
+        route: '/audit-trails',
+      },
     ],
   },
   {

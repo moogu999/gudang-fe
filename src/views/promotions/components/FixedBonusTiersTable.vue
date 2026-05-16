@@ -19,24 +19,35 @@
     </div>
 
     <div v-for="(tier, tierIdx) in tiers" :key="tierIdx" class="mb-3 rounded border p-3">
-      <!-- Tier header: threshold + remove -->
+      <!-- Tier header: threshold + multiplicative + remove -->
       <div class="mb-2 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium text-gray-600">
-            {{
-              thresholdKind === 'min_qty'
-                ? t('promotions.fields.minQty')
-                : t('promotions.fields.minAmount')
-            }}
-          </label>
-          <InputText
-            v-if="!isView"
-            v-model="tier.threshold"
-            size="small"
-            style="width: 8rem"
-            autocomplete="off"
-          />
-          <span v-else>{{ tier.threshold }}</span>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">
+              {{
+                thresholdKind === 'min_qty'
+                  ? t('promotions.fields.minQty')
+                  : t('promotions.fields.minAmount')
+              }}
+            </label>
+            <InputText
+              v-if="!isView"
+              v-model="tier.threshold"
+              size="small"
+              style="width: 8rem"
+              autocomplete="off"
+            />
+            <span v-else>{{ tier.threshold }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">
+              {{ t('promotions.labels.tier.multiplicative.label') }}
+            </label>
+            <ToggleSwitch v-if="!isView" v-model="tier.isMultiplicative" />
+            <span v-else>{{
+              tier.isMultiplicative ? t('common.labels.yes') : t('common.labels.no')
+            }}</span>
+          </div>
         </div>
         <Button
           v-if="!isView"
@@ -88,9 +99,7 @@
                 @update:model-value="(v) => (item.productId = v as number)"
                 @select-option="(opt) => onProductSelected(item, opt)"
               >
-                <template #option="{ option }">
-                  {{ option.code }} - {{ option.name }}
-                </template>
+                <template #option="{ option }"> {{ option.code }} - {{ option.name }} </template>
               </InfiniteSelect>
               <span v-else>{{ item._product?.code ?? String(item.productId ?? '') }}</span>
             </template>
@@ -153,6 +162,7 @@ import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
+import ToggleSwitch from 'primevue/toggleswitch'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { ProductsService } from '@/services/products.service'
 import type { ThresholdKind } from '@/types/promotion.type'
@@ -166,6 +176,7 @@ export interface FixedBonusTierItemForm {
 export interface FixedBonusTierForm {
   threshold: string
   items: FixedBonusTierItemForm[]
+  isMultiplicative: boolean
 }
 
 const tiers = defineModel<FixedBonusTierForm[]>('tiers', { required: true })
@@ -179,7 +190,7 @@ defineProps<{
 const { t } = useI18n()
 
 function addTier() {
-  tiers.value.push({ threshold: '', items: [] })
+  tiers.value.push({ threshold: '', items: [], isMultiplicative: false })
 }
 
 function removeTier(tierIdx: number) {

@@ -330,10 +330,12 @@ onMounted(() => {
           threshold: g.thresholdKind === 'min_qty' ? (dt.minQty ?? '') : (dt.minAmount ?? ''),
           discountType: dt.discountType as DiscountType,
           value: dt.value,
+          isMultiplicative: dt.isMultiplicative ?? false,
         }))
 
         const fixedBonusTiers: FixedBonusTierForm[] = (reward.fixedBonusTiers ?? []).map((ft) => ({
           threshold: g.thresholdKind === 'min_qty' ? (ft.minQty ?? '') : (ft.minAmount ?? ''),
+          isMultiplicative: ft.isMultiplicative ?? false,
           items: ft.items.map((item) => ({
             productId: item.productId,
             qty: item.qty,
@@ -511,6 +513,7 @@ function validate(): boolean {
           if (tier.discountType === 'percentage') {
             const v = parseFloat(tier.value)
             if (isNaN(v) || v < 0 || v > 100) return t('promotions.validation.tierValueRange')
+            if (tier.isMultiplicative) return t('promotions.labels.tier.multiplicative.percentageDisabled')
           }
           return ''
         })
@@ -646,6 +649,7 @@ function buildGroupDto(group: GroupForm) {
             minAmount: !isMinQty ? t.threshold || null : null,
             discountType: t.discountType as DiscountType,
             value: t.value,
+            isMultiplicative: t.isMultiplicative,
           }))
         : undefined,
     fixedBonusTiers:
@@ -653,6 +657,7 @@ function buildGroupDto(group: GroupForm) {
         ? reward.fixedBonusTiers.map((ft) => ({
             minQty: isMinQty ? ft.threshold || null : null,
             minAmount: !isMinQty ? ft.threshold || null : null,
+            isMultiplicative: ft.isMultiplicative,
             items: ft.items.map((item) => ({
               productId: item.productId!,
               qty: item.qty,

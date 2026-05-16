@@ -70,6 +70,30 @@
             />
           </div>
         </div>
+
+        <div class="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+          <label for="primaryBranch" class="w-full text-sm font-semibold sm:text-base md:w-32">
+            {{ t('users.labels.primaryBranch') }}
+          </label>
+          <div class="flex flex-auto flex-col gap-1">
+            <Select
+              id="primaryBranch"
+              v-model="selectedPrimaryBranchId"
+              :options="assignedBranches"
+              option-label="branchName"
+              option-value="branchId"
+              :disabled="assignedBranches.length === 0"
+              :placeholder="
+                assignedBranches.length === 0
+                  ? t('users.placeholders.noBranchesAssigned')
+                  : t('users.placeholders.selectPrimaryBranch')
+              "
+              show-clear
+              :pt="{ root: 'w-full' }"
+              @change="onPrimaryBranchChange"
+            />
+          </div>
+        </div>
       </div>
 
       <TableComponent ref="table" :url="url" :columns="columns">
@@ -77,6 +101,13 @@
           <span v-if="col.header === t('common.labels.createdAt')">{{
             dayjs(data[col.field]).format(DateFormat.DATE_TIME)
           }}</span>
+
+          <Tag
+            v-if="col.field === 'isPrimary' && data['isPrimary']"
+            severity="success"
+            :value="t('users.labels.primary')"
+          />
+          <span v-else-if="col.field === 'isPrimary'">-</span>
 
           <div
             class="flex items-center"
@@ -88,7 +119,7 @@
               text
               rounded
               outlined
-              @click="deleteBranch(data['id'])"
+              @click="deleteBranch(data['id'], data['isPrimary'])"
             />
           </div>
         </template>
@@ -105,9 +136,10 @@ import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import Select from 'primevue/select'
-import { ref, computed } from 'vue'
+import Tag from 'primevue/tag'
+import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { commonErrorToast } from '@/services/toast'
+import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { BranchesService } from '@/services/branches.service'
 import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
 import { UserBranchesService } from '@/services/userBranches.service'
@@ -115,6 +147,7 @@ import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import type { Branch, SalesOrganization } from '@/types'
+import type { UserBranch } from '@/types/userBranch.type'
 import { API_ENDPOINTS } from '@/constants/api'
 import { usePermissions } from '@/composables'
 import { useI18n } from 'vue-i18n'
@@ -129,6 +162,10 @@ const props = defineProps({
   userId: {
     type: Number,
     required: true,
+  },
+  primaryBranchId: {
+    type: Number as unknown as () => number | null,
+    default: null,
   },
 })
 
@@ -165,7 +202,7 @@ async function assignBranch(id: unknown) {
 
     selectedBranch.value = undefined
 
-    await table.value.clearSearch()
+    await refreshData()
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
@@ -187,6 +224,33 @@ async function assignSalesOrganization(id: unknown) {
 
     selectedSalesOrganization.value = undefined
 
+    await refreshData()
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    loading.value = false
+  }
+}
+
+// Primary branch selection
+const assignedBranches = ref<UserBranch[]>([])
+const selectedPrimaryBranchId = ref<number | null>(props.primaryBranchId)
+
+async function fetchAssignedBranches() {
+  try {
+    const res = await UserBranchesService.listForUser(props.userId)
+    assignedBranches.value = res.data
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  }
+}
+
+async function onPrimaryBranchChange(event: { value: number | null }) {
+  loading.value = true
+
+  try {
+    await UserBranchesService.setPrimaryBranch(props.userId, { branchId: event.value ?? null })
+    toast.add(commonSuccessToast(t('users.messages.primaryBranchUpdated'), toastGroup))
     await table.value.clearSearch()
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
@@ -194,6 +258,8 @@ async function assignSalesOrganization(id: unknown) {
     loading.value = false
   }
 }
+
+onMounted(fetchAssignedBranches)
 
 // Table
 const url = `${API_ENDPOINTS.GEN_USER_BRANCHES}?filterBy=user_id&filterOperator=0&filterValue=${props.userId}`
@@ -212,6 +278,13 @@ const columns = computed<Column[]>(() => [
     exportable: true,
     sortable: true,
     filterable: true,
+  },
+  {
+    field: 'isPrimary',
+    header: t('users.labels.primary'),
+    exportable: false,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'createdAt',
@@ -240,13 +313,23 @@ const columns = computed<Column[]>(() => [
 
 const table = ref()
 
-async function deleteBranch(id: number) {
+async function refreshData() {
+  await fetchAssignedBranches()
+  await table.value.clearSearch()
+}
+
+async function deleteBranch(id: number, isPrimary: boolean) {
   loading.value = true
 
   try {
     await UserBranchesService.removeBranchFromUser(id)
 
-    await table.value.clearSearch()
+    if (isPrimary) {
+      await UserBranchesService.setPrimaryBranch(props.userId, { branchId: null })
+      selectedPrimaryBranchId.value = null
+    }
+
+    await refreshData()
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

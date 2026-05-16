@@ -86,6 +86,7 @@ export default {
     priceMatrices: 'Price Matrices',
     priceMatrixPriorities: 'Price Matrix Priority',
     promotions: 'Promotions',
+    auditTrails: 'Audit Trails',
   },
   table: {
     search: 'Search',
@@ -121,12 +122,16 @@ export default {
       assignBy: 'Assign By',
       selectBranch: 'Select Branch',
       selectSalesOrganization: 'Select Sales Organization',
+      primaryBranch: 'Primary Branch',
+      primary: 'Primary',
     },
     placeholders: {
       email: 'Enter email address',
       password: 'Enter password',
       passwordEditMode: 'Leave blank to keep current password',
       name: 'Enter name',
+      selectPrimaryBranch: 'Select primary branch',
+      noBranchesAssigned: 'No branches assigned',
     },
     validation: {
       emailRequired: 'Email is required',
@@ -142,6 +147,7 @@ export default {
     messages: {
       userCreated: 'User is created.',
       userUpdated: 'User is updated.',
+      primaryBranchUpdated: 'Primary branch updated.',
     },
     tabs: {
       roles: 'Roles',
@@ -750,7 +756,9 @@ export default {
       description: 'Description',
       criteria: 'Criteria',
       rules: 'Rules',
+      result: 'Result',
       priceList: 'Price List',
+      promotion: 'Promotion',
     },
     labels: {
       selectCriteria: 'Select criteria (max 5)',
@@ -759,6 +767,8 @@ export default {
       wildcard: '— Any —',
       specify: 'Specify value',
       setWildcard: 'Set as any (wildcard)',
+      resultTypePriceList: 'Price List',
+      resultTypePromotion: 'Promotion',
     },
     validation: {
       codeRequired: 'Code is required.',
@@ -767,9 +777,9 @@ export default {
     },
     errors: {
       duplicateCombination:
-        'Duplicate rule combination found. Each row must have a unique set of values.',
+        'Duplicate rule combination found. Each combination + result type must be unique.',
       tooManyCriteria: 'Maximum 5 criteria allowed.',
-      missingValue: 'All rules must have a price list selected.',
+      missingValue: 'All rules must have a price list or promotion selected.',
     },
     messages: {
       created: 'Price matrix is created.',
@@ -833,6 +843,15 @@ export default {
       fixedBonusTiers: 'Fixed Bonus Tiers',
       tierItems: 'Tier Items',
       addTierItem: 'Add Item',
+      tier: {
+        multiplicative: {
+          label: 'Multiplicative',
+          discountHelp:
+            'Scales the flat discount by floor(qty / minQty) (or amount/minAmount). Flat discounts only.',
+          bonusHelp: 'Scales each bonus item quantity by floor(qty / minQty) (or amount/minAmount).',
+          percentageDisabled: 'Not available for percentage discounts.',
+        },
+      },
       customerChoicePool: 'Choice Pool',
       addPoolItem: 'Add Item',
       removePoolItem: 'Remove',
@@ -906,6 +925,34 @@ export default {
       created: 'Promotion is created.',
       updated: 'Promotion is updated.',
       notFound: 'Promotion not found.',
+    },
+  },
+  auditTrails: {
+    title: 'Audit Trails',
+    filters: {
+      type: 'Reference Type',
+      reference: 'Reference',
+      dateRange: 'Date Range',
+    },
+    columns: {
+      referenceType: 'Reference Type',
+      referenceId: 'Reference ID',
+      description: 'Description',
+      createdBy: 'Changed By',
+      createdAt: 'Changed At',
+    },
+    detail: {
+      title: 'Audit Trail Detail',
+      createdAt: 'Changed At',
+      changedBy: 'Changed By',
+      previous: 'Previous',
+      current: 'Current',
+      created: 'Created',
+      deleted: 'Deleted',
+      notFound: 'Audit trail not found.',
+    },
+    references: {
+      promotion: 'Promotion',
     },
   },
   priceMatrixPriority: {

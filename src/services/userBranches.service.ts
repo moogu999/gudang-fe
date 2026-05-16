@@ -1,5 +1,6 @@
 import ApiService from './api'
-import type { AssignBranchesDto } from '@/types/userBranch.type'
+import type { AssignBranchesDto, SetPrimaryBranchDto, UserBranch } from '@/types/userBranch.type'
+import type { Base } from '@/types/api.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
@@ -62,5 +63,15 @@ export class UserBranchesService {
    */
   static async removeBranchFromUser(userBranchId: number): Promise<void> {
     return ApiService.delete<void>(`${this.GEN_BASE_URL}/${userBranchId}`)
+  }
+
+  static async setPrimaryBranch(userId: number, data: SetPrimaryBranchDto): Promise<void> {
+    return ApiService.put<void>(`${API_ENDPOINTS.USERS_V1}/${userId}/primary-branch`, data)
+  }
+
+  static async listForUser(userId: number): Promise<Base<UserBranch>> {
+    return ApiService.get<Base<UserBranch>>(
+      `${this.GEN_BASE_URL}?filterBy=user_id&filterOperator=0&filterValue=${userId}&limit=100`,
+    )
   }
 }

@@ -75,9 +75,7 @@
           sort-operator="asc"
           @select-option="onAddProduct"
         >
-          <template #option="{ option }">
-            {{ option.code }} - {{ option.name }}
-          </template>
+          <template #option="{ option }"> {{ option.code }} - {{ option.name }} </template>
         </InfiniteSelect>
       </div>
       <small v-if="errors.products" class="mb-1 block text-red-500">{{ errors.products }}</small>
@@ -451,9 +449,7 @@ const availableLabelOptions = computed(() => {
     (o) => !group.value.labels.some((l) => l.labelOptionId === o.id),
   )
   if (selectedLabelDefinitionId.value == null) return notYetAdded
-  return notYetAdded.filter(
-    (o) => o.productLabelDefinitionId === selectedLabelDefinitionId.value,
-  )
+  return notYetAdded.filter((o) => o.productLabelDefinitionId === selectedLabelDefinitionId.value)
 })
 
 onMounted(async () => {

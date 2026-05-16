@@ -174,29 +174,73 @@
               </template>
             </Column>
 
-            <!-- Price list column -->
-            <Column :header="t('priceMatrix.fields.priceList')" style="min-width: 200px">
+            <!-- Result column -->
+            <Column :header="t('priceMatrix.fields.result')" style="min-width: 260px">
               <template #body="{ index }">
-                <InfiniteSelect
-                  v-if="!isView"
-                  option-label="code"
-                  option-value="id"
-                  :fetch-fn="(query) => PriceListsService.list(query)"
-                  :initial-option="form.rules[index]._initialPriceList"
-                  :model-value="form.rules[index].priceListId"
-                  sort-by="code"
-                  sort-operator="asc"
-                  class="w-full"
-                  @update:model-value="(v) => (form.rules[index].priceListId = v as number)"
-                  @select-option="(opt) => (form.rules[index]._initialPriceList = opt)"
-                />
-                <span v-else class="text-sm">
-                  {{
-                    form.rules[index]._initialPriceList?.code ??
-                    form.rules[index].priceListId ??
-                    '—'
-                  }}
-                </span>
+                <div class="flex flex-col gap-1">
+                  <!-- Result type toggle (edit mode) -->
+                  <SelectButton
+                    v-if="!isView"
+                    v-model="form.rules[index].resultType"
+                    :options="[
+                      { label: t('priceMatrix.labels.resultTypePriceList'), value: 'price_list' },
+                      { label: t('priceMatrix.labels.resultTypePromotion'), value: 'promotion' },
+                    ]"
+                    option-label="label"
+                    option-value="value"
+                    size="small"
+                    class="w-full"
+                    @update:model-value="onResultTypeChange(index)"
+                  />
+                  <!-- View mode: result type label -->
+                  <span v-else class="text-xs text-gray-500">
+                    {{
+                      form.rules[index].resultType === 'price_list'
+                        ? t('priceMatrix.labels.resultTypePriceList')
+                        : t('priceMatrix.labels.resultTypePromotion')
+                    }}
+                  </span>
+
+                  <!-- Price list select -->
+                  <template v-if="form.rules[index].resultType === 'price_list'">
+                    <InfiniteSelect
+                      v-if="!isView"
+                      option-label="code"
+                      option-value="id"
+                      :fetch-fn="(query) => PriceListsService.list(query)"
+                      :initial-option="form.rules[index]._initialPriceList"
+                      :model-value="form.rules[index].priceListId"
+                      sort-by="code"
+                      sort-operator="asc"
+                      class="w-full"
+                      @update:model-value="(v) => (form.rules[index].priceListId = v as number)"
+                      @select-option="(opt) => (form.rules[index]._initialPriceList = opt)"
+                    />
+                    <span v-else class="text-sm">
+                      {{ form.rules[index]._initialPriceList?.code ?? '—' }}
+                    </span>
+                  </template>
+
+                  <!-- Promotion select -->
+                  <template v-else>
+                    <InfiniteSelect
+                      v-if="!isView"
+                      option-label="code"
+                      option-value="id"
+                      :fetch-fn="(query) => PromotionsService.list(query)"
+                      :initial-option="form.rules[index]._initialPromotion"
+                      :model-value="form.rules[index].promotionId"
+                      sort-by="code"
+                      sort-operator="asc"
+                      class="w-full"
+                      @update:model-value="(v) => (form.rules[index].promotionId = v as number)"
+                      @select-option="(opt) => (form.rules[index]._initialPromotion = opt)"
+                    />
+                    <span v-else class="text-sm">
+                      {{ form.rules[index]._initialPromotion?.code ?? '—' }}
+                    </span>
+                  </template>
+                </div>
               </template>
             </Column>
 
@@ -236,6 +280,7 @@ import { useToast } from 'primevue/usetoast'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import MultiSelect from 'primevue/multiselect'
+import SelectButton from 'primevue/selectbutton'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
@@ -243,6 +288,7 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { CriteriaTypesService } from '@/services/criteria-types.service'
 import { PriceListsService } from '@/services/price-lists.service'
+import { PromotionsService } from '@/services/promotions.service'
 import { BranchesService } from '@/services/branches.service'
 import { CompaniesService } from '@/services/companies.service'
 import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
@@ -274,9 +320,12 @@ interface RuleValueForm {
 
 interface RuleForm {
   id?: number
+  resultType: 'price_list' | 'promotion'
   priceListId: number | undefined
+  promotionId: number | undefined
   values: RuleValueForm[]
   _initialPriceList?: { id: number; code: string }
+  _initialPromotion?: { id: number; code: string }
 }
 
 const props = defineProps<{
@@ -327,10 +376,17 @@ onMounted(async () => {
 
     form.value.rules = props.priceMatrix.rules.map((rule) => ({
       id: rule.id,
-      priceListId: rule.priceListId,
-      _initialPriceList: rule.priceListCode
-        ? { id: rule.priceListId, code: rule.priceListCode }
-        : undefined,
+      resultType: rule.resultType,
+      priceListId: rule.priceListId ?? undefined,
+      promotionId: rule.promotionId ?? undefined,
+      _initialPriceList:
+        rule.priceListCode && rule.priceListId
+          ? { id: rule.priceListId, code: rule.priceListCode }
+          : undefined,
+      _initialPromotion:
+        rule.promotionCode && rule.promotionId
+          ? { id: rule.promotionId, code: rule.promotionCode }
+          : undefined,
       values: form.value.criteria.map((crit) => {
         const rv = rule.values.find((v) => v.criteriaTypeId === crit.criteriaTypeId)
         return {
@@ -427,12 +483,21 @@ function moveCriteria(idx: number, dir: -1 | 1) {
 
 function addRule() {
   form.value.rules.push({
+    resultType: 'price_list',
     priceListId: undefined,
+    promotionId: undefined,
     values: form.value.criteria.map((crit) => ({
       criteriaTypeId: crit.criteriaTypeId,
       valueId: null,
     })),
   })
+}
+
+function onResultTypeChange(ruleIndex: number) {
+  form.value.rules[ruleIndex].priceListId = undefined
+  form.value.rules[ruleIndex].promotionId = undefined
+  form.value.rules[ruleIndex]._initialPriceList = undefined
+  form.value.rules[ruleIndex]._initialPromotion = undefined
 }
 
 function removeRule(index: number) {
@@ -474,10 +539,11 @@ function setRuleValueOption(
 }
 
 function buildRuleKey(rule: RuleForm): string {
-  return rule.values
+  const valuesKey = rule.values
     .map((v) => `${v.criteriaTypeId}:${v.valueId ?? ''}`)
     .sort()
     .join('|')
+  return `${valuesKey}::${rule.resultType}`
 }
 
 function validate(): boolean {
@@ -497,6 +563,16 @@ function validate(): boolean {
   if (form.value.rules.length === 0) {
     errors.value.rules = t('priceMatrix.validation.rulesRequired')
     valid = false
+  }
+
+  if (valid) {
+    const missingResult = form.value.rules.some((rule) =>
+      rule.resultType === 'price_list' ? !rule.priceListId : !rule.promotionId,
+    )
+    if (missingResult) {
+      errors.value.rules = t('priceMatrix.errors.missingValue')
+      valid = false
+    }
   }
 
   if (valid) {
@@ -522,7 +598,9 @@ function onSave() {
       position: c.position,
     })),
     rules: form.value.rules.map((rule) => ({
-      priceListId: rule.priceListId!,
+      resultType: rule.resultType,
+      priceListId: rule.resultType === 'price_list' ? (rule.priceListId ?? null) : null,
+      promotionId: rule.resultType === 'promotion' ? (rule.promotionId ?? null) : null,
       values: rule.values.map((v) => ({
         criteriaTypeId: v.criteriaTypeId,
         valueId: v.valueId ?? null,

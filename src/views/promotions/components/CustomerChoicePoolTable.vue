@@ -74,9 +74,7 @@
               @update:model-value="(v) => (item.productId = v as number)"
               @select-option="(opt) => onProductSelected(item, opt)"
             >
-              <template #option="{ option }">
-                {{ option.code }} - {{ option.name }}
-              </template>
+              <template #option="{ option }"> {{ option.code }} - {{ option.name }} </template>
             </InfiniteSelect>
             <span v-else>{{ item._product?.code ?? String(item.productId ?? '') }}</span>
           </template>

@@ -86,6 +86,7 @@ export default {
     priceMatrices: 'Matriks Harga',
     priceMatrixPriorities: 'Prioritas Matriks Harga',
     promotions: 'Promosi',
+    auditTrails: 'Jejak Audit',
   },
   table: {
     search: 'Cari',
@@ -121,12 +122,16 @@ export default {
       assignBy: 'Tetapkan Melalui',
       selectBranch: 'Pilih Cabang',
       selectSalesOrganization: 'Pilih Organisasi Penjualan',
+      primaryBranch: 'Cabang Utama',
+      primary: 'Utama',
     },
     placeholders: {
       email: 'Masukkan alamat email',
       password: 'Masukkan kata sandi',
       passwordEditMode: 'Biarkan kosong untuk mempertahankan kata sandi saat ini',
       name: 'Masukkan nama',
+      selectPrimaryBranch: 'Pilih cabang utama',
+      noBranchesAssigned: 'Tidak ada cabang yang ditetapkan',
     },
     validation: {
       emailRequired: 'Email wajib diisi',
@@ -142,6 +147,7 @@ export default {
     messages: {
       userCreated: 'Pengguna berhasil dibuat.',
       userUpdated: 'Pengguna berhasil diperbarui.',
+      primaryBranchUpdated: 'Cabang utama berhasil diperbarui.',
     },
     tabs: {
       roles: 'Peran',
@@ -797,6 +803,16 @@ export default {
       fixedBonusTiers: 'Tingkatan Bonus Tetap',
       tierItems: 'Item Tingkatan',
       addTierItem: 'Tambah Item',
+      tier: {
+        multiplicative: {
+          label: 'Multiplikatif',
+          discountHelp:
+            'Mengalikan diskon tetap dengan floor(qty / minQty) (atau amount/minAmount). Hanya untuk diskon tetap.',
+          bonusHelp:
+            'Mengalikan kuantitas setiap item bonus dengan floor(qty / minQty) (atau amount/minAmount).',
+          percentageDisabled: 'Tidak tersedia untuk diskon persentase.',
+        },
+      },
       customerChoicePool: 'Kumpulan Pilihan',
       addPoolItem: 'Tambah Item',
       removePoolItem: 'Hapus',
@@ -882,7 +898,9 @@ export default {
       description: 'Deskripsi',
       criteria: 'Kriteria',
       rules: 'Aturan',
+      result: 'Hasil',
       priceList: 'Daftar Harga',
+      promotion: 'Promosi',
     },
     labels: {
       selectCriteria: 'Pilih kriteria (maks 5)',
@@ -891,6 +909,8 @@ export default {
       wildcard: '— Semua —',
       specify: 'Tentukan nilai',
       setWildcard: 'Jadikan sembarang (wildcard)',
+      resultTypePriceList: 'Daftar Harga',
+      resultTypePromotion: 'Promosi',
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',
@@ -899,14 +919,42 @@ export default {
     },
     errors: {
       duplicateCombination:
-        'Kombinasi aturan duplikat ditemukan. Setiap baris harus memiliki kombinasi nilai yang unik.',
+        'Kombinasi aturan duplikat ditemukan. Setiap kombinasi + tipe hasil harus unik.',
       tooManyCriteria: 'Maksimal 5 kriteria diizinkan.',
-      missingValue: 'Semua aturan harus memiliki daftar harga yang dipilih.',
+      missingValue: 'Semua aturan harus memiliki daftar harga atau promosi yang dipilih.',
     },
     messages: {
       created: 'Matriks harga berhasil dibuat.',
       updated: 'Matriks harga berhasil diperbarui.',
       notFound: 'Matriks harga tidak ditemukan.',
+    },
+  },
+  auditTrails: {
+    title: 'Jejak Audit',
+    filters: {
+      type: 'Tipe Referensi',
+      reference: 'Referensi',
+      dateRange: 'Rentang Tanggal',
+    },
+    columns: {
+      referenceType: 'Tipe Referensi',
+      referenceId: 'ID Referensi',
+      description: 'Deskripsi',
+      createdBy: 'Diubah Oleh',
+      createdAt: 'Diubah Pada',
+    },
+    detail: {
+      title: 'Detail Jejak Audit',
+      createdAt: 'Diubah Pada',
+      changedBy: 'Diubah Oleh',
+      previous: 'Sebelumnya',
+      current: 'Saat Ini',
+      created: 'Dibuat',
+      deleted: 'Dihapus',
+      notFound: 'Jejak audit tidak ditemukan.',
+    },
+    references: {
+      promotion: 'Promosi',
     },
   },
   priceMatrixPriority: {

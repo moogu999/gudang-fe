@@ -1183,6 +1183,12 @@ export default {
       saved: 'Data karyawan berhasil disimpan.',
       draftSaved: 'Draft berhasil disimpan.',
       deleted: 'Karyawan berhasil dihapus.',
+      photoUploadFailed: 'Upload foto gagal. Silakan coba upload ulang dari halaman detail karyawan.',
+      photoDeleted: 'Foto berhasil dihapus.',
+    },
+    confirm: {
+      deletePhotoTitle: 'Hapus Foto',
+      deletePhotoMessage: 'Apakah Anda yakin ingin menghapus foto ini? Tindakan ini tidak dapat dibatalkan.',
     },
     placeholders: {
       nip: 'Masukkan NIP',
@@ -1199,6 +1205,9 @@ export default {
       saveDraft: 'Simpan sebagai Draft',
       selectEmployeeType: 'Pilih tipe karyawan',
       optional: 'opsional',
+      uploadPhoto: 'Upload Foto',
+      viewPhoto: 'Lihat ukuran penuh',
+      deletePhoto: 'Hapus Foto',
     },
     filter: {
       statusAll: 'Semua Status',

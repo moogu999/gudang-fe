@@ -834,6 +834,7 @@ export default {
       voucherTiers: 'Voucher Tiers',
       voucherDiscountType: 'Voucher Type',
       voucherValue: 'Voucher Value',
+      target: 'Target',
     },
     labels: {
       groups: 'Groups',
@@ -856,10 +857,12 @@ export default {
           label: 'Multiplicative',
           discountHelp:
             'Scales the flat discount by floor(qty / minQty) (or amount/minAmount). Flat discounts only.',
-          bonusHelp: 'Scales each bonus item quantity by floor(qty / minQty) (or amount/minAmount).',
+          bonusHelp:
+            'Scales each bonus item quantity by floor(qty / minQty) (or amount/minAmount).',
           percentageDisabled: 'Not available for percentage discounts.',
         },
       },
+      wholeInvoice: 'Whole Invoice',
       customerChoicePool: 'Choice Pool',
       addPoolItem: 'Add Item',
       removePoolItem: 'Remove',
@@ -928,6 +931,9 @@ export default {
       voucherMinRedeemAmountInvalid: 'Minimum redeem amount must be greater than 0.',
       voucherTiersRequired: 'At least one voucher tier is required.',
       voucherValueRange: 'Percentage voucher value must be between 0 and 100.',
+      tiersNotAscendingPerTarget: 'Tier thresholds must be strictly ascending within each target.',
+      tierInvoiceProductCollision:
+        'A threshold used by a whole-invoice tier cannot be reused by a product or label tier.',
     },
     messages: {
       created: 'Promotion is created.',

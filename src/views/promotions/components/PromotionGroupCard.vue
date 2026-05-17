@@ -266,6 +266,7 @@
         <DiscountTiersTable
           v-model:tiers="group.reward.discountTiers"
           :threshold-kind="group.thresholdKind"
+          :qualifier-items="qualifierItems"
           :errors="errors.discountTierErrors"
           :is-view="isView"
         />
@@ -299,6 +300,7 @@
           <FixedBonusTiersTable
             v-model:tiers="group.reward.fixedBonusTiers"
             :threshold-kind="group.thresholdKind"
+            :qualifier-items="qualifierItems"
             :tier-errors="errors.fixedBonusTierErrors"
             :is-view="isView"
           />
@@ -317,7 +319,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -331,7 +333,10 @@ import { ProductsService } from '@/services/products.service'
 import { ProductLabelOptionsService } from '@/services/productLabelOptions.service'
 import { ProductLabelDefinitionsService } from '@/services/productLabelDefinitions.service'
 import type { RewardType, BonusKind, MeasureKind, PromoType } from '@/types/promotion.type'
-import DiscountTiersTable, { type DiscountTierForm } from './DiscountTiersTable.vue'
+import DiscountTiersTable, {
+  type DiscountTierForm,
+  type TierQualifierItem,
+} from './DiscountTiersTable.vue'
 import FixedBonusTiersTable, { type FixedBonusTierForm } from './FixedBonusTiersTable.vue'
 import CustomerChoicePoolTable, {
   type CustomerChoicePoolForm,
@@ -451,6 +456,57 @@ const availableLabelOptions = computed(() => {
   if (selectedLabelDefinitionId.value == null) return notYetAdded
   return notYetAdded.filter((o) => o.productLabelDefinitionId === selectedLabelDefinitionId.value)
 })
+
+const qualifierItems = computed<TierQualifierItem[]>(() => {
+  if (group.value.qualifierKind === 'products') {
+    return group.value.products
+      .filter((p) => p.productId != null)
+      .map((p) => ({
+        kind: 'product' as const,
+        id: p.productId!,
+        label: p._product ? `${p._product.code} - ${p._product.name}` : String(p.productId),
+      }))
+  }
+  return group.value.labels.map((l) => {
+    const opt = allLabelOptions.value.find((o) => o.id === l.labelOptionId)
+    return {
+      kind: 'label' as const,
+      id: l.labelOptionId,
+      label: opt?.value ?? String(l.labelOptionId),
+    }
+  })
+})
+
+function resetStaleTierTargets() {
+  const validProductIds = new Set(group.value.products.map((p) => p.productId))
+  const validLabelIds = new Set(group.value.labels.map((l) => l.labelOptionId))
+  const qk = group.value.qualifierKind
+
+  function resetIfStale(tier: DiscountTierForm | FixedBonusTierForm) {
+    if (
+      tier.targetKind === 'product' &&
+      (qk !== 'products' || !validProductIds.has(tier.targetProductId ?? undefined))
+    ) {
+      tier.targetKind = 'invoice'
+      tier.targetProductId = null
+      tier.targetLabelOptionId = null
+    } else if (
+      tier.targetKind === 'label' &&
+      (qk !== 'labels' || !validLabelIds.has(tier.targetLabelOptionId ?? 0))
+    ) {
+      tier.targetKind = 'invoice'
+      tier.targetProductId = null
+      tier.targetLabelOptionId = null
+    }
+  }
+
+  for (const tier of group.value.reward.discountTiers) resetIfStale(tier)
+  for (const tier of group.value.reward.fixedBonusTiers) resetIfStale(tier)
+}
+
+watch(() => group.value.qualifierKind, resetStaleTierTargets)
+watch(() => group.value.products.map((p) => p.productId), resetStaleTierTargets)
+watch(() => group.value.labels.map((l) => l.labelOptionId), resetStaleTierTargets)
 
 onMounted(async () => {
   await loadLabelOptions()

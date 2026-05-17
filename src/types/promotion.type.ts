@@ -1,4 +1,5 @@
 export type PromoType = 'per_transaction' | 'period_based'
+export type TargetKind = 'invoice' | 'product' | 'label'
 export type QualifierKind = 'products' | 'labels'
 export type ThresholdKind = 'min_qty' | 'min_amount'
 export type MeasureKind = 'total_qty' | 'total_amount'
@@ -15,6 +16,11 @@ export type PromotionDiscountTier = {
   discountType: DiscountType
   value: string
   isMultiplicative?: boolean | null
+  targetKind: TargetKind
+  targetProductId?: number | null
+  targetLabelOptionId?: number | null
+  targetProduct?: { code: string; name: string } | null
+  targetLabel?: { name: string } | null
 }
 
 export type PromotionFixedBonusTierItem = {
@@ -30,6 +36,11 @@ export type PromotionFixedBonusTier = {
   minAmount?: string | null
   items: PromotionFixedBonusTierItem[]
   isMultiplicative?: boolean | null
+  targetKind: TargetKind
+  targetProductId?: number | null
+  targetLabelOptionId?: number | null
+  targetProduct?: { code: string; name: string } | null
+  targetLabel?: { name: string } | null
 }
 
 export type PromotionCustomerChoicePoolItem = {
@@ -147,6 +158,9 @@ export type CreateDiscountTierDto = {
   discountType: DiscountType
   value: string
   isMultiplicative: boolean
+  targetKind: TargetKind
+  targetProductId?: number | null
+  targetLabelOptionId?: number | null
 }
 
 export type CreateFixedBonusTierItemDto = {
@@ -159,6 +173,9 @@ export type CreateFixedBonusTierDto = {
   minAmount?: string | null
   items: CreateFixedBonusTierItemDto[]
   isMultiplicative: boolean
+  targetKind: TargetKind
+  targetProductId?: number | null
+  targetLabelOptionId?: number | null
 }
 
 export type CreateCustomerChoicePoolItemDto = {

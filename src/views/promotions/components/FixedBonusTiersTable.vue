@@ -19,9 +19,25 @@
     </div>
 
     <div v-for="(tier, tierIdx) in tiers" :key="tierIdx" class="mb-3 rounded border p-3">
-      <!-- Tier header: threshold + multiplicative + remove -->
+      <!-- Tier header: target + threshold + multiplicative + remove -->
       <div class="mb-2 flex items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">
+              {{ t('promotions.fields.target') }}
+            </label>
+            <Select
+              v-if="!isView"
+              :model-value="tierTargetKey(tier)"
+              :options="targetOptions"
+              option-label="label"
+              option-value="value"
+              size="small"
+              style="width: 10rem"
+              @update:model-value="(v) => onTargetChange(tier, v as string)"
+            />
+            <span v-else class="text-sm">{{ tierTargetLabel(tier) }}</span>
+          </div>
           <div class="flex items-center gap-2">
             <label class="text-sm font-medium text-gray-600">
               {{
@@ -157,15 +173,18 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
+import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { ProductsService } from '@/services/products.service'
-import type { ThresholdKind } from '@/types/promotion.type'
+import type { ThresholdKind, TargetKind } from '@/types/promotion.type'
+import type { TierQualifierItem } from './DiscountTiersTable.vue'
 
 export interface FixedBonusTierItemForm {
   productId: number | undefined
@@ -177,20 +196,67 @@ export interface FixedBonusTierForm {
   threshold: string
   items: FixedBonusTierItemForm[]
   isMultiplicative: boolean
+  targetKind: TargetKind
+  targetProductId: number | null
+  targetLabelOptionId: number | null
 }
 
 const tiers = defineModel<FixedBonusTierForm[]>('tiers', { required: true })
 
-defineProps<{
+const props = defineProps<{
   thresholdKind: ThresholdKind
+  qualifierItems: TierQualifierItem[]
   tierErrors: string[][]
   isView: boolean
 }>()
 
 const { t } = useI18n()
 
+const targetOptions = computed(() => [
+  { label: t('promotions.labels.wholeInvoice'), value: 'invoice' },
+  ...props.qualifierItems.map((qi) => ({
+    label: qi.label,
+    value: `${qi.kind}:${qi.id}`,
+  })),
+])
+
+function tierTargetKey(tier: FixedBonusTierForm): string {
+  if (tier.targetKind === 'product') return `product:${tier.targetProductId}`
+  if (tier.targetKind === 'label') return `label:${tier.targetLabelOptionId}`
+  return 'invoice'
+}
+
+function tierTargetLabel(tier: FixedBonusTierForm): string {
+  if (tier.targetKind === 'invoice') return t('promotions.labels.wholeInvoice')
+  const opt = targetOptions.value.find((o) => o.value === tierTargetKey(tier))
+  return opt?.label ?? tierTargetKey(tier)
+}
+
+function onTargetChange(tier: FixedBonusTierForm, value: string) {
+  if (value === 'invoice') {
+    tier.targetKind = 'invoice'
+    tier.targetProductId = null
+    tier.targetLabelOptionId = null
+  } else if (value.startsWith('product:')) {
+    tier.targetKind = 'product'
+    tier.targetProductId = Number(value.slice('product:'.length))
+    tier.targetLabelOptionId = null
+  } else if (value.startsWith('label:')) {
+    tier.targetKind = 'label'
+    tier.targetProductId = null
+    tier.targetLabelOptionId = Number(value.slice('label:'.length))
+  }
+}
+
 function addTier() {
-  tiers.value.push({ threshold: '', items: [], isMultiplicative: false })
+  tiers.value.push({
+    threshold: '',
+    items: [],
+    isMultiplicative: false,
+    targetKind: 'invoice',
+    targetProductId: null,
+    targetLabelOptionId: null,
+  })
 }
 
 function removeTier(tierIdx: number) {

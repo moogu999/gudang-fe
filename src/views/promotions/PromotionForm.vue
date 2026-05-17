@@ -331,11 +331,17 @@ onMounted(() => {
           discountType: dt.discountType as DiscountType,
           value: dt.value,
           isMultiplicative: dt.isMultiplicative ?? false,
+          targetKind: dt.targetKind ?? 'invoice',
+          targetProductId: dt.targetProductId ?? null,
+          targetLabelOptionId: dt.targetLabelOptionId ?? null,
         }))
 
         const fixedBonusTiers: FixedBonusTierForm[] = (reward.fixedBonusTiers ?? []).map((ft) => ({
           threshold: g.thresholdKind === 'min_qty' ? (ft.minQty ?? '') : (ft.minAmount ?? ''),
           isMultiplicative: ft.isMultiplicative ?? false,
+          targetKind: ft.targetKind ?? 'invoice',
+          targetProductId: ft.targetProductId ?? null,
+          targetLabelOptionId: ft.targetLabelOptionId ?? null,
           items: ft.items.map((item) => ({
             productId: item.productId,
             qty: item.qty,
@@ -399,6 +405,47 @@ function formatDate(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   return `${y}-${m}-${day}`
+}
+
+function getTierTargetKey(tier: DiscountTierForm | FixedBonusTierForm): string {
+  if (tier.targetKind === 'product') return `product:${tier.targetProductId}`
+  if (tier.targetKind === 'label') return `label:${tier.targetLabelOptionId}`
+  return 'invoice'
+}
+
+function validateTierThresholds(tiers: Array<DiscountTierForm | FixedBonusTierForm>): string {
+  // Per-target ascending check
+  const buckets = new Map<string, number[]>()
+  for (const tier of tiers) {
+    const key = getTierTargetKey(tier)
+    if (!buckets.has(key)) buckets.set(key, [])
+    buckets.get(key)!.push(parseFloat(tier.threshold || '0'))
+  }
+  for (const [, thresholds] of buckets) {
+    for (let i = 1; i < thresholds.length; i++) {
+      if (isNaN(thresholds[i]) || thresholds[i] <= thresholds[i - 1]) {
+        return t('promotions.validation.tiersNotAscendingPerTarget')
+      }
+    }
+  }
+
+  // Invoice-blocks-product collision check
+  const invoiceThresholds = new Set<number>()
+  for (const tier of tiers) {
+    if (tier.targetKind === 'invoice') {
+      invoiceThresholds.add(parseFloat(tier.threshold || '0'))
+    }
+  }
+  for (const tier of tiers) {
+    if (tier.targetKind !== 'invoice') {
+      const v = parseFloat(tier.threshold || '0')
+      if (invoiceThresholds.has(v)) {
+        return t('promotions.validation.tierInvoiceProductCollision')
+      }
+    }
+  }
+
+  return ''
 }
 
 function validate(): boolean {
@@ -513,20 +560,14 @@ function validate(): boolean {
           if (tier.discountType === 'percentage') {
             const v = parseFloat(tier.value)
             if (isNaN(v) || v < 0 || v > 100) return t('promotions.validation.tierValueRange')
-            if (tier.isMultiplicative) return t('promotions.labels.tier.multiplicative.percentageDisabled')
+            if (tier.isMultiplicative)
+              return t('promotions.labels.tier.multiplicative.percentageDisabled')
           }
           return ''
         })
         if (ge.discountTierErrors.some((e) => e)) valid = false
-        for (let i = 1; i < reward.discountTiers.length; i++) {
-          const prev = parseFloat(reward.discountTiers[i - 1].threshold || '0')
-          const curr = parseFloat(reward.discountTiers[i].threshold || '0')
-          if (isNaN(curr) || curr <= prev) {
-            ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
-            valid = false
-            break
-          }
-        }
+        ge.tierThresholdError = validateTierThresholds(reward.discountTiers)
+        if (ge.tierThresholdError) valid = false
       }
 
       if (reward.rewardType === 'bonus' && reward.bonusKind === 'fixed') {
@@ -541,15 +582,8 @@ function validate(): boolean {
           })
         })
         if (ge.fixedBonusTierErrors.some((te) => te.some((e) => e))) valid = false
-        for (let i = 1; i < reward.fixedBonusTiers.length; i++) {
-          const prev = parseFloat(reward.fixedBonusTiers[i - 1].threshold || '0')
-          const curr = parseFloat(reward.fixedBonusTiers[i].threshold || '0')
-          if (isNaN(curr) || curr <= prev) {
-            ge.tierThresholdError = t('promotions.validation.tiersNotAscending')
-            valid = false
-            break
-          }
-        }
+        ge.tierThresholdError = validateTierThresholds(reward.fixedBonusTiers)
+        if (ge.tierThresholdError) valid = false
       }
 
       if (reward.rewardType === 'bonus' && reward.bonusKind === 'customer_choice') {
@@ -644,12 +678,15 @@ function buildGroupDto(group: GroupForm) {
     bonusKind: reward.bonusKind || undefined,
     discountTiers:
       reward.rewardType === 'discount'
-        ? reward.discountTiers.map((t) => ({
-            minQty: isMinQty ? t.threshold || null : null,
-            minAmount: !isMinQty ? t.threshold || null : null,
-            discountType: t.discountType as DiscountType,
-            value: t.value,
-            isMultiplicative: t.isMultiplicative,
+        ? reward.discountTiers.map((tier) => ({
+            minQty: isMinQty ? tier.threshold || null : null,
+            minAmount: !isMinQty ? tier.threshold || null : null,
+            discountType: tier.discountType as DiscountType,
+            value: tier.value,
+            isMultiplicative: tier.isMultiplicative,
+            targetKind: tier.targetKind,
+            targetProductId: tier.targetProductId ?? null,
+            targetLabelOptionId: tier.targetLabelOptionId ?? null,
           }))
         : undefined,
     fixedBonusTiers:
@@ -658,6 +695,9 @@ function buildGroupDto(group: GroupForm) {
             minQty: isMinQty ? ft.threshold || null : null,
             minAmount: !isMinQty ? ft.threshold || null : null,
             isMultiplicative: ft.isMultiplicative,
+            targetKind: ft.targetKind,
+            targetProductId: ft.targetProductId ?? null,
+            targetLabelOptionId: ft.targetLabelOptionId ?? null,
             items: ft.items.map((item) => ({
               productId: item.productId!,
               qty: item.qty,

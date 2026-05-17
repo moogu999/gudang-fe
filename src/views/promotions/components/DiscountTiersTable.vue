@@ -19,6 +19,21 @@
     </div>
 
     <DataTable v-else :value="tiers" size="small">
+      <Column :header="t('promotions.fields.target')" style="width: 12rem">
+        <template #body="{ data: tier }">
+          <Select
+            v-if="!isView"
+            :model-value="tierTargetKey(tier)"
+            :options="targetOptions"
+            option-label="label"
+            option-value="value"
+            class="w-full"
+            size="small"
+            @update:model-value="(v) => onTargetChange(tier, v as string)"
+          />
+          <span v-else>{{ tierTargetLabel(tier) }}</span>
+        </template>
+      </Column>
       <Column
         :header="
           thresholdKind === 'min_qty'
@@ -48,7 +63,11 @@
             option-value="value"
             class="w-full"
             size="small"
-            @update:model-value="(v) => { if (v === 'percentage') tier.isMultiplicative = false }"
+            @update:model-value="
+              (v) => {
+                if (v === 'percentage') tier.isMultiplicative = false
+              }
+            "
           />
           <span v-else>
             {{
@@ -80,7 +99,9 @@
             v-model="tier.isMultiplicative"
             :disabled="tier.discountType === 'percentage'"
           />
-          <span v-else>{{ tier.isMultiplicative ? t('common.labels.yes') : t('common.labels.no') }}</span>
+          <span v-else>{{
+            tier.isMultiplicative ? t('common.labels.yes') : t('common.labels.no')
+          }}</span>
         </template>
       </Column>
       <Column v-if="!isView" style="width: 4rem">
@@ -108,19 +129,29 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import ToggleSwitch from 'primevue/toggleswitch'
-import type { ThresholdKind, DiscountType } from '@/types/promotion.type'
+import type { ThresholdKind, DiscountType, TargetKind } from '@/types/promotion.type'
+
+export interface TierQualifierItem {
+  kind: 'product' | 'label'
+  id: number
+  label: string
+}
 
 export interface DiscountTierForm {
   threshold: string
   discountType: DiscountType | ''
   value: string
   isMultiplicative: boolean
+  targetKind: TargetKind
+  targetProductId: number | null
+  targetLabelOptionId: number | null
 }
 
 const tiers = defineModel<DiscountTierForm[]>('tiers', { required: true })
 
-defineProps<{
+const props = defineProps<{
   thresholdKind: ThresholdKind
+  qualifierItems: TierQualifierItem[]
   errors: string[]
   isView: boolean
 }>()
@@ -132,8 +163,52 @@ const discountTypeOptions = computed(() => [
   { label: t('promotions.labels.discountTypes.percentage'), value: 'percentage' },
 ])
 
+const targetOptions = computed(() => [
+  { label: t('promotions.labels.wholeInvoice'), value: 'invoice' },
+  ...props.qualifierItems.map((qi) => ({
+    label: qi.label,
+    value: `${qi.kind}:${qi.id}`,
+  })),
+])
+
+function tierTargetKey(tier: DiscountTierForm): string {
+  if (tier.targetKind === 'product') return `product:${tier.targetProductId}`
+  if (tier.targetKind === 'label') return `label:${tier.targetLabelOptionId}`
+  return 'invoice'
+}
+
+function tierTargetLabel(tier: DiscountTierForm): string {
+  if (tier.targetKind === 'invoice') return t('promotions.labels.wholeInvoice')
+  const opt = targetOptions.value.find((o) => o.value === tierTargetKey(tier))
+  return opt?.label ?? tierTargetKey(tier)
+}
+
+function onTargetChange(tier: DiscountTierForm, value: string) {
+  if (value === 'invoice') {
+    tier.targetKind = 'invoice'
+    tier.targetProductId = null
+    tier.targetLabelOptionId = null
+  } else if (value.startsWith('product:')) {
+    tier.targetKind = 'product'
+    tier.targetProductId = Number(value.slice('product:'.length))
+    tier.targetLabelOptionId = null
+  } else if (value.startsWith('label:')) {
+    tier.targetKind = 'label'
+    tier.targetProductId = null
+    tier.targetLabelOptionId = Number(value.slice('label:'.length))
+  }
+}
+
 function addTier() {
-  tiers.value.push({ threshold: '', discountType: '', value: '', isMultiplicative: false })
+  tiers.value.push({
+    threshold: '',
+    discountType: '',
+    value: '',
+    isMultiplicative: false,
+    targetKind: 'invoice',
+    targetProductId: null,
+    targetLabelOptionId: null,
+  })
 }
 
 function removeTier(index: number) {

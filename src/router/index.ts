@@ -234,6 +234,26 @@ const router = createRouter({
           component: () => import('@/views/audit-trails/AuditTrailDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.AUDIT_TRAIL_READ },
         },
+        {
+          path: 'employees',
+          name: 'Employees',
+          component: () => import('@/views/employees/EmployeesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.EMPLOYEE_READ },
+        },
+        {
+          path: 'employees/new',
+          name: 'EmployeeNew',
+          component: () => import('@/views/employees/EmployeeDetailView.vue'),
+          props: { mode: 'add' },
+          meta: { requiredPermission: PERMISSIONS.EMPLOYEE_CREATE },
+        },
+        {
+          path: 'employees/:id',
+          name: 'EmployeeDetail',
+          component: () => import('@/views/employees/EmployeeDetailView.vue'),
+          props: (route) => ({ mode: 'view', id: Number(route.params.id) }),
+          meta: { requiredPermission: PERMISSIONS.EMPLOYEE_READ },
+        },
       ],
     },
 

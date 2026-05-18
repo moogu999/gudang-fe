@@ -155,6 +155,17 @@ export type {
 // Audit Trail types
 export type { AuditReferenceType, AuditTrailListItem, AuditTrail } from './auditTrail.type'
 
+// Employee types
+export type {
+  EmploymentStatus,
+  EmployeeType,
+  EmployeeLite,
+  Employee,
+  CreateEmployeeDto,
+  UpdateEmployeeDto,
+  EmployeeSummary,
+} from './employee.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

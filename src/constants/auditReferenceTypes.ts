@@ -21,4 +21,15 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     },
     codeField: 'code',
   },
+  employee: {
+    label: 'Employee',
+    labelKey: 'auditTrails.references.employee',
+    listEndpoint: API_ENDPOINTS.EMPLOYEES,
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query ? `${API_ENDPOINTS.EMPLOYEES}?${query}` : API_ENDPOINTS.EMPLOYEES
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'name',
+  },
 }

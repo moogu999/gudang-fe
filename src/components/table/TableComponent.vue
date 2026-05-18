@@ -251,7 +251,7 @@ import Card from 'primevue/card'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch, nextTick } from 'vue'
 import type { Column as ColumnType } from '@/types/table.type'
 import ApiService from '@/services/api'
 import type { Base } from '@/types/api.type'
@@ -451,6 +451,14 @@ watch(selectedRow, (newVal) => {
       matchMode: FilterMatchMode.EQUALS,
     }
   }
+})
+
+watch(() => props.url, async () => {
+  resetToFirstPage()
+  currSort = undefined
+  searchQuery.value = ''
+  currFilters.value = new Map()
+  await fetchData(currPage)
 })
 
 async function handleSortChange(event: DataTableSortEvent) {

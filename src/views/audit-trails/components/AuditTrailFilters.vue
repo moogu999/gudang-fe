@@ -25,6 +25,7 @@
         :option-label="currentTypeEntry.codeField"
         option-value="id"
         :fetch-fn="currentTypeEntry.fetchFn"
+        :initial-option="initialReferenceOption"
         sort-by="code"
         sort-operator="asc"
         class="w-52"
@@ -60,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
@@ -70,6 +71,16 @@ import { AUDIT_REFERENCE_TYPES } from '@/constants/auditReferenceTypes'
 import type { AuditReferenceType } from '@/types/auditTrail.type'
 
 const { t } = useI18n()
+
+const props = withDefaults(
+  defineProps<{
+    initialFilters?: {
+      referenceType?: AuditReferenceType
+      referenceId?: number
+    }
+  }>(),
+  { initialFilters: undefined },
+)
 
 const emit = defineEmits<{
   change: [
@@ -85,6 +96,16 @@ const selectedType = ref<AuditReferenceType | undefined>(undefined)
 const selectedReferenceId = ref<number | undefined>(undefined)
 const selectedDateRange = ref<Date[] | null>(null)
 
+// When a referenceId is pre-seeded from a query param, we only have the ID.
+// Pass a minimal initial-option so InfiniteSelect shows "#ID" until the user interacts.
+const initialReferenceOption = computed(() => {
+  if (!props.initialFilters?.referenceId || selectedReferenceId.value !== props.initialFilters.referenceId) {
+    return undefined
+  }
+  const codeField = currentTypeEntry.value?.codeField ?? 'name'
+  return { id: props.initialFilters.referenceId, [codeField]: `#${props.initialFilters.referenceId}` }
+})
+
 const typeOptions = computed(() =>
   Object.entries(AUDIT_REFERENCE_TYPES).map(([value, entry]) => ({
     value,
@@ -95,6 +116,13 @@ const typeOptions = computed(() =>
 const currentTypeEntry = computed(() =>
   selectedType.value ? AUDIT_REFERENCE_TYPES[selectedType.value] : undefined,
 )
+
+onMounted(() => {
+  if (props.initialFilters?.referenceType) {
+    selectedType.value = props.initialFilters.referenceType
+    selectedReferenceId.value = props.initialFilters.referenceId
+  }
+})
 
 function onTypeChange() {
   selectedReferenceId.value = undefined

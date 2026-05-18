@@ -1,4 +1,4 @@
-export type AuditReferenceType = 'promotion'
+export type AuditReferenceType = 'promotion' | 'employee'
 
 export type AuditTrailListItem = {
   id: number

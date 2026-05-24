@@ -89,6 +89,13 @@ export type {
   CustomerLite,
   ProductLite,
   ProductLiteWithUom,
+  LineDiscount,
+  LineBonus,
+  ChoicePoolItem,
+  ChoiceOffer,
+  ResolvedLine,
+  ResolveSalesOrderRequest,
+  ResolveSalesOrderResponse,
 } from './salesOrder.type'
 
 // Number Series types

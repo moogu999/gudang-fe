@@ -139,6 +139,16 @@ const router = createRouter({
           component: () => import('@/views/sales-orders/SalesOrdersView.vue'),
         },
         {
+          path: 'sales-orders/create',
+          name: 'SalesOrderCreate',
+          component: () => import('@/views/sales-orders/SalesOrderCreateView.vue'),
+        },
+        {
+          path: 'sales-orders/:id',
+          name: 'SalesOrderDetail',
+          component: () => import('@/views/sales-orders/SalesOrderDetailView.vue'),
+        },
+        {
           path: 'number-series',
           name: 'NumberSeries',
           component: () => import('@/views/number-series/NumberSeriesView.vue'),

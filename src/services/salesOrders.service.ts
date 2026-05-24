@@ -1,5 +1,10 @@
 import ApiService from './api'
-import type { SalesOrderHeader, CreateSalesOrderRequest } from '@/types/salesOrder.type'
+import type {
+  SalesOrderHeader,
+  CreateSalesOrderRequest,
+  ResolveSalesOrderRequest,
+  ResolveSalesOrderResponse,
+} from '@/types/salesOrder.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
@@ -36,5 +41,9 @@ export class SalesOrdersService {
    */
   static async create(data: CreateSalesOrderRequest): Promise<SalesOrderHeader> {
     return ApiService.post<SalesOrderHeader>(this.BASE_URL, data)
+  }
+
+  static async resolve(data: ResolveSalesOrderRequest): Promise<ResolveSalesOrderResponse> {
+    return ApiService.post<ResolveSalesOrderResponse>(API_ENDPOINTS.RESOLVE_SALES_ORDER, data)
   }
 }

@@ -25,7 +25,8 @@ export default {
     },
     confirm: {
       unsavedTitle: 'Ada Perubahan Belum Tersimpan',
-      unsavedMessage: 'Anda memiliki perubahan yang belum disimpan. Yakin ingin meninggalkan halaman?',
+      unsavedMessage:
+        'Anda memiliki perubahan yang belum disimpan. Yakin ingin meninggalkan halaman?',
     },
     labels: {
       actions: 'Aksi',
@@ -603,6 +604,12 @@ export default {
     addSalesOrder: 'Tambah Pesanan',
     viewSalesOrder: 'Lihat Pesanan',
 
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+
     sections: {
       orderInfo: 'Informasi Pesanan',
       paymentInfo: 'Pembayaran & Keuangan',
@@ -615,6 +622,7 @@ export default {
       deliveryDate: 'Tanggal Pengiriman',
       expiredDate: 'Tanggal Kadaluarsa',
       customer: 'Pelanggan',
+      salesman: 'Salesman',
       remark: 'Catatan',
       isCash: 'Penjualan Tunai',
       discountAmount: 'Diskon',
@@ -627,19 +635,34 @@ export default {
       title: 'Detail Pesanan',
       addDetail: 'Tambah Item',
       empty: 'Belum ada item',
+      productCode: 'Kode',
       product: 'Produk',
       quantity: 'Jumlah',
       price: 'Harga',
+      gross: 'Bruto',
       discount: 'Diskon',
       subAmount: 'Subtotal',
+      resolving: 'Menghitung harga…',
+      invoiceDiscounts: 'Diskon Invoice',
+      invoiceBonuses: 'Bonus Invoice',
+      chooseInvoiceBonus: 'Pilih Item Bonus Invoice',
+      promotionDiscounts: 'Diskon Promosi',
+      promotionCode: 'Kode',
+      discountType: 'Tipe',
+      discountValue: 'Nilai',
+      discountAmount: 'Jumlah',
+      bonusItems: 'Item Bonus',
+      chooseBonus: 'Pilih Item Bonus',
+      pickCount: 'Pilih {count}',
+      pickRemaining: 'Pilih {count} lagi',
+      noPromotions: 'Tidak ada promosi yang berlaku',
+      productId: 'Produk #{id}',
     },
 
     summary: {
       title: 'Ringkasan Pesanan',
-      subtotal: 'Subtotal',
-      discount: 'Diskon',
-      dpp: 'DPP',
-      tax: 'Pajak',
+      grossTotal: 'Subtotal',
+      discountTotal: 'Diskon',
       total: 'Total',
     },
 
@@ -647,10 +670,13 @@ export default {
       noRequired: 'Nomor pesanan wajib diisi',
       orderDateRequired: 'Tanggal pesanan wajib diisi',
       customerRequired: 'Pelanggan wajib dipilih',
+      salesmanRequired: 'Salesman wajib dipilih',
       detailsRequired: 'Minimal satu item harus ditambahkan',
-      detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+      detailIncomplete: 'Baris {row}: Produk dan jumlah wajib diisi',
       tierSkippingNotAllowed:
         'Baris {row}: jumlah tidak boleh melewati tingkatan (mis. 0/0/1 tidak valid)',
+      choicePickRequired: 'Baris {row}: lengkapi semua pilihan item bonus',
+      invoiceChoicePickRequired: 'Lengkapi semua pilihan item bonus tingkat invoice',
     },
 
     messages: {
@@ -1033,12 +1059,14 @@ export default {
       saved: 'Data karyawan berhasil disimpan.',
       draftSaved: 'Draft berhasil disimpan.',
       deleted: 'Karyawan berhasil dihapus.',
-      photoUploadFailed: 'Upload foto gagal. Silakan coba upload ulang dari halaman detail karyawan.',
+      photoUploadFailed:
+        'Upload foto gagal. Silakan coba upload ulang dari halaman detail karyawan.',
       photoDeleted: 'Foto berhasil dihapus.',
     },
     confirm: {
       deletePhotoTitle: 'Hapus Foto',
-      deletePhotoMessage: 'Apakah Anda yakin ingin menghapus foto ini? Tindakan ini tidak dapat dibatalkan.',
+      deletePhotoMessage:
+        'Apakah Anda yakin ingin menghapus foto ini? Tindakan ini tidak dapat dibatalkan.',
     },
     placeholders: {
       nip: 'Masukkan NIP',

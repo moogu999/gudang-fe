@@ -11,6 +11,68 @@ export interface ProductLiteWithUom {
   }
 }
 
+// Resolve contract types
+export interface LineDiscount {
+  promotionId: number
+  promotionCode: string
+  promotionDescription: string
+  discountType: string
+  value: string
+  amount: string
+}
+
+export interface LineBonus {
+  promotionId: number
+  promotionCode: string
+  promotionDescription: string
+  bonusProductId: number
+  bonusProductCode: string
+  bonusProductName: string
+  qty: string
+}
+
+export interface ChoicePoolItem {
+  productId: number
+  productCode: string
+  productName: string
+  bonusAmount: string
+}
+
+export interface ChoiceOffer {
+  promotionId: number
+  promotionCode: string
+  promotionDescription: string
+  pickableCount: number
+  pool: ChoicePoolItem[]
+}
+
+export interface ResolvedLine {
+  productId: number
+  price: string
+  priceListId: number | null
+  priceListCode: string | null
+  discount: string
+  discounts: LineDiscount[]
+  bonuses: LineBonus[]
+  choiceOffers: ChoiceOffer[]
+}
+
+export interface ResolveSalesOrderRequest {
+  customerId: number
+  employeeId: number
+  orderDate: string
+  priceDate?: string | null
+  details: { productId: number; quantity: string }[]
+}
+
+export interface ResolveSalesOrderResponse {
+  details: ResolvedLine[]
+  headerDiscountAmount: string
+  headerDiscounts: LineDiscount[]
+  headerBonuses: LineBonus[]
+  headerChoiceOffers: ChoiceOffer[]
+}
+
 // Sales Order Header Entity
 export interface SalesOrderHeader {
   id: number
@@ -21,6 +83,10 @@ export interface SalesOrderHeader {
   expiredDate: string | null
   customerId: number
   customer?: CustomerLite
+  employeeId: number | null
+  branchId: number | null
+  salesOrganizationId: number | null
+  companyId: number | null
   remark: string | null
   downPaymentAmount: string
   remainingAmount: string
@@ -30,7 +96,6 @@ export interface SalesOrderHeader {
   subtotalAmount: string
   discountAmount: string
   dppAmount: string
-  taxAmount: string
   totalAmount: string
   createdBy: number | null
   createdAt: string
@@ -48,32 +113,34 @@ export interface SalesOrderDetail {
   price: string
   subAmount: string
   discount: string
+  priceListId?: number | null
+  discounts?: LineDiscount[]
+  bonuses?: LineBonus[]
   createdAt: string
   updatedAt: string | null
 }
 
 // DTOs
 export interface CreateSalesOrderRequest {
-  no: string
+  no?: string
   orderDate: string // ISO date
   priceDate?: string | null
   deliveryDate?: string | null
   expiredDate?: string | null
   customerId: number
+  employeeId: number
   remark?: string | null
   downPaymentAmount?: string // Backend expects string for decimal
   isCash?: boolean
-  discountAmount?: string // Backend expects string for decimal
-  taxAmount?: string // Backend expects string for decimal
   details: CreateSalesOrderDetailDto[]
+  headerCustomerChoices?: { promotionId: number; productIds: number[] }[]
   createdBy: number
 }
 
 export interface CreateSalesOrderDetailDto {
   productId: number
   quantity: string // Backend expects string for decimal
-  price: string // Backend expects string for decimal
-  discount?: string // Backend expects string for decimal
+  customerChoices?: { promotionId: number; productIds: number[] }[]
 }
 
 // Local state for inline editing
@@ -86,6 +153,15 @@ export interface SalesOrderDetailRow {
   price?: number
   discount?: number
   subAmount?: number // Computed field
+  // Resolution fields (read-only, set by backend resolve)
+  _priceListId?: number | null
+  _priceListCode?: string | null
+  _discounts?: LineDiscount[]
+  _bonuses?: LineBonus[]
+  _choiceOffers?: ChoiceOffer[]
+  _choicePicks?: Record<string, number[]> // promotionId (as string) → chosen productIds
+  // Allow dynamic internal-only fields (e.g. _quantityTiersRaw for tier input tracking)
+  [key: string]: unknown
 }
 
 // Lite types for foreign keys

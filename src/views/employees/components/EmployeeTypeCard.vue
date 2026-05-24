@@ -5,7 +5,7 @@
     :class="
       selected
         ? 'border-primary-500 bg-primary-50 text-primary-700'
-        : 'border-stone-200 bg-white text-stone-600 hover:border-primary-300'
+        : 'hover:border-primary-300 border-stone-200 bg-white text-stone-600'
     "
     @click="$emit('select')"
   >

@@ -1,5 +1,13 @@
 import type { UomConversionLevel } from './uomConversionLevel.type'
 
+export interface ManualDiscount {
+  id?: number
+  discountType: 'flat' | 'percentage'
+  value: string
+  amount: string
+  reason: string
+}
+
 // Lightweight product type that includes UOM conversion levels (returned by sales order detail API)
 export interface ProductLiteWithUom {
   code: string
@@ -75,6 +83,7 @@ export interface ResolveSalesOrderResponse {
 
 // Sales Order Header Entity
 export interface SalesOrderHeader {
+  manualDiscounts?: ManualDiscount[]
   id: number
   no: string
   orderDate: string // ISO date
@@ -117,11 +126,18 @@ export interface SalesOrderDetail {
   priceListId?: number | null
   discounts?: LineDiscount[]
   bonuses?: LineBonus[]
+  manualDiscounts?: ManualDiscount[]
   createdAt: string
   updatedAt: string | null
 }
 
 // DTOs
+export interface ManualDiscountDto {
+  discountType: 'flat' | 'percentage'
+  value: string
+  reason: string
+}
+
 export interface CreateSalesOrderRequest {
   no?: string
   orderDate: string // ISO date
@@ -135,6 +151,7 @@ export interface CreateSalesOrderRequest {
   isCash?: boolean
   details: CreateSalesOrderDetailDto[]
   headerCustomerChoices?: { promotionId: number; productIds: number[] }[]
+  manualDiscounts?: ManualDiscountDto[]
   createdBy: number
 }
 
@@ -142,6 +159,7 @@ export interface CreateSalesOrderDetailDto {
   productId: number
   quantity: string // Backend expects string for decimal
   customerChoices?: { promotionId: number; productIds: number[] }[]
+  manualDiscounts?: ManualDiscountDto[]
 }
 
 // Local state for inline editing
@@ -161,6 +179,7 @@ export interface SalesOrderDetailRow {
   _bonuses?: LineBonus[]
   _choiceOffers?: ChoiceOffer[]
   _choicePicks?: Record<string, number[]> // promotionId (as string) → chosen productIds
+  _manualDiscounts?: ManualDiscount[]
   // Allow dynamic internal-only fields (e.g. _quantityTiersRaw for tier input tracking)
   [key: string]: unknown
 }

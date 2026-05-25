@@ -85,6 +85,8 @@ export type {
   SalesOrderDetail,
   CreateSalesOrderRequest,
   CreateSalesOrderDetailDto,
+  ManualDiscount,
+  ManualDiscountDto,
   SalesOrderDetailRow,
   CustomerLite,
   ProductLite,

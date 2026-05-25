@@ -247,6 +247,15 @@
       v-model:header-choice-picks="headerChoicePicks"
     />
 
+    <!-- Invoice-level Manual Discounts -->
+    <div class="mt-4 rounded-lg border border-stone-200 p-4">
+      <ManualDiscountEditor
+        v-model="headerManualDiscounts"
+        :disabled="mode === DialogMode.VIEW"
+        :gross="calculatedTotals.grossTotal"
+      />
+    </div>
+
     <Divider />
 
     <!-- Remarks + Summary Section -->
@@ -333,6 +342,7 @@ import Form from '@primevue/forms/form'
 import type { FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import SalesOrderDetailsTable from './SalesOrderDetailsTable.vue'
+import ManualDiscountEditor from './ManualDiscountEditor.vue'
 import DialogMode from '@/constants/dialogMode'
 import FilterOperator from '@/constants/filterOperator'
 import {
@@ -354,6 +364,7 @@ import type {
   ResolveSalesOrderRequest,
   EmployeeLite,
   Employee,
+  ManualDiscount,
 } from '@/types'
 import { decomposeBaseQty } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
@@ -399,6 +410,7 @@ const headerDiscounts = ref<import('@/types').LineDiscount[]>([])
 const headerBonuses = ref<import('@/types').LineBonus[]>([])
 const headerChoiceOffers = ref<import('@/types').ChoiceOffer[]>([])
 const headerChoicePicks = ref<Record<string, number[]>>({})
+const headerManualDiscounts = ref<ManualDiscount[]>([])
 const initialCustomer = ref<CustomerLite>()
 const initialSalesman = ref<EmployeeLite>()
 const salesmanTypeId = ref<number | undefined>()
@@ -472,7 +484,25 @@ const calculatedTotals = computed(() => {
   const lineDiscountTotal = details.value.reduce((sum, row) => {
     return sum + (row.discount || 0)
   }, 0)
-  const discountTotal = lineDiscountTotal + headerDiscountAmount.value
+
+  const lineManualDiscountTotal = details.value.reduce((sum, row) => {
+    const rowGross = (row.quantity || 0) * (row.price || 0)
+    return (
+      sum +
+      (row._manualDiscounts ?? []).reduce((s, d) => {
+        const v = parseFloat(d.value) || 0
+        return s + (d.discountType === 'flat' ? v : Math.round(rowGross * v / 100 * 100) / 100)
+      }, 0)
+    )
+  }, 0)
+
+  const headerManualDiscountTotal = headerManualDiscounts.value.reduce((sum, d) => {
+    const v = parseFloat(d.value) || 0
+    return sum + (d.discountType === 'flat' ? v : Math.round(grossTotal * v / 100 * 100) / 100)
+  }, 0)
+
+  const discountTotal =
+    lineDiscountTotal + headerDiscountAmount.value + lineManualDiscountTotal + headerManualDiscountTotal
   const dppTotal = grossTotal - discountTotal
 
   const taxAmount =
@@ -732,10 +762,20 @@ async function onFormSubmit(event: FormSubmitEvent) {
               .filter((c) => c.productIds.length > 0)
           : undefined
 
+      const lineManualDiscounts =
+        (row._manualDiscounts ?? []).length > 0
+          ? (row._manualDiscounts ?? []).map((d) => ({
+              discountType: d.discountType,
+              value: d.value,
+              reason: d.reason,
+            }))
+          : undefined
+
       return {
         productId: row.productId!,
         quantity: String(row.quantity!),
         ...(customerChoices ? { customerChoices } : {}),
+        ...(lineManualDiscounts ? { manualDiscounts: lineManualDiscounts } : {}),
       }
     }),
     headerCustomerChoices:
@@ -746,6 +786,14 @@ async function onFormSubmit(event: FormSubmitEvent) {
               productIds: headerChoicePicks.value[String(offer.promotionId)] ?? [],
             }))
             .filter((c) => c.productIds.length > 0)
+        : undefined,
+    manualDiscounts:
+      headerManualDiscounts.value.length > 0
+        ? headerManualDiscounts.value.map((d) => ({
+            discountType: d.discountType,
+            value: d.value,
+            reason: d.reason,
+          }))
         : undefined,
     createdBy: authStore.userId!,
   }
@@ -784,6 +832,7 @@ async function loadSalesOrder() {
 
     headerDiscountAmount.value = parseFloat(header.discountAmount)
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
+    headerManualDiscounts.value = header.manualDiscounts ?? []
 
     if (header.customer) {
       initialCustomer.value = { id: header.customerId, name: header.customer.name }
@@ -820,6 +869,7 @@ async function loadSalesOrder() {
         _bonuses: detail.bonuses ?? [],
         _choiceOffers: [],
         _choicePicks: {},
+        _manualDiscounts: detail.manualDiscounts ?? [],
       }
     })
   } catch (e) {

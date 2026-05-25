@@ -667,6 +667,18 @@ export default {
       total: 'Total',
     },
 
+    manualDiscount: {
+      title: 'Diskon Manual',
+      add: 'Tambah',
+      type: 'Tipe',
+      flat: 'Nominal',
+      percentage: 'Persentase',
+      value: 'Nilai',
+      amount: 'Jumlah',
+      reason: 'Alasan',
+      reasonPlaceholder: 'mis. pelanggan setia, promo event…',
+    },
+
     validation: {
       noRequired: 'Nomor pesanan wajib diisi',
       orderDateRequired: 'Tanggal pesanan wajib diisi',
@@ -678,6 +690,8 @@ export default {
         'Baris {row}: jumlah tidak boleh melewati tingkatan (mis. 0/0/1 tidak valid)',
       choicePickRequired: 'Baris {row}: lengkapi semua pilihan item bonus',
       invoiceChoicePickRequired: 'Lengkapi semua pilihan item bonus tingkat invoice',
+      manualDiscountReasonRequired: 'Alasan wajib diisi',
+      manualDiscountValueInvalid: 'Nilai harus lebih dari 0',
     },
 
     messages: {

@@ -666,6 +666,18 @@ export default {
       total: 'Total',
     },
 
+    manualDiscount: {
+      title: 'Manual Discounts',
+      add: 'Add',
+      type: 'Type',
+      flat: 'Flat',
+      percentage: 'Percentage',
+      value: 'Value',
+      amount: 'Amount',
+      reason: 'Reason',
+      reasonPlaceholder: 'e.g. loyal customer, event promo…',
+    },
+
     validation: {
       noRequired: 'Order number is required',
       orderDateRequired: 'Order date is required',
@@ -676,6 +688,8 @@ export default {
       tierSkippingNotAllowed: 'Row {row}: quantity cannot skip tiers (e.g. 0/0/1 is invalid)',
       choicePickRequired: 'Row {row}: please complete all bonus item selections',
       invoiceChoicePickRequired: 'Please complete all invoice-level bonus item selections',
+      manualDiscountReasonRequired: 'Reason is required',
+      manualDiscountValueInvalid: 'Value must be greater than 0',
     },
 
     messages: {

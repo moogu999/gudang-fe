@@ -329,12 +329,24 @@
             </div>
           </template>
 
+          <!-- Manual discounts -->
+          <div class="mt-3">
+            <ManualDiscountEditor
+              :model-value="(data as SalesOrderDetailRow)._manualDiscounts ?? []"
+              :disabled="mode === DialogMode.VIEW"
+              :gross="((data as SalesOrderDetailRow).quantity ?? 0) * ((data as SalesOrderDetailRow).price ?? 0)"
+              @update:model-value="(v) => onLineManualDiscountsUpdate(data as SalesOrderDetailRow, v)"
+            />
+          </div>
+
           <!-- Empty state -->
           <p
             v-if="
               !(data as SalesOrderDetailRow)._discounts?.length &&
               !(data as SalesOrderDetailRow)._bonuses?.length &&
-              !(data as SalesOrderDetailRow)._choiceOffers?.length
+              !(data as SalesOrderDetailRow)._choiceOffers?.length &&
+              !(data as SalesOrderDetailRow)._manualDiscounts?.length &&
+              mode === DialogMode.VIEW
             "
             class="text-xs text-stone-400"
           >
@@ -494,6 +506,7 @@ import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import ProgressSpinner from 'primevue/progressspinner'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import ManualDiscountEditor from './ManualDiscountEditor.vue'
 import DialogMode from '@/constants/dialogMode'
 import type {
   SalesOrderDetailRow,
@@ -501,6 +514,7 @@ import type {
   UomConversionLevel,
   LineDiscount,
   LineBonus,
+  ManualDiscount,
 } from '@/types'
 import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
 import { ProductsService } from '@/services'
@@ -588,6 +602,7 @@ function addRow() {
     _bonuses: [],
     _choiceOffers: [],
     _choicePicks: {},
+    _manualDiscounts: [],
   }
   localRows.value.push(newRow)
   editingRows.value = [newRow]
@@ -694,6 +709,12 @@ function isHeaderChoicePicked(promotionId: number, productId: number): boolean {
 
 function getHeaderPickCount(promotionId: number): number {
   return props.headerChoicePicks?.[String(promotionId)]?.length ?? 0
+}
+
+function onLineManualDiscountsUpdate(row: SalesOrderDetailRow, discounts: ManualDiscount[]) {
+  row._manualDiscounts = discounts
+  skipNextWatch = true
+  emit('update:modelValue', [...localRows.value])
 }
 
 function toggleHeaderChoice(offer: ChoiceOffer, productId: number, checked: boolean) {

@@ -99,11 +99,17 @@ const selectedDateRange = ref<Date[] | null>(null)
 // When a referenceId is pre-seeded from a query param, we only have the ID.
 // Pass a minimal initial-option so InfiniteSelect shows "#ID" until the user interacts.
 const initialReferenceOption = computed(() => {
-  if (!props.initialFilters?.referenceId || selectedReferenceId.value !== props.initialFilters.referenceId) {
+  if (
+    !props.initialFilters?.referenceId ||
+    selectedReferenceId.value !== props.initialFilters.referenceId
+  ) {
     return undefined
   }
   const codeField = currentTypeEntry.value?.codeField ?? 'name'
-  return { id: props.initialFilters.referenceId, [codeField]: `#${props.initialFilters.referenceId}` }
+  return {
+    id: props.initialFilters.referenceId,
+    [codeField]: `#${props.initialFilters.referenceId}`,
+  }
 })
 
 const typeOptions = computed(() =>

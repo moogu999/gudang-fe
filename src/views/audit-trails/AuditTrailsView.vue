@@ -34,14 +34,14 @@
             </span>
             <a
               v-if="col.field === 'referenceId' && data['referenceType'] === 'employee'"
-              class="cursor-pointer text-primary-500 hover:underline"
+              class="text-primary-500 cursor-pointer hover:underline"
               @click.prevent="router.push(`/employees/${data['referenceId']}`)"
             >
               #{{ data['referenceId'] }}
             </a>
             <a
               v-else-if="col.field === 'referenceId' && data['referenceType'] === 'promotion'"
-              class="cursor-pointer text-primary-500 hover:underline"
+              class="text-primary-500 cursor-pointer hover:underline"
               @click.prevent="router.push(`/promotions/${data['referenceId']}`)"
             >
               #{{ data['referenceId'] }}
@@ -107,9 +107,7 @@ const initialFiltersFromQuery = computed(() => {
   return undefined
 })
 
-const activeFilters = ref<Filters>(
-  initialFiltersFromQuery.value ?? {},
-)
+const activeFilters = ref<Filters>(initialFiltersFromQuery.value ?? {})
 
 const url = computed(() => {
   const base = API_ENDPOINTS.GEN_AUDIT_TRAILS

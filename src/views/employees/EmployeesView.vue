@@ -76,7 +76,10 @@
                 class="h-9 w-9 rounded-full object-cover"
                 alt=""
               />
-              <div v-else class="flex h-9 w-9 items-center justify-center rounded-full bg-stone-200">
+              <div
+                v-else
+                class="flex h-9 w-9 items-center justify-center rounded-full bg-stone-200"
+              >
                 <i class="pi pi-user text-stone-500" />
               </div>
               <div>

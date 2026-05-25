@@ -85,10 +85,19 @@ export type {
   SalesOrderDetail,
   CreateSalesOrderRequest,
   CreateSalesOrderDetailDto,
+  ManualDiscount,
+  ManualDiscountDto,
   SalesOrderDetailRow,
   CustomerLite,
   ProductLite,
   ProductLiteWithUom,
+  LineDiscount,
+  LineBonus,
+  ChoicePoolItem,
+  ChoiceOffer,
+  ResolvedLine,
+  ResolveSalesOrderRequest,
+  ResolveSalesOrderResponse,
 } from './salesOrder.type'
 
 // Number Series types

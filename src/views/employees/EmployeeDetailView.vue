@@ -31,11 +31,7 @@
       />
       <div class="flex-1">
         <h1 class="text-base font-semibold sm:text-lg md:text-2xl">
-          {{
-            mode === 'add'
-              ? t('employees.addButton')
-              : (employee?.name ?? t('employees.title'))
-          }}
+          {{ mode === 'add' ? t('employees.addButton') : (employee?.name ?? t('employees.title')) }}
         </h1>
         <p v-if="employee?.isDraft" class="mt-0.5 text-sm text-amber-600">
           {{ t('employees.status.draft') }} — {{ t('employees.status.draftTooltip') }}
@@ -71,7 +67,10 @@
             :name="et.name"
             :icon="typeIcon(et.name)"
             :selected="selectedTypeId === et.id"
-            @select="selectedTypeId = et.id; isDirty = true"
+            @select="
+              selectedTypeId = et.id
+              isDirty = true
+            "
           />
         </div>
         <p v-if="typeError" class="mt-2 text-sm text-red-500">{{ typeError }}</p>
@@ -88,7 +87,9 @@
         <!-- Section: Identitas -->
         <ResponsiveCard class="mb-6">
           <template #header>
-            <h2 class="px-4 pt-4 text-sm font-semibold uppercase tracking-wide text-stone-500 sm:px-6">
+            <h2
+              class="px-4 pt-4 text-sm font-semibold tracking-wide text-stone-500 uppercase sm:px-6"
+            >
               {{ t('employees.sections.identity') }}
             </h2>
           </template>
@@ -98,18 +99,24 @@
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
                 <label class="w-full text-sm font-semibold sm:text-base md:w-40">
                   {{ t('employees.fields.photo') }}
-                  <span class="ml-1 text-xs font-normal text-stone-400">{{ t('employees.labels.optional') }}</span>
+                  <span class="ml-1 text-xs font-normal text-stone-400">{{
+                    t('employees.labels.optional')
+                  }}</span>
                 </label>
                 <div class="flex items-center gap-4">
                   <!-- Avatar: clickable to view full size when photo exists -->
                   <button
                     v-if="photoPreview"
                     type="button"
-                    class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full bg-stone-100 ring-2 ring-stone-200 transition-all hover:ring-primary-400 focus:outline-none focus:ring-primary-400"
+                    class="hover:ring-primary-400 focus:ring-primary-400 h-16 w-16 flex-shrink-0 overflow-hidden rounded-full bg-stone-100 ring-2 ring-stone-200 transition-all focus:outline-none"
                     :title="t('employees.labels.viewPhoto')"
                     @click="showPhotoDialog = true"
                   >
-                    <img :src="photoPreview" class="h-full w-full object-cover" alt="Photo preview" />
+                    <img
+                      :src="photoPreview"
+                      class="h-full w-full object-cover"
+                      alt="Photo preview"
+                    />
                   </button>
                   <div
                     v-else
@@ -151,22 +158,57 @@
               </div>
 
               <!-- Nama -->
-              <FormField name="name" :label="t('employees.fields.name')" :required="true" :form="$form">
-                <InputText id="name" name="name" class="w-full" :placeholder="t('employees.placeholders.name')" />
+              <FormField
+                name="name"
+                :label="t('employees.fields.name')"
+                :required="true"
+                :form="$form"
+              >
+                <InputText
+                  id="name"
+                  name="name"
+                  class="w-full"
+                  :placeholder="t('employees.placeholders.name')"
+                />
               </FormField>
 
               <!-- Nickname -->
-              <FormField name="nickname" :label="t('employees.fields.nickname')" :optional="true" :form="$form">
-                <InputText id="nickname" name="nickname" class="w-full" :placeholder="t('employees.placeholders.nickname')" />
+              <FormField
+                name="nickname"
+                :label="t('employees.fields.nickname')"
+                :optional="true"
+                :form="$form"
+              >
+                <InputText
+                  id="nickname"
+                  name="nickname"
+                  class="w-full"
+                  :placeholder="t('employees.placeholders.nickname')"
+                />
               </FormField>
 
               <!-- NIP -->
-              <FormField name="nip" :label="t('employees.fields.nip')" :required="!submittingAsDraft" :form="$form">
-                <InputText id="nip" name="nip" class="w-full" :placeholder="t('employees.placeholders.nip')" />
+              <FormField
+                name="nip"
+                :label="t('employees.fields.nip')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
+                <InputText
+                  id="nip"
+                  name="nip"
+                  class="w-full"
+                  :placeholder="t('employees.placeholders.nip')"
+                />
               </FormField>
 
               <!-- KTP -->
-              <FormField name="ktpNumber" :label="t('employees.fields.ktpNumber')" :required="!submittingAsDraft" :form="$form">
+              <FormField
+                name="ktpNumber"
+                :label="t('employees.fields.ktpNumber')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
                 <InputText
                   id="ktpNumber"
                   name="ktpNumber"
@@ -177,23 +219,66 @@
               </FormField>
 
               <!-- Phone -->
-              <FormField name="phoneNumber" :label="t('employees.fields.phoneNumber')" :required="!submittingAsDraft" :form="$form">
-                <InputText id="phoneNumber" name="phoneNumber" class="w-full" :placeholder="t('employees.placeholders.phoneNumber')" />
+              <FormField
+                name="phoneNumber"
+                :label="t('employees.fields.phoneNumber')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
+                <InputText
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  class="w-full"
+                  :placeholder="t('employees.placeholders.phoneNumber')"
+                />
               </FormField>
 
               <!-- Email -->
-              <FormField name="email" :label="t('employees.fields.email')" :optional="true" :form="$form">
-                <InputText id="email" name="email" type="email" class="w-full" :placeholder="t('employees.placeholders.email')" />
+              <FormField
+                name="email"
+                :label="t('employees.fields.email')"
+                :optional="true"
+                :form="$form"
+              >
+                <InputText
+                  id="email"
+                  name="email"
+                  type="email"
+                  class="w-full"
+                  :placeholder="t('employees.placeholders.email')"
+                />
               </FormField>
 
               <!-- Birth Date -->
-              <FormField name="birthDate" :label="t('employees.fields.birthDate')" :optional="true" :form="$form">
-                <DatePicker id="birthDate" name="birthDate" class="w-full" date-format="dd/mm/yy" show-icon />
+              <FormField
+                name="birthDate"
+                :label="t('employees.fields.birthDate')"
+                :optional="true"
+                :form="$form"
+              >
+                <DatePicker
+                  id="birthDate"
+                  name="birthDate"
+                  class="w-full"
+                  date-format="dd/mm/yy"
+                  show-icon
+                />
               </FormField>
 
               <!-- Address -->
-              <FormField name="address" :label="t('employees.fields.address')" :optional="true" :form="$form">
-                <Textarea id="address" name="address" class="w-full" rows="3" :placeholder="t('employees.placeholders.address')" />
+              <FormField
+                name="address"
+                :label="t('employees.fields.address')"
+                :optional="true"
+                :form="$form"
+              >
+                <Textarea
+                  id="address"
+                  name="address"
+                  class="w-full"
+                  rows="3"
+                  :placeholder="t('employees.placeholders.address')"
+                />
               </FormField>
             </div>
           </template>
@@ -202,14 +287,21 @@
         <!-- Section: Pekerjaan -->
         <ResponsiveCard class="mb-6">
           <template #header>
-            <h2 class="px-4 pt-4 text-sm font-semibold uppercase tracking-wide text-stone-500 sm:px-6">
+            <h2
+              class="px-4 pt-4 text-sm font-semibold tracking-wide text-stone-500 uppercase sm:px-6"
+            >
               {{ t('employees.sections.employment') }}
             </h2>
           </template>
           <template #content>
             <div class="flex flex-col gap-5 px-4 pb-4 sm:px-6 sm:pb-6">
               <!-- Company -->
-              <FormField name="companyId" :label="t('employees.fields.company')" :required="!submittingAsDraft" :form="$form">
+              <FormField
+                name="companyId"
+                :label="t('employees.fields.company')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
                 <InfiniteSelect
                   id="companyId"
                   name="companyId"
@@ -224,7 +316,12 @@
               </FormField>
 
               <!-- Branch -->
-              <FormField name="branchId" :label="t('employees.fields.branch')" :required="!submittingAsDraft" :form="$form">
+              <FormField
+                name="branchId"
+                :label="t('employees.fields.branch')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
                 <InfiniteSelect
                   id="branchId"
                   name="branchId"
@@ -238,7 +335,12 @@
               </FormField>
 
               <!-- Department -->
-              <FormField name="departmentId" :label="t('employees.fields.department')" :required="!submittingAsDraft" :form="$form">
+              <FormField
+                name="departmentId"
+                :label="t('employees.fields.department')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
                 <InfiniteSelect
                   id="departmentId"
                   name="departmentId"
@@ -252,7 +354,12 @@
               </FormField>
 
               <!-- Division -->
-              <FormField name="divisionId" :label="t('employees.fields.division')" :required="!submittingAsDraft" :form="$form">
+              <FormField
+                name="divisionId"
+                :label="t('employees.fields.division')"
+                :required="!submittingAsDraft"
+                :form="$form"
+              >
                 <InfiniteSelect
                   id="divisionId"
                   name="divisionId"
@@ -288,12 +395,28 @@
               </FormField>
 
               <!-- Join Date -->
-              <FormField name="joinDate" :label="t('employees.fields.joinDate')" :optional="true" :form="$form">
-                <DatePicker id="joinDate" name="joinDate" class="w-full" date-format="dd/mm/yy" show-icon />
+              <FormField
+                name="joinDate"
+                :label="t('employees.fields.joinDate')"
+                :optional="true"
+                :form="$form"
+              >
+                <DatePicker
+                  id="joinDate"
+                  name="joinDate"
+                  class="w-full"
+                  date-format="dd/mm/yy"
+                  show-icon
+                />
               </FormField>
 
               <!-- Employment Status -->
-              <FormField name="employmentStatus" :label="t('employees.fields.employmentStatus')" :optional="true" :form="$form">
+              <FormField
+                name="employmentStatus"
+                :label="t('employees.fields.employmentStatus')"
+                :optional="true"
+                :form="$form"
+              >
                 <Select
                   id="employmentStatus"
                   name="employmentStatus"
@@ -340,13 +463,17 @@
         <!-- Section: Akses Sistem -->
         <ResponsiveCard class="mb-6">
           <template #header>
-            <h2 class="px-4 pt-4 text-sm font-semibold uppercase tracking-wide text-stone-500 sm:px-6">
+            <h2
+              class="px-4 pt-4 text-sm font-semibold tracking-wide text-stone-500 uppercase sm:px-6"
+            >
               {{ t('employees.sections.systemAccess') }}
             </h2>
           </template>
           <template #content>
             <div class="px-4 pb-4 sm:px-6 sm:pb-6">
-              <p class="mb-4 text-sm text-stone-500">{{ t('employees.sections.systemAccessNote') }}</p>
+              <p class="mb-4 text-sm text-stone-500">
+                {{ t('employees.sections.systemAccessNote') }}
+              </p>
               <div class="flex flex-col gap-4">
                 <div class="flex items-center justify-between gap-4">
                   <label for="accessNcommand" class="text-sm font-medium sm:text-base">
@@ -424,7 +551,6 @@ import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants'
 
-
 const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
@@ -461,10 +587,7 @@ const selectedTypeName = computed(
   () => employeeTypes.value.find((et) => et.id === selectedTypeId.value)?.name ?? '',
 )
 
-const requiresSalesOrg = computed(() =>
-  ['Salesman', 'Collector'].includes(selectedTypeName.value),
-)
-const requiresSupervisor = computed(() => selectedTypeName.value !== 'Management')
+const requiresSalesOrg = computed(() => ['Salesman', 'Collector'].includes(selectedTypeName.value))
 
 // Current salesOrg for supervisor filter
 const currentSalesOrgId = ref<number | undefined>(undefined)
@@ -552,7 +675,9 @@ const employmentStatusOptions = computed(() => [
 const supervisorFetchFn = computed(() => (q?: string) => {
   let query = q ?? ''
   if (currentSalesOrgId.value) {
-    query = query ? `${query}&salesOrganizationId=${currentSalesOrgId.value}` : `salesOrganizationId=${currentSalesOrgId.value}`
+    query = query
+      ? `${query}&salesOrganizationId=${currentSalesOrgId.value}`
+      : `salesOrganizationId=${currentSalesOrgId.value}`
   }
   query = query ? `${query}&isActive=true` : 'isActive=true'
   return EmployeesService.list(query)
@@ -616,10 +741,13 @@ async function loadEmployee() {
     // Set initial options for dropdowns
     if (emp.company) initialCompany.value = { id: emp.companyId, name: emp.company.name }
     if (emp.branch) initialBranch.value = { id: emp.branchId, name: emp.branch.name }
-    if (emp.department) initialDepartment.value = { id: emp.departmentId, name: emp.department.name }
+    if (emp.department)
+      initialDepartment.value = { id: emp.departmentId, name: emp.department.name }
     if (emp.division) initialDivision.value = { id: emp.divisionId, name: emp.division.name }
-    if (emp.salesOrganization) initialSalesOrg.value = { id: emp.salesOrganizationId, name: emp.salesOrganization.name }
-    if (emp.supervisor) initialSupervisor.value = { id: emp.supervisorId, name: emp.supervisor.name }
+    if (emp.salesOrganization)
+      initialSalesOrg.value = { id: emp.salesOrganizationId, name: emp.salesOrganization.name }
+    if (emp.supervisor)
+      initialSupervisor.value = { id: emp.supervisorId, name: emp.supervisor.name }
 
     if (emp.photoUrl) photoPreview.value = photoSrc(emp.photoUrl)
   } catch {
@@ -659,10 +787,12 @@ async function tryUploadPhoto(id: number): Promise<void> {
     photoPreview.value = photoSrc(res.photoUrl)
     pendingPhoto.value = null
   } catch (e) {
-    toast.add(commonWarnToast(
-      e instanceof Error ? e.message : t('employees.messages.photoUploadFailed'),
-      toastGroup,
-    ))
+    toast.add(
+      commonWarnToast(
+        e instanceof Error ? e.message : t('employees.messages.photoUploadFailed'),
+        toastGroup,
+      ),
+    )
   }
 }
 
@@ -738,20 +868,20 @@ async function onSaveDraft() {
     const payload = {
       employeeTypeId: selectedTypeId.value,
       name,
-      nip: ((states?.nip?.value as string) || undefined),
-      nickname: ((states?.nickname?.value as string) || undefined),
-      ktpNumber: ((states?.ktpNumber?.value as string) || undefined),
-      phoneNumber: ((states?.phoneNumber?.value as string) || undefined),
-      email: ((states?.email?.value as string) || undefined),
+      nip: (states?.nip?.value as string) || undefined,
+      nickname: (states?.nickname?.value as string) || undefined,
+      ktpNumber: (states?.ktpNumber?.value as string) || undefined,
+      phoneNumber: (states?.phoneNumber?.value as string) || undefined,
+      email: (states?.email?.value as string) || undefined,
       birthDate: toISODate(states?.birthDate?.value),
-      address: ((states?.address?.value as string) || undefined),
+      address: (states?.address?.value as string) || undefined,
       companyId: (states?.companyId?.value as number) || undefined,
       branchId: (states?.branchId?.value as number) || undefined,
       departmentId: (states?.departmentId?.value as number) || undefined,
       divisionId: (states?.divisionId?.value as number) || undefined,
       salesOrganizationId: (states?.salesOrganizationId?.value as number) || undefined,
       joinDate: toISODate(states?.joinDate?.value),
-      employmentStatus: ((states?.employmentStatus?.value as EmploymentStatus) || undefined),
+      employmentStatus: (states?.employmentStatus?.value as EmploymentStatus) || undefined,
       supervisorId: (states?.supervisorId?.value as number) || undefined,
       isActive: (states?.isActive?.value as boolean) ?? true,
       accessNcommand: (states?.accessNcommand?.value as boolean) ?? false,

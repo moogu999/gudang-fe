@@ -107,8 +107,10 @@ export const API_ENDPOINTS = {
 
   // Sales Order endpoints
   SALES_ORDERS: '/v1/sales-orders', // POST create
+  RESOLVE_SALES_ORDER: '/v1/sales-orders/resolve', // POST resolve prices/discounts
   GEN_SALES_ORDER_HEADERS: '/gen/v1/sales-order-headers', // GET list/byId
   GEN_SALES_ORDER_DETAILS: '/gen/v1/sales-order-details', // GET list
+  TAX_CONFIGURATION: '/v1/tax-configuration', // GET tax percentage
 
   // Number Series endpoints
   GEN_NUMBER_SERIES: '/gen/v1/number-series',

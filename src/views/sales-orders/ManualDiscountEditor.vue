@@ -6,12 +6,19 @@
 
     <!-- Applied discounts list -->
     <table v-if="modelValue.length" class="mb-3 w-full text-xs">
+      <colgroup>
+        <col style="width: 45%" />
+        <col style="width: 18%" />
+        <col style="width: 18%" />
+        <col style="width: 15%" />
+        <col v-if="!disabled" style="width: 4%" />
+      </colgroup>
       <thead>
         <tr class="border-b border-stone-200 text-stone-400">
+          <th class="pb-1 text-left">{{ t('salesOrders.manualDiscount.reason') }}</th>
           <th class="pb-1 text-left">{{ t('salesOrders.manualDiscount.type') }}</th>
           <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.value') }}</th>
           <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.amount') }}</th>
-          <th class="pb-1 text-left pl-2">{{ t('salesOrders.manualDiscount.reason') }}</th>
           <th v-if="!disabled" class="pb-1" style="width: 2rem" />
         </tr>
       </thead>
@@ -21,6 +28,7 @@
           :key="idx"
           class="border-b border-stone-100"
         >
+          <td class="py-0.5 text-stone-500">{{ disc.reason }}</td>
           <td class="py-0.5 capitalize">
             {{ disc.discountType === 'flat' ? t('salesOrders.manualDiscount.flat') : t('salesOrders.manualDiscount.percentage') }}
           </td>
@@ -30,7 +38,6 @@
           <td class="py-0.5 text-right text-red-600">
             -{{ formatValue(previewAmount(disc)) }}
           </td>
-          <td class="py-0.5 pl-2 text-stone-500">{{ disc.reason }}</td>
           <td v-if="!disabled" class="py-0.5 text-right">
             <Button
               icon="pi pi-trash"

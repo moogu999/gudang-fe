@@ -195,6 +195,12 @@
               {{ t('salesOrders.details.promotionDiscounts') }}
             </p>
             <table class="mb-3 w-full text-xs">
+              <colgroup>
+                <col style="width: 45%" />
+                <col style="width: 18%" />
+                <col style="width: 18%" />
+                <col style="width: 19%" />
+              </colgroup>
               <thead>
                 <tr class="border-b border-stone-200 text-stone-400">
                   <th class="pb-1 text-left">{{ t('salesOrders.details.promotionCode') }}</th>

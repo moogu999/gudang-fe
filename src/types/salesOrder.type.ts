@@ -96,6 +96,7 @@ export interface SalesOrderHeader {
   subtotalAmount: string
   discountAmount: string
   dppAmount: string
+  taxAmount: string
   totalAmount: string
   createdBy: number | null
   createdAt: string

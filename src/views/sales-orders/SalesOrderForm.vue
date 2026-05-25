@@ -282,6 +282,11 @@
             <span>- {{ formatCurrency(calculatedTotals.discountTotal) }}</span>
           </div>
 
+          <div v-if="calculatedTotals.taxAmount > 0" class="flex justify-between text-orange-600">
+            <span>{{ t('salesOrders.summary.tax') }}</span>
+            <span>+ {{ formatCurrency(calculatedTotals.taxAmount) }}</span>
+          </div>
+
           <Divider />
 
           <div class="flex justify-between text-lg">
@@ -337,6 +342,7 @@ import {
   SalesOrdersService,
   SalesOrderHeadersService,
   SalesOrderDetailsService,
+  TaxConfigurationService,
   GenericQueryBuilder,
   commonSuccessToast,
   commonErrorToast,
@@ -386,6 +392,9 @@ const isSaving = ref(false)
 const isResolving = ref(false)
 const details = ref<SalesOrderDetailRow[]>([])
 const headerDiscountAmount = ref(0)
+const taxRate = ref(0)
+const customerTaxable = ref(false)
+const savedTaxAmount = ref(0)
 const headerDiscounts = ref<import('@/types').LineDiscount[]>([])
 const headerBonuses = ref<import('@/types').LineBonus[]>([])
 const headerChoiceOffers = ref<import('@/types').ChoiceOffer[]>([])
@@ -464,8 +473,17 @@ const calculatedTotals = computed(() => {
     return sum + (row.discount || 0)
   }, 0)
   const discountTotal = lineDiscountTotal + headerDiscountAmount.value
-  const total = grossTotal - discountTotal
-  return { grossTotal, discountTotal, total }
+  const dppTotal = grossTotal - discountTotal
+
+  const taxAmount =
+    props.mode === DialogMode.VIEW
+      ? savedTaxAmount.value
+      : customerTaxable.value
+        ? Math.round(dppTotal * (taxRate.value / 100) * 100) / 100
+        : 0
+
+  const total = dppTotal + taxAmount
+  return { grossTotal, discountTotal, taxAmount, total }
 })
 
 // Format number with decimals
@@ -556,9 +574,19 @@ async function resolveOrder() {
 const scheduleResolve = useDebounceFn(resolveOrder, 400)
 
 // Trigger resolve when customer or salesman changes
-watch(currentCustomerId, () => {
+watch(currentCustomerId, async (id) => {
   if (props.mode !== DialogMode.ADD) return
   scheduleResolve()
+  if (!id) {
+    customerTaxable.value = false
+    return
+  }
+  try {
+    const customer = await CustomersService.getById(id)
+    customerTaxable.value = customer.taxable ?? false
+  } catch {
+    customerTaxable.value = false
+  }
 })
 
 watch(currentEmployeeId, () => {
@@ -755,6 +783,7 @@ async function loadSalesOrder() {
     initialValues.downPaymentAmount = parseFloat(header.downPaymentAmount)
 
     headerDiscountAmount.value = parseFloat(header.discountAmount)
+    savedTaxAmount.value = parseFloat(header.taxAmount) || 0
 
     if (header.customer) {
       initialCustomer.value = { id: header.customerId, name: header.customer.name }
@@ -802,9 +831,13 @@ async function loadSalesOrder() {
 
 // Lifecycle
 onBeforeMount(async () => {
-  const typesResponse = await EmployeeTypesService.list()
+  const [typesResponse, taxConfig] = await Promise.all([
+    EmployeeTypesService.list(),
+    TaxConfigurationService.get().catch(() => ({ percentage: '0' })),
+  ])
   const salesmanType = typesResponse.data.find((t) => t.name === 'Salesman')
   salesmanTypeId.value = salesmanType?.id
+  taxRate.value = parseFloat(taxConfig.percentage) || 0
 
   if (props.mode === DialogMode.VIEW && props.salesOrderId) {
     await loadSalesOrder()

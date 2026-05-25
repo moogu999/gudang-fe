@@ -663,6 +663,7 @@ export default {
       title: 'Ringkasan Pesanan',
       grossTotal: 'Subtotal',
       discountTotal: 'Diskon',
+      tax: 'Pajak',
       total: 'Total',
     },
 

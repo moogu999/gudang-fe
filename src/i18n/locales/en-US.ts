@@ -662,6 +662,7 @@ export default {
       title: 'Order Summary',
       grossTotal: 'Subtotal',
       discountTotal: 'Discount',
+      tax: 'Tax',
       total: 'Total',
     },
 

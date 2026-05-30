@@ -15,57 +15,52 @@
       </h1>
     </div>
 
-    <ResponsiveCard v-if="customer">
-      <template #content>
-        <CustomerForm
-          ref="customerForm"
-          :mode="DialogMode.EDIT"
-          :customer="customer"
-          :is-loading="isLoading"
-          @submit="onFormSubmit"
-          @cancel="router.back()"
-        />
-      </template>
-    </ResponsiveCard>
+    <!-- Loading -->
+    <div v-if="isLoadingCustomer" class="flex justify-center py-16">
+      <i class="pi pi-spinner pi-spin text-3xl text-stone-400" />
+    </div>
 
-    <!-- Labels Section -->
-    <ResponsiveCard v-if="customer" class="mt-4">
-      <template #content>
-        <div class="mb-3 flex items-center justify-between">
-          <h3 class="text-sm font-semibold sm:text-base md:text-lg">
-            {{ t('customers.labels.title') }}
-          </h3>
-          <Button
-            :label="t('customers.labels.setLabels')"
-            icon="pi pi-tag"
-            size="small"
-            @click="openSetLabelsDialog"
-          />
-        </div>
-        <DataTable
-          :value="customer.labels ?? []"
-          striped-rows
-          responsive-layout="scroll"
-          :empty-message="t('table.noResults')"
-          class="text-sm"
-        >
-          <Column field="definition.name" :header="t('customers.labels.fields.label')" />
-          <Column field="option.value" :header="t('customers.labels.fields.value')" />
-        </DataTable>
-      </template>
-    </ResponsiveCard>
+    <template v-else-if="customer">
+      <CustomerForm
+        mode="edit"
+        :customer="customer"
+        :is-loading="isLoading"
+        @save-draft="onSaveDraft"
+        @submit="onSubmit"
+        @cancel="router.back()"
+      />
 
-    <ResponsiveCard v-else-if="!isLoadingCustomer">
-      <template #content>
-        <Message severity="error">{{ t('customers.messages.customerNotFound') }}</Message>
-      </template>
-    </ResponsiveCard>
+      <!-- Labels section -->
+      <ResponsiveCard class="mt-6">
+        <template #content>
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="text-sm font-semibold sm:text-base md:text-lg">
+              {{ t('customers.labels.title') }}
+            </h3>
+            <Button
+              :label="t('customers.labels.setLabels')"
+              icon="pi pi-tag"
+              size="small"
+              @click="openSetLabelsDialog"
+            />
+          </div>
+          <DataTable
+            :value="customer.labels ?? []"
+            striped-rows
+            responsive-layout="scroll"
+            :empty-message="t('table.noResults')"
+            class="text-sm"
+          >
+            <Column field="definition.name" :header="t('customers.labels.fields.label')" />
+            <Column field="option.value" :header="t('customers.labels.fields.value')" />
+          </DataTable>
+        </template>
+      </ResponsiveCard>
+    </template>
 
     <ResponsiveCard v-else>
       <template #content>
-        <div class="flex items-center justify-center p-8">
-          <i class="pi pi-spinner pi-spin text-4xl" />
-        </div>
+        <Message severity="error">{{ t('customers.messages.customerNotFound') }}</Message>
       </template>
     </ResponsiveCard>
 
@@ -105,9 +100,7 @@ import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CustomerForm from './CustomerForm.vue'
 import CustomerSetLabelsDialog from './CustomerSetLabelsDialog.vue'
-import DialogMode from '@/constants/dialogMode'
-import type { FormSubmitEvent } from '@primevue/forms'
-import type { Customer } from '@/types/customer.type'
+import type { Customer, CreateCustomerV1Dto, UpdateCustomerV1Dto } from '@/types/customer.type'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -120,7 +113,6 @@ const isLoading = ref(false)
 const isLoadingCustomer = ref(false)
 const customer = ref<Customer | undefined>(undefined)
 const isSetLabelsDialogShown = ref(false)
-const customerForm = ref()
 
 onMounted(async () => {
   const customerId = Number(route.params.id)
@@ -132,7 +124,7 @@ onMounted(async () => {
 
   isLoadingCustomer.value = true
   try {
-    customer.value = await CustomersService.getById(customerId)
+    customer.value = await CustomersService.v1Get(customerId)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
@@ -148,53 +140,33 @@ async function closeSetLabelsDialog() {
   isSetLabelsDialogShown.value = false
   if (customer.value) {
     try {
-      customer.value = await CustomersService.getById(customer.value.id)
+      customer.value = await CustomersService.v1Get(customer.value.id)
     } catch (e) {
       toast.add(commonErrorToast(e, toastGroup))
     }
   }
 }
 
-async function onFormSubmit(event: FormSubmitEvent) {
+async function save(dto: CreateCustomerV1Dto | UpdateCustomerV1Dto) {
   if (!customer.value) return
-
   isLoading.value = true
-
   try {
-    const code = await customerForm.value.resolveCode(event)
-
-    await CustomersService.update(customer.value.id, {
-      code,
-      name: event.states.name.value,
-      currencyId: event.states.currencyId.value,
-      isActive: event.states.isActive.value,
-      sellToId: event.states.sellToId.value,
-      deliverToId: event.states.deliverToId.value,
-      invoiceToId: event.states.invoiceToId.value,
-      joinInvoice: event.states.joinInvoice.value,
-      collectToId: event.states.collectToId.value,
-      areaId: event.states.areaId.value,
-      taxable: event.states.taxable.value,
-      address: event.states.address.value || undefined,
-      countryId: event.states.countryId.value,
-      provinceId: event.states.provinceId.value,
-      cityId: event.states.cityId.value,
-      districtId: event.states.districtId.value,
-      subDistrictId: event.states.subDistrictId.value,
-      zipCode: event.states.zipCode.value || undefined,
-      longitude: event.states.longitude.value,
-      latitude: event.states.latitude.value,
-    })
-
-    toast.add(commonSuccessToast(t('customers.messages.customerUpdated'), toastGroup))
-
-    setTimeout(() => {
-      router.push('/customers')
-    }, 1000)
+    customer.value = await CustomersService.v1Update(customer.value.id, dto as UpdateCustomerV1Dto)
+    const msg = dto.isDraft ? t('customers.messages.draftSaved') : t('customers.messages.customerSaved')
+    toast.add(commonSuccessToast(msg, toastGroup))
+    if (!dto.isDraft) setTimeout(() => router.push('/customers'), 800)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
   }
+}
+
+function onSaveDraft(dto: CreateCustomerV1Dto) {
+  save(dto)
+}
+
+function onSubmit(dto: CreateCustomerV1Dto) {
+  save(dto)
 }
 </script>

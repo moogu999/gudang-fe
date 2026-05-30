@@ -67,10 +67,7 @@
             :name="et.name"
             :icon="typeIcon(et.name)"
             :selected="selectedTypeId === et.id"
-            @select="
-              selectedTypeId = et.id
-              isDirty = true
-            "
+            @select="selectedTypeId = et.id; isDirty = true"
           />
         </div>
         <p v-if="typeError" class="mt-2 text-sm text-red-500">{{ typeError }}</p>

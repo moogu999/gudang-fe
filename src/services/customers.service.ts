@@ -1,6 +1,12 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type { Customer, CreateCustomerDto, UpdateCustomerDto } from '@/types/customer.type'
+import type {
+  Customer,
+  CreateCustomerDto,
+  UpdateCustomerDto,
+  CreateCustomerV1Dto,
+  UpdateCustomerV1Dto,
+} from '@/types/customer.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
@@ -153,5 +159,29 @@ export class CustomersService {
     labels: { labelDefinitionId: number; labelOptionId: number }[],
   ): Promise<void> {
     return ApiService.put<void>(`${API_ENDPOINTS.CUSTOMERS_V1}/${customerId}/labels`, { labels })
+  }
+
+  // ─── V1 full-feature methods (with child entities + draft support) ───────────
+
+  static async v1List(queryString?: string): Promise<Base<Customer>> {
+    const base = API_ENDPOINTS.CUSTOMERS_V1_FULL
+    const url = queryString ? `${base}?${queryString}` : base
+    return ApiService.get<Base<Customer>>(url)
+  }
+
+  static async v1Get(id: number): Promise<Customer> {
+    return ApiService.get<Customer>(`${API_ENDPOINTS.CUSTOMERS_V1_FULL}/${id}`)
+  }
+
+  static async v1Create(data: CreateCustomerV1Dto): Promise<Customer> {
+    return ApiService.post<Customer>(API_ENDPOINTS.CUSTOMERS_V1_FULL, data)
+  }
+
+  static async v1Update(id: number, data: UpdateCustomerV1Dto): Promise<Customer> {
+    return ApiService.put<Customer>(`${API_ENDPOINTS.CUSTOMERS_V1_FULL}/${id}`, data)
+  }
+
+  static async v1Delete(id: number): Promise<void> {
+    return ApiService.delete<void>(`${API_ENDPOINTS.CUSTOMERS_V1_FULL}/${id}`)
   }
 }

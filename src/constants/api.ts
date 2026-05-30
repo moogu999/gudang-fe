@@ -147,6 +147,15 @@ export const API_ENDPOINTS = {
 
   // File endpoints
   FILES: '/v1/files',
+
+  // Customer master endpoints (new)
+  GEN_CUSTOMER_OUTLET_TYPES: '/gen/v1/customer-outlet-types',
+  GEN_CUSTOMER_CHANNELS: '/gen/v1/customer-channels',
+  GEN_CUSTOMER_CATEGORIES: '/gen/v1/customer-categories',
+  GEN_VEHICLE_ACCESSES: '/gen/v1/vehicle-accesses',
+
+  // Customer V1 endpoint (new full-feature CRUD with child entities)
+  CUSTOMERS_V1_FULL: '/v1/customers',
 } as const
 
 // Type for API endpoints (useful for validation)

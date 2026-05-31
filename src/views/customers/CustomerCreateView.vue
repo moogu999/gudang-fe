@@ -15,17 +15,13 @@
       </h1>
     </div>
 
-    <ResponsiveCard>
-      <template #content>
-        <CustomerForm
-          ref="customerForm"
-          :mode="DialogMode.ADD"
-          :is-loading="isLoading"
-          @submit="onFormSubmit"
-          @cancel="router.back()"
-        />
-      </template>
-    </ResponsiveCard>
+    <CustomerForm
+      mode="add"
+      :is-loading="isLoading"
+      @save-draft="onSaveDraft"
+      @submit="onSubmit"
+      @cancel="router.back()"
+    />
   </div>
 </template>
 
@@ -38,62 +34,35 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { CustomersService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
-import { useAuthStore } from '@/stores'
-import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CustomerForm from './CustomerForm.vue'
-import DialogMode from '@/constants/dialogMode'
-import type { FormSubmitEvent } from '@primevue/forms'
+import type { CreateCustomerV1Dto } from '@/types/customer.type'
 
 const { t } = useI18n()
 const router = useRouter()
-const authStore = useAuthStore()
 
-// Toast
 const toastGroup = 'customerCreate'
 const toast = useToast()
-
 const isLoading = ref(false)
-const customerForm = ref()
 
-async function onFormSubmit(event: FormSubmitEvent) {
+async function save(dto: CreateCustomerV1Dto) {
   isLoading.value = true
-
   try {
-    const code = await customerForm.value.resolveCode(event)
-
-    await CustomersService.create({
-      code,
-      name: event.states.name.value,
-      currencyId: event.states.currencyId.value,
-      isActive: event.states.isActive.value,
-      sellToId: event.states.sellToId.value,
-      deliverToId: event.states.deliverToId.value,
-      invoiceToId: event.states.invoiceToId.value,
-      joinInvoice: event.states.joinInvoice.value,
-      collectToId: event.states.collectToId.value,
-      areaId: event.states.areaId.value,
-      taxable: event.states.taxable.value,
-      address: event.states.address.value || undefined,
-      countryId: event.states.countryId.value,
-      provinceId: event.states.provinceId.value,
-      cityId: event.states.cityId.value,
-      districtId: event.states.districtId.value,
-      subDistrictId: event.states.subDistrictId.value,
-      zipCode: event.states.zipCode.value || undefined,
-      longitude: event.states.longitude.value,
-      latitude: event.states.latitude.value,
-      createdBy: authStore.userId!,
-    })
-
-    toast.add(commonSuccessToast(t('customers.messages.customerCreated'), toastGroup))
-
-    setTimeout(() => {
-      router.push('/customers')
-    }, 1000)
+    await CustomersService.v1Create(dto)
+    const msg = dto.isDraft ? t('customers.messages.draftSaved') : t('customers.messages.customerSaved')
+    toast.add(commonSuccessToast(msg, toastGroup))
+    if (!dto.isDraft) setTimeout(() => router.push('/customers'), 800)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
   }
+}
+
+function onSaveDraft(dto: CreateCustomerV1Dto) {
+  save(dto)
+}
+
+function onSubmit(dto: CreateCustomerV1Dto) {
+  save(dto)
 }
 </script>

@@ -15,42 +15,37 @@
       </h1>
     </div>
 
-    <ResponsiveCard v-if="customer">
-      <template #content>
-        <CustomerForm :mode="DialogMode.VIEW" :customer="customer" @cancel="router.back()" />
-      </template>
-    </ResponsiveCard>
+    <!-- Loading -->
+    <div v-if="isLoadingCustomer" class="flex justify-center py-16">
+      <i class="pi pi-spinner pi-spin text-3xl text-stone-400" />
+    </div>
 
-    <!-- Labels Section (read-only) -->
-    <ResponsiveCard v-if="customer" class="mt-4">
-      <template #content>
-        <h3 class="mb-3 text-sm font-semibold sm:text-base md:text-lg">
-          {{ t('customers.labels.title') }}
-        </h3>
-        <DataTable
-          :value="customer.labels ?? []"
-          striped-rows
-          responsive-layout="scroll"
-          :empty-message="t('table.noResults')"
-          class="text-sm"
-        >
-          <Column field="definition.name" :header="t('customers.labels.fields.label')" />
-          <Column field="option.value" :header="t('customers.labels.fields.value')" />
-        </DataTable>
-      </template>
-    </ResponsiveCard>
+    <template v-else-if="customer">
+      <CustomerForm mode="edit" :customer="customer" disabled @cancel="router.back()" />
 
-    <ResponsiveCard v-else-if="!isLoadingCustomer">
-      <template #content>
-        <Message severity="error">{{ t('customers.messages.customerNotFound') }}</Message>
-      </template>
-    </ResponsiveCard>
+      <!-- Labels Section (read-only) -->
+      <ResponsiveCard class="mt-6">
+        <template #content>
+          <h3 class="mb-3 text-sm font-semibold sm:text-base md:text-lg">
+            {{ t('customers.labels.title') }}
+          </h3>
+          <DataTable
+            :value="customer.labels ?? []"
+            striped-rows
+            responsive-layout="scroll"
+            :empty-message="t('table.noResults')"
+            class="text-sm"
+          >
+            <Column field="definition.name" :header="t('customers.labels.fields.label')" />
+            <Column field="option.value" :header="t('customers.labels.fields.value')" />
+          </DataTable>
+        </template>
+      </ResponsiveCard>
+    </template>
 
     <ResponsiveCard v-else>
       <template #content>
-        <div class="flex items-center justify-center p-8">
-          <i class="pi pi-spinner pi-spin text-4xl" />
-        </div>
+        <Message severity="error">{{ t('customers.messages.customerNotFound') }}</Message>
       </template>
     </ResponsiveCard>
   </div>
@@ -70,14 +65,12 @@ import { CustomersService } from '@/services'
 import { commonErrorToast } from '@/services/toast'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CustomerForm from './CustomerForm.vue'
-import DialogMode from '@/constants/dialogMode'
 import type { Customer } from '@/types/customer.type'
 
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
-// Toast
 const toastGroup = 'customerDetail'
 const toast = useToast()
 
@@ -94,7 +87,7 @@ onMounted(async () => {
 
   isLoadingCustomer.value = true
   try {
-    customer.value = await CustomersService.getById(customerId)
+    customer.value = await CustomersService.v1Get(customerId)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

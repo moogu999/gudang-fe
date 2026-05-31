@@ -6,7 +6,6 @@
  */
 export interface ProductLabelDefinition {
   id: number
-  companyId: number
   name: string
   createdAt: string
   updatedAt?: string
@@ -28,7 +27,6 @@ export interface ProductLabelOption {
 }
 
 export interface CreateProductLabelDefinitionDto {
-  companyId: number
   name: string
   createdBy: number
 }

@@ -35,14 +35,4 @@ export class EmployeesService {
   static async delete(id: number): Promise<void> {
     return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
   }
-
-  static async uploadPhoto(id: number, file: File): Promise<{ photoUrl: string }> {
-    const formData = new FormData()
-    formData.append('photo', file)
-    return ApiService.postMultipart<{ photoUrl: string }>(`${this.BASE_URL}/${id}/photo`, formData)
-  }
-
-  static async deletePhoto(id: number): Promise<void> {
-    return ApiService.delete<void>(`${this.BASE_URL}/${id}/photo`)
-  }
 }

@@ -57,6 +57,7 @@ export interface ChoiceOffer {
 export interface ResolvedLine {
   productId: number
   price: string
+  taxIncluded: boolean
   priceListId: number | null
   priceListCode: string | null
   discount: string
@@ -124,6 +125,7 @@ export interface SalesOrderDetail {
   subAmount: string
   discount: string
   priceListId?: number | null
+  taxIncluded?: boolean
   discounts?: LineDiscount[]
   bonuses?: LineBonus[]
   manualDiscounts?: ManualDiscount[]
@@ -175,6 +177,7 @@ export interface SalesOrderDetailRow {
   // Resolution fields (read-only, set by backend resolve)
   _priceListId?: number | null
   _priceListCode?: string | null
+  _taxIncluded?: boolean
   _discounts?: LineDiscount[]
   _bonuses?: LineBonus[]
   _choiceOffers?: ChoiceOffer[]

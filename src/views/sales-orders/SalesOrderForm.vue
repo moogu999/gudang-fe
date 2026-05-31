@@ -283,7 +283,7 @@
         <div class="space-y-2">
           <div class="flex justify-between">
             <span>{{ t('salesOrders.summary.grossTotal') }}</span>
-            <span>{{ formatCurrency(calculatedTotals.grossTotal) }}</span>
+            <span>{{ formatCurrency(calculatedTotals.netSubtotal) }}</span>
           </div>
 
           <div class="flex justify-between text-red-600">
@@ -406,6 +406,7 @@ const headerDiscountAmount = ref(0)
 const taxRate = ref(0)
 const customerTaxable = ref(false)
 const savedTaxAmount = ref(0)
+const savedTotalAmount = ref(0)
 const headerDiscounts = ref<import('@/types').LineDiscount[]>([])
 const headerBonuses = ref<import('@/types').LineBonus[]>([])
 const headerChoiceOffers = ref<import('@/types').ChoiceOffer[]>([])
@@ -478,42 +479,66 @@ const resolver = computed(() =>
 
 // Computed totals for summary section
 const calculatedTotals = computed(() => {
-  const grossTotal = details.value.reduce((sum, row) => {
-    return sum + (row.quantity || 0) * (row.price || 0)
-  }, 0)
-  const lineDiscountTotal = details.value.reduce((sum, row) => {
-    return sum + (row.discount || 0)
-  }, 0)
+  // Split line subAmounts by tax inclusion status
+  let subTotalInclusive = 0
+  let subTotalExclusive = 0
+  let lineDiscountTotal = 0
 
-  const lineManualDiscountTotal = details.value.reduce((sum, row) => {
-    const rowGross = (row.quantity || 0) * (row.price || 0)
-    return (
-      sum +
-      (row._manualDiscounts ?? []).reduce((s, d) => {
-        const v = parseFloat(d.value) || 0
-        return s + (d.discountType === 'flat' ? v : Math.round(rowGross * v / 100 * 100) / 100)
-      }, 0)
-    )
-  }, 0)
+  details.value.forEach((row) => {
+    const gross = (row.quantity || 0) * (row.price || 0)
+    const lineDisc = row.discount || 0
+    const manualDisc = (row._manualDiscounts ?? []).reduce((s, d) => {
+      const v = parseFloat(d.value) || 0
+      return s + (d.discountType === 'flat' ? v : Math.round(((gross * v) / 100) * 100) / 100)
+    }, 0)
+    lineDiscountTotal += lineDisc + manualDisc
+    const sub = gross - lineDisc - manualDisc
+    if (row._taxIncluded) subTotalInclusive += sub
+    else subTotalExclusive += sub
+  })
+
+  const grossTotal = subTotalInclusive + subTotalExclusive
 
   const headerManualDiscountTotal = headerManualDiscounts.value.reduce((sum, d) => {
     const v = parseFloat(d.value) || 0
-    return sum + (d.discountType === 'flat' ? v : Math.round(grossTotal * v / 100 * 100) / 100)
+    return sum + (d.discountType === 'flat' ? v : Math.round(((grossTotal * v) / 100) * 100) / 100)
   }, 0)
 
-  const discountTotal =
-    lineDiscountTotal + headerDiscountAmount.value + lineManualDiscountTotal + headerManualDiscountTotal
-  const dppTotal = grossTotal - discountTotal
+  const discountTotal = lineDiscountTotal + headerDiscountAmount.value + headerManualDiscountTotal
+  const dppGross = grossTotal - discountTotal
+
+  // Proportionally split dppGross between inclusive and exclusive line portions
+  const inclusiveFraction = grossTotal > 0 ? subTotalInclusive / grossTotal : 0
+  const dppInclusive = dppGross * inclusiveFraction
+  const dppExclusive = dppGross - dppInclusive
+
+  // Embedded tax extracted from inclusive-price lines (always shown)
+  const embeddedTax =
+    taxRate.value > 0
+      ? Math.round(((dppInclusive * taxRate.value) / (100 + taxRate.value)) * 100) / 100
+      : 0
+
+  // Additive tax on exclusive-price lines (only if customer is taxable)
+  const additiveTax = customerTaxable.value
+    ? Math.round(((dppExclusive * taxRate.value) / 100) * 100) / 100
+    : 0
 
   const taxAmount =
     props.mode === DialogMode.VIEW
       ? savedTaxAmount.value
-      : customerTaxable.value
-        ? Math.round(dppTotal * (taxRate.value / 100) * 100) / 100
-        : 0
+      : Math.round((embeddedTax + additiveTax) * 100) / 100
 
-  const total = dppTotal + taxAmount
-  return { grossTotal, discountTotal, taxAmount, total }
+  // In VIEW mode use the saved total to avoid double-counting embedded tax
+  const total =
+    props.mode === DialogMode.VIEW
+      ? savedTotalAmount.value
+      : Math.round((dppGross + additiveTax) * 100) / 100
+
+  // Net subtotal: gross minus embedded tax, so summary math holds:
+  // netSubtotal - discountTotal + taxAmount = total
+  const netSubtotal = total + discountTotal - taxAmount
+
+  return { grossTotal, netSubtotal, discountTotal, taxAmount, total }
 })
 
 // Format number with decimals
@@ -588,6 +613,7 @@ async function resolveOrder() {
         discount: parseFloat(resolved.discount),
         _priceListId: resolved.priceListId,
         _priceListCode: resolved.priceListCode,
+        _taxIncluded: resolved.taxIncluded ?? false,
         _discounts: resolved.discounts,
         _bonuses: resolved.bonuses,
         _choiceOffers: resolved.choiceOffers,
@@ -675,23 +701,6 @@ function validateDetails(): boolean {
         ),
       )
       return false
-    }
-
-    // Validate no tier skipping
-    const tiers = row._quantityTiers
-    const levels = row.product?.uomGroup?.levels
-    if (tiers && levels && levels.length > 1) {
-      for (let i = 1; i < tiers.length; i++) {
-        if ((tiers[i] ?? 0) > 0 && tiers.slice(0, i).every((t) => (t ?? 0) === 0)) {
-          toast.add(
-            commonErrorToast(
-              new Error(t('salesOrders.validation.tierSkippingNotAllowed', { row: index + 1 })),
-              toastGroup,
-            ),
-          )
-          return false
-        }
-      }
     }
 
     // Validate all choice offers have complete picks
@@ -832,6 +841,7 @@ async function loadSalesOrder() {
 
     headerDiscountAmount.value = parseFloat(header.discountAmount)
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
+    savedTotalAmount.value = parseFloat(header.totalAmount) || 0
     headerManualDiscounts.value = header.manualDiscounts ?? []
 
     if (header.customer) {
@@ -865,6 +875,7 @@ async function loadSalesOrder() {
         subAmount: parseFloat(detail.subAmount),
         _priceListId: detail.priceListId ?? null,
         _priceListCode: null,
+        _taxIncluded: detail.taxIncluded ?? false,
         _discounts: detail.discounts ?? [],
         _bonuses: detail.bonuses ?? [],
         _choiceOffers: [],

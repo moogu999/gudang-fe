@@ -144,6 +144,9 @@ export const API_ENDPOINTS = {
   // Employee endpoints
   EMPLOYEES: '/v1/employees',
   EMPLOYEE_TYPES: '/gen/v1/employee-types',
+
+  // File endpoints
+  FILES: '/v1/files',
 } as const
 
 // Type for API endpoints (useful for validation)

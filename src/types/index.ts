@@ -175,6 +175,9 @@ export type {
   EmployeeSummary,
 } from './employee.type'
 
+// File upload types
+export type { FileRecord, UploadFileDto } from './file.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 

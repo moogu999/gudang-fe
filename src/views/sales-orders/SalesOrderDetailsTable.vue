@@ -29,8 +29,10 @@
       @row-edit-save="onRowEditSave"
     >
       <Column header="#" style="width: 3rem">
-        <template #body="{ index }">
-          <span class="text-stone-400">{{ index + 1 }}</span>
+        <template #body="{ index, data }">
+          <span class="text-stone-400">{{
+            (data as SalesOrderDetailRow)._isPlaceholder ? '' : index + 1
+          }}</span>
         </template>
       </Column>
 
@@ -135,6 +137,12 @@
             >
               {{ (data as SalesOrderDetailRow)._priceListCode }}
             </span>
+            <span
+              v-if="(data as SalesOrderDetailRow)._taxIncluded"
+              class="w-fit rounded bg-orange-100 px-1 py-0.5 text-xs font-medium text-orange-700"
+            >
+              {{ t('priceLists.fields.taxIncluded') }}
+            </span>
           </div>
         </template>
       </Column>
@@ -175,8 +183,9 @@
 
       <!-- Delete -->
       <Column v-if="mode !== DialogMode.VIEW" style="width: 3rem">
-        <template #body="{ index }">
+        <template #body="{ index, data }">
           <Button
+            v-if="!(data as SalesOrderDetailRow)._isPlaceholder"
             icon="pi pi-trash"
             size="small"
             severity="danger"
@@ -340,8 +349,13 @@
             <ManualDiscountEditor
               :model-value="(data as SalesOrderDetailRow)._manualDiscounts ?? []"
               :disabled="mode === DialogMode.VIEW"
-              :gross="((data as SalesOrderDetailRow).quantity ?? 0) * ((data as SalesOrderDetailRow).price ?? 0)"
-              @update:model-value="(v) => onLineManualDiscountsUpdate(data as SalesOrderDetailRow, v)"
+              :gross="
+                ((data as SalesOrderDetailRow).quantity ?? 0) *
+                ((data as SalesOrderDetailRow).price ?? 0)
+              "
+              @update:model-value="
+                (v) => onLineManualDiscountsUpdate(data as SalesOrderDetailRow, v)
+              "
             />
           </div>
 
@@ -501,7 +515,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -555,6 +569,32 @@ const editingRows = ref<SalesOrderDetailRow[]>([])
 const expandedRows = ref<Record<string, boolean>>({})
 let skipNextWatch = false
 
+function createPlaceholderRow(): SalesOrderDetailRow {
+  return {
+    _localId: crypto.randomUUID(),
+    _isPlaceholder: true,
+    _discounts: [],
+    _bonuses: [],
+    _choiceOffers: [],
+    _choicePicks: {},
+    _manualDiscounts: [],
+  }
+}
+
+function ensurePlaceholder() {
+  if (props.mode === DialogMode.VIEW) return
+  const hasPlaceholder = localRows.value.some((r) => r._isPlaceholder)
+  if (!hasPlaceholder) {
+    const placeholder = createPlaceholderRow()
+    localRows.value.push(placeholder)
+    editingRows.value = [...editingRows.value, placeholder]
+  }
+}
+
+onMounted(() => {
+  ensurePlaceholder()
+})
+
 watch(
   () => props.modelValue,
   (newRows) => {
@@ -573,6 +613,7 @@ watch(
         local.discount = newRow.discount
         local._priceListId = newRow._priceListId
         local._priceListCode = newRow._priceListCode
+        local._taxIncluded = newRow._taxIncluded
         local._discounts = newRow._discounts
         local._bonuses = newRow._bonuses
         local._choiceOffers = newRow._choiceOffers
@@ -592,38 +633,38 @@ watch(
         expandedRows.value[row._localId] = true
       }
     })
+
+    ensurePlaceholder()
   },
   { deep: true },
 )
 
 function emitRows() {
   skipNextWatch = true
-  emit('update:modelValue', localRows.value)
+  emit(
+    'update:modelValue',
+    localRows.value.filter((r) => !r._isPlaceholder),
+  )
 }
 
 function addRow() {
-  const newRow: SalesOrderDetailRow = {
-    _localId: crypto.randomUUID(),
-    _discounts: [],
-    _bonuses: [],
-    _choiceOffers: [],
-    _choicePicks: {},
-    _manualDiscounts: [],
-  }
-  localRows.value.push(newRow)
-  editingRows.value = [newRow]
-  emitRows()
+  ensurePlaceholder()
 }
 
 function removeRow(index: number) {
   localRows.value.splice(index, 1)
   emitRows()
+  ensurePlaceholder()
 }
 
 function onRowEditSave(event: { newData: SalesOrderDetailRow; index: number }) {
   const { newData, index } = event
+  if (newData._isPlaceholder && newData.productId) {
+    newData._isPlaceholder = false
+  }
   localRows.value[index] = newData
   emitRows()
+  ensurePlaceholder()
 }
 
 function onProductSelect(data: SalesOrderDetailRow, option: object) {

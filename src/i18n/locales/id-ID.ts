@@ -686,8 +686,6 @@ export default {
       salesmanRequired: 'Salesman wajib dipilih',
       detailsRequired: 'Minimal satu item harus ditambahkan',
       detailIncomplete: 'Baris {row}: Produk dan jumlah wajib diisi',
-      tierSkippingNotAllowed:
-        'Baris {row}: jumlah tidak boleh melewati tingkatan (mis. 0/0/1 tidak valid)',
       choicePickRequired: 'Baris {row}: lengkapi semua pilihan item bonus',
       invoiceChoicePickRequired: 'Lengkapi semua pilihan item bonus tingkat invoice',
       manualDiscountReasonRequired: 'Alasan wajib diisi',

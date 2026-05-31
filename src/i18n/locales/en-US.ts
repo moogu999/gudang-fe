@@ -685,7 +685,6 @@ export default {
       salesmanRequired: 'Salesman is required',
       detailsRequired: 'At least one item is required',
       detailIncomplete: 'Row {row}: Product and quantity are required',
-      tierSkippingNotAllowed: 'Row {row}: quantity cannot skip tiers (e.g. 0/0/1 is invalid)',
       choicePickRequired: 'Row {row}: please complete all bonus item selections',
       invoiceChoicePickRequired: 'Please complete all invoice-level bonus item selections',
       manualDiscountReasonRequired: 'Reason is required',

@@ -478,6 +478,7 @@ export default {
       closed: 'Closed',
       open: 'Open',
       receiving: 'Receiving',
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     },
     validation: {
       codeRequired: 'Code is required.',

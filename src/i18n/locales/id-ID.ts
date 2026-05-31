@@ -479,6 +479,7 @@ export default {
       closed: 'Tutup',
       open: 'Buka',
       receiving: 'Terima',
+      days: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
     },
     validation: {
       codeRequired: 'Kode wajib diisi.',

@@ -784,7 +784,7 @@ function validateFull(): boolean {
 
 async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
   let code = formData.code || undefined
-  if (props.mode === 'add' && codeMode.value === 'auto' && numberSeriesId.value !== null) {
+  if (!isDraft && props.mode === 'add' && codeMode.value === 'auto' && numberSeriesId.value !== null) {
     code = await generateCode()
   }
 
@@ -803,8 +803,8 @@ async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
     districtId: formData.districtId,
     subDistrictId: formData.subDistrictId,
     zipCode: formData.zipCode || undefined,
-    latitude: formData.latitude || undefined,
-    longitude: formData.longitude || undefined,
+    latitude: formData.latitude || null,
+    longitude: formData.longitude || null,
     areaId: formData.areaId,
     currencyId: formData.currencyId,
     sellToId: formData.sellToId,
@@ -817,10 +817,10 @@ async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
     phoneAlt: formData.phoneAlt || undefined,
     email: formData.email || undefined,
     taxable: formData.taxable,
-    nikOwner: formData.nikOwner || undefined,
-    npwp: formData.npwp || undefined,
-    npwpName: formData.npwpName || undefined,
-    npwpAddress: formData.npwpAddress || undefined,
+    nikOwner: formData.taxable ? formData.nikOwner || undefined : undefined,
+    npwp: formData.taxable ? formData.npwp || undefined : undefined,
+    npwpName: formData.taxable ? formData.npwpName || undefined : undefined,
+    npwpAddress: formData.taxable ? formData.npwpAddress || undefined : undefined,
     siupNib: formData.siupNib || undefined,
     paysWithGiro: formData.paysWithGiro,
     isDraft,

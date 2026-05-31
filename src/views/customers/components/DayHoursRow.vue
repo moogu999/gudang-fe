@@ -66,9 +66,7 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import InputText from 'primevue/inputtext'
 import type { CustomerOperatingHour } from '@/types/customer.type'
 
-const { t } = useI18n()
-
-const DAY_LABELS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+const { t, tm } = useI18n()
 
 interface Props {
   modelValue: CustomerOperatingHour
@@ -81,7 +79,10 @@ const emit = defineEmits<{
   'update:modelValue': [value: CustomerOperatingHour]
 }>()
 
-const dayLabel = computed(() => DAY_LABELS[props.modelValue.dayOfWeek] ?? '')
+const dayLabel = computed(() => {
+  const days = tm('customers.operationalHours.days') as string[]
+  return days[props.modelValue.dayOfWeek] ?? ''
+})
 
 function onToggleChange(isOpen: boolean) {
   emit('update:modelValue', {

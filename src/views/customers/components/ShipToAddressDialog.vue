@@ -13,8 +13,12 @@
       <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
         <label class="w-full text-sm font-semibold sm:text-base md:w-40">
           {{ t('customers.fields.label') }}
+          <span class="ml-0.5 text-red-500">*</span>
         </label>
-        <InputText v-model="form.label" class="w-full" />
+        <div class="flex w-full flex-col gap-1">
+          <InputText v-model="form.label" class="w-full" />
+          <small v-if="labelError" class="text-red-500">{{ labelError }}</small>
+        </div>
       </div>
 
       <!-- Address Picker (region cascade) -->
@@ -188,6 +192,7 @@ watch(
   () => props.visible,
   (val) => {
     if (!val) return
+    labelError.value = ''
     const src = props.modelValue
     form.id = src?.id
     form.label = src?.label ?? ''
@@ -222,7 +227,11 @@ watch(
   },
 )
 
+const labelError = ref('')
+
 function onSave() {
+  labelError.value = form.label?.trim() ? '' : t('common.messages.required')
+  if (labelError.value) return
   emit('save', { ...form })
 }
 </script>

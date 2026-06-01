@@ -11,7 +11,11 @@
         @update:model-value="onToggleChange"
       />
       <span class="text-sm" :class="modelValue.isClosed ? 'text-stone-400' : 'text-green-600'">
-        {{ modelValue.isClosed ? t('customers.operationalHours.closed') : t('customers.operationalHours.open') }}
+        {{
+          modelValue.isClosed
+            ? t('customers.operationalHours.closed')
+            : t('customers.operationalHours.open')
+        }}
       </span>
     </div>
 

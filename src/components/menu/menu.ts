@@ -94,6 +94,28 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Inventory',
+    labelKey: 'navigation.inventory',
+    icon: 'pi pi-warehouse',
+    items: [
+      {
+        label: 'Warehouses',
+        labelKey: 'navigation.warehouses',
+        route: '/warehouses',
+      },
+      {
+        label: 'Goods Receipts',
+        labelKey: 'navigation.goodsReceipts',
+        route: '/goods-receipts',
+      },
+      {
+        label: 'Inventory Status',
+        labelKey: 'navigation.inventoryStatus',
+        route: '/inventory-status',
+      },
+    ],
+  },
+  {
     label: 'Pricing',
     labelKey: 'navigation.pricing',
     icon: 'pi pi-tag',

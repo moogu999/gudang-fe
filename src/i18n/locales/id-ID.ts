@@ -96,6 +96,10 @@ export default {
     priceMatrixPriorities: 'Prioritas Matriks Harga',
     promotions: 'Promosi',
     auditTrails: 'Jejak Audit',
+    inventory: 'Inventaris',
+    warehouses: 'Gudang',
+    goodsReceipts: 'Penerimaan Barang',
+    inventoryStatus: 'Status Inventaris',
   },
   table: {
     search: 'Cari',
@@ -1187,6 +1191,29 @@ export default {
       viewAuditTrail: 'Lihat Riwayat Perubahan',
     },
   },
+  warehouses: {
+    title: 'Gudang',
+    addWarehouse: 'Tambah Gudang',
+    editWarehouse: 'Edit Gudang',
+    viewWarehouse: 'Lihat Gudang',
+    fields: {
+      code: 'Kode',
+      name: 'Nama',
+      branch: 'Cabang',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      nameRequired: 'Nama wajib diisi.',
+      branchRequired: 'Cabang wajib diisi.',
+    },
+    messages: {
+      warehouseCreated: 'Gudang berhasil dibuat.',
+      warehouseUpdated: 'Gudang berhasil diperbarui.',
+    },
+  },
   priceMatrixPriority: {
     title: 'Prioritas Matriks Harga',
     addPlaceholder: 'Pilih matriks harga untuk ditambahkan',
@@ -1209,6 +1236,116 @@ export default {
     errors: {
       alreadyAtBoundary: 'Sudah berada di batas daftar prioritas.',
       alreadyInList: 'Matriks harga ini sudah ada dalam daftar prioritas.',
+    },
+  },
+  goodsReceipts: {
+    title: 'Penerimaan Barang',
+    addGoodsReceipt: 'Tambah Penerimaan',
+    viewGoodsReceipt: 'Detail Penerimaan Barang',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+    fields: {
+      no: 'No.',
+      receiptDate: 'Tanggal Terima',
+      warehouse: 'Gudang',
+      arrivalType: 'Jenis Kedatangan',
+      stockType: 'Jenis Stok',
+      total: 'Total',
+      remark: 'Catatan',
+    },
+    sections: {
+      receiptInfo: 'Informasi Penerimaan',
+      typeInfo: 'Jenis & Catatan',
+    },
+    arrivalTypes: {
+      regular: 'Reguler',
+      consignment: 'Konsinyasi',
+      bonus: 'Bonus',
+      transfer: 'Transfer',
+      returnIn: 'Retur Masuk',
+      other: 'Lainnya',
+    },
+    stockTypes: {
+      good: 'Baik',
+      bad: 'Rusak',
+    },
+    details: {
+      title: 'Detail Item',
+      addDetail: 'Tambah Item',
+      productCode: 'Kode Produk',
+      product: 'Nama Produk',
+      uom: 'Satuan',
+      quantity: 'Qty',
+      price: 'Harga',
+      subAmount: 'Subtotal',
+      empty: 'Belum ada item. Klik "Tambah Item" untuk mulai.',
+    },
+    summary: {
+      title: 'Ringkasan',
+      totalQty: 'Total Qty',
+      subtotal: 'Subtotal',
+      tax: 'Pajak',
+      total: 'Total',
+    },
+    actions: {
+      confirm: 'Konfirmasi Terima',
+    },
+    confirm: {
+      header: 'Konfirmasi Penerimaan Barang',
+      message:
+        'Apakah Anda yakin ingin memposting penerimaan barang ini? Saldo stok akan diperbarui segera.',
+    },
+    validation: {
+      noRequired: 'Nomor penerimaan wajib diisi.',
+      receiptDateRequired: 'Tanggal terima wajib diisi.',
+      warehouseRequired: 'Gudang wajib dipilih.',
+      arrivalTypeRequired: 'Jenis kedatangan wajib dipilih.',
+      stockTypeRequired: 'Jenis stok wajib dipilih.',
+      detailsRequired: 'Minimal satu item harus diisi.',
+      detailProductRequired: 'Baris {row}: produk wajib dipilih.',
+      detailQtyRequired: 'Baris {row}: qty harus lebih dari 0.',
+      detailPriceRequired: 'Baris {row}: harga harus 0 atau lebih.',
+    },
+    messages: {
+      created: 'Penerimaan barang berhasil diposting.',
+      notFound: 'Penerimaan barang tidak ditemukan.',
+    },
+  },
+  inventoryStatus: {
+    title: 'Status Inventaris',
+    kpi: {
+      onHand: 'Stok Tersedia',
+      inTransit: 'Dalam Transit',
+      reserved: 'Direservasi',
+      available: 'Dapat Digunakan',
+    },
+    filters: {
+      allWarehouses: 'Semua Gudang',
+    },
+    chips: {
+      all: 'Semua',
+      stockout: 'Habis',
+      inTransit: 'Ada Transit',
+      reserved: 'Ada Reservasi',
+    },
+    fields: {
+      productCode: 'Kode',
+      productName: 'Nama',
+      uom: 'Satuan',
+      onHand: 'Stok Tersedia',
+      inTransit: 'Dalam Transit',
+      reserved: 'Direservasi',
+      available: 'Dapat Digunakan',
+      composition: 'Komposisi',
+      value: 'Nilai HPP',
+    },
+    status: {
+      out: 'Habis',
+      normal: 'Normal',
+      unknown: '-',
     },
   },
 }

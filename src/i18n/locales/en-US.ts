@@ -95,6 +95,10 @@ export default {
     priceMatrixPriorities: 'Price Matrix Priority',
     promotions: 'Promotions',
     auditTrails: 'Audit Trails',
+    inventory: 'Inventory',
+    warehouses: 'Warehouses',
+    goodsReceipts: 'Goods Receipts',
+    inventoryStatus: 'Inventory Status',
   },
   table: {
     search: 'Search',
@@ -1191,6 +1195,29 @@ export default {
       viewAuditTrail: 'View Audit Trail',
     },
   },
+  warehouses: {
+    title: 'Warehouses',
+    addWarehouse: 'Add Warehouse',
+    editWarehouse: 'Edit Warehouse',
+    viewWarehouse: 'View Warehouse',
+    fields: {
+      code: 'Code',
+      name: 'Name',
+      branch: 'Branch',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+      branchRequired: 'Branch is required.',
+    },
+    messages: {
+      warehouseCreated: 'Warehouse is created.',
+      warehouseUpdated: 'Warehouse is updated.',
+    },
+  },
   priceMatrixPriority: {
     title: 'Price Matrix Priority',
     addPlaceholder: 'Select a price matrix to add',
@@ -1213,6 +1240,116 @@ export default {
     errors: {
       alreadyAtBoundary: 'Already at the boundary of the priority list.',
       alreadyInList: 'This price matrix is already in the priority list.',
+    },
+  },
+  goodsReceipts: {
+    title: 'Goods Receipts',
+    addGoodsReceipt: 'Add Goods Receipt',
+    viewGoodsReceipt: 'Goods Receipt Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'No.',
+      receiptDate: 'Receipt Date',
+      warehouse: 'Warehouse',
+      arrivalType: 'Arrival Type',
+      stockType: 'Stock Type',
+      total: 'Total',
+      remark: 'Remark',
+    },
+    sections: {
+      receiptInfo: 'Receipt Information',
+      typeInfo: 'Type & Notes',
+    },
+    arrivalTypes: {
+      regular: 'Regular',
+      consignment: 'Consignment',
+      bonus: 'Bonus',
+      transfer: 'Transfer',
+      returnIn: 'Return In',
+      other: 'Other',
+    },
+    stockTypes: {
+      good: 'Good',
+      bad: 'Bad',
+    },
+    details: {
+      title: 'Line Items',
+      addDetail: 'Add Item',
+      productCode: 'Product Code',
+      product: 'Product Name',
+      uom: 'UOM',
+      quantity: 'Qty',
+      price: 'Price',
+      subAmount: 'Sub Amount',
+      empty: 'No items. Click "Add Item" to begin.',
+    },
+    summary: {
+      title: 'Summary',
+      totalQty: 'Total Qty',
+      subtotal: 'Subtotal',
+      tax: 'Tax',
+      total: 'Total',
+    },
+    actions: {
+      confirm: 'Confirm Receipt',
+    },
+    confirm: {
+      header: 'Confirm Goods Receipt',
+      message:
+        'Are you sure you want to post this goods receipt? Stock balances will be updated immediately.',
+    },
+    validation: {
+      noRequired: 'Receipt number is required.',
+      receiptDateRequired: 'Receipt date is required.',
+      warehouseRequired: 'Warehouse is required.',
+      arrivalTypeRequired: 'Arrival type is required.',
+      stockTypeRequired: 'Stock type is required.',
+      detailsRequired: 'At least one line item is required.',
+      detailProductRequired: 'Row {row}: product is required.',
+      detailQtyRequired: 'Row {row}: quantity must be greater than 0.',
+      detailPriceRequired: 'Row {row}: price must be 0 or greater.',
+    },
+    messages: {
+      created: 'Goods receipt posted successfully.',
+      notFound: 'Goods receipt not found.',
+    },
+  },
+  inventoryStatus: {
+    title: 'Inventory Status',
+    kpi: {
+      onHand: 'On Hand',
+      inTransit: 'In Transit',
+      reserved: 'Reserved',
+      available: 'Available',
+    },
+    filters: {
+      allWarehouses: 'All Warehouses',
+    },
+    chips: {
+      all: 'All',
+      stockout: 'Stockout',
+      inTransit: 'Has In Transit',
+      reserved: 'Has Reserved',
+    },
+    fields: {
+      productCode: 'Code',
+      productName: 'Name',
+      uom: 'UOM',
+      onHand: 'On Hand',
+      inTransit: 'In Transit',
+      reserved: 'Reserved',
+      available: 'Available',
+      composition: 'Composition',
+      value: 'Inventory Value',
+    },
+    status: {
+      out: 'Stockout',
+      normal: 'Normal',
+      unknown: '-',
     },
   },
 }

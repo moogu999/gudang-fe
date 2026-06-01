@@ -48,7 +48,9 @@ async function save(dto: CreateCustomerV1Dto) {
   isLoading.value = true
   try {
     await CustomersService.v1Create(dto)
-    const msg = dto.isDraft ? t('customers.messages.draftSaved') : t('customers.messages.customerSaved')
+    const msg = dto.isDraft
+      ? t('customers.messages.draftSaved')
+      : t('customers.messages.customerSaved')
     toast.add(commonSuccessToast(msg, toastGroup))
     if (!dto.isDraft) setTimeout(() => router.push('/customers'), 800)
   } catch (e) {

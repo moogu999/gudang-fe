@@ -9,7 +9,9 @@
       <section id="identity" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.identity') }}
             </h2>
           </template>
@@ -46,14 +48,11 @@
                       readonly
                       class="w-full"
                     />
-                    <small class="text-stone-500">{{ t('customers.codeMode.assignedOnSave') }}</small>
+                    <small class="text-stone-500">{{
+                      t('customers.codeMode.assignedOnSave')
+                    }}</small>
                   </div>
-                  <InputText
-                    v-else
-                    v-model="formData.code"
-                    :disabled="disabled"
-                    class="w-full"
-                  />
+                  <InputText v-else v-model="formData.code" :disabled="disabled" class="w-full" />
                 </div>
               </div>
 
@@ -93,9 +92,13 @@
                     :model-value="formData.outletTypeId ?? null"
                     :disabled="disabled"
                     :placeholder="t('customers.labels.selectOutletType')"
-                    @update:model-value="formData.outletTypeId = typeof $event === 'number' ? $event : null"
+                    @update:model-value="
+                      formData.outletTypeId = typeof $event === 'number' ? $event : null
+                    "
                   />
-                  <small v-if="errors.outletTypeId" class="text-red-500">{{ errors.outletTypeId }}</small>
+                  <small v-if="errors.outletTypeId" class="text-red-500">{{
+                    errors.outletTypeId
+                  }}</small>
                 </div>
               </div>
 
@@ -115,7 +118,9 @@
                     :model-value="formData.channelId ?? null"
                     :disabled="disabled"
                     :placeholder="t('customers.labels.selectChannel')"
-                    @update:model-value="formData.channelId = typeof $event === 'number' ? $event : null"
+                    @update:model-value="
+                      formData.channelId = typeof $event === 'number' ? $event : null
+                    "
                   />
                   <small v-if="errors.channelId" class="text-red-500">{{ errors.channelId }}</small>
                 </div>
@@ -137,16 +142,27 @@
                     :model-value="formData.categoryId ?? null"
                     :disabled="disabled"
                     :placeholder="t('customers.labels.selectCategory')"
-                    @update:model-value="formData.categoryId = typeof $event === 'number' ? $event : null"
+                    @update:model-value="
+                      formData.categoryId = typeof $event === 'number' ? $event : null
+                    "
                   />
-                  <small v-if="errors.categoryId" class="text-red-500">{{ errors.categoryId }}</small>
+                  <small v-if="errors.categoryId" class="text-red-500">{{
+                    errors.categoryId
+                  }}</small>
                 </div>
               </div>
 
               <!-- Is Active -->
               <div class="flex items-center gap-3">
-                <Checkbox v-model="formData.isActive" :binary="true" :disabled="disabled" input-id="isActive" />
-                <label for="isActive" class="text-sm font-medium">{{ t('customers.fields.active') }}</label>
+                <Checkbox
+                  v-model="formData.isActive"
+                  :binary="true"
+                  :disabled="disabled"
+                  input-id="isActive"
+                />
+                <label for="isActive" class="text-sm font-medium">{{
+                  t('customers.fields.active')
+                }}</label>
               </div>
             </div>
           </template>
@@ -157,7 +173,9 @@
       <section id="location" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.location') }}
             </h2>
           </template>
@@ -211,7 +229,9 @@
       <section id="ship-to" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.shipTo') }}
             </h2>
           </template>
@@ -231,7 +251,9 @@
                 <div class="flex flex-col gap-5">
                   <!-- Currency -->
                   <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.currency') }}</label>
+                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                      t('customers.fields.currency')
+                    }}</label>
                     <InfiniteSelect
                       class="w-full"
                       option-label="code"
@@ -243,13 +265,17 @@
                       :placeholder="t('customers.labels.selectCurrency')"
                       sort-by="code"
                       sort-operator="asc"
-                      @update:model-value="formData.currencyId = typeof $event === 'number' ? $event : null"
+                      @update:model-value="
+                        formData.currencyId = typeof $event === 'number' ? $event : null
+                      "
                     />
                   </div>
 
                   <!-- Sell To -->
                   <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.sellTo') }}</label>
+                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                      t('customers.fields.sellTo')
+                    }}</label>
                     <InfiniteSelect
                       class="w-full"
                       option-label="name"
@@ -259,13 +285,17 @@
                       :model-value="formData.sellToId ?? null"
                       :disabled="disabled"
                       :placeholder="t('customers.labels.selectCustomer')"
-                      @update:model-value="formData.sellToId = typeof $event === 'number' ? $event : null"
+                      @update:model-value="
+                        formData.sellToId = typeof $event === 'number' ? $event : null
+                      "
                     />
                   </div>
 
                   <!-- Deliver To -->
                   <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.deliverTo') }}</label>
+                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                      t('customers.fields.deliverTo')
+                    }}</label>
                     <InfiniteSelect
                       class="w-full"
                       option-label="name"
@@ -275,13 +305,17 @@
                       :model-value="formData.deliverToId ?? null"
                       :disabled="disabled"
                       :placeholder="t('customers.labels.selectCustomer')"
-                      @update:model-value="formData.deliverToId = typeof $event === 'number' ? $event : null"
+                      @update:model-value="
+                        formData.deliverToId = typeof $event === 'number' ? $event : null
+                      "
                     />
                   </div>
 
                   <!-- Invoice To -->
                   <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.invoiceTo') }}</label>
+                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                      t('customers.fields.invoiceTo')
+                    }}</label>
                     <InfiniteSelect
                       class="w-full"
                       option-label="name"
@@ -291,19 +325,30 @@
                       :model-value="formData.invoiceToId ?? null"
                       :disabled="disabled"
                       :placeholder="t('customers.labels.selectCustomer')"
-                      @update:model-value="formData.invoiceToId = typeof $event === 'number' ? $event : null"
+                      @update:model-value="
+                        formData.invoiceToId = typeof $event === 'number' ? $event : null
+                      "
                     />
                   </div>
 
                   <!-- Join Invoice -->
                   <div class="flex items-center gap-3">
-                    <Checkbox v-model="formData.joinInvoice" :binary="true" :disabled="disabled" input-id="joinInvoice" />
-                    <label for="joinInvoice" class="text-sm font-medium">{{ t('customers.fields.joinInvoice') }}</label>
+                    <Checkbox
+                      v-model="formData.joinInvoice"
+                      :binary="true"
+                      :disabled="disabled"
+                      input-id="joinInvoice"
+                    />
+                    <label for="joinInvoice" class="text-sm font-medium">{{
+                      t('customers.fields.joinInvoice')
+                    }}</label>
                   </div>
 
                   <!-- Collect To -->
                   <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.collectTo') }}</label>
+                    <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                      t('customers.fields.collectTo')
+                    }}</label>
                     <InfiniteSelect
                       class="w-full"
                       option-label="name"
@@ -313,7 +358,9 @@
                       :model-value="formData.collectToId ?? null"
                       :disabled="disabled"
                       :placeholder="t('customers.labels.selectCustomer')"
-                      @update:model-value="formData.collectToId = typeof $event === 'number' ? $event : null"
+                      @update:model-value="
+                        formData.collectToId = typeof $event === 'number' ? $event : null
+                      "
                     />
                   </div>
                 </div>
@@ -327,7 +374,9 @@
       <section id="contact" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.contact') }}
             </h2>
           </template>
@@ -335,13 +384,17 @@
             <div class="flex flex-col gap-5 px-4 pb-4 sm:px-6 sm:pb-6">
               <!-- Phone -->
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.phone') }}</label>
+                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                  t('customers.fields.phone')
+                }}</label>
                 <InputText v-model="formData.phone" :disabled="disabled" class="w-full" />
               </div>
 
               <!-- WhatsApp -->
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.whatsappPhone') }}</label>
+                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                  t('customers.fields.whatsappPhone')
+                }}</label>
                 <div class="flex w-full gap-2">
                   <InputText v-model="formData.whatsappPhone" :disabled="disabled" class="flex-1" />
                   <Button
@@ -357,14 +410,23 @@
 
               <!-- Alt Phone -->
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.phoneAlt') }}</label>
+                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                  t('customers.fields.phoneAlt')
+                }}</label>
                 <InputText v-model="formData.phoneAlt" :disabled="disabled" class="w-full" />
               </div>
 
               <!-- Email -->
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.email') }}</label>
-                <InputText v-model="formData.email" type="email" :disabled="disabled" class="w-full" />
+                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                  t('customers.fields.email')
+                }}</label>
+                <InputText
+                  v-model="formData.email"
+                  type="email"
+                  :disabled="disabled"
+                  class="w-full"
+                />
               </div>
             </div>
           </template>
@@ -375,7 +437,9 @@
       <section id="tax" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.tax') }}
             </h2>
           </template>
@@ -383,8 +447,15 @@
             <div class="flex flex-col gap-5 px-4 pb-4 sm:px-6 sm:pb-6">
               <!-- Taxable (PKP) -->
               <div class="flex items-center gap-3">
-                <Checkbox v-model="formData.taxable" :binary="true" :disabled="disabled" input-id="taxable" />
-                <label for="taxable" class="text-sm font-medium">{{ t('customers.fields.taxable') }}</label>
+                <Checkbox
+                  v-model="formData.taxable"
+                  :binary="true"
+                  :disabled="disabled"
+                  input-id="taxable"
+                />
+                <label for="taxable" class="text-sm font-medium">{{
+                  t('customers.fields.taxable')
+                }}</label>
               </div>
 
               <template v-if="formData.taxable">
@@ -431,15 +502,24 @@
                     <span v-if="!isDraftMode" class="ml-0.5 text-red-500">*</span>
                   </label>
                   <div class="flex w-full flex-col gap-1">
-                    <Textarea v-model="formData.npwpAddress" :disabled="disabled" rows="2" class="w-full" />
-                    <small v-if="errors.npwpAddress" class="text-red-500">{{ errors.npwpAddress }}</small>
+                    <Textarea
+                      v-model="formData.npwpAddress"
+                      :disabled="disabled"
+                      rows="2"
+                      class="w-full"
+                    />
+                    <small v-if="errors.npwpAddress" class="text-red-500">{{
+                      errors.npwpAddress
+                    }}</small>
                   </div>
                 </div>
               </template>
 
               <!-- SIUP / NIB -->
               <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{ t('customers.fields.siupNib') }}</label>
+                <label class="w-full text-sm font-semibold sm:text-base md:w-40">{{
+                  t('customers.fields.siupNib')
+                }}</label>
                 <InputText v-model="formData.siupNib" :disabled="disabled" class="w-full" />
               </div>
             </div>
@@ -451,7 +531,9 @@
       <section id="banking" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.banking') }}
             </h2>
           </template>
@@ -472,16 +554,15 @@
       <section id="operational" class="mb-6 scroll-mt-4">
         <ResponsiveCard>
           <template #header>
-            <h2 class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6">
+            <h2
+              class="px-4 pt-4 text-xs font-semibold tracking-widest text-stone-500 uppercase sm:px-6"
+            >
               {{ t('customers.sections.operational') }}
             </h2>
           </template>
           <template #content>
             <div class="px-4 pb-4 sm:px-6 sm:pb-6">
-              <OperationalSection
-                v-model="formData.operatingHours"
-                :disabled="disabled"
-              />
+              <OperationalSection v-model="formData.operatingHours" :disabled="disabled" />
             </div>
           </template>
         </ResponsiveCard>
@@ -542,7 +623,13 @@ import {
   CustomerCategoriesService,
 } from '@/services'
 import { useNumberSeries } from '@/composables'
-import type { Customer, CustomerAddress, CustomerBankAccount, CustomerOperatingHour, CreateCustomerV1Dto } from '@/types/customer.type'
+import type {
+  Customer,
+  CustomerAddress,
+  CustomerBankAccount,
+  CustomerOperatingHour,
+  CreateCustomerV1Dto,
+} from '@/types/customer.type'
 
 const { t } = useI18n()
 
@@ -700,7 +787,9 @@ watch(
     formData.addresses = c.addresses ? [...c.addresses] : []
     formData.bankAccounts = c.bankAccounts ? [...c.bankAccounts] : []
     formData.operatingHours =
-      c.operatingHours && c.operatingHours.length > 0 ? [...c.operatingHours] : defaultOperatingHours()
+      c.operatingHours && c.operatingHours.length > 0
+        ? [...c.operatingHours]
+        : defaultOperatingHours()
 
     // Initial options
     if (c.outletType) initialOutletType.value = { id: c.outletTypeId!, name: c.outletType.name }
@@ -775,7 +864,8 @@ function validateFull(): boolean {
     if (!formData.nikOwner?.trim()) errors.nikOwner = t('customers.validation.nikOwnerRequired')
     if (!formData.npwp?.trim()) errors.npwp = t('customers.validation.npwpRequired')
     if (!formData.npwpName?.trim()) errors.npwpName = t('customers.validation.npwpNameRequired')
-    if (!formData.npwpAddress?.trim()) errors.npwpAddress = t('customers.validation.npwpAddressRequired')
+    if (!formData.npwpAddress?.trim())
+      errors.npwpAddress = t('customers.validation.npwpAddressRequired')
   }
   return Object.keys(errors).length === 0
 }
@@ -784,7 +874,12 @@ function validateFull(): boolean {
 
 async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
   let code = formData.code || undefined
-  if (!isDraft && props.mode === 'add' && codeMode.value === 'auto' && numberSeriesId.value !== null) {
+  if (
+    !isDraft &&
+    props.mode === 'add' &&
+    codeMode.value === 'auto' &&
+    numberSeriesId.value !== null
+  ) {
     code = await generateCode()
   }
 

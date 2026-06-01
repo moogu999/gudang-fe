@@ -46,6 +46,8 @@ export const PERMISSIONS = {
   EMPLOYEE_UPDATE: 39,
   EMPLOYEE_DELETE: 40,
   EMPLOYEE_TYPE_READ: 41,
+  WAREHOUSE_READ: 45,
+  WAREHOUSE_WRITE: 46,
 } as const
 
 /**
@@ -78,6 +80,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ,
   '/audit-trails': PERMISSIONS.AUDIT_TRAIL_READ,
   '/employees': PERMISSIONS.EMPLOYEE_READ,
+  '/warehouses': PERMISSIONS.WAREHOUSE_READ,
 }
 
 /**
@@ -102,4 +105,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_WRITE,
   '/promotions': PERMISSIONS.PROMOTION_WRITE,
   '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_WRITE,
+  '/warehouses': PERMISSIONS.WAREHOUSE_WRITE,
 }

@@ -86,22 +86,22 @@
         </div>
         <div class="flex items-center gap-3">
           <Checkbox v-model="form.isDefaultShipping" :binary="true" input-id="addrDefaultShip" />
-          <label for="addrDefaultShip" class="text-sm">{{ t('customers.fields.isDefaultShipping') }}</label>
+          <label for="addrDefaultShip" class="text-sm">{{
+            t('customers.fields.isDefaultShipping')
+          }}</label>
         </div>
         <div class="flex items-center gap-3">
           <Checkbox v-model="form.isTaxInvoiceAddress" :binary="true" input-id="addrTaxInvoice" />
-          <label for="addrTaxInvoice" class="text-sm">{{ t('customers.fields.isTaxInvoiceAddress') }}</label>
+          <label for="addrTaxInvoice" class="text-sm">{{
+            t('customers.fields.isTaxInvoiceAddress')
+          }}</label>
         </div>
       </div>
     </div>
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <Button
-          :label="t('common.actions.cancel')"
-          severity="secondary"
-          @click="emit('hide')"
-        />
+        <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('hide')" />
         <Button :label="t('common.actions.save')" @click="onSave" />
       </div>
     </template>
@@ -215,9 +215,13 @@ watch(
     form.isTaxInvoiceAddress = src?.isTaxInvoiceAddress ?? false
 
     initialCountry.value = src?.country ? { id: src.countryId!, name: src.country.name } : undefined
-    initialProvince.value = src?.province ? { id: src.provinceId!, name: src.province.name } : undefined
+    initialProvince.value = src?.province
+      ? { id: src.provinceId!, name: src.province.name }
+      : undefined
     initialCity.value = src?.city ? { id: src.cityId!, name: src.city.name } : undefined
-    initialDistrict.value = src?.district ? { id: src.districtId!, name: src.district.name } : undefined
+    initialDistrict.value = src?.district
+      ? { id: src.districtId!, name: src.district.name }
+      : undefined
     initialSubDistrict.value = src?.subDistrict
       ? { id: src.subDistrictId!, name: src.subDistrict.name }
       : undefined

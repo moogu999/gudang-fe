@@ -156,6 +156,17 @@ export const API_ENDPOINTS = {
 
   // Customer V1 endpoint (new full-feature CRUD with child entities)
   CUSTOMERS_V1_FULL: '/v1/customers',
+
+  // Warehouse endpoints
+  GEN_WAREHOUSES: '/gen/v1/warehouses',
+
+  // Goods Receipt endpoints
+  GOODS_RECEIPTS: '/v1/goods-receipts',
+  GEN_GOODS_RECEIPT_HEADERS: '/gen/v1/goods-receipt-headers',
+
+  // Inventory endpoints
+  GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
+  INVENTORY_SUMMARY: '/v1/inventory/summary',
 } as const
 
 // Type for API endpoints (useful for validation)

@@ -178,6 +178,28 @@ export type {
 // File upload types
 export type { FileRecord, UploadFileDto } from './file.type'
 
+// Warehouse types
+export type { Warehouse, CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.type'
+
+// Goods Receipt types
+export type {
+  ArrivalType,
+  StockType,
+  GRProductLite,
+  GoodsReceiptHeader,
+  GoodsReceiptDetailRow,
+  GoodsReceiptDetailResponse,
+  GoodsReceiptResponse,
+  CreateGoodsReceiptRequest,
+  CreateGoodsReceiptDetailDto,
+} from './goodsReceipt.type'
+
+// Inventory Balance types
+export type {
+  InventoryBalanceStatus,
+  InventoryBalance,
+  InventorySummary,
+} from './inventoryBalance.type'
 
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'

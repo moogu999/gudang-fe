@@ -264,6 +264,32 @@ const router = createRouter({
           props: (route) => ({ mode: 'view', id: Number(route.params.id) }),
           meta: { requiredPermission: PERMISSIONS.EMPLOYEE_READ },
         },
+        {
+          path: 'warehouses',
+          name: 'Warehouses',
+          component: () => import('@/views/warehouses/WarehousesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.WAREHOUSE_READ },
+        },
+        {
+          path: 'goods-receipts',
+          name: 'GoodsReceipts',
+          component: () => import('@/views/goods-receipts/GoodsReceiptsView.vue'),
+        },
+        {
+          path: 'goods-receipts/create',
+          name: 'GoodsReceiptCreate',
+          component: () => import('@/views/goods-receipts/GoodsReceiptCreateView.vue'),
+        },
+        {
+          path: 'goods-receipts/:id',
+          name: 'GoodsReceiptDetail',
+          component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
+        },
+        {
+          path: 'inventory-status',
+          name: 'InventoryStatus',
+          component: () => import('@/views/inventory-status/InventoryStatusView.vue'),
+        },
       ],
     },
 

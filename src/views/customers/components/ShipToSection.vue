@@ -28,7 +28,7 @@
             <div class="mb-1 flex flex-wrap gap-1">
               <span
                 v-if="addr.isPrimary"
-                class="rounded bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700"
+                class="bg-primary-100 text-primary-700 rounded px-2 py-0.5 text-xs font-medium"
               >
                 {{ t('customers.labels.primaryBadge') }}
               </span>
@@ -47,7 +47,11 @@
             </div>
             <p v-if="addr.label" class="text-sm font-medium">{{ addr.label }}</p>
             <p class="text-sm text-stone-500">
-              {{ [addr.address, addr.city?.name, addr.province?.name, addr.zipCode].filter(Boolean).join(', ') || '—' }}
+              {{
+                [addr.address, addr.city?.name, addr.province?.name, addr.zipCode]
+                  .filter(Boolean)
+                  .join(', ') || '—'
+              }}
             </p>
             <p v-if="addr.picName" class="mt-1 text-xs text-stone-400">
               PIC: {{ addr.picName }}<span v-if="addr.picPhone"> · {{ addr.picPhone }}</span>

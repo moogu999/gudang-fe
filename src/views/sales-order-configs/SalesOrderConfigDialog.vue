@@ -1,0 +1,202 @@
+<template>
+  <div>
+    <Toast position="top-center" :group="toastGroup" />
+
+    <Form
+      v-slot="$form"
+      :initial-values="initialValues"
+      :resolver="resolver"
+      @submit="onFormSubmit"
+    >
+      <!-- Branch -->
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="branchId" class="w-full text-sm font-semibold sm:text-base md:w-48">
+          {{ t('salesOrderConfigs.fields.branch') }}
+        </label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InfiniteSelect
+            v-if="mode === DialogMode.ADD"
+            id="branchId"
+            name="branchId"
+            option-label="name"
+            option-value="id"
+            :fetch-fn="(query) => BranchesService.list(query)"
+            :placeholder="t('salesOrderConfigs.labels.selectBranch')"
+            sort-by="name"
+            sort-operator="asc"
+          />
+          <InputText v-else :value="props.config?.branchName" disabled class="w-full" />
+          <Message v-if="$form.branchId?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.branchId.error.message }}
+          </Message>
+        </div>
+      </div>
+
+      <!-- Delivery Date Offset -->
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="deliveryDateOffset" class="w-full text-sm font-semibold sm:text-base md:w-48">
+          {{ t('salesOrderConfigs.fields.deliveryDateOffset') }}
+        </label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InputNumber
+            id="deliveryDateOffset"
+            name="deliveryDateOffset"
+            :min="0"
+            :max-fraction-digits="0"
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
+          <Message
+            v-if="$form.deliveryDateOffset?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.deliveryDateOffset.error.message }}
+          </Message>
+        </div>
+      </div>
+
+      <!-- Expiry Date Offset -->
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="expiredDateOffset" class="w-full text-sm font-semibold sm:text-base md:w-48">
+          {{ t('salesOrderConfigs.fields.expiredDateOffset') }}
+        </label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InputNumber
+            id="expiredDateOffset"
+            name="expiredDateOffset"
+            :min="0"
+            :max-fraction-digits="0"
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
+          <Message
+            v-if="$form.expiredDateOffset?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.expiredDateOffset.error.message }}
+          </Message>
+        </div>
+      </div>
+
+      <div v-if="mode !== DialogMode.VIEW" class="flex justify-end gap-2">
+        <Button
+          type="button"
+          :label="t('common.actions.cancel')"
+          severity="secondary"
+          :disabled="isLoading"
+          @click="emit('close')"
+        />
+        <Button
+          type="submit"
+          :label="!isLoading ? t('common.actions.save') : ''"
+          :icon="isLoading ? 'pi pi-spinner pi-spin' : ''"
+          :disabled="isLoading"
+        />
+      </div>
+      <div v-else class="flex justify-end gap-2">
+        <Button type="button" :label="t('common.actions.close')" @click="emit('close')" />
+      </div>
+    </Form>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onBeforeMount, type PropType } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue/usetoast'
+import { zodResolver } from '@primevue/forms/resolvers/zod'
+import { z } from 'zod'
+import Toast from 'primevue/toast'
+import Button from 'primevue/button'
+import InputNumber from 'primevue/inputnumber'
+import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
+import { Form, type FormSubmitEvent } from '@primevue/forms'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import DialogMode from '@/constants/dialogMode'
+import { BranchesService, SalesOrderConfigService } from '@/services'
+import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import type { SalesOrderConfig } from '@/types'
+
+const { t } = useI18n()
+const toast = useToast()
+
+const props = defineProps({
+  mode: {
+    type: String as PropType<DialogMode>,
+    default: DialogMode.ADD,
+  },
+  config: {
+    type: Object as PropType<SalesOrderConfig>,
+    default: undefined,
+  },
+})
+
+const emit = defineEmits(['close'])
+
+const toastGroup = 'salesOrderConfigDialog'
+const isLoading = ref(false)
+
+const initialValues = reactive({
+  branchId: undefined as number | undefined,
+  deliveryDateOffset: 0,
+  expiredDateOffset: 0,
+})
+
+onBeforeMount(() => {
+  if ((props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW) && props.config) {
+    initialValues.deliveryDateOffset = props.config.deliveryDateOffset
+    initialValues.expiredDateOffset = props.config.expiredDateOffset
+  }
+})
+
+const resolver = computed(() =>
+  zodResolver(
+    z.object({
+      branchId:
+        props.mode === DialogMode.ADD
+          ? z.number({ message: t('salesOrderConfigs.validation.branchRequired') })
+          : z.number().optional(),
+      deliveryDateOffset: z
+        .number({ message: t('salesOrderConfigs.validation.deliveryDateOffsetRequired') })
+        .int()
+        .min(0),
+      expiredDateOffset: z
+        .number({ message: t('salesOrderConfigs.validation.expiredDateOffsetRequired') })
+        .int()
+        .min(0),
+    }),
+  ),
+)
+
+async function onFormSubmit(event: FormSubmitEvent) {
+  if (!event.valid) return
+
+  const branchId =
+    props.mode === DialogMode.ADD ? event.states.branchId.value : props.config!.branchId
+
+  isLoading.value = true
+  try {
+    await SalesOrderConfigService.upsert(branchId, {
+      deliveryDateOffset: event.states.deliveryDateOffset.value,
+      expiredDateOffset: event.states.expiredDateOffset.value,
+    })
+
+    const message =
+      props.mode === DialogMode.ADD
+        ? t('salesOrderConfigs.messages.created')
+        : t('salesOrderConfigs.messages.updated')
+
+    toast.add(commonSuccessToast(message, toastGroup))
+    emit('close')
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    isLoading.value = false
+  }
+}
+</script>

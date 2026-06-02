@@ -81,6 +81,7 @@ export default {
     customerLabelDefinitions: 'Customer Label Definitions',
     sales: 'Sales',
     salesOrders: 'Sales Orders',
+    salesOrderConfigs: 'SO Config',
     users: 'Users',
     accessControls: 'Access Controls',
     roles: 'Roles',
@@ -1350,6 +1351,30 @@ export default {
       out: 'Stockout',
       normal: 'Normal',
       unknown: '-',
+    },
+  },
+  salesOrderConfigs: {
+    title: 'Sales Order Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      deliveryDateOffset: 'Delivery Offset',
+      expiredDateOffset: 'Expiry Offset',
+    },
+    labels: {
+      days: 'days',
+      selectBranch: 'Select Branch',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+      deliveryDateOffsetRequired: 'Delivery date offset is required.',
+      expiredDateOffsetRequired: 'Expiry date offset is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
     },
   },
 }

@@ -148,6 +148,11 @@ const mainMenu = [
         route: '/sales-orders',
       },
       {
+        label: 'SO Config',
+        labelKey: 'navigation.salesOrderConfigs',
+        route: '/sales-order-configs',
+      },
+      {
         label: 'Promotions',
         labelKey: 'navigation.promotions',
         route: '/promotions',

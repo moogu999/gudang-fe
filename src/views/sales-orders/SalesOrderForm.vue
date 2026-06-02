@@ -109,10 +109,12 @@
             }}</label>
             <DatePicker
               id="deliveryDate"
-              name="deliveryDate"
+              v-model="deliveryDate"
               date-format="dd/mm/yy"
               :disabled="mode === DialogMode.VIEW"
               class="w-full"
+              @date-select="onDeliveryDateChange"
+              @clear-click="onDeliveryDateChange(undefined)"
             />
           </div>
 
@@ -122,10 +124,12 @@
             }}</label>
             <DatePicker
               id="expiredDate"
-              name="expiredDate"
+              v-model="expiredDate"
               date-format="dd/mm/yy"
               :disabled="mode === DialogMode.VIEW"
               class="w-full"
+              @date-select="onExpiredDateChange"
+              @clear-click="onExpiredDateChange(undefined)"
             />
           </div>
         </div>
@@ -353,10 +357,12 @@ import {
   SalesOrderHeadersService,
   SalesOrderDetailsService,
   TaxConfigurationService,
+  SalesOrderConfigService,
   GenericQueryBuilder,
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import type { SalesOrderConfig } from '@/types'
 import type {
   SalesOrderDetailRow,
   CreateSalesOrderRequest,
@@ -426,6 +432,13 @@ const currentPriceDate = ref<Date | undefined>()
 const selectedSalesmanBranch = ref<string | undefined>()
 const selectedSalesmanCompany = ref<string | undefined>()
 
+// SO config auto-fill
+const soConfig = ref<SalesOrderConfig | null>(null)
+const deliveryDate = ref<Date | undefined>()
+const expiredDate = ref<Date | undefined>()
+const deliveryDateAutoFilled = ref(true)
+const expiredDateAutoFilled = ref(true)
+
 // Computed custom filters for the salesman InfiniteSelect
 const salesmanFilters = computed(() => {
   const filters: { filterBy: string; filterOperator: string; filterValue: string | number }[] = []
@@ -447,8 +460,6 @@ const initialValues = reactive({
   no: '',
   orderDate: undefined as Date | undefined,
   priceDate: undefined as Date | undefined,
-  deliveryDate: undefined as Date | undefined,
-  expiredDate: undefined as Date | undefined,
   customerId: undefined as number | undefined,
   employeeId: undefined as number | undefined,
   remark: '',
@@ -468,8 +479,6 @@ const resolver = computed(() =>
       customerId: z.number({ message: t('salesOrders.validation.customerRequired') }),
       employeeId: z.number({ message: t('salesOrders.validation.salesmanRequired') }),
       priceDate: z.date().optional().nullable(),
-      deliveryDate: z.date().optional().nullable(),
-      expiredDate: z.date().optional().nullable(),
       remark: z.string().optional(),
       isCash: z.boolean().optional(),
       downPaymentAmount: z.number().min(0).optional(),
@@ -670,6 +679,35 @@ function onPriceDateSelect(date: Date) {
   currentPriceDate.value = date
 }
 
+function onDeliveryDateChange(val: Date | undefined) {
+  deliveryDateAutoFilled.value = false
+  deliveryDate.value = val
+}
+
+function onExpiredDateChange(val: Date | undefined) {
+  expiredDateAutoFilled.value = false
+  expiredDate.value = val
+}
+
+// Auto-fill delivery/expiry dates from SO config when order date changes
+watch(
+  currentOrderDate,
+  (newDate) => {
+    if (!soConfig.value || !newDate || props.mode !== DialogMode.ADD) return
+    if (deliveryDateAutoFilled.value) {
+      const d = new Date(newDate)
+      d.setDate(d.getDate() + soConfig.value.deliveryDateOffset)
+      deliveryDate.value = d
+    }
+    if (expiredDateAutoFilled.value) {
+      const d = new Date(newDate)
+      d.setDate(d.getDate() + soConfig.value.expiredDateOffset)
+      expiredDate.value = d
+    }
+  },
+  { immediate: true },
+)
+
 // ─── Customer change handler ──────────────────────────────────────────────────
 
 function onCustomerSelect(opt: CustomerLite) {
@@ -752,8 +790,8 @@ async function onFormSubmit(event: FormSubmitEvent) {
     no,
     orderDate: event.states.orderDate.value.toISOString().split('T')[0],
     priceDate: event.states.priceDate.value?.toISOString().split('T')[0] || null,
-    deliveryDate: event.states.deliveryDate.value?.toISOString().split('T')[0] || null,
-    expiredDate: event.states.expiredDate.value?.toISOString().split('T')[0] || null,
+    deliveryDate: deliveryDate.value?.toISOString().split('T')[0] || null,
+    expiredDate: expiredDate.value?.toISOString().split('T')[0] || null,
     customerId: event.states.customerId.value,
     employeeId: event.states.employeeId.value,
     remark: event.states.remark.value || null,
@@ -831,8 +869,8 @@ async function loadSalesOrder() {
     initialValues.no = header.no
     initialValues.orderDate = new Date(header.orderDate)
     initialValues.priceDate = header.priceDate ? new Date(header.priceDate) : undefined
-    initialValues.deliveryDate = header.deliveryDate ? new Date(header.deliveryDate) : undefined
-    initialValues.expiredDate = header.expiredDate ? new Date(header.expiredDate) : undefined
+    deliveryDate.value = header.deliveryDate ? new Date(header.deliveryDate) : undefined
+    expiredDate.value = header.expiredDate ? new Date(header.expiredDate) : undefined
     initialValues.customerId = header.customerId
     initialValues.employeeId = header.employeeId ?? undefined
     initialValues.remark = header.remark || ''
@@ -892,13 +930,15 @@ async function loadSalesOrder() {
 
 // Lifecycle
 onBeforeMount(async () => {
-  const [typesResponse, taxConfig] = await Promise.all([
+  const [typesResponse, taxConfig, config] = await Promise.all([
     EmployeeTypesService.list(),
     TaxConfigurationService.get().catch(() => ({ percentage: '0' })),
+    props.mode === DialogMode.ADD ? SalesOrderConfigService.getMyBranch() : Promise.resolve(null),
   ])
   const salesmanType = typesResponse.data.find((t) => t.name === 'Salesman')
   salesmanTypeId.value = salesmanType?.id
   taxRate.value = parseFloat(taxConfig.percentage) || 0
+  soConfig.value = config
 
   if (props.mode === DialogMode.VIEW && props.salesOrderId) {
     await loadSalesOrder()

@@ -167,6 +167,11 @@ export const API_ENDPOINTS = {
   // Inventory endpoints
   GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
   INVENTORY_SUMMARY: '/v1/inventory/summary',
+
+  // Sales Order Config endpoints
+  SALES_ORDER_CONFIGS: '/v1/sales-order-configs',
+  SALES_ORDER_CONFIG_MY_BRANCH: '/v1/sales-order-configs/my-branch',
+  SALES_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/sales-order-configs/${branchId}`,
 } as const
 
 // Type for API endpoints (useful for validation)

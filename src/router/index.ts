@@ -290,6 +290,12 @@ const router = createRouter({
           name: 'InventoryStatus',
           component: () => import('@/views/inventory-status/InventoryStatusView.vue'),
         },
+        {
+          path: 'sales-order-configs',
+          name: 'SalesOrderConfigs',
+          component: () => import('@/views/sales-order-configs/SalesOrderConfigsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_CONFIG_READ },
+        },
       ],
     },
 

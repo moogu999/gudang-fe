@@ -204,5 +204,8 @@ export type {
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 
+// Sales Order Config types
+export type { SalesOrderConfig, UpsertSalesOrderConfigDto } from './salesOrderConfig.type'
+
 // Component types
 export type { Column } from './table.type'

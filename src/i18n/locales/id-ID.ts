@@ -82,6 +82,7 @@ export default {
     customerLabelDefinitions: 'Definisi Label Pelanggan',
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
+    salesOrderConfigs: 'Konfigurasi PO',
     users: 'Pengguna',
     accessControls: 'Kontrol Akses',
     roles: 'Peran',
@@ -1346,6 +1347,30 @@ export default {
       out: 'Habis',
       normal: 'Normal',
       unknown: '-',
+    },
+  },
+  salesOrderConfigs: {
+    title: 'Konfigurasi Pesanan Penjualan',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      deliveryDateOffset: 'Offset Pengiriman',
+      expiredDateOffset: 'Offset Kedaluwarsa',
+    },
+    labels: {
+      days: 'hari',
+      selectBranch: 'Pilih Cabang',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+      deliveryDateOffsetRequired: 'Offset tanggal pengiriman wajib diisi.',
+      expiredDateOffsetRequired: 'Offset tanggal kedaluwarsa wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
     },
   },
 }

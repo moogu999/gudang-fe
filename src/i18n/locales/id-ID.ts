@@ -1217,6 +1217,9 @@ export default {
   },
   priceMatrixPriority: {
     title: 'Prioritas Matriks Harga',
+    branchLabel: 'Cabang',
+    branchPlaceholder: 'Pilih cabang',
+    branchHint: 'Pilih cabang untuk melihat dan mengelola daftar prioritasnya.',
     addPlaceholder: 'Pilih matriks harga untuk ditambahkan',
     columns: {
       priority: 'Prioritas',

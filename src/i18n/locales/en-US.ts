@@ -1221,6 +1221,9 @@ export default {
   },
   priceMatrixPriority: {
     title: 'Price Matrix Priority',
+    branchLabel: 'Branch',
+    branchPlaceholder: 'Select a branch',
+    branchHint: 'Select a branch to view and manage its priority list.',
     addPlaceholder: 'Select a price matrix to add',
     columns: {
       priority: 'Priority',

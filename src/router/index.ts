@@ -134,19 +134,28 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.UOM_GROUP_READ },
         },
         {
+          path: 'booking-orders',
+          name: 'BookingOrders',
+          component: () => import('@/views/booking-orders/BookingOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.BOOKING_ORDER_READ },
+        },
+        {
           path: 'sales-orders',
           name: 'SalesOrders',
           component: () => import('@/views/sales-orders/SalesOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_READ },
         },
         {
           path: 'sales-orders/create',
           name: 'SalesOrderCreate',
           component: () => import('@/views/sales-orders/SalesOrderCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_WRITE },
         },
         {
           path: 'sales-orders/:id',
           name: 'SalesOrderDetail',
           component: () => import('@/views/sales-orders/SalesOrderDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_READ },
         },
         {
           path: 'number-series',
@@ -206,7 +215,7 @@ const router = createRouter({
           path: 'price-matrix-priorities',
           name: 'PriceMatrixPriorities',
           component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
-          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_PRIORITY_READ },
         },
         {
           path: 'promotions',
@@ -274,21 +283,25 @@ const router = createRouter({
           path: 'goods-receipts',
           name: 'GoodsReceipts',
           component: () => import('@/views/goods-receipts/GoodsReceiptsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ },
         },
         {
           path: 'goods-receipts/create',
           name: 'GoodsReceiptCreate',
           component: () => import('@/views/goods-receipts/GoodsReceiptCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_WRITE },
         },
         {
           path: 'goods-receipts/:id',
           name: 'GoodsReceiptDetail',
           component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ },
         },
         {
           path: 'inventory-status',
           name: 'InventoryStatus',
           component: () => import('@/views/inventory-status/InventoryStatusView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVENTORY_READ },
         },
         {
           path: 'sales-order-configs',

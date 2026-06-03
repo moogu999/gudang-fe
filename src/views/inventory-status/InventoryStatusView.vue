@@ -1,6 +1,6 @@
 <template>
-  <div class="p-2 sm:p-4 lg:p-10">
-    <h1 class="mb-6 text-base font-bold sm:text-lg md:text-2xl">
+  <div>
+    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
       {{ t('inventoryStatus.title') }}
     </h1>
 
@@ -40,102 +40,108 @@
       </div>
     </div>
 
-    <!-- Filters Row -->
-    <div class="mb-4 flex flex-wrap items-center gap-3">
-      <!-- Warehouse filter -->
-      <Select
-        v-model="selectedWarehouseId"
-        :options="warehouses"
-        option-label="name"
-        option-value="id"
-        :placeholder="t('inventoryStatus.filters.allWarehouses')"
-        show-clear
-        class="w-48"
-        @change="onWarehouseChange"
-      />
+    <!-- Filters -->
+    <Toolbar class="mb-5">
+      <template #start>
+        <div class="flex flex-wrap items-center gap-3">
+          <Select
+            v-model="selectedWarehouseId"
+            :options="warehouses"
+            option-label="name"
+            option-value="id"
+            :placeholder="t('inventoryStatus.filters.allWarehouses')"
+            show-clear
+            class="w-48"
+            @change="onWarehouseChange"
+          />
 
-      <!-- Status chips -->
-      <div class="flex gap-2">
-        <Button
-          :severity="activeChip === 'all' ? 'primary' : 'secondary'"
-          :label="t('inventoryStatus.chips.all')"
-          size="small"
-          @click="setChip('all')"
-        />
-        <Button
-          :severity="activeChip === 'out' ? 'primary' : 'secondary'"
-          :label="t('inventoryStatus.chips.stockout')"
-          size="small"
-          @click="setChip('out')"
-        />
-        <Button
-          :severity="activeChip === 'inTransit' ? 'primary' : 'secondary'"
-          :label="t('inventoryStatus.chips.inTransit')"
-          size="small"
-          @click="setChip('inTransit')"
-        />
-        <Button
-          :severity="activeChip === 'reserved' ? 'primary' : 'secondary'"
-          :label="t('inventoryStatus.chips.reserved')"
-          size="small"
-          @click="setChip('reserved')"
-        />
-      </div>
-    </div>
-
-    <!-- Table -->
-    <TableComponent :url="tableUrl" :columns="columns">
-      <template #content="{ col, data }">
-        <span v-if="col.field === 'onHand'">{{ formatQty(data.onHand) }}</span>
-        <span v-else-if="col.field === 'inTransit'">{{ formatQty(data.inTransit) }}</span>
-        <span v-else-if="col.field === 'reserved'">{{ formatQty(data.reserved) }}</span>
-        <span v-else-if="col.field === 'available'">{{ formatQty(data.available) }}</span>
-        <span v-else-if="col.field === 'value'">{{
-          formatNumber(parseFloat(data.value || '0'))
-        }}</span>
-        <div v-else-if="col.field === 'composition'">
-          <div class="flex h-2 w-24 overflow-hidden rounded-full bg-stone-100">
-            <template
-              v-if="
-                parseFloat(data.onHand || '0') +
-                  parseFloat(data.inTransit || '0') +
-                  parseFloat(data.reserved || '0') >
-                0
-              "
-            >
-              <div
-                class="bg-green-500"
-                :style="`width:${onHandPct(data)}%`"
-                :title="`On Hand: ${onHandPct(data).toFixed(0)}%`"
-              />
-              <div
-                class="bg-blue-400"
-                :style="`width:${inTransitPct(data)}%`"
-                :title="`In Transit: ${inTransitPct(data).toFixed(0)}%`"
-              />
-              <div
-                class="bg-orange-400"
-                :style="`width:${reservedPct(data)}%`"
-                :title="`Reserved: ${reservedPct(data).toFixed(0)}%`"
-              />
-            </template>
+          <div class="flex gap-2">
+            <Button
+              :severity="activeChip === 'all' ? 'primary' : 'secondary'"
+              :label="t('inventoryStatus.chips.all')"
+              size="small"
+              @click="setChip('all')"
+            />
+            <Button
+              :severity="activeChip === 'out' ? 'primary' : 'secondary'"
+              :label="t('inventoryStatus.chips.stockout')"
+              size="small"
+              @click="setChip('out')"
+            />
+            <Button
+              :severity="activeChip === 'inTransit' ? 'primary' : 'secondary'"
+              :label="t('inventoryStatus.chips.inTransit')"
+              size="small"
+              @click="setChip('inTransit')"
+            />
+            <Button
+              :severity="activeChip === 'reserved' ? 'primary' : 'secondary'"
+              :label="t('inventoryStatus.chips.reserved')"
+              size="small"
+              @click="setChip('reserved')"
+            />
           </div>
         </div>
-        <div v-else-if="col.field === 'status'">
-          <Tag
-            v-if="data.status === 'out'"
-            severity="danger"
-            :value="t('inventoryStatus.status.out')"
-          />
-          <Tag
-            v-else-if="data.status === 'normal'"
-            severity="success"
-            :value="t('inventoryStatus.status.normal')"
-          />
-          <Tag v-else severity="secondary" :value="t('inventoryStatus.status.unknown')" />
-        </div>
       </template>
-    </TableComponent>
+    </Toolbar>
+
+    <!-- Table -->
+    <ResponsiveCard>
+      <template #content>
+        <TableComponent :url="tableUrl" :columns="columns">
+          <template #content="{ col, data }">
+            <span v-if="col.field === 'onHand'">{{ formatQty(data.onHand) }}</span>
+            <span v-else-if="col.field === 'inTransit'">{{ formatQty(data.inTransit) }}</span>
+            <span v-else-if="col.field === 'reserved'">{{ formatQty(data.reserved) }}</span>
+            <span v-else-if="col.field === 'available'">{{ formatQty(data.available) }}</span>
+            <span v-else-if="col.field === 'value'">{{
+              formatNumber(parseFloat(data.value || '0'))
+            }}</span>
+            <div v-else-if="col.field === 'composition'">
+              <div class="flex h-2 w-24 overflow-hidden rounded-full bg-stone-100">
+                <template
+                  v-if="
+                    parseFloat(data.onHand || '0') +
+                      parseFloat(data.inTransit || '0') +
+                      parseFloat(data.reserved || '0') >
+                    0
+                  "
+                >
+                  <div
+                    class="bg-green-500"
+                    :style="`width:${onHandPct(data)}%`"
+                    :title="`On Hand: ${onHandPct(data).toFixed(0)}%`"
+                  />
+                  <div
+                    class="bg-blue-400"
+                    :style="`width:${inTransitPct(data)}%`"
+                    :title="`In Transit: ${inTransitPct(data).toFixed(0)}%`"
+                  />
+                  <div
+                    class="bg-orange-400"
+                    :style="`width:${reservedPct(data)}%`"
+                    :title="`Reserved: ${reservedPct(data).toFixed(0)}%`"
+                  />
+                </template>
+              </div>
+            </div>
+            <div v-else-if="col.field === 'status'">
+              <Tag
+                v-if="data.status === 'out'"
+                severity="danger"
+                :value="t('inventoryStatus.status.out')"
+              />
+              <Tag
+                v-else-if="data.status === 'normal'"
+                severity="success"
+                :value="t('inventoryStatus.status.normal')"
+              />
+              <Tag v-else severity="secondary" :value="t('inventoryStatus.status.unknown')" />
+            </div>
+          </template>
+        </TableComponent>
+      </template>
+    </ResponsiveCard>
   </div>
 </template>
 
@@ -146,6 +152,8 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import Tag from 'primevue/tag'
 import TableComponent from '@/components/table/TableComponent.vue'
+import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
+import Toolbar from 'primevue/toolbar'
 import { API_ENDPOINTS } from '@/constants/api'
 import { WarehousesService, InventoryService } from '@/services'
 import type { Column } from '@/types'

@@ -53,11 +53,7 @@ export class PriceMatricesService {
     )
   }
 
-  static async movePriority(
-    id: number,
-    direction: 'up' | 'down',
-    branchId: number,
-  ): Promise<void> {
+  static async movePriority(id: number, direction: 'up' | 'down', branchId: number): Promise<void> {
     return ApiService.patch<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY(id), {
       direction,
       branchId,

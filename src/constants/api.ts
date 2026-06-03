@@ -168,6 +168,11 @@ export const API_ENDPOINTS = {
   GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
   INVENTORY_SUMMARY: '/v1/inventory/summary',
 
+  // Booking Order endpoints
+  BOOKING_ORDER_SALES_ORDERS: '/v1/booking-orders/sales-orders',
+  BOOKING_ORDER_EVALUATE: '/v1/booking-orders/evaluate',
+  BOOKING_ORDERS: '/v1/booking-orders',
+
   // Sales Order Config endpoints
   SALES_ORDER_CONFIGS: '/v1/sales-order-configs',
   SALES_ORDER_CONFIG_MY_BRANCH: '/v1/sales-order-configs/my-branch',

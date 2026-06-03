@@ -81,6 +81,7 @@ export default {
     customerLabelDefinitions: 'Customer Label Definitions',
     sales: 'Sales',
     salesOrders: 'Sales Orders',
+    bookingOrders: 'Booking Orders',
     salesOrderConfigs: 'SO Config',
     users: 'Users',
     accessControls: 'Access Controls',
@@ -1354,6 +1355,31 @@ export default {
       out: 'Stockout',
       normal: 'Normal',
       unknown: '-',
+    },
+  },
+  bookingOrders: {
+    title: 'Booking Orders',
+    showBooked: 'Show booked',
+    fields: {
+      no: 'SO Number',
+      value: 'Value',
+      deliveryDeadline: 'Delivery Deadline',
+      fulfillment: 'Fulfillment',
+      doNo: 'DO Number',
+    },
+    status: {
+      full: 'Full',
+      partial: 'Partial',
+      none: 'None',
+      pending: '—',
+    },
+    actions: {
+      submit: 'Book Selected',
+    },
+    messages: {
+      confirmSubmit:
+        'This will reserve stock for all selected sales orders and create delivery orders. Proceed?',
+      submitSuccess: 'Booking submitted successfully.',
     },
   },
   salesOrderConfigs: {

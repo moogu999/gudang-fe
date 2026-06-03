@@ -82,6 +82,7 @@ export default {
     customerLabelDefinitions: 'Definisi Label Pelanggan',
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
+    bookingOrders: 'Pesanan Booking',
     salesOrderConfigs: 'Konfigurasi PO',
     users: 'Pengguna',
     accessControls: 'Kontrol Akses',
@@ -1350,6 +1351,31 @@ export default {
       out: 'Habis',
       normal: 'Normal',
       unknown: '-',
+    },
+  },
+  bookingOrders: {
+    title: 'Pesanan Booking',
+    showBooked: 'Tampilkan yang sudah dibooking',
+    fields: {
+      no: 'No. SO',
+      value: 'Nilai',
+      deliveryDeadline: 'Batas Pengiriman',
+      fulfillment: 'Pemenuhan',
+      doNo: 'No. DO',
+    },
+    status: {
+      full: 'Penuh',
+      partial: 'Sebagian',
+      none: 'Tidak Ada',
+      pending: '—',
+    },
+    actions: {
+      submit: 'Booking Terpilih',
+    },
+    messages: {
+      confirmSubmit:
+        'Ini akan mereservasi stok untuk semua pesanan penjualan yang dipilih dan membuat pesanan pengiriman. Lanjutkan?',
+      submitSuccess: 'Booking berhasil disubmit.',
     },
   },
   salesOrderConfigs: {

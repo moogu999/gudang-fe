@@ -207,5 +207,14 @@ export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 // Sales Order Config types
 export type { SalesOrderConfig, UpsertSalesOrderConfigDto } from './salesOrderConfig.type'
 
+// Booking Order types
+export type {
+  BookableSalesOrder,
+  FulfillmentStatus,
+  FulfillmentItem,
+  SalesOrderFulfillment,
+  CreateBookingOrderResult,
+} from './bookingOrder.type'
+
 // Component types
 export type { Column } from './table.type'

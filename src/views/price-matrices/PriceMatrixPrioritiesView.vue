@@ -25,7 +25,7 @@
             @update:model-value="onBranchChange"
           />
         </div>
-        <p v-if="selectedBranchId === null" class="mt-2 text-sm text-surface-500">
+        <p v-if="selectedBranchId === null" class="text-surface-500 mt-2 text-sm">
           {{ t('priceMatrixPriority.branchHint') }}
         </p>
       </template>
@@ -73,7 +73,9 @@
                   icon="pi pi-arrow-down"
                   severity="secondary"
                   text
-                  :disabled="index === priorities.length - 1 || loading || selectedBranchId === null"
+                  :disabled="
+                    index === priorities.length - 1 || loading || selectedBranchId === null
+                  "
                   :aria-label="t('priceMatrixPriority.actions.moveDown')"
                   @click="onMove(data.id, 'down')"
                 />

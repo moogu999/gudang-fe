@@ -1,38 +1,41 @@
 <template>
-  <div class="p-2 sm:p-4 lg:p-10">
-    <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h1 class="text-base font-bold sm:text-lg md:text-2xl">
-        {{ t('goodsReceipts.title') }}
-      </h1>
-      <Button
-        :label="t('goodsReceipts.addGoodsReceipt')"
-        icon="pi pi-plus"
-        @click="addGoodsReceipt"
-      />
-    </div>
+  <div>
+    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
+      {{ t('goodsReceipts.title') }}
+    </h1>
 
-    <TableComponent :url="url" :columns="columns">
-      <template #content="{ col, data }">
-        <span v-if="col.field === 'receiptDate'">
-          {{ dayjs(data.receiptDate).format(DateFormat.DATE) }}
-        </span>
-        <span v-else-if="col.field === 'warehouseName'">
-          {{ data.warehouseName || '-' }}
-        </span>
-        <span v-else-if="col.field === 'arrivalType'" class="capitalize">
-          {{ data.arrivalType || '-' }}
-        </span>
-        <span v-else-if="col.field === 'stockType'" class="capitalize">
-          {{ data.stockType || '-' }}
-        </span>
-        <span v-else-if="col.field === 'totalAmount'">
-          {{ formatNumber(parseFloat(data.totalAmount || '0')) }}
-        </span>
-        <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
-          <Button icon="pi pi-eye" size="small" text @click="viewGoodsReceipt(data.id)" />
-        </div>
+    <Toolbar class="mb-5">
+      <template #end>
+        <ResponsiveButton :label="t('goodsReceipts.addGoodsReceipt')" @click="addGoodsReceipt" />
       </template>
-    </TableComponent>
+    </Toolbar>
+
+    <ResponsiveCard>
+      <template #content>
+        <TableComponent :url="url" :columns="columns">
+          <template #content="{ col, data }">
+            <span v-if="col.field === 'receiptDate'">
+              {{ dayjs(data.receiptDate).format(DateFormat.DATE) }}
+            </span>
+            <span v-else-if="col.field === 'warehouseName'">
+              {{ data.warehouseName || '-' }}
+            </span>
+            <span v-else-if="col.field === 'arrivalType'" class="capitalize">
+              {{ data.arrivalType || '-' }}
+            </span>
+            <span v-else-if="col.field === 'stockType'" class="capitalize">
+              {{ data.stockType || '-' }}
+            </span>
+            <span v-else-if="col.field === 'totalAmount'">
+              {{ formatNumber(parseFloat(data.totalAmount || '0')) }}
+            </span>
+            <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
+              <Button icon="pi pi-eye" size="small" text @click="viewGoodsReceipt(data.id)" />
+            </div>
+          </template>
+        </TableComponent>
+      </template>
+    </ResponsiveCard>
   </div>
 </template>
 
@@ -41,8 +44,11 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Toolbar from 'primevue/toolbar'
 import dayjs from 'dayjs'
 import TableComponent from '@/components/table/TableComponent.vue'
+import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
+import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import { API_ENDPOINTS } from '@/constants/api'
 import DateFormat from '@/constants/dateFormat'
 import type { Column } from '@/types'

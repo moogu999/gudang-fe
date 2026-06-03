@@ -747,7 +747,7 @@ function toggleChoice(
   }
 
   skipNextWatch = true
-  emit('update:modelValue', [...localRows.value])
+  emitRows()
 }
 
 function isHeaderChoicePicked(promotionId: number, productId: number): boolean {
@@ -761,7 +761,7 @@ function getHeaderPickCount(promotionId: number): number {
 function onLineManualDiscountsUpdate(row: SalesOrderDetailRow, discounts: ManualDiscount[]) {
   row._manualDiscounts = discounts
   skipNextWatch = true
-  emit('update:modelValue', [...localRows.value])
+  emitRows()
 }
 
 function toggleHeaderChoice(offer: ChoiceOffer, productId: number, checked: boolean) {

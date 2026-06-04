@@ -153,9 +153,19 @@ const mainMenu = [
         route: '/booking-orders',
       },
       {
+        label: 'Delivery Orders',
+        labelKey: 'navigation.deliveryOrders',
+        route: '/delivery-orders',
+      },
+      {
         label: 'SO Config',
         labelKey: 'navigation.salesOrderConfigs',
         route: '/sales-order-configs',
+      },
+      {
+        label: 'BO Config',
+        labelKey: 'navigation.bookingOrderConfigs',
+        route: '/booking-order-configs',
       },
       {
         label: 'Promotions',

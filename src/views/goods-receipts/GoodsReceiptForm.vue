@@ -330,7 +330,7 @@ function validateDetails(): boolean {
       )
       return false
     }
-    if (row.price === undefined || row.price === null || row.price < 0) {
+    if (row.price !== undefined && row.price !== null && row.price < 0) {
       toast.add(
         commonErrorToast(
           new Error(t('goodsReceipts.validation.detailPriceRequired', { row: index + 1 })),

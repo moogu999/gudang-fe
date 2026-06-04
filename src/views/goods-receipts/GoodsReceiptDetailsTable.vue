@@ -54,24 +54,63 @@
         </template>
       </Column>
 
-      <!-- UOM (read-only) -->
-      <Column :header="t('goodsReceipts.details.uom')" style="width: 6rem">
-        <template #body="{ data }">
-          <span class="text-stone-500">{{ getUomSymbol(data as GoodsReceiptDetailRow) }}</span>
-        </template>
-      </Column>
-
       <!-- Quantity -->
       <Column field="quantity" :header="t('goodsReceipts.details.quantity')">
         <template #body="{ data }">
-          {{
-            (data as GoodsReceiptDetailRow).quantity != null
-              ? String((data as GoodsReceiptDetailRow).quantity)
-              : ''
-          }}
+          <div class="flex flex-col gap-0.5">
+            <span>
+              <template v-if="(getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1">
+                {{
+                  decomposeBaseQty(
+                    (data as GoodsReceiptDetailRow).quantity as number,
+                    getUomLevels(data as GoodsReceiptDetailRow)!,
+                  ).join(' / ')
+                }}
+              </template>
+              <template v-else>
+                {{
+                  (data as GoodsReceiptDetailRow).quantity != null
+                    ? String((data as GoodsReceiptDetailRow).quantity)
+                    : ''
+                }}
+              </template>
+            </span>
+            <span v-if="getUomLabel(data as GoodsReceiptDetailRow)" class="text-xs text-stone-400">
+              {{ getUomLabel(data as GoodsReceiptDetailRow) }}
+            </span>
+            <span
+              v-if="
+                (getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1 &&
+                (data as GoodsReceiptDetailRow).quantity != null
+              "
+              class="text-xs text-stone-400"
+            >
+              {{ (data as GoodsReceiptDetailRow).quantity!.toLocaleString(locale) }}
+              {{ getUomLevels(data as GoodsReceiptDetailRow)!.at(-1)?.uom?.symbol }}
+            </span>
+          </div>
         </template>
         <template #editor="{ data }">
+          <template v-if="(getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1">
+            <InputText
+              :model-value="getTierString(data as GoodsReceiptDetailRow)"
+              :placeholder="
+                getUomLevels(data as GoodsReceiptDetailRow)!
+                  .map((l) => l.uom?.symbol ?? '?')
+                  .join('/')
+              "
+              class="w-full font-mono"
+              @input="
+                (e: Event) =>
+                  handleTierInput(
+                    data as GoodsReceiptDetailRow,
+                    (e.target as HTMLInputElement).value,
+                  )
+              "
+            />
+          </template>
           <InputNumber
+            v-else
             v-model="(data as GoodsReceiptDetailRow).quantity"
             :min-fraction-digits="0"
             :max-fraction-digits="4"
@@ -131,8 +170,10 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
+import InputText from 'primevue/inputtext'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
-import type { GoodsReceiptDetailRow } from '@/types'
+import type { GoodsReceiptDetailRow, UomConversionLevel } from '@/types'
+import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
 import { ProductsService } from '@/services'
 
 const { t, locale } = useI18n()
@@ -204,7 +245,7 @@ function removeRow(index: number) {
 
 function onRowEditSave(event: { newData: GoodsReceiptDetailRow; index: number }) {
   const { newData, index } = event
-  if (newData._isPlaceholder && newData.productId) {
+  if (newData._isPlaceholder && newData.productId && newData.quantity && (newData.quantity as number) > 0) {
     newData._isPlaceholder = false
   }
   localRows.value[index] = newData
@@ -214,12 +255,39 @@ function onRowEditSave(event: { newData: GoodsReceiptDetailRow; index: number })
 
 function onProductSelect(data: GoodsReceiptDetailRow, option: object) {
   data.product = option as GoodsReceiptDetailRow['product']
+  data._quantityTiers = undefined
+  data['_quantityTiersRaw'] = undefined
 }
 
-function getUomSymbol(data: GoodsReceiptDetailRow): string {
-  const levels = data.product?.uomGroup?.levels
+function getUomLevels(data: GoodsReceiptDetailRow): UomConversionLevel[] | undefined {
+  return (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup
+    ?.levels
+}
+
+function getUomLabel(data: GoodsReceiptDetailRow): string {
+  const levels = getUomLevels(data)
   if (!levels?.length) return ''
-  return levels[levels.length - 1].uom?.symbol ?? ''
+  if (levels.length === 1) return levels[0].uom?.symbol ?? ''
+  return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
+}
+
+function getTierString(data: GoodsReceiptDetailRow): string {
+  const raw = data['_quantityTiersRaw'] as string | undefined
+  if (raw !== undefined) return raw
+  return data._quantityTiers ? (data._quantityTiers as number[]).join('/') : ''
+}
+
+function handleTierInput(data: GoodsReceiptDetailRow, rawValue: string) {
+  const levels = getUomLevels(data)
+  if (!levels) return
+  data['_quantityTiersRaw'] = rawValue
+  const parts = rawValue.split('/')
+  const tiers = Array.from({ length: levels.length }, (_, i) => {
+    const n = parseInt((parts[i] ?? '').trim(), 10)
+    return isNaN(n) || n < 0 ? 0 : n
+  })
+  data._quantityTiers = tiers
+  data.quantity = computeBaseQty(tiers, levels)
 }
 
 function computeSubAmount(data: GoodsReceiptDetailRow): number {

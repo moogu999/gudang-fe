@@ -13,7 +13,7 @@
     @submit="onFormSubmit"
   >
     <!-- Two Column Layout for Header Fields -->
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+    <div v-if="!hideHeader" class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
       <!-- Left Column: Order Information -->
       <div class="space-y-4">
         <h3 class="mb-2 text-sm font-semibold text-stone-700 sm:text-base">
@@ -238,7 +238,7 @@
       </div>
     </div>
 
-    <Divider class="my-6" />
+    <Divider v-if="!hideHeader" class="my-6" />
 
     <!-- Details Section -->
     <SalesOrderDetailsTable
@@ -394,6 +394,7 @@ const toastGroup = 'salesOrderForm'
 interface Props {
   mode: DialogMode.ADD | DialogMode.VIEW
   salesOrderId?: number
+  hideHeader?: boolean
 }
 
 const props = defineProps<Props>()

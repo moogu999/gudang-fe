@@ -6,7 +6,7 @@ export interface GRProductLite {
   code: string
   name: string
   uomGroup?: {
-    levels: { levelOrder: number; uom?: { symbol: string } }[]
+    levels: { levelOrder: number; qtyPerParent: number | null; uom?: { symbol: string } }[]
   }
 }
 

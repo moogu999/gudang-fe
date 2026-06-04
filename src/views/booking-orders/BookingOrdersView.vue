@@ -53,7 +53,10 @@
           <Column :header="t('bookingOrders.fields.no')">
             <template #body="{ data }">
               <div class="flex flex-col gap-0.5">
-                <span class="font-medium">{{ data.no }}</span>
+                <RouterLink
+                  :to="{ name: 'SalesOrderDetail', params: { id: data.id } }"
+                  class="font-medium text-primary hover:underline !pointer-events-auto"
+                >{{ data.no }}</RouterLink>
                 <span class="text-xs text-stone-500">{{ data.customerName }}</span>
                 <span v-if="data.salesmanCode || data.salesmanName" class="text-xs text-stone-400">
                   {{ [data.salesmanCode, data.salesmanName].filter(Boolean).join(' - ') }}
@@ -83,7 +86,25 @@
           </Column>
           <Column :header="t('bookingOrders.fields.doNo')">
             <template #body="{ data }">
-              {{ data.deliveryOrderNo ?? '-' }}
+              <RouterLink
+                v-if="data.deliveryOrderId"
+                :to="{ name: 'DeliveryOrderDetail', params: { id: data.deliveryOrderId } }"
+                class="font-medium text-primary hover:underline !pointer-events-auto"
+              >{{ data.deliveryOrderNo }}</RouterLink>
+              <span v-else>-</span>
+            </template>
+          </Column>
+          <Column v-if="canCancelDO" :header="t('common.labels.actions')">
+            <template #body="{ data }">
+              <Button
+                v-if="data.booked && data.deliveryOrderId"
+                :label="t('bookingOrders.actions.cancelDO')"
+                severity="danger"
+                size="small"
+                outlined
+                class="!pointer-events-auto"
+                @click="onCancelDOClick(data)"
+              />
             </template>
           </Column>
           <template #empty>
@@ -100,6 +121,8 @@ import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { usePermissions } from '@/composables'
+import { PERMISSIONS } from '@/constants'
 import Toast from 'primevue/toast'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -110,7 +133,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
-import { BookingOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
+import { BookingOrdersService, DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
 import type { BookableSalesOrder, FulfillmentStatus } from '@/types'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
@@ -118,6 +141,7 @@ import dayjs from 'dayjs'
 const { t } = useI18n()
 const confirm = useConfirm()
 const toast = useToast()
+const { hasPermission } = usePermissions()
 
 const overlayGroup = 'bookingOrders'
 
@@ -135,6 +159,7 @@ const canSubmit = computed(
     selected.value.length > 0 &&
     selected.value.every((row) => statusMap.value.get(row.id) === 'full'),
 )
+const canCancelDO = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
 
 const submitAcceptHandler = ref(async () => {})
 
@@ -235,6 +260,28 @@ function onSubmitClick() {
     message: t('bookingOrders.messages.confirmSubmit'),
     rejectProps: { label: t('common.actions.cancel'), severity: 'secondary', outlined: true },
     acceptProps: { label: t('bookingOrders.actions.submit') },
+  })
+}
+
+function onCancelDOClick(item: BookableSalesOrder) {
+  submitAcceptHandler.value = async () => {
+    try {
+      await DeliveryOrdersService.cancel(item.deliveryOrderId!)
+      toast.add(commonSuccessToast(t('bookingOrders.messages.cancelDOSuccess'), overlayGroup))
+      selected.value = []
+      statusMap.value = new Map()
+      await fetchData(currentPage.value)
+    } catch (e) {
+      toast.add(commonErrorToast(e, overlayGroup))
+    }
+  }
+
+  confirm.require({
+    group: overlayGroup,
+    header: t('bookingOrders.actions.cancelDO'),
+    message: t('bookingOrders.messages.confirmCancelDO'),
+    rejectProps: { label: t('common.actions.cancel'), severity: 'secondary', outlined: true },
+    acceptProps: { label: t('bookingOrders.actions.cancelDO'), severity: 'danger' },
   })
 }
 

@@ -145,6 +145,7 @@ import {
   DistrictsService,
   SubDistrictsService,
 } from '@/services'
+import FilterOperator from '@/constants/filterOperator'
 
 const { t } = useI18n()
 
@@ -180,25 +181,25 @@ const emit = defineEmits<{
 
 const provinceFilters = computed(() =>
   props.modelValue.countryId
-    ? [{ filterBy: 'countryId', filterOperator: 'eq', filterValue: props.modelValue.countryId }]
+    ? [{ filterBy: 'countryId', filterOperator: FilterOperator.EQUAL, filterValue: props.modelValue.countryId }]
     : [],
 )
 
 const cityFilters = computed(() =>
   props.modelValue.provinceId
-    ? [{ filterBy: 'provinceId', filterOperator: 'eq', filterValue: props.modelValue.provinceId }]
+    ? [{ filterBy: 'provinceId', filterOperator: FilterOperator.EQUAL, filterValue: props.modelValue.provinceId }]
     : [],
 )
 
 const districtFilters = computed(() =>
   props.modelValue.cityId
-    ? [{ filterBy: 'cityId', filterOperator: 'eq', filterValue: props.modelValue.cityId }]
+    ? [{ filterBy: 'cityId', filterOperator: FilterOperator.EQUAL, filterValue: props.modelValue.cityId }]
     : [],
 )
 
 const subDistrictFilters = computed(() =>
   props.modelValue.districtId
-    ? [{ filterBy: 'districtId', filterOperator: 'eq', filterValue: props.modelValue.districtId }]
+    ? [{ filterBy: 'districtId', filterOperator: FilterOperator.EQUAL, filterValue: props.modelValue.districtId }]
     : [],
 )
 

@@ -82,7 +82,9 @@ export default {
     sales: 'Sales',
     salesOrders: 'Sales Orders',
     bookingOrders: 'Booking Orders',
+    deliveryOrders: 'Delivery Orders',
     salesOrderConfigs: 'SO Config',
+    bookingOrderConfigs: 'BO Config',
     users: 'Users',
     accessControls: 'Access Controls',
     roles: 'Roles',
@@ -1375,11 +1377,14 @@ export default {
     },
     actions: {
       submit: 'Book Selected',
+      cancelDO: 'Cancel DO',
     },
     messages: {
       confirmSubmit:
         'This will reserve stock for all selected sales orders and create delivery orders. Proceed?',
       submitSuccess: 'Booking submitted successfully.',
+      confirmCancelDO: 'Cancel the delivery order for this sales order? This will release reserved stock.',
+      cancelDOSuccess: 'Delivery order cancelled successfully.',
     },
   },
   salesOrderConfigs: {
@@ -1404,6 +1409,55 @@ export default {
     messages: {
       created: 'Config is created.',
       updated: 'Config is updated.',
+    },
+  },
+  bookingOrderConfigs: {
+    title: 'Booking Order Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      warehouse: 'Warehouse',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      selectWarehouse: 'Select Warehouse',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+      warehouseRequired: 'Warehouse is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  deliveryOrders: {
+    title: 'Delivery Orders',
+    fields: {
+      no: 'DO Number',
+      soNo: 'SO Number',
+      customer: 'Customer',
+      warehouse: 'Warehouse',
+      deliveryDate: 'Delivery Date',
+      createdAt: 'Created At',
+      status: 'Status',
+      remark: 'Remark',
+    },
+    status: {
+      open: 'Open',
+      cancelled: 'Cancelled',
+    },
+    actions: {
+      cancel: 'Cancel DO',
+      print: 'Print',
+    },
+    messages: {
+      confirmCancel:
+        'This will release all reserved stock back to available inventory. Proceed?',
+      cancelSuccess: 'Delivery order cancelled successfully.',
+      notFound: 'Delivery order not found.',
     },
   },
 }

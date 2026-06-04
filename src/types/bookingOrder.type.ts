@@ -5,6 +5,7 @@ export interface BookableSalesOrder {
   deliveryDate: string | null
   createdAt: string
   booked: boolean
+  deliveryOrderId: number | null
   deliveryOrderNo: string | null
   customerName: string
   salesmanCode: string | null

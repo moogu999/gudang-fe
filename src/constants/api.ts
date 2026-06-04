@@ -177,6 +177,16 @@ export const API_ENDPOINTS = {
   SALES_ORDER_CONFIGS: '/v1/sales-order-configs',
   SALES_ORDER_CONFIG_MY_BRANCH: '/v1/sales-order-configs/my-branch',
   SALES_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/sales-order-configs/${branchId}`,
+
+  // Booking Order Config endpoints
+  BOOKING_ORDER_CONFIGS: '/v1/booking-order-configs',
+  BOOKING_ORDER_CONFIG_MY_BRANCH: '/v1/booking-order-configs/my-branch',
+  BOOKING_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/booking-order-configs/${branchId}`,
+
+  // Delivery Order endpoints
+  DELIVERY_ORDERS: '/v1/delivery-orders',
+  DELIVERY_ORDER_BY_ID: (id: number) => `/v1/delivery-orders/${id}`,
+  DELIVERY_ORDER_CANCEL: (id: number) => `/v1/delivery-orders/${id}/cancel`,
 } as const
 
 // Type for API endpoints (useful for validation)

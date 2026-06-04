@@ -13,6 +13,14 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
 
+    // Print routes (no layout, requires auth)
+    {
+      path: '/delivery-orders/:id/print',
+      name: 'DeliveryOrderPrint',
+      component: () => import('@/views/delivery-orders/DeliveryOrderPrintView.vue'),
+      meta: { requiresAuth: true, requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
+    },
+
     // Protected routes (with MainLayout)
     {
       path: '/',
@@ -138,6 +146,18 @@ const router = createRouter({
           name: 'BookingOrders',
           component: () => import('@/views/booking-orders/BookingOrdersView.vue'),
           meta: { requiredPermission: PERMISSIONS.BOOKING_ORDER_READ },
+        },
+        {
+          path: 'delivery-orders',
+          name: 'DeliveryOrders',
+          component: () => import('@/views/delivery-orders/DeliveryOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
+        },
+        {
+          path: 'delivery-orders/:id',
+          name: 'DeliveryOrderDetail',
+          component: () => import('@/views/delivery-orders/DeliveryOrderDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
         },
         {
           path: 'sales-orders',
@@ -308,6 +328,12 @@ const router = createRouter({
           name: 'SalesOrderConfigs',
           component: () => import('@/views/sales-order-configs/SalesOrderConfigsView.vue'),
           meta: { requiredPermission: PERMISSIONS.SALES_ORDER_CONFIG_READ },
+        },
+        {
+          path: 'booking-order-configs',
+          name: 'BookingOrderConfigs',
+          component: () => import('@/views/booking-order-configs/BookingOrderConfigsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.BOOKING_ORDER_CONFIG_READ },
         },
       ],
     },

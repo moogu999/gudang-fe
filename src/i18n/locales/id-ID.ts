@@ -83,7 +83,9 @@ export default {
     sales: 'Penjualan',
     salesOrders: 'Pesanan Penjualan',
     bookingOrders: 'Pesanan Booking',
+    deliveryOrders: 'Pesanan Pengiriman',
     salesOrderConfigs: 'Konfigurasi PO',
+    bookingOrderConfigs: 'Konfigurasi BO',
     users: 'Pengguna',
     accessControls: 'Kontrol Akses',
     roles: 'Peran',
@@ -1371,11 +1373,14 @@ export default {
     },
     actions: {
       submit: 'Booking Terpilih',
+      cancelDO: 'Batalkan DO',
     },
     messages: {
       confirmSubmit:
         'Ini akan mereservasi stok untuk semua pesanan penjualan yang dipilih dan membuat pesanan pengiriman. Lanjutkan?',
       submitSuccess: 'Booking berhasil disubmit.',
+      confirmCancelDO: 'Batalkan pesanan pengiriman untuk pesanan penjualan ini? Stok yang direservasi akan dibebaskan.',
+      cancelDOSuccess: 'Pesanan pengiriman berhasil dibatalkan.',
     },
   },
   salesOrderConfigs: {
@@ -1400,6 +1405,55 @@ export default {
     messages: {
       created: 'Konfigurasi berhasil dibuat.',
       updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  bookingOrderConfigs: {
+    title: 'Konfigurasi Pesanan Booking',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      warehouse: 'Gudang',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      selectWarehouse: 'Pilih Gudang',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+      warehouseRequired: 'Gudang wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  deliveryOrders: {
+    title: 'Pesanan Pengiriman',
+    fields: {
+      no: 'No. DO',
+      soNo: 'No. SO',
+      customer: 'Pelanggan',
+      warehouse: 'Gudang',
+      deliveryDate: 'Tanggal Pengiriman',
+      createdAt: 'Dibuat Pada',
+      status: 'Status',
+      remark: 'Catatan',
+    },
+    status: {
+      open: 'Terbuka',
+      cancelled: 'Dibatalkan',
+    },
+    actions: {
+      cancel: 'Batalkan DO',
+      print: 'Cetak',
+    },
+    messages: {
+      confirmCancel:
+        'Ini akan melepaskan semua stok yang direservasi kembali ke inventaris tersedia. Lanjutkan?',
+      cancelSuccess: 'Pesanan pengiriman berhasil dibatalkan.',
+      notFound: 'Pesanan pengiriman tidak ditemukan.',
     },
   },
 }

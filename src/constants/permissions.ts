@@ -62,6 +62,10 @@ export const PERMISSIONS = {
   SALES_ORDER_WRITE: 55,
   BOOKING_ORDER_READ: 56,
   BOOKING_ORDER_WRITE: 57,
+  BOOKING_ORDER_CONFIG_READ: 58,
+  BOOKING_ORDER_CONFIG_WRITE: 59,
+  DELIVERY_ORDER_READ: 60,
+  DELIVERY_ORDER_CANCEL: 61,
 } as const
 
 /**
@@ -100,6 +104,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/sales-orders': PERMISSIONS.SALES_ORDER_READ,
   '/booking-orders': PERMISSIONS.BOOKING_ORDER_READ,
   '/sales-order-configs': PERMISSIONS.SALES_ORDER_CONFIG_READ,
+  '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
+  '/delivery-orders': PERMISSIONS.DELIVERY_ORDER_READ,
 }
 
 /**
@@ -129,4 +135,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/sales-orders': PERMISSIONS.SALES_ORDER_WRITE,
   '/booking-orders': PERMISSIONS.BOOKING_ORDER_WRITE,
   '/sales-order-configs': PERMISSIONS.SALES_ORDER_CONFIG_WRITE,
+  '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_WRITE,
 }

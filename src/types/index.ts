@@ -216,5 +216,16 @@ export type {
   CreateBookingOrderResult,
 } from './bookingOrder.type'
 
+// Booking Order Config types
+export type { BookingOrderConfig, UpsertBookingOrderConfigDto } from './bookingOrderConfig.type'
+
+// Delivery Order types
+export type {
+  DeliveryOrderStatus,
+  DeliveryOrderListItem,
+  DeliveryOrderViewLine,
+  DeliveryOrderDetail,
+} from './deliveryOrder.type'
+
 // Component types
 export type { Column } from './table.type'

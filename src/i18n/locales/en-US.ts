@@ -1383,8 +1383,22 @@ export default {
       confirmSubmit:
         'This will reserve stock for all selected sales orders and create delivery orders. Proceed?',
       submitSuccess: 'Booking submitted successfully.',
-      confirmCancelDO: 'Cancel the delivery order for this sales order? This will release reserved stock.',
+      confirmCancelDO:
+        'Cancel the delivery order for this sales order? This will release reserved stock.',
       cancelDOSuccess: 'Delivery order cancelled successfully.',
+      partialWarningTitle: 'Partial Fulfillment Warning',
+      partialWarningNote:
+        'Some selected orders cannot be fully fulfilled. Only available quantities will be included in each delivery order. The shortfall items are listed below. Proceed?',
+    },
+    partial: {
+      product: 'Product',
+      ordered: 'Ordered',
+      fulfilled: 'Fulfilled',
+      shortfall: 'Shortfall',
+    },
+    bonus: {
+      title: 'Bonus Items',
+      available: 'Available',
     },
   },
   salesOrderConfigs: {
@@ -1444,20 +1458,35 @@ export default {
       createdAt: 'Created At',
       status: 'Status',
       remark: 'Remark',
+      soQuantity: 'Ordered Qty',
+      fulfilledQuantity: 'Fulfilled Qty',
+      product: 'Product',
+      price: 'Price',
+      discount: 'Discount',
+      subAmount: 'Sub Amount',
+      tax: 'Tax',
+      subtotal: 'Subtotal',
+      taxBase: 'Tax Base',
+      total: 'Total',
     },
     status: {
       open: 'Open',
       cancelled: 'Cancelled',
+      partial: 'Partial',
     },
     actions: {
       cancel: 'Cancel DO',
       print: 'Print',
     },
     messages: {
-      confirmCancel:
-        'This will release all reserved stock back to available inventory. Proceed?',
+      confirmCancel: 'This will release all reserved stock back to available inventory. Proceed?',
       cancelSuccess: 'Delivery order cancelled successfully.',
       notFound: 'Delivery order not found.',
+    },
+    bonus: {
+      title: 'Bonus Items',
+      promotionCode: 'Promo Code',
+      quantity: 'Qty (Delivered)',
     },
   },
 }

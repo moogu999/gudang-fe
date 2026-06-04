@@ -72,6 +72,7 @@
           }}</label>
           <InputNumber
             v-model="addValue"
+            :locale="locale"
             :min="0"
             :min-fraction-digits="0"
             :max-fraction-digits="2"

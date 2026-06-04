@@ -37,6 +37,10 @@ export interface LineBonus {
   bonusProductCode: string
   bonusProductName: string
   qty: string
+  uomGroup?: {
+    name: string
+    levels: UomConversionLevel[]
+  } | null
 }
 
 export interface ChoicePoolItem {
@@ -85,6 +89,8 @@ export interface ResolveSalesOrderResponse {
 // Sales Order Header Entity
 export interface SalesOrderHeader {
   manualDiscounts?: ManualDiscount[]
+  headerDiscounts?: LineDiscount[]
+  headerBonuses?: LineBonus[]
   id: number
   no: string
   orderDate: string // ISO date
@@ -105,7 +111,7 @@ export interface SalesOrderHeader {
   creditLimitApproval: boolean
   subtotalAmount: string
   discountAmount: string
-  dppAmount: string
+  taxBaseAmount: string
   taxAmount: string
   totalAmount: string
   createdBy: number | null

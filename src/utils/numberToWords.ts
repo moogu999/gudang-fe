@@ -1,8 +1,24 @@
 const ones = [
-  '', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima',
-  'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh',
-  'Sebelas', 'Dua Belas', 'Tiga Belas', 'Empat Belas', 'Lima Belas',
-  'Enam Belas', 'Tujuh Belas', 'Delapan Belas', 'Sembilan Belas',
+  '',
+  'Satu',
+  'Dua',
+  'Tiga',
+  'Empat',
+  'Lima',
+  'Enam',
+  'Tujuh',
+  'Delapan',
+  'Sembilan',
+  'Sepuluh',
+  'Sebelas',
+  'Dua Belas',
+  'Tiga Belas',
+  'Empat Belas',
+  'Lima Belas',
+  'Enam Belas',
+  'Tujuh Belas',
+  'Delapan Belas',
+  'Sembilan Belas',
 ]
 
 function hundredsToWords(n: number): string {
@@ -11,11 +27,19 @@ function hundredsToWords(n: number): string {
 
   const tens = Math.floor(n / 10)
   const remainder = n % 10
-  const tensWords = ['', '', 'Dua Puluh', 'Tiga Puluh', 'Empat Puluh', 'Lima Puluh',
-    'Enam Puluh', 'Tujuh Puluh', 'Delapan Puluh', 'Sembilan Puluh']
-  return remainder === 0
-    ? tensWords[tens]
-    : `${tensWords[tens]} ${ones[remainder]}`
+  const tensWords = [
+    '',
+    '',
+    'Dua Puluh',
+    'Tiga Puluh',
+    'Empat Puluh',
+    'Lima Puluh',
+    'Enam Puluh',
+    'Tujuh Puluh',
+    'Delapan Puluh',
+    'Sembilan Puluh',
+  ]
+  return remainder === 0 ? tensWords[tens] : `${tensWords[tens]} ${ones[remainder]}`
 }
 
 function threeDigitsToWords(n: number): string {

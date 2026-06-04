@@ -112,6 +112,7 @@
           <InputNumber
             v-else
             v-model="(data as GoodsReceiptDetailRow).quantity"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="4"
             class="w-full"
@@ -127,6 +128,7 @@
         <template #editor="{ data }">
           <InputNumber
             v-model="(data as GoodsReceiptDetailRow).price"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             class="w-full"
@@ -245,7 +247,12 @@ function removeRow(index: number) {
 
 function onRowEditSave(event: { newData: GoodsReceiptDetailRow; index: number }) {
   const { newData, index } = event
-  if (newData._isPlaceholder && newData.productId && newData.quantity && (newData.quantity as number) > 0) {
+  if (
+    newData._isPlaceholder &&
+    newData.productId &&
+    newData.quantity &&
+    (newData.quantity as number) > 0
+  ) {
     newData._isPlaceholder = false
   }
   localRows.value[index] = newData

@@ -119,6 +119,7 @@
           <InputNumber
             v-else
             v-model="(data as SalesOrderDetailRow).quantity"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             class="w-full"
@@ -159,10 +160,15 @@
         </template>
       </Column>
 
-      <!-- Discount (always read-only — resolved by backend) -->
+      <!-- Discount (promotion + manual discounts) -->
       <Column field="discount" :header="t('salesOrders.details.discount')">
         <template #body="{ data }">
-          {{ formatValue((data as SalesOrderDetailRow).discount) }}
+          {{
+            formatValue(
+              ((data as SalesOrderDetailRow).discount ?? 0) +
+                computeManualDiscountTotal(data as SalesOrderDetailRow),
+            )
+          }}
         </template>
       </Column>
 
@@ -263,7 +269,20 @@
                     </p>
                   </td>
                   <td class="py-0.5 text-right text-green-700">
-                    +{{ bonus.qty }} × {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}
+                    <div class="flex flex-col gap-0">
+                      <span>{{ getBonusQtyDisplay(bonus).qty }}</span>
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).label"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).label }}</span
+                      >
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).baseQty"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).baseQty }}</span
+                      >
+                    </div>
+                    <span>× {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -442,7 +461,20 @@
                     </p>
                   </td>
                   <td class="py-0.5 text-right text-green-700">
-                    +{{ bonus.qty }} × {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}
+                    <div class="flex flex-col gap-0">
+                      <span>{{ getBonusQtyDisplay(bonus).qty }}</span>
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).label"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).label }}</span
+                      >
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).baseQty"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).baseQty }}</span
+                      >
+                    </div>
+                    <span>× {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -686,6 +718,23 @@ function getUomLabel(data: SalesOrderDetailRow): string | undefined {
   return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
 }
 
+function getBonusQtyDisplay(bonus: LineBonus): {
+  qty: string
+  label?: string
+  baseQty?: string
+} {
+  const levels = bonus.uomGroup?.levels
+  if (!levels || levels.length <= 1) {
+    return { qty: `+${bonus.qty}` }
+  }
+  const decomposed = decomposeBaseQty(parseFloat(bonus.qty), levels)
+  const qty = '+' + decomposed.join(' / ')
+  const label = levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
+  const smallestSymbol = levels.at(-1)?.uom?.symbol
+  const baseQty = smallestSymbol ? `+${parseFloat(bonus.qty)} ${smallestSymbol}` : undefined
+  return { qty, label, baseQty }
+}
+
 function getTierString(data: SalesOrderDetailRow): string {
   const raw = data['_quantityTiersRaw'] as string | undefined
   if (raw !== undefined) return raw
@@ -705,10 +754,15 @@ function handleTierInput(data: SalesOrderDetailRow, rawValue: string) {
   data.quantity = computeBaseQty(tiers, levels)
 }
 
+function computeManualDiscountTotal(data: SalesOrderDetailRow): number {
+  return (data._manualDiscounts ?? []).reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0)
+}
+
 function computeSubAmount(data: SalesOrderDetailRow): number {
   return (
     ((data.quantity ?? 0) as number) * ((data.price ?? 0) as number) -
-    ((data.discount ?? 0) as number)
+    ((data.discount ?? 0) as number) -
+    computeManualDiscountTotal(data)
   )
 }
 

@@ -212,6 +212,7 @@ export type {
   BookableSalesOrder,
   FulfillmentStatus,
   FulfillmentItem,
+  BonusFulfillmentItem,
   SalesOrderFulfillment,
   CreateBookingOrderResult,
 } from './bookingOrder.type'
@@ -224,7 +225,10 @@ export type {
   DeliveryOrderStatus,
   DeliveryOrderListItem,
   DeliveryOrderViewLine,
+  DeliveryOrderBonusLine,
   DeliveryOrderDetail,
+  DeliveryOrderUomLevel,
+  DeliveryOrderUomGroup,
 } from './deliveryOrder.type'
 
 // Component types

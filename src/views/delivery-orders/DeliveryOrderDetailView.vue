@@ -11,7 +11,7 @@
     </div>
 
     <div v-if="isLoading" class="flex justify-center py-10">
-      <i class="pi pi-spin pi-spinner text-3xl text-primary" />
+      <i class="pi pi-spin pi-spinner text-primary text-3xl" />
     </div>
 
     <template v-else-if="detail">
@@ -20,42 +20,69 @@
         <template #content>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.no') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.no')
+              }}</span>
               <span class="font-medium">{{ detail.no }}</span>
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.status') }}</span>
-              <Tag
-                class="w-fit"
-                :severity="detail.status === 'open' ? 'success' : 'danger'"
-                :value="t(`deliveryOrders.status.${detail.status}`)"
-              />
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.status')
+              }}</span>
+              <div class="flex items-center gap-2">
+                <Tag
+                  class="w-fit"
+                  :severity="detail.status === 'open' ? 'success' : 'danger'"
+                  :value="t(`deliveryOrders.status.${detail.status}`)"
+                />
+                <Tag
+                  v-if="detail.isPartial"
+                  class="w-fit"
+                  severity="warn"
+                  :value="t('deliveryOrders.status.partial')"
+                />
+              </div>
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.createdAt') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.createdAt')
+              }}</span>
               <span>{{ dayjs(detail.createdAt).format(DateFormat.DATE_TIME) }}</span>
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.warehouse') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.warehouse')
+              }}</span>
               <span>{{ detail.warehouseName }}</span>
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.soNo') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.soNo')
+              }}</span>
               <RouterLink
                 :to="{ name: 'SalesOrderDetail', params: { id: detail.salesOrderHeaderId } }"
-                class="font-medium text-primary hover:underline"
-              >{{ detail.soNo }}</RouterLink>
+                class="text-primary font-medium hover:underline"
+                >{{ detail.soNo }}</RouterLink
+              >
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.customer') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.customer')
+              }}</span>
               <span>{{ detail.customerName }}</span>
             </div>
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.deliveryDate') }}</span>
-              <span>{{ detail.deliveryDate ? dayjs(detail.deliveryDate).format(DateFormat.DATE) : '-' }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.deliveryDate')
+              }}</span>
+              <span>{{
+                detail.deliveryDate ? dayjs(detail.deliveryDate).format(DateFormat.DATE) : '-'
+              }}</span>
             </div>
             <div v-if="detail.remark" class="flex flex-col gap-1 sm:col-span-2 lg:col-span-3">
-              <span class="text-xs font-semibold uppercase text-stone-500">{{ t('deliveryOrders.fields.remark') }}</span>
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.remark')
+              }}</span>
               <span class="whitespace-pre-line">{{ detail.remark }}</span>
             </div>
           </div>
@@ -78,15 +105,195 @@
         </template>
       </ResponsiveCard>
 
-      <!-- Items and order summary -->
+      <!-- DO lines table -->
       <ResponsiveCard>
         <template #content>
-          <SalesOrderForm
-            :mode="DialogMode.VIEW"
-            :sales-order-id="detail.salesOrderHeaderId"
-            :hide-header="true"
-            @cancel="router.back()"
-          />
+          <DataTable :value="detail.lines" class="mb-4 text-sm" size="small">
+            <Column :header="t('deliveryOrders.fields.product')">
+              <template #body="{ data }">
+                <div class="flex flex-col">
+                  <span class="font-medium">{{ data.productCode }}</span>
+                  <span class="text-xs text-stone-500">{{ data.productName }}</span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.soQuantity')" class="text-right">
+              <template #body="{ data }">
+                <div class="flex flex-col gap-0.5">
+                  <span>
+                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                      {{
+                        decomposeBaseQty(parseFloat(data.soQuantity), data.uomGroup!.levels).join(
+                          ' / ',
+                        )
+                      }}
+                    </template>
+                    <template v-else>{{ formatQty(data.soQuantity) }}</template>
+                  </span>
+                  <span v-if="getUomLabel(data)" class="text-xs text-stone-400">
+                    {{ getUomLabel(data) }}
+                  </span>
+                  <span
+                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    class="text-xs text-stone-400"
+                  >
+                    {{ formatQty(data.soQuantity) }}
+                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                  </span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.fulfilledQuantity')" class="text-right">
+              <template #body="{ data }">
+                <div
+                  class="flex flex-col gap-0.5"
+                  :class="{
+                    'text-amber-600': parseFloat(data.quantity) < parseFloat(data.soQuantity),
+                  }"
+                >
+                  <span>
+                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                      {{
+                        decomposeBaseQty(parseFloat(data.quantity), data.uomGroup!.levels).join(
+                          ' / ',
+                        )
+                      }}
+                    </template>
+                    <template v-else>{{ formatQty(data.quantity) }}</template>
+                  </span>
+                  <span v-if="getUomLabel(data)" class="text-xs text-stone-400">
+                    {{ getUomLabel(data) }}
+                  </span>
+                  <span
+                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    class="text-xs text-stone-400"
+                  >
+                    {{ formatQty(data.quantity) }}
+                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                  </span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.price')" class="text-right">
+              <template #body="{ data }">
+                <div class="flex flex-col gap-0.5">
+                  <span>{{ formatAmount(data.price) }}</span>
+                  <span
+                    v-if="data.taxIncluded"
+                    class="w-fit rounded bg-orange-100 px-1 py-0.5 text-xs font-medium text-orange-700"
+                  >
+                    {{ t('priceLists.fields.taxIncluded') }}
+                  </span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.discount')" class="text-right">
+              <template #body="{ data }">
+                {{ parseFloat(data.discount) > 0 ? formatAmount(data.discount) : '-' }}
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.subAmount')" class="text-right">
+              <template #body="{ data }">{{ formatAmount(data.subAmount) }}</template>
+            </Column>
+            <template #empty>
+              <div class="py-4 text-center text-stone-500">{{ t('table.noResults') }}</div>
+            </template>
+          </DataTable>
+
+          <!-- Financial summary -->
+          <div class="flex justify-end">
+            <div class="w-full max-w-xs rounded-lg border border-stone-200 p-4">
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-stone-500">{{ t('deliveryOrders.fields.subtotal') }}</span>
+                  <span class="tabular-nums">{{
+                    formatAmount(String(summaryTotals.grossTotal))
+                  }}</span>
+                </div>
+                <div
+                  v-if="summaryTotals.discountTotal > 0"
+                  class="flex justify-between text-red-600"
+                >
+                  <span>{{ t('deliveryOrders.fields.discount') }}</span>
+                  <span class="tabular-nums"
+                    >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
+                  >
+                </div>
+                <div
+                  v-if="parseFloat(detail.taxAmount) > 0"
+                  class="flex justify-between text-orange-600"
+                >
+                  <span>{{ t('deliveryOrders.fields.tax') }}</span>
+                  <span class="tabular-nums">+ {{ formatAmount(detail.taxAmount) }}</span>
+                </div>
+                <Divider class="my-1" />
+                <div class="flex justify-between text-base font-bold">
+                  <span>{{ t('deliveryOrders.fields.total') }}</span>
+                  <span class="text-green-600 tabular-nums">{{
+                    formatAmount(detail.totalAmount)
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </ResponsiveCard>
+
+      <!-- Bonus lines card -->
+      <ResponsiveCard v-if="detail.bonusLines.length > 0" class="mt-4">
+        <template #content>
+          <p class="mb-3 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+            {{ t('deliveryOrders.bonus.title') }}
+          </p>
+          <DataTable :value="detail.bonusLines" class="text-sm" size="small">
+            <Column :header="t('deliveryOrders.bonus.promotionCode')">
+              <template #body="{ data }">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-medium text-green-700">{{ data.promotionCode }}</span>
+                  <span v-if="data.promotionDescription" class="text-xs text-stone-500">{{
+                    data.promotionDescription
+                  }}</span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.product')">
+              <template #body="{ data }">
+                <div class="flex flex-col">
+                  <span class="font-medium">{{ data.productCode }}</span>
+                  <span class="text-xs text-stone-500">{{ data.productName }}</span>
+                </div>
+              </template>
+            </Column>
+            <Column :header="t('deliveryOrders.bonus.quantity')" class="text-right">
+              <template #body="{ data }">
+                <div class="flex flex-col gap-0.5 text-green-700">
+                  <span>
+                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                      +{{
+                        decomposeBaseQty(parseFloat(data.quantity), data.uomGroup!.levels).join(
+                          ' / ',
+                        )
+                      }}
+                    </template>
+                    <template v-else>+{{ formatQty(data.quantity) }}</template>
+                  </span>
+                  <span v-if="getBonusUomLabel(data)" class="text-xs text-green-600/70">
+                    {{ getBonusUomLabel(data) }}
+                  </span>
+                  <span
+                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    class="text-xs text-green-600/70"
+                  >
+                    +{{ formatQty(data.quantity) }}
+                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                  </span>
+                </div>
+              </template>
+            </Column>
+            <template #empty>
+              <div class="py-4 text-center text-stone-500">{{ t('table.noResults') }}</div>
+            </template>
+          </DataTable>
         </template>
       </ResponsiveCard>
     </template>
@@ -107,16 +314,18 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Tag from 'primevue/tag'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Divider from 'primevue/divider'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
-import SalesOrderForm from '@/views/sales-orders/SalesOrderForm.vue'
 import { DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants'
-import type { DeliveryOrderDetail } from '@/types'
-import DialogMode from '@/constants/dialogMode'
+import type { DeliveryOrderDetail, DeliveryOrderViewLine, DeliveryOrderBonusLine } from '@/types'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
+import { decomposeBaseQty } from '@/utils/uomHelper'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -131,6 +340,18 @@ const isLoading = ref(false)
 
 const canCancel = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
 
+const summaryTotals = computed(() => {
+  if (!detail.value) return { grossTotal: 0, discountTotal: 0 }
+  let grossTotal = 0
+  let discountTotal = 0
+  for (const line of detail.value.lines) {
+    grossTotal += parseFloat(line.price) * parseFloat(line.soQuantity)
+    discountTotal += parseFloat(line.discount)
+  }
+  discountTotal += parseFloat(detail.value.discountAmount)
+  return { grossTotal, discountTotal }
+})
+
 const cancelAcceptHandler = ref(async () => {})
 
 async function fetchDetail(id: number) {
@@ -143,6 +364,35 @@ async function fetchDetail(id: number) {
   } finally {
     isLoading.value = false
   }
+}
+
+function formatAmount(decStr: string): string {
+  const num = parseFloat(decStr)
+  if (isNaN(num)) return '-'
+  return new Intl.NumberFormat('id-ID', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num)
+}
+
+function formatQty(decStr: string): string {
+  const num = parseFloat(decStr)
+  if (isNaN(num)) return '-'
+  return num % 1 === 0 ? num.toFixed(0) : num.toString()
+}
+
+function getUomLabel(line: DeliveryOrderViewLine): string | undefined {
+  const levels = line.uomGroup?.levels
+  if (!levels?.length) return undefined
+  if (levels.length === 1) return levels[0].uomSymbol
+  return levels.map((l) => l.uomSymbol).join(' / ')
+}
+
+function getBonusUomLabel(line: DeliveryOrderBonusLine): string | undefined {
+  const levels = line.uomGroup?.levels
+  if (!levels?.length) return undefined
+  if (levels.length === 1) return levels[0].uomSymbol
+  return levels.map((l) => l.uomSymbol).join(' / ')
 }
 
 function onPrintClick() {

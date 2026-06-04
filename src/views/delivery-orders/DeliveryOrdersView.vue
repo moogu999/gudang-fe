@@ -31,8 +31,9 @@
             <template #body="{ data }">
               <RouterLink
                 :to="{ name: 'SalesOrderDetail', params: { id: data.salesOrderHeaderId } }"
-                class="font-medium text-primary hover:underline"
-              >{{ data.soNo }}</RouterLink>
+                class="text-primary font-medium hover:underline"
+                >{{ data.soNo }}</RouterLink
+              >
             </template>
           </Column>
           <Column :header="t('deliveryOrders.fields.customer')">
@@ -57,7 +58,17 @@
           </Column>
           <Column :header="t('deliveryOrders.fields.status')">
             <template #body="{ data }">
-              <Tag :severity="statusSeverity(data.status)" :value="t(`deliveryOrders.status.${data.status}`)" />
+              <div class="flex items-center gap-1">
+                <Tag
+                  :severity="statusSeverity(data.status)"
+                  :value="t(`deliveryOrders.status.${data.status}`)"
+                />
+                <Tag
+                  v-if="data.isPartial"
+                  severity="warn"
+                  :value="t('deliveryOrders.status.partial')"
+                />
+              </div>
             </template>
           </Column>
           <Column :header="t('common.labels.actions')">

@@ -1379,8 +1379,22 @@ export default {
       confirmSubmit:
         'Ini akan mereservasi stok untuk semua pesanan penjualan yang dipilih dan membuat pesanan pengiriman. Lanjutkan?',
       submitSuccess: 'Booking berhasil disubmit.',
-      confirmCancelDO: 'Batalkan pesanan pengiriman untuk pesanan penjualan ini? Stok yang direservasi akan dibebaskan.',
+      confirmCancelDO:
+        'Batalkan pesanan pengiriman untuk pesanan penjualan ini? Stok yang direservasi akan dibebaskan.',
       cancelDOSuccess: 'Pesanan pengiriman berhasil dibatalkan.',
+      partialWarningTitle: 'Peringatan Pemenuhan Sebagian',
+      partialWarningNote:
+        'Beberapa pesanan yang dipilih tidak dapat dipenuhi sepenuhnya. Hanya kuantitas yang tersedia yang akan disertakan dalam setiap pesanan pengiriman. Item kekurangan tercantum di bawah ini. Lanjutkan?',
+    },
+    partial: {
+      product: 'Produk',
+      ordered: 'Dipesan',
+      fulfilled: 'Terpenuhi',
+      shortfall: 'Kekurangan',
+    },
+    bonus: {
+      title: 'Item Bonus',
+      available: 'Tersedia',
     },
   },
   salesOrderConfigs: {
@@ -1440,10 +1454,21 @@ export default {
       createdAt: 'Dibuat Pada',
       status: 'Status',
       remark: 'Catatan',
+      soQuantity: 'Qty Dipesan',
+      fulfilledQuantity: 'Qty Terpenuhi',
+      product: 'Produk',
+      price: 'Harga',
+      discount: 'Diskon',
+      subAmount: 'Sub Total',
+      tax: 'Pajak',
+      subtotal: 'Subtotal',
+      taxBase: 'Tax Base',
+      total: 'Total',
     },
     status: {
       open: 'Terbuka',
       cancelled: 'Dibatalkan',
+      partial: 'Sebagian',
     },
     actions: {
       cancel: 'Batalkan DO',
@@ -1454,6 +1479,11 @@ export default {
         'Ini akan melepaskan semua stok yang direservasi kembali ke inventaris tersedia. Lanjutkan?',
       cancelSuccess: 'Pesanan pengiriman berhasil dibatalkan.',
       notFound: 'Pesanan pengiriman tidak ditemukan.',
+    },
+    bonus: {
+      title: 'Item Bonus',
+      promotionCode: 'Kode Promo',
+      quantity: 'Qty (Terkirim)',
     },
   },
 }

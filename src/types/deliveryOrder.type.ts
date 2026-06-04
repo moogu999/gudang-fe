@@ -1,10 +1,24 @@
 export type DeliveryOrderStatus = 'open' | 'cancelled'
 
+export interface DeliveryOrderUomLevel {
+  id: number
+  levelOrder: number
+  uomSymbol: string
+  qtyPerParent: number | null
+}
+
+export interface DeliveryOrderUomGroup {
+  id: number
+  name: string
+  levels: DeliveryOrderUomLevel[]
+}
+
 export interface DeliveryOrderListItem {
   id: number
   no: string
   createdAt: string
   status: DeliveryOrderStatus
+  isPartial: boolean
   warehouseId: number
   warehouseName: string
   salesOrderHeaderId: number
@@ -17,11 +31,24 @@ export interface DeliveryOrderViewLine {
   productId: number
   productCode: string
   productName: string
+  soQuantity: string
   quantity: string
   price: string
   discount: string
   subAmount: string
   taxIncluded: boolean
+  uomGroup?: DeliveryOrderUomGroup | null
+}
+
+export interface DeliveryOrderBonusLine {
+  productId: number
+  productCode: string
+  productName: string
+  promotionId: number
+  promotionCode: string
+  promotionDescription: string
+  quantity: string
+  uomGroup?: DeliveryOrderUomGroup | null
 }
 
 export interface DeliveryOrderDetail {
@@ -30,6 +57,7 @@ export interface DeliveryOrderDetail {
   createdAt: string
   cancelledAt: string | null
   status: DeliveryOrderStatus
+  isPartial: boolean
   warehouseId: number
   warehouseName: string
   salesOrderHeaderId: number
@@ -39,7 +67,7 @@ export interface DeliveryOrderDetail {
   remark: string | null
   subtotalAmount: string
   discountAmount: string
-  dppAmount: string
+  taxBaseAmount: string
   taxAmount: string
   totalAmount: string
   companyName: string | null
@@ -47,4 +75,5 @@ export interface DeliveryOrderDetail {
   companyTaxId: string | null
   salesmanName: string | null
   lines: DeliveryOrderViewLine[]
+  bonusLines: DeliveryOrderBonusLine[]
 }

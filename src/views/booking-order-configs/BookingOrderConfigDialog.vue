@@ -125,7 +125,13 @@ const initialWarehouse = ref<Warehouse | undefined>(undefined)
 
 const warehouseFilters = computed(() => {
   if (selectedBranchId.value === undefined) return []
-  return [{ filterBy: 'branch_id', filterOperator: FilterOperator.EQUAL, filterValue: selectedBranchId.value }]
+  return [
+    {
+      filterBy: 'branch_id',
+      filterOperator: FilterOperator.EQUAL,
+      filterValue: selectedBranchId.value,
+    },
+  ]
 })
 
 const initialValues = reactive({

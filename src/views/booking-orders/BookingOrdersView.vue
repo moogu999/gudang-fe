@@ -3,6 +3,55 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="submitAcceptHandler" />
 
+    <!-- Partial fulfillment confirmation dialog -->
+    <Dialog
+      v-model:visible="showPartialDialog"
+      modal
+      :header="t('bookingOrders.messages.partialWarningTitle')"
+      :style="{ width: '90vw', maxWidth: '680px' }"
+    >
+      <p class="mb-4 text-sm text-amber-700">
+        {{ t('bookingOrders.messages.partialWarningNote') }}
+      </p>
+
+      <div v-for="item in partialWarningData" :key="item.soId" class="mb-4">
+        <div class="mb-1 text-sm font-semibold">{{ item.soNo }} — {{ item.customerName }}</div>
+        <DataTable :value="item.shortfallItems" class="text-xs" size="small">
+          <Column :header="t('bookingOrders.partial.product')">
+            <template #body="{ data }">
+              <span class="font-medium">{{ data.productCode }}</span>
+              <span class="ml-1 text-stone-500">{{ data.productName }}</span>
+            </template>
+          </Column>
+          <Column :header="t('bookingOrders.partial.ordered')">
+            <template #body="{ data }">{{ formatQty(data.required) }}</template>
+          </Column>
+          <Column :header="t('bookingOrders.partial.fulfilled')">
+            <template #body="{ data }">{{ formatQty(data.available) }}</template>
+          </Column>
+          <Column :header="t('bookingOrders.partial.shortfall')">
+            <template #body="{ data }">
+              <span class="font-medium text-red-600">{{ formatQty(shortfall(data)) }}</span>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+
+      <template #footer>
+        <Button
+          :label="t('common.actions.cancel')"
+          severity="secondary"
+          outlined
+          @click="showPartialDialog = false"
+        />
+        <Button
+          :label="t('bookingOrders.actions.submit')"
+          :loading="partialSubmitting"
+          @click="onPartialConfirm"
+        />
+      </template>
+    </Dialog>
+
     <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
       {{ t('bookingOrders.title') }}
     </h1>
@@ -55,8 +104,9 @@
               <div class="flex flex-col gap-0.5">
                 <RouterLink
                   :to="{ name: 'SalesOrderDetail', params: { id: data.id } }"
-                  class="font-medium text-primary hover:underline !pointer-events-auto"
-                >{{ data.no }}</RouterLink>
+                  class="text-primary !pointer-events-auto font-medium hover:underline"
+                  >{{ data.no }}</RouterLink
+                >
                 <span class="text-xs text-stone-500">{{ data.customerName }}</span>
                 <span v-if="data.salesmanCode || data.salesmanName" class="text-xs text-stone-400">
                   {{ [data.salesmanCode, data.salesmanName].filter(Boolean).join(' - ') }}
@@ -77,11 +127,36 @@
           <Column :header="t('bookingOrders.fields.fulfillment')">
             <template #body="{ data }">
               <Tag
-                v-if="statusMap.has(data.id)"
-                :severity="severityFor(statusMap.get(data.id)!)"
-                :value="t(`bookingOrders.status.${statusMap.get(data.id)}`)"
+                v-if="fulfillmentMap.has(data.id)"
+                :severity="severityFor(fulfillmentMap.get(data.id)!.status)"
+                :value="t(`bookingOrders.status.${fulfillmentMap.get(data.id)!.status}`)"
               />
               <Tag v-else severity="secondary" :value="t('bookingOrders.status.pending')" />
+              <template
+                v-if="
+                  fulfillmentMap.has(data.id) && fulfillmentMap.get(data.id)!.bonusItems?.length
+                "
+              >
+                <details class="mt-1">
+                  <summary class="cursor-pointer text-xs font-medium text-green-700">
+                    {{ t('bookingOrders.bonus.title') }}
+                    ({{ fulfillmentMap.get(data.id)!.bonusItems.length }})
+                  </summary>
+                  <div class="mt-1 space-y-0.5">
+                    <div
+                      v-for="bonus in fulfillmentMap.get(data.id)!.bonusItems"
+                      :key="bonus.promotionId"
+                      class="text-xs text-green-700"
+                    >
+                      <span class="font-medium">{{ bonus.promotionCode }}</span
+                      >: {{ bonus.productCode }} — {{ bonus.productName }}
+                      <span class="text-stone-500">
+                        ({{ t('bookingOrders.bonus.available') }}: {{ formatQty(bonus.available) }})
+                      </span>
+                    </div>
+                  </div>
+                </details>
+              </template>
             </template>
           </Column>
           <Column :header="t('bookingOrders.fields.doNo')">
@@ -89,8 +164,9 @@
               <RouterLink
                 v-if="data.deliveryOrderId"
                 :to="{ name: 'DeliveryOrderDetail', params: { id: data.deliveryOrderId } }"
-                class="font-medium text-primary hover:underline !pointer-events-auto"
-              >{{ data.deliveryOrderNo }}</RouterLink>
+                class="text-primary !pointer-events-auto font-medium hover:underline"
+                >{{ data.deliveryOrderNo }}</RouterLink
+              >
               <span v-else>-</span>
             </template>
           </Column>
@@ -128,13 +204,24 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import ToggleSwitch from 'primevue/toggleswitch'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
-import { BookingOrdersService, DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
-import type { BookableSalesOrder, FulfillmentStatus } from '@/types'
+import {
+  BookingOrdersService,
+  DeliveryOrdersService,
+  commonSuccessToast,
+  commonErrorToast,
+} from '@/services'
+import type {
+  BookableSalesOrder,
+  FulfillmentStatus,
+  SalesOrderFulfillment,
+  FulfillmentItem,
+} from '@/types'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
 
@@ -152,12 +239,26 @@ const currentPage = ref(0)
 const isLoading = ref(false)
 const includeBooked = ref(false)
 const selected = ref<BookableSalesOrder[]>([])
-const statusMap = ref<Map<number, FulfillmentStatus>>(new Map())
+const fulfillmentMap = ref<Map<number, SalesOrderFulfillment>>(new Map())
+
+const showPartialDialog = ref(false)
+const partialSubmitting = ref(false)
+
+interface PartialWarningSO {
+  soId: number
+  soNo: string
+  customerName: string
+  shortfallItems: FulfillmentItem[]
+}
+const partialWarningData = ref<PartialWarningSO[]>([])
 
 const canSubmit = computed(
   () =>
     selected.value.length > 0 &&
-    selected.value.every((row) => statusMap.value.get(row.id) === 'full'),
+    selected.value.every((row) => {
+      const s = fulfillmentMap.value.get(row.id)?.status
+      return s === 'full' || s === 'partial'
+    }),
 )
 const canCancelDO = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
 
@@ -178,6 +279,18 @@ function formatCurrency(value: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value)
+}
+
+function formatQty(value: string): string {
+  const n = parseFloat(value)
+  if (isNaN(n)) return '-'
+  return n % 1 === 0 ? n.toFixed(0) : n.toString()
+}
+
+function shortfall(item: FulfillmentItem): string {
+  const req = parseFloat(item.required)
+  const avail = parseFloat(item.available)
+  return String(req - avail)
 }
 
 async function fetchData(page: number) {
@@ -207,7 +320,7 @@ function onPage(event: DataTablePageEvent) {
 function onToggleBooked() {
   currentPage.value = 0
   selected.value = []
-  statusMap.value = new Map()
+  fulfillmentMap.value = new Map()
   fetchData(0)
 }
 
@@ -216,18 +329,18 @@ let evaluateTimer: ReturnType<typeof setTimeout> | null = null
 function onSelectionChange() {
   if (evaluateTimer) clearTimeout(evaluateTimer)
   if (selected.value.length === 0) {
-    statusMap.value = new Map()
+    fulfillmentMap.value = new Map()
     return
   }
   evaluateTimer = setTimeout(async () => {
     const ids = selected.value.map((r) => r.id)
     try {
       const results = await BookingOrdersService.evaluate(ids)
-      const next = new Map<number, FulfillmentStatus>()
+      const next = new Map<number, SalesOrderFulfillment>()
       for (const r of results) {
-        next.set(r.salesOrderId, r.status)
+        next.set(r.salesOrderId, r)
       }
-      statusMap.value = next
+      fulfillmentMap.value = next
     } catch (e) {
       toast.add(commonErrorToast(e, overlayGroup))
     }
@@ -240,15 +353,42 @@ function onUpdateSelection(value: BookableSalesOrder[]) {
 
 watch(selected, onSelectionChange)
 
+async function executeSubmit() {
+  const ids = selected.value.map((r) => r.id)
+  await BookingOrdersService.submit(ids)
+  toast.add(commonSuccessToast(t('bookingOrders.messages.submitSuccess'), overlayGroup))
+  selected.value = []
+  fulfillmentMap.value = new Map()
+  await fetchData(currentPage.value)
+}
+
 function onSubmitClick() {
+  const hasPartial = selected.value.some(
+    (r) => fulfillmentMap.value.get(r.id)?.status === 'partial',
+  )
+
+  if (hasPartial) {
+    partialWarningData.value = selected.value
+      .filter((r) => fulfillmentMap.value.get(r.id)?.status === 'partial')
+      .map((so) => {
+        const fulfillment = fulfillmentMap.value.get(so.id)!
+        const shortfallItems = fulfillment.items.filter(
+          (item) => parseFloat(item.available) < parseFloat(item.required),
+        )
+        return {
+          soId: so.id,
+          soNo: so.no,
+          customerName: so.customerName,
+          shortfallItems,
+        }
+      })
+    showPartialDialog.value = true
+    return
+  }
+
   submitAcceptHandler.value = async () => {
-    const ids = selected.value.map((r) => r.id)
     try {
-      await BookingOrdersService.submit(ids)
-      toast.add(commonSuccessToast(t('bookingOrders.messages.submitSuccess'), overlayGroup))
-      selected.value = []
-      statusMap.value = new Map()
-      await fetchData(currentPage.value)
+      await executeSubmit()
     } catch (e) {
       toast.add(commonErrorToast(e, overlayGroup))
     }
@@ -263,13 +403,25 @@ function onSubmitClick() {
   })
 }
 
+async function onPartialConfirm() {
+  partialSubmitting.value = true
+  try {
+    await executeSubmit()
+    showPartialDialog.value = false
+  } catch (e) {
+    toast.add(commonErrorToast(e, overlayGroup))
+  } finally {
+    partialSubmitting.value = false
+  }
+}
+
 function onCancelDOClick(item: BookableSalesOrder) {
   submitAcceptHandler.value = async () => {
     try {
       await DeliveryOrdersService.cancel(item.deliveryOrderId!)
       toast.add(commonSuccessToast(t('bookingOrders.messages.cancelDOSuccess'), overlayGroup))
       selected.value = []
-      statusMap.value = new Map()
+      fulfillmentMap.value = new Map()
       await fetchData(currentPage.value)
     } catch (e) {
       toast.add(commonErrorToast(e, overlayGroup))

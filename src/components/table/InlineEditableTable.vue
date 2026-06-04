@@ -58,6 +58,7 @@
           <InputNumber
             v-else-if="col.type === 'number'"
             v-model="data[field]"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             class="w-full"
@@ -102,6 +103,7 @@
             <InputNumber
               v-else
               v-model="data[field]"
+              :locale="locale"
               :min-fraction-digits="0"
               :max-fraction-digits="2"
               class="w-full"
@@ -151,7 +153,7 @@ import DialogMode from '@/constants/dialogMode'
 import type { Base, UomConversionLevel } from '@/types'
 import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 export type EditableColumn =
   | {

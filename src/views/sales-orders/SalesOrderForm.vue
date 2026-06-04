@@ -229,6 +229,7 @@
           <InputNumber
             id="downPaymentAmount"
             name="downPaymentAmount"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             :disabled="mode === DialogMode.VIEW"
@@ -376,7 +377,7 @@ import { decomposeBaseQty } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
 
@@ -493,44 +494,69 @@ const calculatedTotals = computed(() => {
   let subTotalInclusive = 0
   let subTotalExclusive = 0
   let lineDiscountTotal = 0
+  let rawGrossTotal = 0
 
   details.value.forEach((row) => {
     const gross = (row.quantity || 0) * (row.price || 0)
+    rawGrossTotal += gross
     const lineDisc = row.discount || 0
-    const manualDisc = (row._manualDiscounts ?? []).reduce((s, d) => {
-      const v = parseFloat(d.value) || 0
-      return s + (d.discountType === 'flat' ? v : Math.round(((gross * v) / 100) * 100) / 100)
-    }, 0)
-    lineDiscountTotal += lineDisc + manualDisc
-    const sub = gross - lineDisc - manualDisc
+
+    // In VIEW mode the backend has already folded manual discounts into detail.discount,
+    // so we must not add them again. In ADD mode detail.discount is promotion-only.
+    let totalLineDisc: number
+    if (props.mode === DialogMode.VIEW) {
+      totalLineDisc = lineDisc
+    } else {
+      const manualDisc = (row._manualDiscounts ?? []).reduce((s, d) => {
+        const v = parseFloat(d.value) || 0
+        return s + (d.discountType === 'flat' ? v : Math.round(((gross * v) / 100) * 100) / 100)
+      }, 0)
+      totalLineDisc = lineDisc + manualDisc
+    }
+
+    lineDiscountTotal += totalLineDisc
+    const sub = gross - totalLineDisc
     if (row._taxIncluded) subTotalInclusive += sub
     else subTotalExclusive += sub
   })
 
+  // grossTotal = sum of line sub-amounts (post line-discount); mirrors backend SubtotalAmount.
   const grossTotal = subTotalInclusive + subTotalExclusive
 
-  const headerManualDiscountTotal = headerManualDiscounts.value.reduce((sum, d) => {
-    const v = parseFloat(d.value) || 0
-    return sum + (d.discountType === 'flat' ? v : Math.round(((grossTotal * v) / 100) * 100) / 100)
-  }, 0)
+  // Header manual discount percentage must be applied to the raw gross (before any discounts),
+  // matching the backend's ApplyManualDiscounts logic.
+  // In VIEW mode headerDiscountAmount already includes header manual discounts (saved by backend).
+  const headerManualDiscountTotal =
+    props.mode === DialogMode.VIEW
+      ? 0
+      : headerManualDiscounts.value.reduce((sum, d) => {
+          const v = parseFloat(d.value) || 0
+          return (
+            sum +
+            (d.discountType === 'flat' ? v : Math.round(((rawGrossTotal * v) / 100) * 100) / 100)
+          )
+        }, 0)
 
   const discountTotal = lineDiscountTotal + headerDiscountAmount.value + headerManualDiscountTotal
-  const dppGross = grossTotal - discountTotal
 
-  // Proportionally split dppGross between inclusive and exclusive line portions
+  // grossTotal already excludes line discounts, so only subtract header-level discounts here.
+  // (Subtracting discountTotal would double-count the line discounts already removed above.)
+  const taxBase = grossTotal - headerDiscountAmount.value - headerManualDiscountTotal
+
+  // Proportionally split taxBase between inclusive and exclusive line portions
   const inclusiveFraction = grossTotal > 0 ? subTotalInclusive / grossTotal : 0
-  const dppInclusive = dppGross * inclusiveFraction
-  const dppExclusive = dppGross - dppInclusive
+  const taxBaseInclusive = taxBase * inclusiveFraction
+  const taxBaseExclusive = taxBase - taxBaseInclusive
 
   // Embedded tax extracted from inclusive-price lines (always shown)
   const embeddedTax =
     taxRate.value > 0
-      ? Math.round(((dppInclusive * taxRate.value) / (100 + taxRate.value)) * 100) / 100
+      ? Math.round(((taxBaseInclusive * taxRate.value) / (100 + taxRate.value)) * 100) / 100
       : 0
 
   // Additive tax on exclusive-price lines (only if customer is taxable)
   const additiveTax = customerTaxable.value
-    ? Math.round(((dppExclusive * taxRate.value) / 100) * 100) / 100
+    ? Math.round(((taxBaseExclusive * taxRate.value) / 100) * 100) / 100
     : 0
 
   const taxAmount =
@@ -542,7 +568,7 @@ const calculatedTotals = computed(() => {
   const total =
     props.mode === DialogMode.VIEW
       ? savedTotalAmount.value
-      : Math.round((dppGross + additiveTax) * 100) / 100
+      : Math.round((taxBase + additiveTax) * 100) / 100
 
   // Net subtotal: gross minus embedded tax, so summary math holds:
   // netSubtotal - discountTotal + taxAmount = total
@@ -882,6 +908,8 @@ async function loadSalesOrder() {
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
     savedTotalAmount.value = parseFloat(header.totalAmount) || 0
     headerManualDiscounts.value = header.manualDiscounts ?? []
+    headerDiscounts.value = header.headerDiscounts ?? []
+    headerBonuses.value = header.headerBonuses ?? []
 
     if (header.customer) {
       initialCustomer.value = { id: header.customerId, name: header.customer.name }

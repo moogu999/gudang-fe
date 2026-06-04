@@ -1,6 +1,9 @@
 import ApiService from './api'
 import { API_ENDPOINTS } from '@/constants/api'
-import type { BookingOrderConfig, UpsertBookingOrderConfigDto } from '@/types/bookingOrderConfig.type'
+import type {
+  BookingOrderConfig,
+  UpsertBookingOrderConfigDto,
+} from '@/types/bookingOrderConfig.type'
 
 export class BookingOrderConfigService {
   static async getMyBranch(): Promise<BookingOrderConfig | null> {
@@ -15,7 +18,10 @@ export class BookingOrderConfigService {
     return ApiService.get<BookingOrderConfig[]>(API_ENDPOINTS.BOOKING_ORDER_CONFIGS)
   }
 
-  static async upsert(branchId: number, dto: UpsertBookingOrderConfigDto): Promise<BookingOrderConfig> {
+  static async upsert(
+    branchId: number,
+    dto: UpsertBookingOrderConfigDto,
+  ): Promise<BookingOrderConfig> {
     return ApiService.put<BookingOrderConfig>(
       API_ENDPOINTS.BOOKING_ORDER_CONFIG_BY_BRANCH(branchId),
       dto,

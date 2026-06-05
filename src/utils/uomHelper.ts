@@ -1,4 +1,20 @@
-import type { UomConversionLevel } from '@/types'
+import type { UomConversionLevel, PinnedUom } from '@/types'
+
+/**
+ * Convert a pinned UOM snapshot into UomConversionLevel[] so existing display helpers work on it.
+ * Returns undefined when the snapshot is absent or has no levels.
+ */
+export function pinnedToLevels(pinned?: PinnedUom | null): UomConversionLevel[] | undefined {
+  if (!pinned?.levels?.length) return undefined
+  return pinned.levels.map((l) => ({
+    id: 0,
+    uomGroupId: pinned.uomGroupId,
+    levelOrder: l.levelOrder,
+    uomId: l.uomId,
+    qtyPerParent: l.qtyPerParent,
+    uom: { id: l.uomId, name: l.symbol, symbol: l.symbol },
+  }))
+}
 
 /**
  * Convert tier values (e.g. [1, 0, 1]) to base unit total (e.g. 121).

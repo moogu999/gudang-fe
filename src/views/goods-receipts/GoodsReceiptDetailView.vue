@@ -93,12 +93,32 @@
             </Column>
             <Column :header="t('goodsReceipts.details.productCode')">
               <template #body="{ data }">
-                {{ data.productId }}
+                {{ data.productCode }}
+              </template>
+            </Column>
+            <Column :header="t('goodsReceipts.details.product')">
+              <template #body="{ data }">
+                {{ data.productName }}
               </template>
             </Column>
             <Column :header="t('goodsReceipts.details.quantity')">
               <template #body="{ data }">
-                {{ formatQty(data.quantity) }}
+                <div class="flex flex-col gap-0.5">
+                  <span>
+                    <template v-if="(getGrLevels(data)?.length ?? 0) > 1">
+                      {{
+                        decomposeBaseQty(parseFloat(data.quantity), getGrLevels(data)!).join(' / ')
+                      }}
+                    </template>
+                    <template v-else>{{ formatQty(data.quantity) }}</template>
+                  </span>
+                  <span v-if="getGrUomLabel(data)" class="text-xs text-stone-400">
+                    {{ getGrUomLabel(data) }}
+                  </span>
+                  <span v-if="(getGrLevels(data)?.length ?? 0) > 1" class="text-xs text-stone-400">
+                    {{ formatQty(data.quantity) }} {{ getGrLevels(data)!.at(-1)?.uom?.symbol }}
+                  </span>
+                </div>
               </template>
             </Column>
             <Column :header="t('goodsReceipts.details.price')">
@@ -164,8 +184,9 @@ import Divider from 'primevue/divider'
 import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import { GoodsReceiptsService, commonErrorToast } from '@/services'
-import type { GoodsReceiptResponse } from '@/types'
+import type { GoodsReceiptDetailResponse, GoodsReceiptResponse, UomConversionLevel } from '@/types'
 import DateFormat from '@/constants/dateFormat'
+import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -203,6 +224,17 @@ function formatQty(value: string): string {
     : new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 4 }).format(
         n,
       )
+}
+
+function getGrLevels(detail: GoodsReceiptDetailResponse): UomConversionLevel[] | undefined {
+  return pinnedToLevels(detail.pinnedUom)
+}
+
+function getGrUomLabel(detail: GoodsReceiptDetailResponse): string | undefined {
+  const levels = getGrLevels(detail)
+  if (!levels?.length) return undefined
+  if (levels.length === 1) return levels[0].uom?.symbol
+  return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
 }
 
 function formatNumber(value: string): string {

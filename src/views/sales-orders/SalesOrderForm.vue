@@ -373,7 +373,7 @@ import type {
   Employee,
   ManualDiscount,
 } from '@/types'
-import { decomposeBaseQty } from '@/utils/uomHelper'
+import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
 
@@ -929,7 +929,7 @@ async function loadSalesOrder() {
     const detailsResponse = await SalesOrderDetailsService.list(query)
 
     details.value = detailsResponse.data.map((detail) => {
-      const levels = detail.product?.uomGroup?.levels
+      const levels = pinnedToLevels(detail.pinnedUom) ?? detail.product?.uomGroup?.levels
       const qty = parseFloat(detail.quantity)
       return {
         _localId: crypto.randomUUID(),
@@ -948,6 +948,7 @@ async function loadSalesOrder() {
         _choiceOffers: [],
         _choicePicks: {},
         _manualDiscounts: detail.manualDiscounts ?? [],
+        pinnedUom: detail.pinnedUom ?? null,
       }
     })
   } catch (e) {

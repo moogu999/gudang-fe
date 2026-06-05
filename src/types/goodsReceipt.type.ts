@@ -1,3 +1,5 @@
+import type { PinnedUom } from './pinnedUom.type'
+
 export type ArrivalType = 'regular' | 'consignment' | 'bonus' | 'transfer' | 'return_in' | 'other'
 export type StockType = 'good' | 'bad'
 
@@ -34,6 +36,7 @@ export interface GoodsReceiptDetailRow {
   product?: GRProductLite
   quantity?: number
   price?: number
+  pinnedUom?: PinnedUom | null
   [key: string]: unknown
 }
 
@@ -41,9 +44,12 @@ export interface GoodsReceiptDetailResponse {
   id: number
   goodsReceiptHeaderId: number
   productId: number
+  productCode: string
+  productName: string
   quantity: string
   price: string
   subAmount: string
+  pinnedUom?: PinnedUom | null
   createdAt: string
   updatedAt: string | null
 }

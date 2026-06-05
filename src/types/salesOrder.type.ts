@@ -1,4 +1,5 @@
 import type { UomConversionLevel } from './uomConversionLevel.type'
+import type { PinnedUom } from './pinnedUom.type'
 
 export interface ManualDiscount {
   id?: number
@@ -41,6 +42,7 @@ export interface LineBonus {
     name: string
     levels: UomConversionLevel[]
   } | null
+  pinnedUom?: PinnedUom | null
 }
 
 export interface ChoicePoolItem {
@@ -135,6 +137,7 @@ export interface SalesOrderDetail {
   discounts?: LineDiscount[]
   bonuses?: LineBonus[]
   manualDiscounts?: ManualDiscount[]
+  pinnedUom?: PinnedUom | null
   createdAt: string
   updatedAt: string | null
 }
@@ -189,6 +192,7 @@ export interface SalesOrderDetailRow {
   _choiceOffers?: ChoiceOffer[]
   _choicePicks?: Record<string, number[]> // promotionId (as string) → chosen productIds
   _manualDiscounts?: ManualDiscount[]
+  pinnedUom?: PinnedUom | null
   // Allow dynamic internal-only fields (e.g. _quantityTiersRaw for tier input tracking)
   [key: string]: unknown
 }

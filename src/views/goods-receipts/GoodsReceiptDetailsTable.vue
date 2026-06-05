@@ -175,7 +175,7 @@ import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import type { GoodsReceiptDetailRow, UomConversionLevel } from '@/types'
-import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
+import { computeBaseQty, decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { ProductsService } from '@/services'
 
 const { t, locale } = useI18n()
@@ -267,8 +267,10 @@ function onProductSelect(data: GoodsReceiptDetailRow, option: object) {
 }
 
 function getUomLevels(data: GoodsReceiptDetailRow): UomConversionLevel[] | undefined {
-  return (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup
-    ?.levels
+  return (
+    pinnedToLevels(data.pinnedUom) ??
+    (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup?.levels
+  )
 }
 
 function getUomLabel(data: GoodsReceiptDetailRow): string {

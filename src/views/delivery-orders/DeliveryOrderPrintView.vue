@@ -92,7 +92,15 @@
             <td class="c">{{ i + 1 }}</td>
             <td>{{ line.productCode }}</td>
             <td>{{ line.productName }}</td>
-            <td class="r">{{ formatQty(line.quantity) }}</td>
+            <td class="r">
+              <template v-if="(resolveLineLevels(line)?.length ?? 0) > 1">
+                {{ decomposeBaseQty(parseFloat(line.quantity), resolveLineLevels(line)!).join(' / ') }}
+                <div v-if="getUomLabel(line)" style="font-size: 11px; color: #888">
+                  {{ getUomLabel(line) }}
+                </div>
+              </template>
+              <template v-else>{{ formatQty(line.quantity) }}</template>
+            </td>
             <td class="r">{{ formatAmount(line.price) }}</td>
             <td class="r">{{ formatDiscount(line.discount) }}</td>
             <td class="r">{{ formatAmount(line.subAmount) }}</td>
@@ -132,7 +140,12 @@
               <td>{{ line.promotionCode }}</td>
               <td>{{ line.productCode }}</td>
               <td>{{ line.productName }}</td>
-              <td class="r">+{{ formatQty(line.quantity) }}</td>
+              <td class="r">
+                <template v-if="(resolveBonusLineLevels(line)?.length ?? 0) > 1">
+                  +{{ decomposeBaseQty(parseFloat(line.quantity), resolveBonusLineLevels(line)!).join(' / ') }}
+                </template>
+                <template v-else>+{{ formatQty(line.quantity) }}</template>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -217,8 +230,15 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { DeliveryOrdersService } from '@/services'
 import { decimalToWords } from '@/utils/numberToWords'
-import type { DeliveryOrderDetail } from '@/types'
+import type {
+  DeliveryOrderDetail,
+  DeliveryOrderViewLine,
+  DeliveryOrderBonusLine,
+  DeliveryOrderUomLevel,
+  UomConversionLevel,
+} from '@/types'
 import dayjs from 'dayjs'
+import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 
 const route = useRoute()
 
@@ -261,6 +281,38 @@ function formatQty(decStr: string): string {
   const num = parseFloat(decStr)
   if (isNaN(num)) return '—'
   return num % 1 === 0 ? num.toFixed(0) : num.toString()
+}
+
+function doLevelsToUomLevels(levels: DeliveryOrderUomLevel[]): UomConversionLevel[] {
+  return levels.map((l) => ({
+    id: l.id,
+    uomGroupId: 0,
+    levelOrder: l.levelOrder,
+    uomId: 0,
+    qtyPerParent: l.qtyPerParent,
+    uom: { id: l.id, name: l.uomSymbol, symbol: l.uomSymbol },
+  }))
+}
+
+function resolveLineLevels(line: DeliveryOrderViewLine): UomConversionLevel[] | undefined {
+  return (
+    pinnedToLevels(line.pinnedUom) ??
+    (line.uomGroup?.levels?.length ? doLevelsToUomLevels(line.uomGroup.levels) : undefined)
+  )
+}
+
+function resolveBonusLineLevels(line: DeliveryOrderBonusLine): UomConversionLevel[] | undefined {
+  return (
+    pinnedToLevels(line.pinnedUom) ??
+    (line.uomGroup?.levels?.length ? doLevelsToUomLevels(line.uomGroup.levels) : undefined)
+  )
+}
+
+function getUomLabel(line: DeliveryOrderViewLine): string | undefined {
+  const levels = resolveLineLevels(line)
+  if (!levels?.length) return undefined
+  if (levels.length === 1) return levels[0].uom?.symbol
+  return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
 }
 
 function formatDiscount(decStr: string): string {

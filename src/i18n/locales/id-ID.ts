@@ -1282,8 +1282,8 @@ export default {
     details: {
       title: 'Detail Item',
       addDetail: 'Tambah Item',
-      productCode: 'Kode Produk',
-      product: 'Nama Produk',
+      productCode: 'Kode',
+      product: 'Nama',
       uom: 'Satuan',
       quantity: 'Qty',
       price: 'Harga',
@@ -1483,7 +1483,7 @@ export default {
     bonus: {
       title: 'Item Bonus',
       promotionCode: 'Kode Promo',
-      quantity: 'Qty (Terkirim)',
+      quantity: 'Qty Terpenuhi',
     },
   },
 }

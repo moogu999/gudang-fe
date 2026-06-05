@@ -1,3 +1,5 @@
+import type { PinnedUom } from './pinnedUom.type'
+
 export type DeliveryOrderStatus = 'open' | 'cancelled'
 
 export interface DeliveryOrderUomLevel {
@@ -38,6 +40,7 @@ export interface DeliveryOrderViewLine {
   subAmount: string
   taxIncluded: boolean
   uomGroup?: DeliveryOrderUomGroup | null
+  pinnedUom?: PinnedUom | null
 }
 
 export interface DeliveryOrderBonusLine {
@@ -49,6 +52,7 @@ export interface DeliveryOrderBonusLine {
   promotionDescription: string
   quantity: string
   uomGroup?: DeliveryOrderUomGroup | null
+  pinnedUom?: PinnedUom | null
 }
 
 export interface DeliveryOrderDetail {

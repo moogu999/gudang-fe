@@ -121,11 +121,12 @@
               <template #body="{ data }">
                 <div class="flex flex-col gap-0.5">
                   <span>
-                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                    <template v-if="(resolveLineLevels(data)?.length ?? 0) > 1">
                       {{
-                        decomposeBaseQty(parseFloat(data.soQuantity), data.uomGroup!.levels).join(
-                          ' / ',
-                        )
+                        decomposeBaseQty(
+                          parseFloat(data.soQuantity),
+                          resolveLineLevels(data)!,
+                        ).join(' / ')
                       }}
                     </template>
                     <template v-else>{{ formatQty(data.soQuantity) }}</template>
@@ -134,11 +135,11 @@
                     {{ getUomLabel(data) }}
                   </span>
                   <span
-                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    v-if="(resolveLineLevels(data)?.length ?? 0) > 1"
                     class="text-xs text-stone-400"
                   >
                     {{ formatQty(data.soQuantity) }}
-                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                    {{ resolveLineLevels(data)!.at(-1)?.uom?.symbol }}
                   </span>
                 </div>
               </template>
@@ -152,11 +153,12 @@
                   }"
                 >
                   <span>
-                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                    <template v-if="(resolveLineLevels(data)?.length ?? 0) > 1">
                       {{
-                        decomposeBaseQty(parseFloat(data.quantity), data.uomGroup!.levels).join(
-                          ' / ',
-                        )
+                        decomposeBaseQty(
+                          parseFloat(data.quantity),
+                          resolveLineLevels(data)!,
+                        ).join(' / ')
                       }}
                     </template>
                     <template v-else>{{ formatQty(data.quantity) }}</template>
@@ -165,11 +167,11 @@
                     {{ getUomLabel(data) }}
                   </span>
                   <span
-                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    v-if="(resolveLineLevels(data)?.length ?? 0) > 1"
                     class="text-xs text-stone-400"
                   >
                     {{ formatQty(data.quantity) }}
-                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                    {{ resolveLineLevels(data)!.at(-1)?.uom?.symbol }}
                   </span>
                 </div>
               </template>
@@ -268,11 +270,12 @@
               <template #body="{ data }">
                 <div class="flex flex-col gap-0.5 text-green-700">
                   <span>
-                    <template v-if="(data.uomGroup?.levels?.length ?? 0) > 1">
+                    <template v-if="(resolveBonusLineLevels(data)?.length ?? 0) > 1">
                       +{{
-                        decomposeBaseQty(parseFloat(data.quantity), data.uomGroup!.levels).join(
-                          ' / ',
-                        )
+                        decomposeBaseQty(
+                          parseFloat(data.quantity),
+                          resolveBonusLineLevels(data)!,
+                        ).join(' / ')
                       }}
                     </template>
                     <template v-else>+{{ formatQty(data.quantity) }}</template>
@@ -281,11 +284,11 @@
                     {{ getBonusUomLabel(data) }}
                   </span>
                   <span
-                    v-if="(data.uomGroup?.levels?.length ?? 0) > 1"
+                    v-if="(resolveBonusLineLevels(data)?.length ?? 0) > 1"
                     class="text-xs text-green-600/70"
                   >
                     +{{ formatQty(data.quantity) }}
-                    {{ data.uomGroup!.levels.at(-1)?.uomSymbol }}
+                    {{ resolveBonusLineLevels(data)!.at(-1)?.uom?.symbol }}
                   </span>
                 </div>
               </template>
@@ -322,10 +325,16 @@ import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants'
-import type { DeliveryOrderDetail, DeliveryOrderViewLine, DeliveryOrderBonusLine } from '@/types'
+import type {
+  DeliveryOrderDetail,
+  DeliveryOrderViewLine,
+  DeliveryOrderBonusLine,
+  DeliveryOrderUomLevel,
+  UomConversionLevel,
+} from '@/types'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
-import { decomposeBaseQty } from '@/utils/uomHelper'
+import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -381,18 +390,43 @@ function formatQty(decStr: string): string {
   return num % 1 === 0 ? num.toFixed(0) : num.toString()
 }
 
+function doLevelsToUomLevels(levels: DeliveryOrderUomLevel[]): UomConversionLevel[] {
+  return levels.map((l) => ({
+    id: l.id,
+    uomGroupId: 0,
+    levelOrder: l.levelOrder,
+    uomId: 0,
+    qtyPerParent: l.qtyPerParent,
+    uom: { id: l.id, name: l.uomSymbol, symbol: l.uomSymbol },
+  }))
+}
+
+function resolveLineLevels(line: DeliveryOrderViewLine): UomConversionLevel[] | undefined {
+  return (
+    pinnedToLevels(line.pinnedUom) ??
+    (line.uomGroup?.levels?.length ? doLevelsToUomLevels(line.uomGroup.levels) : undefined)
+  )
+}
+
+function resolveBonusLineLevels(line: DeliveryOrderBonusLine): UomConversionLevel[] | undefined {
+  return (
+    pinnedToLevels(line.pinnedUom) ??
+    (line.uomGroup?.levels?.length ? doLevelsToUomLevels(line.uomGroup.levels) : undefined)
+  )
+}
+
 function getUomLabel(line: DeliveryOrderViewLine): string | undefined {
-  const levels = line.uomGroup?.levels
+  const levels = resolveLineLevels(line)
   if (!levels?.length) return undefined
-  if (levels.length === 1) return levels[0].uomSymbol
-  return levels.map((l) => l.uomSymbol).join(' / ')
+  if (levels.length === 1) return levels[0].uom?.symbol
+  return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
 }
 
 function getBonusUomLabel(line: DeliveryOrderBonusLine): string | undefined {
-  const levels = line.uomGroup?.levels
+  const levels = resolveBonusLineLevels(line)
   if (!levels?.length) return undefined
-  if (levels.length === 1) return levels[0].uomSymbol
-  return levels.map((l) => l.uomSymbol).join(' / ')
+  if (levels.length === 1) return levels[0].uom?.symbol
+  return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
 }
 
 function onPrintClick() {

@@ -231,5 +231,8 @@ export type {
   DeliveryOrderUomGroup,
 } from './deliveryOrder.type'
 
+// Pinned UOM types
+export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
+
 // Component types
 export type { Column } from './table.type'

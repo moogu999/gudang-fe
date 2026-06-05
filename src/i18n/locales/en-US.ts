@@ -1286,8 +1286,8 @@ export default {
     details: {
       title: 'Line Items',
       addDetail: 'Add Item',
-      productCode: 'Product Code',
-      product: 'Product Name',
+      productCode: 'Code',
+      product: 'Name',
       uom: 'UOM',
       quantity: 'Qty',
       price: 'Price',
@@ -1486,7 +1486,7 @@ export default {
     bonus: {
       title: 'Bonus Items',
       promotionCode: 'Promo Code',
-      quantity: 'Qty (Delivered)',
+      quantity: 'Fulfilled Qty',
     },
   },
 }

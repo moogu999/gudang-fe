@@ -568,7 +568,7 @@ import type {
   LineBonus,
   ManualDiscount,
 } from '@/types'
-import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
+import { computeBaseQty, decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { ProductsService } from '@/services'
 
 const { t, locale } = useI18n()
@@ -707,8 +707,10 @@ function onProductSelect(data: SalesOrderDetailRow, option: object) {
 }
 
 function getUomLevels(data: SalesOrderDetailRow): UomConversionLevel[] | undefined {
-  return (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup
-    ?.levels
+  return (
+    pinnedToLevels(data.pinnedUom) ??
+    (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup?.levels
+  )
 }
 
 function getUomLabel(data: SalesOrderDetailRow): string | undefined {
@@ -723,7 +725,7 @@ function getBonusQtyDisplay(bonus: LineBonus): {
   label?: string
   baseQty?: string
 } {
-  const levels = bonus.uomGroup?.levels
+  const levels = pinnedToLevels(bonus.pinnedUom) ?? bonus.uomGroup?.levels
   if (!levels || levels.length <= 1) {
     return { qty: `+${bonus.qty}` }
   }

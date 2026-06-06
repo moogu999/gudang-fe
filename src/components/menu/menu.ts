@@ -94,6 +94,18 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Fleet',
+    labelKey: 'navigation.fleet',
+    icon: 'pi pi-truck',
+    items: [
+      {
+        label: 'Vehicles',
+        labelKey: 'navigation.vehicles',
+        route: '/vehicles',
+      },
+    ],
+  },
+  {
     label: 'Inventory',
     labelKey: 'navigation.inventory',
     icon: 'pi pi-warehouse',
@@ -156,6 +168,16 @@ const mainMenu = [
         label: 'Delivery Orders',
         labelKey: 'navigation.deliveryOrders',
         route: '/delivery-orders',
+      },
+      {
+        label: 'Delivery Notes',
+        labelKey: 'navigation.deliveryNotes',
+        route: '/delivery-notes',
+      },
+      {
+        label: 'Picking Lists',
+        labelKey: 'navigation.pickingLists',
+        route: '/picking-lists',
       },
       {
         label: 'SO Config',

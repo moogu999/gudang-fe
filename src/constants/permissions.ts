@@ -66,6 +66,13 @@ export const PERMISSIONS = {
   BOOKING_ORDER_CONFIG_WRITE: 59,
   DELIVERY_ORDER_READ: 60,
   DELIVERY_ORDER_CANCEL: 61,
+  VEHICLE_TYPE_READ: 62,
+  VEHICLE_TYPE_WRITE: 63,
+  VEHICLE_READ: 64,
+  VEHICLE_WRITE: 65,
+  DELIVERY_NOTE_READ: 66,
+  DELIVERY_NOTE_WRITE: 67,
+  PICKING_LIST_READ: 68,
 } as const
 
 /**
@@ -106,6 +113,9 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/sales-order-configs': PERMISSIONS.SALES_ORDER_CONFIG_READ,
   '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
   '/delivery-orders': PERMISSIONS.DELIVERY_ORDER_READ,
+  '/vehicles': PERMISSIONS.VEHICLE_READ,
+  '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_READ,
+  '/picking-lists': PERMISSIONS.PICKING_LIST_READ,
 }
 
 /**
@@ -136,4 +146,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/booking-orders': PERMISSIONS.BOOKING_ORDER_WRITE,
   '/sales-order-configs': PERMISSIONS.SALES_ORDER_CONFIG_WRITE,
   '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_WRITE,
+  '/vehicles': PERMISSIONS.VEHICLE_WRITE,
+  '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_WRITE,
 }

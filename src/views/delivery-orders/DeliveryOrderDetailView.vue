@@ -161,10 +161,9 @@
                   <span>
                     <template v-if="(resolveLineLevels(data)?.length ?? 0) > 1">
                       {{
-                        decomposeBaseQty(
-                          parseFloat(data.quantity),
-                          resolveLineLevels(data)!,
-                        ).join(' / ')
+                        decomposeBaseQty(parseFloat(data.quantity), resolveLineLevels(data)!).join(
+                          ' / ',
+                        )
                       }}
                     </template>
                     <template v-else>{{ formatQty(data.quantity) }}</template>

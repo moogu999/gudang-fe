@@ -160,6 +160,10 @@ export const API_ENDPOINTS = {
   // Warehouse endpoints
   GEN_WAREHOUSES: '/gen/v1/warehouses',
 
+  // Vehicle endpoints
+  GEN_VEHICLES: '/gen/v1/vehicles',
+  GEN_VEHICLE_TYPES: '/gen/v1/vehicle-types',
+
   // Goods Receipt endpoints
   GOODS_RECEIPTS: '/v1/goods-receipts',
   GEN_GOODS_RECEIPT_HEADERS: '/gen/v1/goods-receipt-headers',
@@ -187,6 +191,16 @@ export const API_ENDPOINTS = {
   DELIVERY_ORDERS: '/v1/delivery-orders',
   DELIVERY_ORDER_BY_ID: (id: number) => `/v1/delivery-orders/${id}`,
   DELIVERY_ORDER_CANCEL: (id: number) => `/v1/delivery-orders/${id}/cancel`,
+
+  // Delivery Note endpoints
+  DELIVERY_NOTES: '/v1/delivery-notes',
+  DELIVERY_NOTE_BY_ID: (id: number) => `/v1/delivery-notes/${id}`,
+  DELIVERY_NOTE_CANCEL: (id: number) => `/v1/delivery-notes/${id}/cancel`,
+  DELIVERY_NOTE_AVAILABLE_DOS: '/v1/delivery-notes/available-delivery-orders',
+
+  // Picking List endpoints
+  PICKING_LISTS: '/v1/picking-lists',
+  PICKING_LIST_BY_ID: (id: number) => `/v1/picking-lists/${id}`,
 } as const
 
 // Type for API endpoints (useful for validation)

@@ -101,7 +101,9 @@
             <td>{{ line.productName }}</td>
             <td class="r">
               <template v-if="(resolveLineLevels(line)?.length ?? 0) > 1">
-                {{ decomposeBaseQty(parseFloat(line.quantity), resolveLineLevels(line)!).join(' / ') }}
+                {{
+                  decomposeBaseQty(parseFloat(line.quantity), resolveLineLevels(line)!).join(' / ')
+                }}
                 <div v-if="getUomLabel(line)" style="font-size: 11px; color: #888">
                   {{ getUomLabel(line) }}
                 </div>
@@ -149,7 +151,11 @@
               <td>{{ line.productName }}</td>
               <td class="r">
                 <template v-if="(resolveBonusLineLevels(line)?.length ?? 0) > 1">
-                  +{{ decomposeBaseQty(parseFloat(line.quantity), resolveBonusLineLevels(line)!).join(' / ') }}
+                  +{{
+                    decomposeBaseQty(parseFloat(line.quantity), resolveBonusLineLevels(line)!).join(
+                      ' / ',
+                    )
+                  }}
                 </template>
                 <template v-else>+{{ formatQty(line.quantity) }}</template>
               </td>
@@ -206,7 +212,13 @@
               </tr>
               <tr>
                 <td style="color: #888">Diskon</td>
-                <td>{{ summaryTotals.discountTotal > 0 ? formatAmount(String(summaryTotals.discountTotal)) : '—' }}</td>
+                <td>
+                  {{
+                    summaryTotals.discountTotal > 0
+                      ? formatAmount(String(summaryTotals.discountTotal))
+                      : '—'
+                  }}
+                </td>
               </tr>
               <tr>
                 <td style="color: #888">Tax Base</td>

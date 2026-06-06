@@ -35,7 +35,10 @@
 
       <!-- Recalculate Partial Pricing -->
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label for="recalculatePartialPricing" class="w-full text-sm font-semibold sm:text-base md:w-48">
+        <label
+          for="recalculatePartialPricing"
+          class="w-full text-sm font-semibold sm:text-base md:w-48"
+        >
           {{ t('bookingOrderConfigs.fields.recalculatePartialPricing') }}
         </label>
         <div class="flex w-full flex-auto flex-col gap-1">
@@ -45,9 +48,7 @@
             input-id="recalculatePartialPricing"
           />
           <span v-else>{{
-            initialValues.recalculatePartialPricing
-              ? t('common.labels.yes')
-              : t('common.labels.no')
+            initialValues.recalculatePartialPricing ? t('common.labels.yes') : t('common.labels.no')
           }}</span>
           <small class="text-stone-400">{{
             t('bookingOrderConfigs.labels.recalculatePartialPricingHint')

@@ -181,6 +181,17 @@ export type { FileRecord, UploadFileDto } from './file.type'
 // Warehouse types
 export type { Warehouse, CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.type'
 
+// Vehicle types
+export type { VehicleType } from './vehicleType.type'
+export type {
+  VehicleOwnership,
+  VehicleCargoType,
+  VehicleStatus,
+  Vehicle,
+  CreateVehicleDto,
+  UpdateVehicleDto,
+} from './vehicle.type'
+
 // Goods Receipt types
 export type {
   ArrivalType,
@@ -230,6 +241,25 @@ export type {
   DeliveryOrderUomLevel,
   DeliveryOrderUomGroup,
 } from './deliveryOrder.type'
+
+// Delivery Note types
+export type {
+  DeliveryNoteStatus,
+  DeliveryNoteListItem,
+  DeliveryNoteDeliveryOrder,
+  DeliveryNotePickingListRef,
+  DeliveryNoteDetail,
+  AvailableDeliveryOrder,
+  CreateDeliveryNoteRequest,
+  CreateDeliveryNoteResponse,
+} from './deliveryNote.type'
+
+// Picking List types
+export type {
+  PickingListListItem,
+  PickingListDetailItem,
+  PickingListDetail,
+} from './pickingList.type'
 
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'

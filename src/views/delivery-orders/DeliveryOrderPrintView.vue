@@ -24,6 +24,13 @@
           >
             — PARTIAL —
           </div>
+          <div
+            v-if="detail.isPartial && detail.pricingMode"
+            class="dm dm-sm faint"
+            style="letter-spacing: 0.04em"
+          >
+            {{ detail.pricingMode === 'new' ? 'Harga Dihitung Ulang' : 'Harga Asli SO' }}
+          </div>
           <div class="dm bold" style="font-size: 15px; letter-spacing: 0.02em">{{ detail.no }}</div>
           <div class="dm dm-sm faint">Tgl: {{ formatDate(detail.createdAt) }}</div>
         </div>
@@ -81,9 +88,9 @@
             <th style="width: 28px" class="c">No</th>
             <th style="width: 76px">Kode</th>
             <th>Nama Produk</th>
-            <th style="width: 64px" class="r">Qty</th>
+            <th style="width: 160px" class="r">Qty</th>
             <th style="width: 96px" class="r">Harga Satuan</th>
-            <th style="width: 72px" class="r">Disc (%)</th>
+            <th style="width: 112px" class="r">Disc</th>
             <th style="width: 112px" class="r">Subtotal (Rp)</th>
           </tr>
         </thead>
@@ -131,7 +138,7 @@
               <th style="width: 120px">Kode Promo</th>
               <th style="width: 76px">Kode Produk</th>
               <th>Nama Produk</th>
-              <th style="width: 64px" class="r">Qty</th>
+              <th style="width: 160px" class="r">Qty</th>
             </tr>
           </thead>
           <tbody>
@@ -195,11 +202,11 @@
             <tbody>
               <tr>
                 <td style="color: #888">Subtotal</td>
-                <td>{{ formatAmount(detail.subtotalAmount) }}</td>
+                <td>{{ formatAmount(String(summaryTotals.netSubtotal)) }}</td>
               </tr>
               <tr>
                 <td style="color: #888">Diskon</td>
-                <td>{{ formatAmount(detail.discountAmount) }}</td>
+                <td>{{ summaryTotals.discountTotal > 0 ? formatAmount(String(summaryTotals.discountTotal)) : '—' }}</td>
               </tr>
               <tr>
                 <td style="color: #888">Tax Base</td>
@@ -266,6 +273,19 @@ const terbilang = computed(() => {
   return decimalToWords(detail.value.totalAmount)
 })
 
+const summaryTotals = computed(() => {
+  if (!detail.value) return { netSubtotal: 0, discountTotal: 0 }
+  let discountTotal = 0
+  for (const line of detail.value.lines) {
+    discountTotal += parseFloat(line.discount)
+  }
+  discountTotal += parseFloat(detail.value.discountAmount)
+  const total = parseFloat(detail.value.totalAmount)
+  const taxAmount = parseFloat(detail.value.taxAmount)
+  const netSubtotal = total + discountTotal - taxAmount
+  return { netSubtotal, discountTotal }
+})
+
 function formatDate(iso: string | null): string {
   if (!iso) return '—'
   return dayjs(iso).format('DD MMM YYYY')
@@ -318,7 +338,7 @@ function getUomLabel(line: DeliveryOrderViewLine): string | undefined {
 function formatDiscount(decStr: string): string {
   const num = parseFloat(decStr)
   if (isNaN(num) || num === 0) return '—'
-  return `${num}%`
+  return formatAmount(decStr)
 }
 
 onMounted(async () => {

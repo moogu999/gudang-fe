@@ -1433,10 +1433,13 @@ export default {
     fields: {
       branch: 'Branch',
       warehouse: 'Warehouse',
+      recalculatePartialPricing: 'Recalculate Partial Pricing',
     },
     labels: {
       selectBranch: 'Select Branch',
       selectWarehouse: 'Select Warehouse',
+      recalculatePartialPricingHint:
+        'OFF = honor original SO pricing pro-rated to delivered qty; ON = recompute prices and promotions for delivered quantity',
     },
     validation: {
       branchRequired: 'Branch is required.',
@@ -1487,6 +1490,10 @@ export default {
       title: 'Bonus Items',
       promotionCode: 'Promo Code',
       quantity: 'Fulfilled Qty',
+    },
+    pricingMode: {
+      existing: 'Original Pricing',
+      new: 'Recalculated Pricing',
     },
   },
 }

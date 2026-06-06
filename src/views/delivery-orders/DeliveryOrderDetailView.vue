@@ -41,6 +41,12 @@
                   severity="warn"
                   :value="t('deliveryOrders.status.partial')"
                 />
+                <Tag
+                  v-if="detail.isPartial && detail.pricingMode"
+                  class="w-fit"
+                  :severity="detail.pricingMode === 'new' ? 'info' : 'secondary'"
+                  :value="t(`deliveryOrders.pricingMode.${detail.pricingMode}`)"
+                />
               </div>
             </div>
             <div class="flex flex-col gap-1">
@@ -209,17 +215,35 @@
                 <div class="flex justify-between">
                   <span class="text-stone-500">{{ t('deliveryOrders.fields.subtotal') }}</span>
                   <span class="tabular-nums">{{
-                    formatAmount(String(summaryTotals.grossTotal))
+                    formatAmount(String(summaryTotals.netSubtotal))
                   }}</span>
                 </div>
                 <div
                   v-if="summaryTotals.discountTotal > 0"
-                  class="flex justify-between text-red-600"
+                  class="flex flex-col gap-0.5 text-red-600"
                 >
-                  <span>{{ t('deliveryOrders.fields.discount') }}</span>
-                  <span class="tabular-nums"
-                    >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
-                  >
+                  <div class="flex justify-between">
+                    <span>{{ t('deliveryOrders.fields.discount') }}</span>
+                    <span class="tabular-nums"
+                      >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
+                    >
+                  </div>
+                  <template v-if="detail.headerDiscounts?.length">
+                    <div
+                      v-for="disc in detail.headerDiscounts"
+                      :key="disc.promotionId"
+                      class="flex justify-between text-xs text-red-400"
+                    >
+                      <span>{{ disc.promotionCode }}</span>
+                      <span>
+                        {{
+                          disc.discountType === 'percentage'
+                            ? `${disc.value}%`
+                            : formatAmount(disc.amount)
+                        }}
+                      </span>
+                    </div>
+                  </template>
                 </div>
                 <div
                   v-if="parseFloat(detail.taxAmount) > 0"
@@ -350,15 +374,17 @@ const isLoading = ref(false)
 const canCancel = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
 
 const summaryTotals = computed(() => {
-  if (!detail.value) return { grossTotal: 0, discountTotal: 0 }
-  let grossTotal = 0
+  if (!detail.value) return { netSubtotal: 0, discountTotal: 0 }
   let discountTotal = 0
   for (const line of detail.value.lines) {
-    grossTotal += parseFloat(line.price) * parseFloat(line.soQuantity)
     discountTotal += parseFloat(line.discount)
   }
   discountTotal += parseFloat(detail.value.discountAmount)
-  return { grossTotal, discountTotal }
+  const total = parseFloat(detail.value.totalAmount)
+  const taxAmount = parseFloat(detail.value.taxAmount)
+  // netSubtotal - discountTotal + taxAmount = total  (mirrors SO form pattern)
+  const netSubtotal = total + discountTotal - taxAmount
+  return { netSubtotal, discountTotal }
 })
 
 const cancelAcceptHandler = ref(async () => {})

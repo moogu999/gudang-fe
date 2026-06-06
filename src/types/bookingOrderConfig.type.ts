@@ -4,10 +4,12 @@ export interface BookingOrderConfig {
   branchName: string
   warehouseId: number
   warehouseName: string
+  recalculatePartialPricing: boolean
   createdAt: string
   updatedAt?: string
 }
 
 export interface UpsertBookingOrderConfigDto {
   warehouseId: number
+  recalculatePartialPricing: boolean
 }

@@ -1429,10 +1429,13 @@ export default {
     fields: {
       branch: 'Cabang',
       warehouse: 'Gudang',
+      recalculatePartialPricing: 'Hitung Ulang Harga Parsial',
     },
     labels: {
       selectBranch: 'Pilih Cabang',
       selectWarehouse: 'Pilih Gudang',
+      recalculatePartialPricingHint:
+        'MATI = gunakan harga SO asli yang di-prorata ke qty terkirim; NYALA = hitung ulang harga dan promosi untuk qty terkirim',
     },
     validation: {
       branchRequired: 'Cabang wajib diisi.',
@@ -1484,6 +1487,10 @@ export default {
       title: 'Item Bonus',
       promotionCode: 'Kode Promo',
       quantity: 'Qty Terpenuhi',
+    },
+    pricingMode: {
+      existing: 'Harga Asli',
+      new: 'Harga Dihitung Ulang',
     },
   },
 }

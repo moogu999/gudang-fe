@@ -1,4 +1,7 @@
 import type { PinnedUom } from './pinnedUom.type'
+import type { LineDiscount } from './salesOrder.type'
+
+export type { LineDiscount }
 
 export type DeliveryOrderStatus = 'open' | 'cancelled'
 
@@ -39,6 +42,8 @@ export interface DeliveryOrderViewLine {
   discount: string
   subAmount: string
   taxIncluded: boolean
+  priceListId?: number | null
+  discounts?: LineDiscount[]
   uomGroup?: DeliveryOrderUomGroup | null
   pinnedUom?: PinnedUom | null
 }
@@ -74,10 +79,12 @@ export interface DeliveryOrderDetail {
   taxBaseAmount: string
   taxAmount: string
   totalAmount: string
+  pricingMode?: 'existing' | 'new'
   companyName: string | null
   companyAddress: string | null
   companyTaxId: string | null
   salesmanName: string | null
+  headerDiscounts?: LineDiscount[]
   lines: DeliveryOrderViewLine[]
   bonusLines: DeliveryOrderBonusLine[]
 }

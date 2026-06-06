@@ -33,6 +33,28 @@
         </div>
       </div>
 
+      <!-- Recalculate Partial Pricing -->
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="recalculatePartialPricing" class="w-full text-sm font-semibold sm:text-base md:w-48">
+          {{ t('bookingOrderConfigs.fields.recalculatePartialPricing') }}
+        </label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <ToggleSwitch
+            v-if="mode !== DialogMode.VIEW"
+            v-model="initialValues.recalculatePartialPricing"
+            input-id="recalculatePartialPricing"
+          />
+          <span v-else>{{
+            initialValues.recalculatePartialPricing
+              ? t('common.labels.yes')
+              : t('common.labels.no')
+          }}</span>
+          <small class="text-stone-400">{{
+            t('bookingOrderConfigs.labels.recalculatePartialPricingHint')
+          }}</small>
+        </div>
+      </div>
+
       <!-- Warehouse -->
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
         <label for="warehouseId" class="w-full text-sm font-semibold sm:text-base md:w-48">
@@ -93,6 +115,7 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
+import ToggleSwitch from 'primevue/toggleswitch'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import DialogMode from '@/constants/dialogMode'
@@ -137,12 +160,14 @@ const warehouseFilters = computed(() => {
 const initialValues = reactive({
   branchId: undefined as number | undefined,
   warehouseId: undefined as number | undefined,
+  recalculatePartialPricing: false,
 })
 
 onBeforeMount(() => {
   if ((props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW) && props.config) {
     selectedBranchId.value = props.config.branchId
     initialValues.warehouseId = props.config.warehouseId
+    initialValues.recalculatePartialPricing = props.config.recalculatePartialPricing
     initialWarehouse.value = {
       id: props.config.warehouseId,
       name: props.config.warehouseName,
@@ -176,6 +201,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
   try {
     await BookingOrderConfigService.upsert(branchId, {
       warehouseId: event.states.warehouseId.value,
+      recalculatePartialPricing: initialValues.recalculatePartialPricing,
     })
 
     const message =

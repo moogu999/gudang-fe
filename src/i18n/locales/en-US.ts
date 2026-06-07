@@ -85,6 +85,7 @@ export default {
     deliveryOrders: 'Delivery Orders',
     deliveryNotes: 'Delivery Notes',
     pickingLists: 'Picking Lists',
+    configs: 'Config',
     salesOrderConfigs: 'SO Config',
     bookingOrderConfigs: 'BO Config',
     users: 'Users',
@@ -1481,6 +1482,9 @@ export default {
       title: 'Bonus Items',
       available: 'Available',
     },
+  },
+  configs: {
+    title: 'Config',
   },
   salesOrderConfigs: {
     title: 'Sales Order Configs',

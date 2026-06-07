@@ -344,16 +344,17 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.INVENTORY_READ },
         },
         {
+          path: 'configs',
+          name: 'Configs',
+          component: () => import('@/views/configs/ConfigsView.vue'),
+        },
+        {
           path: 'sales-order-configs',
-          name: 'SalesOrderConfigs',
-          component: () => import('@/views/sales-order-configs/SalesOrderConfigsView.vue'),
-          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_CONFIG_READ },
+          redirect: { path: '/configs', query: { tab: 'so' } },
         },
         {
           path: 'booking-order-configs',
-          name: 'BookingOrderConfigs',
-          component: () => import('@/views/booking-order-configs/BookingOrderConfigsView.vue'),
-          meta: { requiredPermission: PERMISSIONS.BOOKING_ORDER_CONFIG_READ },
+          redirect: { path: '/configs', query: { tab: 'bo' } },
         },
         {
           path: 'delivery-notes',

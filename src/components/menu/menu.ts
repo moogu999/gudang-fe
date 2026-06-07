@@ -1,3 +1,5 @@
+import { PERMISSIONS } from '@/constants'
+
 /**
  * Main navigation menu configuration
  *
@@ -180,14 +182,13 @@ const mainMenu = [
         route: '/picking-lists',
       },
       {
-        label: 'SO Config',
-        labelKey: 'navigation.salesOrderConfigs',
-        route: '/sales-order-configs',
-      },
-      {
-        label: 'BO Config',
-        labelKey: 'navigation.bookingOrderConfigs',
-        route: '/booking-order-configs',
+        label: 'Config',
+        labelKey: 'navigation.configs',
+        route: '/configs',
+        permissionsAny: [
+          PERMISSIONS.SALES_ORDER_CONFIG_READ,
+          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
+        ],
       },
       {
         label: 'Promotions',

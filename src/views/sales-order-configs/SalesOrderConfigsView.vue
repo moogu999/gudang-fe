@@ -3,11 +3,11 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="deleteAcceptanceHandler" />
 
-    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
+    <h1 v-if="!embedded" class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
       {{ t('salesOrderConfigs.title') }}
     </h1>
 
-    <Toolbar v-if="canWrite" class="mb-5">
+    <Toolbar v-if="!embedded && canWrite" class="mb-5">
       <template #end>
         <ResponsiveButton :label="t('common.actions.add')" @click="addConfig" />
       </template>
@@ -84,6 +84,9 @@ import { SalesOrderConfigService } from '@/services'
 import type { SalesOrderConfig } from '@/types'
 import DialogMode from '@/constants/dialogMode'
 
+const props = withDefaults(defineProps<{ embedded?: boolean }>(), { embedded: false })
+const { embedded } = props
+
 const { t } = useI18n()
 
 const overlayGroup = 'salesOrderConfigsView'
@@ -145,4 +148,6 @@ function onDeleteClick(config: SalesOrderConfig) {
 }
 
 onMounted(loadConfigs)
+
+defineExpose({ openAddDialog: addConfig })
 </script>

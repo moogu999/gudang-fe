@@ -86,6 +86,7 @@ export default {
     deliveryOrders: 'Pesanan Pengiriman',
     deliveryNotes: 'Surat Jalan',
     pickingLists: 'Picking List',
+    configs: 'Konfigurasi',
     salesOrderConfigs: 'Konfigurasi PO',
     bookingOrderConfigs: 'Konfigurasi BO',
     users: 'Pengguna',
@@ -1477,6 +1478,9 @@ export default {
       title: 'Item Bonus',
       available: 'Tersedia',
     },
+  },
+  configs: {
+    title: 'Konfigurasi',
   },
   salesOrderConfigs: {
     title: 'Konfigurasi Pesanan Penjualan',

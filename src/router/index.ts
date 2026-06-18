@@ -172,6 +172,12 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.SALES_ORDER_WRITE },
         },
         {
+          path: 'sales-orders/:id/edit',
+          name: 'SalesOrderEdit',
+          component: () => import('@/views/sales-orders/SalesOrderEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_WRITE },
+        },
+        {
           path: 'sales-orders/:id',
           name: 'SalesOrderDetail',
           component: () => import('@/views/sales-orders/SalesOrderDetailView.vue'),

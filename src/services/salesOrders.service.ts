@@ -2,6 +2,7 @@ import ApiService from './api'
 import type {
   SalesOrderHeader,
   CreateSalesOrderRequest,
+  UpdateSalesOrderRequest,
   ResolveSalesOrderRequest,
   ResolveSalesOrderResponse,
 } from '@/types/salesOrder.type'
@@ -41,6 +42,10 @@ export class SalesOrdersService {
    */
   static async create(data: CreateSalesOrderRequest): Promise<SalesOrderHeader> {
     return ApiService.post<SalesOrderHeader>(this.BASE_URL, data)
+  }
+
+  static async update(id: number, data: UpdateSalesOrderRequest): Promise<SalesOrderHeader> {
+    return ApiService.put<SalesOrderHeader>(`${this.BASE_URL}/${id}`, data)
   }
 
   static async resolve(data: ResolveSalesOrderRequest): Promise<ResolveSalesOrderResponse> {

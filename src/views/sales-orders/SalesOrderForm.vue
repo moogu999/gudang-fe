@@ -1,5 +1,6 @@
 <template>
   <Toast position="top-center" :group="toastGroup" />
+  <ConfirmDialog group="soApproveConfirm" />
 
   <div v-if="isLoading" class="flex items-center justify-center py-8">
     <ProgressSpinner />
@@ -12,6 +13,14 @@
     :resolver="resolver"
     @submit="onFormSubmit"
   >
+    <!-- Status tag (VIEW / EDIT modes) -->
+    <div v-if="mode !== DialogMode.ADD && currentStatus" class="mb-4">
+      <Tag
+        :severity="statusSeverity(currentStatus)"
+        :value="t(`salesOrders.status.${currentStatus}`)"
+      />
+    </div>
+
     <!-- Two Column Layout for Header Fields -->
     <div v-if="!hideHeader" class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
       <!-- Left Column: Order Information -->
@@ -51,13 +60,13 @@
             />
             <small class="text-surface-500">{{ t('salesOrders.codeMode.assignedOnSave') }}</small>
           </div>
-          <!-- Manual mode (ADD) or VIEW mode: editable / read-only -->
+          <!-- Manual mode (ADD) or VIEW/EDIT mode: editable / read-only -->
           <InputText
             v-else
             id="no"
             name="no"
             autocomplete="off"
-            :disabled="mode === DialogMode.VIEW"
+            :disabled="mode === DialogMode.VIEW || mode === DialogMode.EDIT"
             class="w-full"
           />
           <Message v-if="$form.no?.invalid" severity="error" size="small" variant="simple">{{
@@ -316,12 +325,21 @@
     <!-- Action Buttons -->
     <div class="mt-6 flex justify-end gap-2">
       <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('cancel')" />
-      <Button
-        v-if="mode !== DialogMode.VIEW"
-        type="submit"
-        :label="t('common.actions.save')"
-        :loading="isSaving || isResolving"
-      />
+      <template v-if="mode !== DialogMode.VIEW">
+        <Button
+          type="submit"
+          severity="secondary"
+          :label="t('salesOrders.actions.saveAsDraft')"
+          :loading="isSaving || isResolving"
+          @click="chosenStatus = 'draft'"
+        />
+        <Button
+          type="submit"
+          :label="t('salesOrders.actions.saveAndApprove')"
+          :loading="isSaving || isResolving"
+          @click="chosenStatus = 'approved'"
+        />
+      </template>
     </div>
   </Form>
 </template>
@@ -330,11 +348,14 @@
 import { ref, reactive, computed, watch, onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { useDebounceFn } from '@vueuse/core'
 import { z } from 'zod'
 import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import DatePicker from 'primevue/datepicker'
@@ -363,7 +384,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
-import type { SalesOrderConfig } from '@/types'
+import type { SalesOrderConfig, SalesOrderStatus } from '@/types'
 import type {
   SalesOrderDetailRow,
   CreateSalesOrderRequest,
@@ -379,6 +400,7 @@ import { useNumberSeries } from '@/composables'
 
 const { t, locale } = useI18n()
 const toast = useToast()
+const confirm = useConfirm()
 const authStore = useAuthStore()
 
 const {
@@ -393,7 +415,7 @@ const {
 const toastGroup = 'salesOrderForm'
 
 interface Props {
-  mode: DialogMode.ADD | DialogMode.VIEW
+  mode: DialogMode.ADD | DialogMode.VIEW | DialogMode.EDIT
   salesOrderId?: number
   hideHeader?: boolean
 }
@@ -404,6 +426,17 @@ const emit = defineEmits<{
   cancel: []
   submitted: []
 }>()
+
+// Status tracking
+const chosenStatus = ref<'draft' | 'approved'>('approved')
+const currentStatus = ref<SalesOrderStatus | undefined>()
+
+function statusSeverity(status: SalesOrderStatus) {
+  if (status === 'approved') return 'success'
+  if (status === 'applied') return 'info'
+  if (status === 'need_approval') return 'warn'
+  return 'secondary'
+}
 
 // State
 const isLoading = ref(false)
@@ -667,7 +700,7 @@ const scheduleResolve = useDebounceFn(resolveOrder, 400)
 
 // Trigger resolve when customer or salesman changes
 watch(currentCustomerId, async (id) => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
   if (!id) {
     customerTaxable.value = false
@@ -682,7 +715,7 @@ watch(currentCustomerId, async (id) => {
 })
 
 watch(currentEmployeeId, () => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
 })
 
@@ -692,7 +725,7 @@ const detailsResolveKey = computed(() =>
 )
 
 watch(detailsResolveKey, () => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
 })
 
@@ -802,12 +835,33 @@ function validateDetails(): boolean {
 
 // ─── Form submission ──────────────────────────────────────────────────────────
 
+const pendingRequest = ref<CreateSalesOrderRequest | null>(null)
+
+async function doSubmit() {
+  if (!pendingRequest.value) return
+  isSaving.value = true
+  try {
+    if (props.mode === DialogMode.EDIT) {
+      await SalesOrdersService.update(props.salesOrderId!, pendingRequest.value)
+      toast.add(commonSuccessToast(t('salesOrders.messages.updated'), toastGroup))
+    } else {
+      await SalesOrdersService.create(pendingRequest.value)
+      toast.add(commonSuccessToast(t('salesOrders.messages.created'), toastGroup))
+    }
+    emit('submitted')
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    isSaving.value = false
+  }
+}
+
 async function onFormSubmit(event: FormSubmitEvent) {
   if (!event.valid) return
   if (!validateDetails()) return
 
   let no: string
-  if (noMode.value === 'auto' && numberSeriesId.value !== null) {
+  if (props.mode === DialogMode.ADD && noMode.value === 'auto' && numberSeriesId.value !== null) {
     no = await generateCode()
   } else {
     no = event.states.no.value
@@ -815,6 +869,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
   const request: CreateSalesOrderRequest = {
     no,
+    status: chosenStatus.value,
     orderDate: event.states.orderDate.value.toISOString().split('T')[0],
     priceDate: event.states.priceDate.value?.toISOString().split('T')[0] || null,
     deliveryDate: deliveryDate.value?.toISOString().split('T')[0] || null,
@@ -872,15 +927,19 @@ async function onFormSubmit(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   }
 
-  isSaving.value = true
-  try {
-    await SalesOrdersService.create(request)
-    toast.add(commonSuccessToast(t('salesOrders.messages.created'), toastGroup))
-    emit('submitted')
-  } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
-  } finally {
-    isSaving.value = false
+  pendingRequest.value = request
+
+  if (chosenStatus.value === 'approved') {
+    confirm.require({
+      group: 'soApproveConfirm',
+      header: t('salesOrders.confirm.header'),
+      message: t('salesOrders.confirm.message'),
+      rejectProps: { label: t('common.actions.cancel'), severity: 'secondary', outlined: true },
+      acceptProps: { label: t('salesOrders.actions.saveAndApprove') },
+      accept: doSubmit,
+    })
+  } else {
+    await doSubmit()
   }
 }
 
@@ -903,6 +962,12 @@ async function loadSalesOrder() {
     initialValues.remark = header.remark || ''
     initialValues.isCash = header.isCash
     initialValues.downPaymentAmount = parseFloat(header.downPaymentAmount)
+
+    currentStatus.value = header.status
+    currentOrderDate.value = new Date(header.orderDate)
+    currentPriceDate.value = header.priceDate ? new Date(header.priceDate) : undefined
+    currentCustomerId.value = header.customerId
+    currentEmployeeId.value = header.employeeId ?? undefined
 
     headerDiscountAmount.value = parseFloat(header.discountAmount)
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
@@ -970,7 +1035,7 @@ onBeforeMount(async () => {
   taxRate.value = parseFloat(taxConfig.percentage) || 0
   soConfig.value = config
 
-  if (props.mode === DialogMode.VIEW && props.salesOrderId) {
+  if ((props.mode === DialogMode.VIEW || props.mode === DialogMode.EDIT) && props.salesOrderId) {
     await loadSalesOrder()
   }
 })

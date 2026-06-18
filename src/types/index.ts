@@ -81,9 +81,11 @@ export type {
 export * from './productLabelDefinition.type'
 export * from './customerLabelDefinition.type'
 export type {
+  SalesOrderStatus,
   SalesOrderHeader,
   SalesOrderDetail,
   CreateSalesOrderRequest,
+  UpdateSalesOrderRequest,
   CreateSalesOrderDetailDto,
   ManualDiscount,
   ManualDiscountDto,

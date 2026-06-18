@@ -23,11 +23,22 @@
             <span v-else-if="col.field === 'totalAmount'">
               {{ formatCurrency(parseFloat(data.totalAmount)) }}
             </span>
-            <div v-else-if="col.field === 'status'" class="flex gap-2">
-              <Tag v-if="data.isPaid" severity="success" :value="t('common.labels.paid')" />
-              <Tag v-if="data.isCash" severity="info" :value="t('common.labels.cash')" />
+            <div v-else-if="col.field === 'status'">
+              <Tag
+                v-if="data.status"
+                :severity="statusSeverity(data.status)"
+                :value="t(`salesOrders.status.${data.status}`)"
+              />
             </div>
             <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
+              <Button
+                v-if="data.status === 'draft'"
+                icon="pi pi-pencil"
+                size="small"
+                text
+                severity="secondary"
+                @click="editSalesOrder(data.id)"
+              />
               <Button icon="pi pi-eye" size="small" text @click="viewSalesOrder(data.id)" />
             </div>
           </template>
@@ -50,7 +61,7 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import { API_ENDPOINTS } from '@/constants/api'
 import DateFormat from '@/constants/dateFormat'
-import type { Column } from '@/types'
+import type { Column, SalesOrderStatus } from '@/types'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -103,6 +114,13 @@ const columns = computed<Column[]>(() => [
   },
 ])
 
+function statusSeverity(status: SalesOrderStatus) {
+  if (status === 'approved') return 'success'
+  if (status === 'applied') return 'info'
+  if (status === 'need_approval') return 'warn'
+  return 'secondary'
+}
+
 // Format number with decimals
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -113,6 +131,10 @@ function formatCurrency(value: number): string {
 
 function addSalesOrder() {
   router.push('/sales-orders/create')
+}
+
+function editSalesOrder(id: number) {
+  router.push(`/sales-orders/${id}/edit`)
 }
 
 function viewSalesOrder(id: number) {

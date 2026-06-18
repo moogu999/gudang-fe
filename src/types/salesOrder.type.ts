@@ -1,6 +1,8 @@
 import type { UomConversionLevel } from './uomConversionLevel.type'
 import type { PinnedUom } from './pinnedUom.type'
 
+export type SalesOrderStatus = 'draft' | 'need_approval' | 'approved' | 'applied'
+
 export interface ManualDiscount {
   id?: number
   discountType: 'flat' | 'percentage'
@@ -95,6 +97,7 @@ export interface SalesOrderHeader {
   headerBonuses?: LineBonus[]
   id: number
   no: string
+  status: SalesOrderStatus
   orderDate: string // ISO date
   priceDate: string | null
   deliveryDate: string | null
@@ -151,6 +154,7 @@ export interface ManualDiscountDto {
 
 export interface CreateSalesOrderRequest {
   no?: string
+  status?: SalesOrderStatus
   orderDate: string // ISO date
   priceDate?: string | null
   deliveryDate?: string | null
@@ -165,6 +169,8 @@ export interface CreateSalesOrderRequest {
   manualDiscounts?: ManualDiscountDto[]
   createdBy: number
 }
+
+export type UpdateSalesOrderRequest = CreateSalesOrderRequest
 
 export interface CreateSalesOrderDetailDto {
   productId: number

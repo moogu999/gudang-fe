@@ -776,8 +776,28 @@ export default {
       manualDiscountValueInvalid: 'Nilai harus lebih dari 0',
     },
 
+    status: {
+      draft: 'Draf',
+      need_approval: 'Butuh Persetujuan',
+      approved: 'Disetujui',
+      applied: 'Diterapkan',
+    },
+
+    actions: {
+      saveAsDraft: 'Simpan sebagai Draf',
+      saveAndApprove: 'Simpan & Setujui',
+      editSalesOrder: 'Edit Pesanan Penjualan',
+    },
+
+    confirm: {
+      header: 'Konfirmasi Persetujuan',
+      message: 'Pesanan penjualan akan disimpan dan disetujui. Lanjutkan?',
+    },
+
     messages: {
       created: 'Pesanan penjualan berhasil dibuat',
+      updated: 'Pesanan penjualan berhasil diperbarui',
+      notFound: 'Pesanan penjualan tidak ditemukan',
     },
   },
   csv: {

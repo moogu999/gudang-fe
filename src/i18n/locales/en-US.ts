@@ -775,8 +775,28 @@ export default {
       manualDiscountValueInvalid: 'Value must be greater than 0',
     },
 
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+      applied: 'Applied',
+    },
+
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      saveAndApprove: 'Save & Approve',
+      editSalesOrder: 'Edit Sales Order',
+    },
+
+    confirm: {
+      header: 'Confirm Approval',
+      message: 'This will save and approve the sales order. Continue?',
+    },
+
     messages: {
       created: 'Sales order created successfully',
+      updated: 'Sales order updated successfully',
+      notFound: 'Sales order not found',
     },
   },
   csv: {

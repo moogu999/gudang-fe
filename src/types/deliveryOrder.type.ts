@@ -84,6 +84,8 @@ export interface DeliveryOrderDetail {
   companyAddress: string | null
   companyTaxId: string | null
   salesmanName: string | null
+  invoiceId?: number | null
+  invoiceNo?: string | null
   headerDiscounts?: LineDiscount[]
   lines: DeliveryOrderViewLine[]
   bonusLines: DeliveryOrderBonusLine[]

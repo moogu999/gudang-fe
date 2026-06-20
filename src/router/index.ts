@@ -392,6 +392,18 @@ const router = createRouter({
           component: () => import('@/views/picking-lists/PickingListDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.PICKING_LIST_READ },
         },
+        {
+          path: 'invoices',
+          name: 'Invoices',
+          component: () => import('@/views/invoices/InvoicesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVOICE_READ },
+        },
+        {
+          path: 'invoices/:id',
+          name: 'InvoiceDetail',
+          component: () => import('@/views/invoices/InvoiceDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVOICE_READ },
+        },
       ],
     },
 

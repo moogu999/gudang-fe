@@ -85,6 +85,16 @@
                 detail.deliveryDate ? dayjs(detail.deliveryDate).format(DateFormat.DATE) : '-'
               }}</span>
             </div>
+            <div v-if="detail.invoiceId" class="flex flex-col gap-1">
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.invoice')
+              }}</span>
+              <RouterLink
+                :to="{ name: 'InvoiceDetail', params: { id: detail.invoiceId } }"
+                class="text-primary font-medium hover:underline"
+                >{{ detail.invoiceNo }}</RouterLink
+              >
+            </div>
             <div v-if="detail.remark" class="flex flex-col gap-1 sm:col-span-2 lg:col-span-3">
               <span class="text-xs font-semibold text-stone-500 uppercase">{{
                 t('deliveryOrders.fields.remark')

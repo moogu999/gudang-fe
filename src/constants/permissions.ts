@@ -73,6 +73,8 @@ export const PERMISSIONS = {
   DELIVERY_NOTE_READ: 66,
   DELIVERY_NOTE_WRITE: 67,
   PICKING_LIST_READ: 68,
+  INVOICE_READ: 69,
+  INVOICE_WRITE: 70,
 } as const
 
 /**
@@ -116,6 +118,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/vehicles': PERMISSIONS.VEHICLE_READ,
   '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_READ,
   '/picking-lists': PERMISSIONS.PICKING_LIST_READ,
+  '/invoices': PERMISSIONS.INVOICE_READ,
 }
 
 /**

@@ -201,6 +201,10 @@ export const API_ENDPOINTS = {
   // Picking List endpoints
   PICKING_LISTS: '/v1/picking-lists',
   PICKING_LIST_BY_ID: (id: number) => `/v1/picking-lists/${id}`,
+
+  // Invoice endpoints
+  INVOICES: '/v1/invoices',
+  INVOICE_BY_ID: (id: number) => `/v1/invoices/${id}`,
 } as const
 
 // Type for API endpoints (useful for validation)

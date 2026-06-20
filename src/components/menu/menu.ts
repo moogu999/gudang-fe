@@ -182,6 +182,11 @@ const mainMenu = [
         route: '/picking-lists',
       },
       {
+        label: 'Invoices',
+        labelKey: 'navigation.invoices',
+        route: '/invoices',
+      },
+      {
         label: 'Config',
         labelKey: 'navigation.configs',
         route: '/configs',

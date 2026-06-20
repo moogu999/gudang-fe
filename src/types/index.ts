@@ -263,6 +263,14 @@ export type {
   PickingListDetail,
 } from './pickingList.type'
 
+// Invoice types
+export type {
+  InvoiceStatus,
+  InvoiceListItem,
+  InvoiceDetailLine,
+  InvoiceDetail,
+} from './invoice.type'
+
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 

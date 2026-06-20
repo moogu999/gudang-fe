@@ -6,6 +6,7 @@ import type {
   AvailableDeliveryOrder,
   CreateDeliveryNoteRequest,
   CreateDeliveryNoteResponse,
+  UpdateDeliveryNoteRequest,
 } from '@/types/deliveryNote.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
@@ -23,6 +24,10 @@ export class DeliveryNotesService {
 
   static async create(payload: CreateDeliveryNoteRequest): Promise<CreateDeliveryNoteResponse> {
     return ApiService.post<CreateDeliveryNoteResponse>(API_ENDPOINTS.DELIVERY_NOTES, payload)
+  }
+
+  static async update(id: number, payload: UpdateDeliveryNoteRequest): Promise<void> {
+    return ApiService.put<void>(API_ENDPOINTS.DELIVERY_NOTE_BY_ID(id), payload)
   }
 
   static async cancel(id: number): Promise<void> {

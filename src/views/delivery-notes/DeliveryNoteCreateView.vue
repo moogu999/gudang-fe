@@ -5,7 +5,7 @@
     <div class="mb-4 flex items-center gap-3">
       <Button icon="pi pi-arrow-left" severity="secondary" text @click="router.back()" />
       <h1 class="text-base font-bold sm:text-lg md:text-2xl">
-        {{ t('deliveryNotes.createTitle') }}
+        {{ isEditMode ? t('deliveryNotes.editTitle') : t('deliveryNotes.createTitle') }}
       </h1>
     </div>
 
@@ -17,7 +17,7 @@
         </p>
         <div class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
           <!-- Row 1: labels -->
-          <div class="flex items-center gap-2">
+          <div v-if="!isEditMode" class="flex items-center gap-2">
             <label class="text-sm font-semibold">{{ t('deliveryNotes.fields.no') }}</label>
             <Button
               type="button"
@@ -34,13 +34,19 @@
               @click="noMode = 'manual'"
             />
           </div>
-          <label class="hidden text-sm font-semibold sm:flex sm:items-center" for="deliveryDate">
+          <label
+            :class="[
+              'text-sm font-semibold',
+              isEditMode ? 'flex items-center' : 'hidden sm:flex sm:items-center',
+            ]"
+            for="deliveryDate"
+          >
             {{ t('deliveryNotes.fields.deliveryDate') }}
             <span class="ml-1 text-red-500">*</span>
           </label>
 
           <!-- Row 2: inputs -->
-          <div class="flex flex-col gap-1">
+          <div v-if="!isEditMode" class="flex flex-col gap-1">
             <div v-if="noMode === 'auto'" class="flex flex-col gap-1">
               <InputText
                 :value="previewLoading ? '' : previewCode"
@@ -76,6 +82,7 @@
               option-label="name"
               option-value="id"
               :fetch-fn="(q) => EmployeesService.list(q)"
+              :initial-option="initialDriver"
               sort-by="name"
               sort-operator="asc"
               :placeholder="t('deliveryNotes.fields.driver')"
@@ -90,6 +97,7 @@
               option-label="plateNumber"
               option-value="id"
               :fetch-fn="(q) => VehiclesService.list(q)"
+              :initial-option="initialVehicle"
               sort-by="plateNumber"
               sort-operator="asc"
               :placeholder="t('deliveryNotes.fields.vehicle')"
@@ -332,6 +340,14 @@
         @click="router.back()"
       />
       <Button
+        v-if="isEditMode"
+        :label="t('deliveryNotes.actions.update')"
+        icon="pi pi-check"
+        :loading="submitting"
+        @click="onUpdate"
+      />
+      <Button
+        v-else
         :label="t('deliveryNotes.actions.submit')"
         icon="pi pi-check"
         :loading="submitting"
@@ -343,7 +359,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast'
@@ -373,15 +389,22 @@ import dayjs from 'dayjs'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const toast = useToast()
 
 const toastGroup = 'deliveryNoteCreate'
 
-// Number mode
+const editId = computed(() => {
+  const id = Number(route.params.id)
+  return isNaN(id) ? null : id
+})
+const isEditMode = computed(() => editId.value !== null)
+
+// Number mode (create only)
 const noMode = ref<'auto' | 'manual'>('auto')
 const manualNo = ref('')
 
-// Number series preview
+// Number series preview (create only)
 const previewCode = ref('')
 const previewLoading = ref(false)
 
@@ -390,6 +413,10 @@ const deliveryDate = ref<Date>(new Date())
 const vehicleId = ref<number | null>(null)
 const driverEmployeeId = ref<number | null>(null)
 const notes = ref('')
+
+// Initial options for InfiniteSelect pre-population in edit mode
+const initialDriver = ref<{ id: number; name: string } | undefined>(undefined)
+const initialVehicle = ref<{ id: number; plateNumber: string } | undefined>(undefined)
 
 // DO picker state
 const pickerSearch = ref('')
@@ -439,6 +466,34 @@ async function loadPreview() {
   }
 }
 
+async function loadForEdit(id: number) {
+  try {
+    const detail = await DeliveryNotesService.get(id)
+    deliveryDate.value = new Date(detail.deliveryDate)
+    notes.value = detail.notes ?? ''
+    vehicleId.value = detail.vehicleId
+    driverEmployeeId.value = detail.driverEmployeeId
+
+    if (detail.driverEmployeeId && detail.driverName) {
+      initialDriver.value = { id: detail.driverEmployeeId, name: detail.driverName }
+    }
+    if (detail.vehicleId && detail.vehiclePlate) {
+      initialVehicle.value = { id: detail.vehicleId, plateNumber: detail.vehiclePlate }
+    }
+
+    addedDOs.value = detail.deliveryOrders.map((d) => ({
+      id: d.id,
+      no: d.no,
+      customerName: d.customerName,
+      warehouseName: d.warehouseName,
+      totalAmount: d.totalAmount,
+      createdAt: detail.createdAt,
+    }))
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  }
+}
+
 async function fetchPickerData(page: number) {
   pickerLoading.value = true
   pickerPage.value = page
@@ -449,6 +504,7 @@ async function fetchPickerData(page: number) {
     })
     if (pickerSearch.value.trim()) params.set('search', pickerSearch.value.trim())
     if (pickerWarehouseId.value != null) params.set('warehouseId', String(pickerWarehouseId.value))
+    if (isEditMode.value && editId.value != null) params.set('dnId', String(editId.value))
 
     const addedIds = new Set(addedDOs.value.map((d) => d.id))
     const res = await DeliveryNotesService.listAvailableDeliveryOrders(params.toString())
@@ -557,8 +613,46 @@ async function onSubmit() {
   }
 }
 
-onMounted(() => {
-  loadPreview()
+async function onUpdate() {
+  if (addedDOs.value.length === 0) {
+    toast.add({
+      severity: 'warn',
+      summary: t('deliveryNotes.messages.noDosSelected'),
+      group: toastGroup,
+      life: 3000,
+    })
+    return
+  }
+  if (!editId.value) return
+
+  submitting.value = true
+  try {
+    await DeliveryNotesService.update(editId.value, {
+      deliveryDate: dayjs(deliveryDate.value).format('YYYY-MM-DD'),
+      vehicleId: vehicleId.value || null,
+      driverEmployeeId: driverEmployeeId.value || null,
+      notes: notes.value.trim() || null,
+      deliveryOrderIds: addedDOs.value.map((d) => d.id),
+    })
+
+    toast.add(commonSuccessToast(t('deliveryNotes.messages.updateSuccess'), toastGroup))
+
+    setTimeout(() => {
+      router.replace({ name: 'DeliveryNotes' })
+    }, 1200)
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    submitting.value = false
+  }
+}
+
+onMounted(async () => {
+  if (isEditMode.value && editId.value) {
+    await loadForEdit(editId.value)
+  } else {
+    loadPreview()
+  }
   fetchPickerData(0)
 })
 </script>

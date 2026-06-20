@@ -1569,14 +1569,18 @@ export default {
       status: 'Status',
       createdAt: 'Created At',
     },
+    editTitle: 'Edit Delivery Note',
     status: {
+      draft: 'Draft',
       open: 'Open',
       cancelled: 'Cancelled',
     },
     actions: {
       create: 'Create Delivery Note',
+      edit: 'Edit',
       cancel: 'Cancel DN',
       submit: 'Submit & Create Picking List',
+      update: 'Save Changes',
     },
     picker: {
       title: 'Available Delivery Orders',
@@ -1601,6 +1605,7 @@ export default {
       confirmCancel: 'Cancel this delivery note? Its delivery orders will be freed.',
       cancelSuccess: 'Delivery note cancelled successfully.',
       createSuccess: 'Delivery note {no} created. Picking list: {plNo}',
+      updateSuccess: 'Delivery note updated successfully.',
       notFound: 'Delivery note not found.',
       noDosSelected: 'Please add at least one delivery order.',
     },

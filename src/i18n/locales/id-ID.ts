@@ -1565,14 +1565,18 @@ export default {
       status: 'Status',
       createdAt: 'Dibuat Pada',
     },
+    editTitle: 'Edit Surat Jalan',
     status: {
+      draft: 'Draf',
       open: 'Terbuka',
       cancelled: 'Dibatalkan',
     },
     actions: {
       create: 'Buat Surat Jalan',
+      edit: 'Edit',
       cancel: 'Batalkan SJ',
       submit: 'Submit & Buat Picking List',
+      update: 'Simpan Perubahan',
     },
     picker: {
       title: 'Delivery Order Tersedia',
@@ -1597,6 +1601,7 @@ export default {
       confirmCancel: 'Batalkan surat jalan ini? Delivery order-nya akan dibebaskan.',
       cancelSuccess: 'Surat jalan berhasil dibatalkan.',
       createSuccess: 'Surat jalan {no} dibuat. Picking list: {plNo}',
+      updateSuccess: 'Surat jalan berhasil diperbarui.',
       notFound: 'Surat jalan tidak ditemukan.',
       noDosSelected: 'Tambahkan minimal satu delivery order.',
     },

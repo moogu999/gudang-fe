@@ -31,7 +31,13 @@
               }}</span>
               <Tag
                 class="w-fit"
-                :severity="detail.status === 'open' ? 'success' : 'danger'"
+                :severity="
+                  detail.status === 'open'
+                    ? 'success'
+                    : detail.status === 'draft'
+                      ? 'secondary'
+                      : 'danger'
+                "
                 :value="t(`deliveryNotes.status.${detail.status}`)"
               />
             </div>
@@ -69,7 +75,14 @@
 
           <div class="mt-5 flex justify-end gap-2">
             <Button
-              v-if="canWrite && detail.status === 'open'"
+              v-if="canWrite && detail.status === 'draft'"
+              :label="t('deliveryNotes.actions.edit')"
+              severity="secondary"
+              icon="pi pi-pencil"
+              @click="router.push({ name: 'DeliveryNoteEdit', params: { id: detail.id } })"
+            />
+            <Button
+              v-if="canWrite && (detail.status === 'draft' || detail.status === 'open')"
               :label="t('deliveryNotes.actions.cancel')"
               severity="danger"
               icon="pi pi-times"

@@ -1,4 +1,4 @@
-export type DeliveryNoteStatus = 'open' | 'cancelled'
+export type DeliveryNoteStatus = 'draft' | 'open' | 'cancelled'
 
 export interface DeliveryNoteListItem {
   id: number
@@ -16,6 +16,7 @@ export interface DeliveryNoteDeliveryOrder {
   no: string
   customerName: string
   warehouseName: string
+  totalAmount: string
 }
 
 export interface DeliveryNotePickingListRef {
@@ -63,4 +64,12 @@ export interface CreateDeliveryNoteResponse {
   no: string
   pickingListId: number
   pickingListNo: string
+}
+
+export interface UpdateDeliveryNoteRequest {
+  deliveryDate: string
+  vehicleId?: number | null
+  driverEmployeeId?: number | null
+  notes?: string | null
+  deliveryOrderIds: number[]
 }

@@ -50,7 +50,7 @@
           <Column :header="t('deliveryNotes.fields.status')">
             <template #body="{ data }">
               <Tag
-                :severity="data.status === 'open' ? 'success' : 'danger'"
+                :severity="data.status === 'open' ? 'success' : data.status === 'draft' ? 'secondary' : 'danger'"
                 :value="t(`deliveryNotes.status.${data.status}`)"
               />
             </template>
@@ -67,8 +67,18 @@
                   @click="router.push({ name: 'DeliveryNoteDetail', params: { id: data.id } })"
                 />
                 <Button
-                  v-if="canWrite && data.status === 'open'"
-                  :label="t('deliveryNotes.actions.cancel')"
+                  v-if="canWrite && data.status === 'draft'"
+                  icon="pi pi-pencil"
+                  :aria-label="t('deliveryNotes.actions.edit')"
+                  severity="secondary"
+                  size="small"
+                  outlined
+                  @click="router.push({ name: 'DeliveryNoteEdit', params: { id: data.id } })"
+                />
+                <Button
+                  v-if="canWrite && (data.status === 'draft' || data.status === 'open')"
+                  icon="pi pi-ban"
+                  :aria-label="t('deliveryNotes.actions.cancel')"
                   severity="danger"
                   size="small"
                   outlined

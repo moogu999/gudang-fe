@@ -375,6 +375,12 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_WRITE },
         },
         {
+          path: 'delivery-notes/:id/edit',
+          name: 'DeliveryNoteEdit',
+          component: () => import('@/views/delivery-notes/DeliveryNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_WRITE },
+        },
+        {
           path: 'delivery-notes/:id',
           name: 'DeliveryNoteDetail',
           component: () => import('@/views/delivery-notes/DeliveryNoteDetailView.vue'),

@@ -77,6 +77,8 @@ export const PERMISSIONS = {
   INVOICE_WRITE: 70,
   GOODS_ISSUE_NOTE_READ: 71,
   GOODS_ISSUE_NOTE_WRITE: 72,
+  DELIVERY_CONFIRMATION_READ: 73,
+  DELIVERY_CONFIRMATION_WRITE: 74,
 } as const
 
 /**
@@ -122,6 +124,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/picking-lists': PERMISSIONS.PICKING_LIST_READ,
   '/invoices': PERMISSIONS.INVOICE_READ,
   '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_READ,
+  '/delivery-confirmations': PERMISSIONS.DELIVERY_CONFIRMATION_READ,
 }
 
 /**
@@ -155,4 +158,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/vehicles': PERMISSIONS.VEHICLE_WRITE,
   '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_WRITE,
   '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_WRITE,
+  '/delivery-confirmations': PERMISSIONS.DELIVERY_CONFIRMATION_WRITE,
 }

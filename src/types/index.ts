@@ -281,6 +281,21 @@ export type {
   AvailablePickingList,
 } from './goodsIssueNote.type'
 
+// Delivery Confirmation types
+export type {
+  DeliveryConfirmationStatus,
+  DeliveryConfirmationDOStatus,
+  DeliveryConfirmationOutcome,
+  DeliveryConfirmationListItem,
+  DeliveryConfirmationItemLine,
+  DeliveryConfirmationDODetail,
+  DeliveryConfirmationDetail,
+  AvailableDeliveryNote,
+  CreateDeliveryConfirmationRequest,
+  CreateDeliveryConfirmationResponse,
+  ConfirmDeliveryOrderRequest,
+} from './deliveryConfirmation.type'
+
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 

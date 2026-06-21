@@ -210,6 +210,13 @@ export const API_ENDPOINTS = {
   GOODS_ISSUE_NOTES: '/v1/goods-issue-notes',
   GOODS_ISSUE_NOTE_BY_ID: (id: number) => `/v1/goods-issue-notes/${id}`,
   GOODS_ISSUE_NOTE_AVAILABLE_PLS: '/v1/goods-issue-notes/available-picking-lists',
+
+  // Delivery Confirmation endpoints
+  DELIVERY_CONFIRMATIONS: '/v1/delivery-confirmations',
+  DELIVERY_CONFIRMATION_BY_ID: (id: number) => `/v1/delivery-confirmations/${id}`,
+  DELIVERY_CONFIRMATION_AVAILABLE_DNS: '/v1/delivery-confirmations/available-delivery-notes',
+  DELIVERY_CONFIRMATION_CONFIRM_DO: (id: number, doId: number) =>
+    `/v1/delivery-confirmations/${id}/delivery-orders/${doId}/confirm`,
 } as const
 
 // Type for API endpoints (useful for validation)

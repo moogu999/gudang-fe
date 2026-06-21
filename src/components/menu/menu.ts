@@ -187,6 +187,11 @@ const mainMenu = [
         route: '/goods-issue-notes',
       },
       {
+        label: 'Delivery Confirmations',
+        labelKey: 'navigation.deliveryConfirmations',
+        route: '/delivery-confirmations',
+      },
+      {
         label: 'Invoices',
         labelKey: 'navigation.invoices',
         route: '/invoices',

@@ -428,6 +428,26 @@ const router = createRouter({
           component: () => import('@/views/goods-issue-notes/GoodsIssueNoteDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_READ },
         },
+        {
+          path: 'delivery-confirmations',
+          name: 'DeliveryConfirmations',
+          component: () => import('@/views/delivery-confirmations/DeliveryConfirmationsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_READ },
+        },
+        {
+          path: 'delivery-confirmations/create',
+          name: 'DeliveryConfirmationCreate',
+          component: () =>
+            import('@/views/delivery-confirmations/DeliveryConfirmationCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_WRITE },
+        },
+        {
+          path: 'delivery-confirmations/:id',
+          name: 'DeliveryConfirmationDetail',
+          component: () =>
+            import('@/views/delivery-confirmations/DeliveryConfirmationDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_READ },
+        },
       ],
     },
 

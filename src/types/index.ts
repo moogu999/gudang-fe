@@ -271,6 +271,16 @@ export type {
   InvoiceDetail,
 } from './invoice.type'
 
+// Goods Issue Note types
+export type {
+  GoodsIssueNoteStatus,
+  GoodsIssueNoteListItem,
+  GoodsIssueNoteItem,
+  GoodsIssueNoteDetail,
+  CreateGoodsIssueNoteRequest,
+  AvailablePickingList,
+} from './goodsIssueNote.type'
+
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 

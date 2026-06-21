@@ -205,6 +205,11 @@ export const API_ENDPOINTS = {
   // Invoice endpoints
   INVOICES: '/v1/invoices',
   INVOICE_BY_ID: (id: number) => `/v1/invoices/${id}`,
+
+  // Goods Issue Note endpoints
+  GOODS_ISSUE_NOTES: '/v1/goods-issue-notes',
+  GOODS_ISSUE_NOTE_BY_ID: (id: number) => `/v1/goods-issue-notes/${id}`,
+  GOODS_ISSUE_NOTE_AVAILABLE_PLS: '/v1/goods-issue-notes/available-picking-lists',
 } as const
 
 // Type for API endpoints (useful for validation)

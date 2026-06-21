@@ -410,6 +410,24 @@ const router = createRouter({
           component: () => import('@/views/invoices/InvoiceDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.INVOICE_READ },
         },
+        {
+          path: 'goods-issue-notes',
+          name: 'GoodsIssueNotes',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNotesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_READ },
+        },
+        {
+          path: 'goods-issue-notes/create',
+          name: 'GoodsIssueNoteCreate',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_WRITE },
+        },
+        {
+          path: 'goods-issue-notes/:id',
+          name: 'GoodsIssueNoteDetail',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNoteDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_READ },
+        },
       ],
     },
 

@@ -32,7 +32,7 @@
               <Tag
                 class="w-fit"
                 :severity="
-                  detail.status === 'open'
+                  detail.status === 'open' || detail.status === 'applied'
                     ? 'success'
                     : detail.status === 'draft'
                       ? 'secondary'

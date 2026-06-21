@@ -50,7 +50,13 @@
           <Column :header="t('deliveryNotes.fields.status')">
             <template #body="{ data }">
               <Tag
-                :severity="data.status === 'open' ? 'success' : data.status === 'draft' ? 'secondary' : 'danger'"
+                :severity="
+                  data.status === 'open' || data.status === 'applied'
+                    ? 'success'
+                    : data.status === 'draft'
+                      ? 'secondary'
+                      : 'danger'
+                "
                 :value="t(`deliveryNotes.status.${data.status}`)"
               />
             </template>

@@ -75,6 +75,8 @@ export const PERMISSIONS = {
   PICKING_LIST_READ: 68,
   INVOICE_READ: 69,
   INVOICE_WRITE: 70,
+  GOODS_ISSUE_NOTE_READ: 71,
+  GOODS_ISSUE_NOTE_WRITE: 72,
 } as const
 
 /**
@@ -119,6 +121,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_READ,
   '/picking-lists': PERMISSIONS.PICKING_LIST_READ,
   '/invoices': PERMISSIONS.INVOICE_READ,
+  '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_READ,
 }
 
 /**
@@ -151,4 +154,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_WRITE,
   '/vehicles': PERMISSIONS.VEHICLE_WRITE,
   '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_WRITE,
+  '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_WRITE,
 }

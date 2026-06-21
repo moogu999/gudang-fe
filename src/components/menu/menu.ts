@@ -182,6 +182,11 @@ const mainMenu = [
         route: '/picking-lists',
       },
       {
+        label: 'Goods Issue Notes',
+        labelKey: 'navigation.goodsIssueNotes',
+        route: '/goods-issue-notes',
+      },
+      {
         label: 'Invoices',
         labelKey: 'navigation.invoices',
         route: '/invoices',

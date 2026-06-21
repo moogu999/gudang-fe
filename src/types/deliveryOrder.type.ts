@@ -3,7 +3,7 @@ import type { LineDiscount } from './salesOrder.type'
 
 export type { LineDiscount }
 
-export type DeliveryOrderStatus = 'open' | 'cancelled'
+export type DeliveryOrderStatus = 'open' | 'applied' | 'cancelled'
 
 export interface DeliveryOrderUomLevel {
   id: number

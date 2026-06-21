@@ -142,7 +142,7 @@ const canCancel = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL
 const cancelAcceptHandler = ref(async () => {})
 
 function statusSeverity(status: DeliveryOrderStatus) {
-  if (status === 'open') return 'success'
+  if (status === 'open' || status === 'applied') return 'success'
   return 'danger'
 }
 

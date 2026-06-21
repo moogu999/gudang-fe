@@ -32,7 +32,9 @@
               <div class="flex items-center gap-2">
                 <Tag
                   class="w-fit"
-                  :severity="detail.status === 'open' ? 'success' : 'danger'"
+                  :severity="
+                    detail.status === 'open' || detail.status === 'applied' ? 'success' : 'danger'
+                  "
                   :value="t(`deliveryOrders.status.${detail.status}`)"
                 />
                 <Tag

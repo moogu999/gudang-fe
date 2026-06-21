@@ -87,6 +87,7 @@ export default {
     invoices: 'Faktur',
     deliveryNotes: 'Surat Jalan',
     pickingLists: 'Picking List',
+    goodsIssueNotes: 'Bukti Keluar Barang',
     configs: 'Konfigurasi',
     salesOrderConfigs: 'Konfigurasi PO',
     bookingOrderConfigs: 'Konfigurasi BO',
@@ -1569,6 +1570,7 @@ export default {
     status: {
       draft: 'Draf',
       open: 'Terbuka',
+      applied: 'Diterapkan',
       cancelled: 'Dibatalkan',
     },
     actions: {
@@ -1624,6 +1626,7 @@ export default {
     },
     status: {
       open: 'Terbuka',
+      closed: 'Ditutup',
       cancelled: 'Dibatalkan',
     },
     detail: {
@@ -1665,6 +1668,59 @@ export default {
       notFound: 'Faktur tidak ditemukan.',
     },
   },
+  goodsIssueNotes: {
+    title: 'Bukti Keluar Barang',
+    createTitle: 'Buat Bukti Keluar Barang',
+    fields: {
+      no: 'No. BKB',
+      pickingListNo: 'No. PL',
+      deliveryNoteNo: 'No. SJ',
+      issueDate: 'Tanggal Keluar',
+      notes: 'Catatan',
+      status: 'Status',
+      createdAt: 'Dibuat Pada',
+    },
+    status: {
+      issued: 'Diterbitkan',
+      cancelled: 'Dibatalkan',
+    },
+    actions: {
+      create: 'Buat Bukti Keluar Barang',
+      submit: 'Keluarkan Barang',
+    },
+    picker: {
+      title: 'Pilih Picking List',
+      placeholder: 'Cari picking list…',
+    },
+    movement: {
+      label: 'Stok Tersedia → Dalam Perjalanan',
+    },
+    numberMode: {
+      label: 'No. BKB',
+      auto: 'Otomatis',
+      manual: 'Manual',
+      manualPlaceholder: 'Masukkan nomor BKB…',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+    messages: {
+      confirmSubmit:
+        'Stok akan dipindahkan dari Stok Tersedia ke Dalam Perjalanan. Tindakan ini tidak dapat dibatalkan.',
+      submitSuccess: 'Bukti keluar barang {no} berhasil dibuat.',
+      notFound: 'Bukti keluar barang tidak ditemukan.',
+      noPlSelected: 'Pilih picking list terlebih dahulu.',
+      noManualNo: 'Masukkan nomor BKB terlebih dahulu.',
+    },
+    banner: 'Barang telah dikeluarkan — item sedang Dalam Perjalanan.',
+    plLink: 'Lihat Picking List',
+    dnLink: 'Lihat Surat Jalan',
+    detail: {
+      product: 'Produk',
+      warehouse: 'Gudang',
+      quantity: 'Qty',
+      movement: 'Pergerakan',
+      uncategorized: 'Tanpa Kategori',
+    },
+  },
   deliveryOrders: {
     title: 'Pesanan Pengiriman',
     fields: {
@@ -1690,6 +1746,7 @@ export default {
     },
     status: {
       open: 'Terbuka',
+      applied: 'Diterapkan',
       cancelled: 'Dibatalkan',
       partial: 'Sebagian',
     },

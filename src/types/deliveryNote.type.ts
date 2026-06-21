@@ -1,4 +1,4 @@
-export type DeliveryNoteStatus = 'draft' | 'open' | 'cancelled'
+export type DeliveryNoteStatus = 'draft' | 'open' | 'applied' | 'cancelled'
 
 export interface DeliveryNoteListItem {
   id: number

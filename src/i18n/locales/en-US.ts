@@ -86,6 +86,7 @@ export default {
     invoices: 'Invoices',
     deliveryNotes: 'Delivery Notes',
     pickingLists: 'Picking Lists',
+    goodsIssueNotes: 'Goods Issue Notes',
     configs: 'Config',
     salesOrderConfigs: 'SO Config',
     bookingOrderConfigs: 'BO Config',
@@ -1573,6 +1574,7 @@ export default {
     status: {
       draft: 'Draft',
       open: 'Open',
+      applied: 'Applied',
       cancelled: 'Cancelled',
     },
     actions: {
@@ -1628,6 +1630,7 @@ export default {
     },
     status: {
       open: 'Open',
+      closed: 'Closed',
       cancelled: 'Cancelled',
     },
     detail: {
@@ -1669,6 +1672,58 @@ export default {
       notFound: 'Invoice not found.',
     },
   },
+  goodsIssueNotes: {
+    title: 'Goods Issue Notes',
+    createTitle: 'Create Goods Issue Note',
+    fields: {
+      no: 'GIN Number',
+      pickingListNo: 'PL Number',
+      deliveryNoteNo: 'DN Number',
+      issueDate: 'Issue Date',
+      notes: 'Notes',
+      status: 'Status',
+      createdAt: 'Created At',
+    },
+    status: {
+      issued: 'Issued',
+      cancelled: 'Cancelled',
+    },
+    actions: {
+      create: 'Create Goods Issue Note',
+      submit: 'Issue Goods',
+    },
+    picker: {
+      title: 'Select Picking List',
+      placeholder: 'Search picking list…',
+    },
+    movement: {
+      label: 'On Hand → In Transit',
+    },
+    numberMode: {
+      label: 'GIN Number',
+      auto: 'Auto',
+      manual: 'Manual',
+      manualPlaceholder: 'Enter GIN number…',
+      assignedOnSave: 'Assigned on save',
+    },
+    messages: {
+      confirmSubmit: 'Stock will move from On Hand to In Transit. This action cannot be undone.',
+      submitSuccess: 'Goods issue note {no} created successfully.',
+      notFound: 'Goods issue note not found.',
+      noPlSelected: 'Please select a picking list.',
+      noManualNo: 'Please enter a GIN number.',
+    },
+    banner: 'Stock issued — items are now In Transit.',
+    plLink: 'View Picking List',
+    dnLink: 'View Delivery Note',
+    detail: {
+      product: 'Product',
+      warehouse: 'Warehouse',
+      quantity: 'Qty',
+      movement: 'Movement',
+      uncategorized: 'Uncategorized',
+    },
+  },
   deliveryOrders: {
     title: 'Delivery Orders',
     fields: {
@@ -1694,6 +1749,7 @@ export default {
     },
     status: {
       open: 'Open',
+      applied: 'Applied',
       cancelled: 'Cancelled',
       partial: 'Partial',
     },

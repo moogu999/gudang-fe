@@ -217,6 +217,9 @@ export const API_ENDPOINTS = {
   DELIVERY_CONFIRMATION_AVAILABLE_DNS: '/v1/delivery-confirmations/available-delivery-notes',
   DELIVERY_CONFIRMATION_CONFIRM_DO: (id: number, doId: number) =>
     `/v1/delivery-confirmations/${id}/delivery-orders/${doId}/confirm`,
+
+  // Stock Movements endpoints
+  STOCK_MOVEMENTS: '/v1/stock-movements',
 } as const
 
 // Type for API endpoints (useful for validation)

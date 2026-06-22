@@ -448,6 +448,12 @@ const router = createRouter({
             import('@/views/delivery-confirmations/DeliveryConfirmationDetailView.vue'),
           meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_READ },
         },
+        {
+          path: 'stock-movements',
+          name: 'StockMovements',
+          component: () => import('@/views/stock-movements/StockMovementsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.STOCK_MOVEMENT_READ },
+        },
       ],
     },
 

@@ -299,5 +299,8 @@ export type {
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 
+// Stock Movement types
+export type { StockMovement, BalanceSnapshot, StockMovementFilters } from './stockMovement.type'
+
 // Component types
 export type { Column } from './table.type'

@@ -44,7 +44,9 @@
             </template>
           </Column>
           <Column :header="t('deliveryConfirmations.fields.doProgress')">
-            <template #body="{ data }">{{ data.doConfirmed }} / {{ data.doTotal }}</template>
+            <template #body="{ data }"
+              >{{ data.totalDoCount - data.pendingDoCount }} / {{ data.totalDoCount }}</template
+            >
           </Column>
           <Column :header="t('deliveryConfirmations.fields.status')">
             <template #body="{ data }">

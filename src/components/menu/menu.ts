@@ -127,6 +127,11 @@ const mainMenu = [
         labelKey: 'navigation.inventoryStatus',
         route: '/inventory-status',
       },
+      {
+        label: 'Stock Movements',
+        labelKey: 'navigation.stockMovements',
+        route: '/stock-movements',
+      },
     ],
   },
   {

@@ -9,8 +9,8 @@ export interface DeliveryConfirmationListItem {
   driverName: string | null
   confirmationDate: string
   status: DeliveryConfirmationStatus
-  doTotal: number
-  doConfirmed: number
+  totalDoCount: number
+  pendingDoCount: number
 }
 
 export interface DeliveryConfirmationItemLine {

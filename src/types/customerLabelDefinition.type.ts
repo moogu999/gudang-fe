@@ -6,7 +6,6 @@
  */
 export interface CustomerLabelDefinition {
   id: number
-  companyId: number
   name: string
   createdAt: string
   updatedAt?: string
@@ -28,7 +27,6 @@ export interface CustomerLabelOption {
 }
 
 export interface CreateCustomerLabelDefinitionDto {
-  companyId: number
   name: string
   createdBy: number
 }

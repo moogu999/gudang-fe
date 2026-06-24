@@ -29,8 +29,10 @@
       @row-edit-save="onRowEditSave"
     >
       <Column header="#" style="width: 3rem">
-        <template #body="{ index }">
-          <span class="text-stone-400">{{ index + 1 }}</span>
+        <template #body="{ index, data }">
+          <span class="text-stone-400">{{
+            (data as SalesOrderDetailRow)._isPlaceholder ? '' : index + 1
+          }}</span>
         </template>
       </Column>
 
@@ -117,6 +119,7 @@
           <InputNumber
             v-else
             v-model="(data as SalesOrderDetailRow).quantity"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             class="w-full"
@@ -135,6 +138,12 @@
             >
               {{ (data as SalesOrderDetailRow)._priceListCode }}
             </span>
+            <span
+              v-if="(data as SalesOrderDetailRow)._taxIncluded"
+              class="w-fit rounded bg-orange-100 px-1 py-0.5 text-xs font-medium text-orange-700"
+            >
+              {{ t('priceLists.fields.taxIncluded') }}
+            </span>
           </div>
         </template>
       </Column>
@@ -151,10 +160,15 @@
         </template>
       </Column>
 
-      <!-- Discount (always read-only — resolved by backend) -->
+      <!-- Discount (promotion + manual discounts) -->
       <Column field="discount" :header="t('salesOrders.details.discount')">
         <template #body="{ data }">
-          {{ formatValue((data as SalesOrderDetailRow).discount) }}
+          {{
+            formatValue(
+              ((data as SalesOrderDetailRow).discount ?? 0) +
+                computeManualDiscountTotal(data as SalesOrderDetailRow),
+            )
+          }}
         </template>
       </Column>
 
@@ -175,8 +189,9 @@
 
       <!-- Delete -->
       <Column v-if="mode !== DialogMode.VIEW" style="width: 3rem">
-        <template #body="{ index }">
+        <template #body="{ index, data }">
           <Button
+            v-if="!(data as SalesOrderDetailRow)._isPlaceholder"
             icon="pi pi-trash"
             size="small"
             severity="danger"
@@ -254,7 +269,20 @@
                     </p>
                   </td>
                   <td class="py-0.5 text-right text-green-700">
-                    +{{ bonus.qty }} × {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}
+                    <div class="flex flex-col gap-0">
+                      <span>{{ getBonusQtyDisplay(bonus).qty }}</span>
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).label"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).label }}</span
+                      >
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).baseQty"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).baseQty }}</span
+                      >
+                    </div>
+                    <span>× {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -340,8 +368,13 @@
             <ManualDiscountEditor
               :model-value="(data as SalesOrderDetailRow)._manualDiscounts ?? []"
               :disabled="mode === DialogMode.VIEW"
-              :gross="((data as SalesOrderDetailRow).quantity ?? 0) * ((data as SalesOrderDetailRow).price ?? 0)"
-              @update:model-value="(v) => onLineManualDiscountsUpdate(data as SalesOrderDetailRow, v)"
+              :gross="
+                ((data as SalesOrderDetailRow).quantity ?? 0) *
+                ((data as SalesOrderDetailRow).price ?? 0)
+              "
+              @update:model-value="
+                (v) => onLineManualDiscountsUpdate(data as SalesOrderDetailRow, v)
+              "
             />
           </div>
 
@@ -428,7 +461,20 @@
                     </p>
                   </td>
                   <td class="py-0.5 text-right text-green-700">
-                    +{{ bonus.qty }} × {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}
+                    <div class="flex flex-col gap-0">
+                      <span>{{ getBonusQtyDisplay(bonus).qty }}</span>
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).label"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).label }}</span
+                      >
+                      <span
+                        v-if="getBonusQtyDisplay(bonus).baseQty"
+                        class="text-xs text-green-600/70"
+                        >{{ getBonusQtyDisplay(bonus).baseQty }}</span
+                      >
+                    </div>
+                    <span>× {{ bonus.bonusProductCode }} - {{ bonus.bonusProductName }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -501,7 +547,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -522,7 +568,7 @@ import type {
   LineBonus,
   ManualDiscount,
 } from '@/types'
-import { computeBaseQty, decomposeBaseQty } from '@/utils/uomHelper'
+import { computeBaseQty, decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { ProductsService } from '@/services'
 
 const { t, locale } = useI18n()
@@ -555,6 +601,32 @@ const editingRows = ref<SalesOrderDetailRow[]>([])
 const expandedRows = ref<Record<string, boolean>>({})
 let skipNextWatch = false
 
+function createPlaceholderRow(): SalesOrderDetailRow {
+  return {
+    _localId: crypto.randomUUID(),
+    _isPlaceholder: true,
+    _discounts: [],
+    _bonuses: [],
+    _choiceOffers: [],
+    _choicePicks: {},
+    _manualDiscounts: [],
+  }
+}
+
+function ensurePlaceholder() {
+  if (props.mode === DialogMode.VIEW) return
+  const hasPlaceholder = localRows.value.some((r) => r._isPlaceholder)
+  if (!hasPlaceholder) {
+    const placeholder = createPlaceholderRow()
+    localRows.value.push(placeholder)
+    editingRows.value = [...editingRows.value, placeholder]
+  }
+}
+
+onMounted(() => {
+  ensurePlaceholder()
+})
+
 watch(
   () => props.modelValue,
   (newRows) => {
@@ -573,6 +645,7 @@ watch(
         local.discount = newRow.discount
         local._priceListId = newRow._priceListId
         local._priceListCode = newRow._priceListCode
+        local._taxIncluded = newRow._taxIncluded
         local._discounts = newRow._discounts
         local._bonuses = newRow._bonuses
         local._choiceOffers = newRow._choiceOffers
@@ -592,38 +665,38 @@ watch(
         expandedRows.value[row._localId] = true
       }
     })
+
+    ensurePlaceholder()
   },
   { deep: true },
 )
 
 function emitRows() {
   skipNextWatch = true
-  emit('update:modelValue', localRows.value)
+  emit(
+    'update:modelValue',
+    localRows.value.filter((r) => !r._isPlaceholder),
+  )
 }
 
 function addRow() {
-  const newRow: SalesOrderDetailRow = {
-    _localId: crypto.randomUUID(),
-    _discounts: [],
-    _bonuses: [],
-    _choiceOffers: [],
-    _choicePicks: {},
-    _manualDiscounts: [],
-  }
-  localRows.value.push(newRow)
-  editingRows.value = [newRow]
-  emitRows()
+  ensurePlaceholder()
 }
 
 function removeRow(index: number) {
   localRows.value.splice(index, 1)
   emitRows()
+  ensurePlaceholder()
 }
 
 function onRowEditSave(event: { newData: SalesOrderDetailRow; index: number }) {
   const { newData, index } = event
+  if (newData._isPlaceholder && newData.productId) {
+    newData._isPlaceholder = false
+  }
   localRows.value[index] = newData
   emitRows()
+  ensurePlaceholder()
 }
 
 function onProductSelect(data: SalesOrderDetailRow, option: object) {
@@ -634,8 +707,10 @@ function onProductSelect(data: SalesOrderDetailRow, option: object) {
 }
 
 function getUomLevels(data: SalesOrderDetailRow): UomConversionLevel[] | undefined {
-  return (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup
-    ?.levels
+  return (
+    pinnedToLevels(data.pinnedUom) ??
+    (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup?.levels
+  )
 }
 
 function getUomLabel(data: SalesOrderDetailRow): string | undefined {
@@ -643,6 +718,23 @@ function getUomLabel(data: SalesOrderDetailRow): string | undefined {
   if (!levels?.length) return undefined
   if (levels.length === 1) return levels[0].uom?.symbol
   return levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
+}
+
+function getBonusQtyDisplay(bonus: LineBonus): {
+  qty: string
+  label?: string
+  baseQty?: string
+} {
+  const levels = pinnedToLevels(bonus.pinnedUom) ?? bonus.uomGroup?.levels
+  if (!levels || levels.length <= 1) {
+    return { qty: `+${bonus.qty}` }
+  }
+  const decomposed = decomposeBaseQty(parseFloat(bonus.qty), levels)
+  const qty = '+' + decomposed.join(' / ')
+  const label = levels.map((l) => l.uom?.symbol ?? '?').join(' / ')
+  const smallestSymbol = levels.at(-1)?.uom?.symbol
+  const baseQty = smallestSymbol ? `+${parseFloat(bonus.qty)} ${smallestSymbol}` : undefined
+  return { qty, label, baseQty }
 }
 
 function getTierString(data: SalesOrderDetailRow): string {
@@ -664,10 +756,15 @@ function handleTierInput(data: SalesOrderDetailRow, rawValue: string) {
   data.quantity = computeBaseQty(tiers, levels)
 }
 
+function computeManualDiscountTotal(data: SalesOrderDetailRow): number {
+  return (data._manualDiscounts ?? []).reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0)
+}
+
 function computeSubAmount(data: SalesOrderDetailRow): number {
   return (
     ((data.quantity ?? 0) as number) * ((data.price ?? 0) as number) -
-    ((data.discount ?? 0) as number)
+    ((data.discount ?? 0) as number) -
+    computeManualDiscountTotal(data)
   )
 }
 
@@ -706,7 +803,7 @@ function toggleChoice(
   }
 
   skipNextWatch = true
-  emit('update:modelValue', [...localRows.value])
+  emitRows()
 }
 
 function isHeaderChoicePicked(promotionId: number, productId: number): boolean {
@@ -720,7 +817,7 @@ function getHeaderPickCount(promotionId: number): number {
 function onLineManualDiscountsUpdate(row: SalesOrderDetailRow, discounts: ManualDiscount[]) {
   row._manualDiscounts = discounts
   skipNextWatch = true
-  emit('update:modelValue', [...localRows.value])
+  emitRows()
 }
 
 function toggleHeaderChoice(offer: ChoiceOffer, productId: number, checked: boolean) {

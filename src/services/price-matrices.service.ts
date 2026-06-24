@@ -34,21 +34,29 @@ export class PriceMatricesService {
     return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
   }
 
-  static async getPriorities(): Promise<{ data: PriceMatrixPriorityItem[] }> {
+  static async getPriorities(branchId: number): Promise<{ data: PriceMatrixPriorityItem[] }> {
     return ApiService.get<{ data: PriceMatrixPriorityItem[] }>(
-      API_ENDPOINTS.PRICE_MATRIX_PRIORITIES,
+      `${API_ENDPOINTS.PRICE_MATRIX_PRIORITIES}?branchId=${branchId}`,
     )
   }
 
-  static async addToPriorityList(priceMatrixId: number): Promise<void> {
-    return ApiService.post<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST, { priceMatrixId })
+  static async addToPriorityList(priceMatrixId: number, branchId: number): Promise<void> {
+    return ApiService.post<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST, {
+      priceMatrixId,
+      branchId,
+    })
   }
 
-  static async removeFromPriorityList(priceMatrixId: number): Promise<void> {
-    return ApiService.delete<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST_ITEM(priceMatrixId))
+  static async removeFromPriorityList(priceMatrixId: number, branchId: number): Promise<void> {
+    return ApiService.delete<void>(
+      `${API_ENDPOINTS.PRICE_MATRIX_PRIORITY_LIST_ITEM(priceMatrixId)}?branchId=${branchId}`,
+    )
   }
 
-  static async movePriority(id: number, direction: 'up' | 'down'): Promise<void> {
-    return ApiService.patch<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY(id), { direction })
+  static async movePriority(id: number, direction: 'up' | 'down', branchId: number): Promise<void> {
+    return ApiService.patch<void>(API_ENDPOINTS.PRICE_MATRIX_PRIORITY(id), {
+      direction,
+      branchId,
+    })
   }
 }

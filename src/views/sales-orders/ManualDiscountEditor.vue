@@ -23,21 +23,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(disc, idx) in modelValue"
-          :key="idx"
-          class="border-b border-stone-100"
-        >
+        <tr v-for="(disc, idx) in modelValue" :key="idx" class="border-b border-stone-100">
           <td class="py-0.5 text-stone-500">{{ disc.reason }}</td>
           <td class="py-0.5 capitalize">
-            {{ disc.discountType === 'flat' ? t('salesOrders.manualDiscount.flat') : t('salesOrders.manualDiscount.percentage') }}
+            {{
+              disc.discountType === 'flat'
+                ? t('salesOrders.manualDiscount.flat')
+                : t('salesOrders.manualDiscount.percentage')
+            }}
           </td>
           <td class="py-0.5 text-right">
             {{ disc.discountType === 'percentage' ? `${disc.value}%` : formatValue(disc.value) }}
           </td>
-          <td class="py-0.5 text-right text-red-600">
-            -{{ formatValue(previewAmount(disc)) }}
-          </td>
+          <td class="py-0.5 text-right text-red-600">-{{ formatValue(previewAmount(disc)) }}</td>
           <td v-if="!disabled" class="py-0.5 text-right">
             <Button
               icon="pi pi-trash"
@@ -52,11 +50,13 @@
     </table>
 
     <!-- Add form (edit mode only) -->
-    <div v-if="!disabled" class="rounded border border-stone-200 bg-stone-50 p-3 space-y-2">
+    <div v-if="!disabled" class="space-y-2 rounded border border-stone-200 bg-stone-50 p-3">
       <!-- Row 1: Type + Value -->
       <div class="flex items-end gap-2">
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-medium text-stone-500">{{ t('salesOrders.manualDiscount.type') }}</label>
+          <label class="text-xs font-medium text-stone-500">{{
+            t('salesOrders.manualDiscount.type')
+          }}</label>
           <Select
             v-model="addType"
             :options="typeOptions"
@@ -67,9 +67,12 @@
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-medium text-stone-500">{{ t('salesOrders.manualDiscount.value') }}</label>
+          <label class="text-xs font-medium text-stone-500">{{
+            t('salesOrders.manualDiscount.value')
+          }}</label>
           <InputNumber
             v-model="addValue"
+            :locale="locale"
             :min="0"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
@@ -103,12 +106,7 @@
         />
       </div>
 
-      <Message
-        v-if="showValidation && !canAdd"
-        severity="error"
-        size="small"
-        variant="simple"
-      >
+      <Message v-if="showValidation && !canAdd" severity="error" size="small" variant="simple">
         {{
           !addReason.trim()
             ? t('salesOrders.validation.manualDiscountReasonRequired')
@@ -178,7 +176,7 @@ function previewAmount(disc: ManualDiscount): number {
   const v = parseFloat(disc.value)
   if (isNaN(v)) return 0
   if (disc.discountType === 'flat') return v
-  return Math.round(((props.gross ?? 0) * v) / 100 * 100) / 100
+  return Math.round((((props.gross ?? 0) * v) / 100) * 100) / 100
 }
 
 function addDiscount() {
@@ -187,7 +185,7 @@ function addDiscount() {
 
   const v = addValue.value!
   const grossAmount =
-    addType.value === 'flat' ? v : Math.round(((props.gross ?? 0) * v) / 100 * 100) / 100
+    addType.value === 'flat' ? v : Math.round((((props.gross ?? 0) * v) / 100) * 100) / 100
 
   const newDiscount: ManualDiscount = {
     discountType: addType.value,

@@ -104,7 +104,10 @@
         <div
           v-for="{ item, idx: itemIdx } in filteredItems"
           :key="itemIdx"
-          class="mb-4 rounded border p-4"
+          :class="[
+            'mb-4 rounded border p-4',
+            item._isPlaceholder ? 'border-surface-300 bg-surface-50 border-dashed' : '',
+          ]"
         >
           <!-- Item header row -->
           <div class="mb-3 grid grid-cols-1 gap-3 md:grid-cols-4">
@@ -168,7 +171,7 @@
                 <Checkbox v-model="item.taxIncluded" :binary="true" :disabled="isView" />
               </div>
               <Button
-                v-if="!isView"
+                v-if="!isView && !item._isPlaceholder"
                 icon="pi pi-trash"
                 severity="danger"
                 text
@@ -277,6 +280,8 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { CurrenciesService } from '@/services/currencies.service'
 import { ProductsService } from '@/services/products.service'
+import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
+import FilterOperator from '@/constants/filterOperator'
 import type { PriceList, CreatePriceListDto, UpdatePriceListDto } from '@/types/price-list'
 
 type FormMode = 'create' | 'edit' | 'view'
@@ -289,6 +294,7 @@ interface ItemForm {
   _initialProduct?: { id: number; code: string; name: string }
   _initialCurrency?: { id: number; code: string }
   _smallestUomSymbol?: string
+  _isPlaceholder?: boolean
 }
 
 const props = defineProps<{
@@ -316,6 +322,7 @@ const form = ref({
 })
 
 const noEndDate = ref(false)
+const defaultCurrency = ref<{ id: number; code: string } | undefined>(undefined)
 const errors = ref<{
   code: string
   startDate: string
@@ -328,6 +335,7 @@ const filteredItems = computed(() => {
   return form.value.items
     .map((item, idx) => ({ item, idx }))
     .filter(({ item }) => {
+      if (item._isPlaceholder) return !isView.value
       if (!q) return true
       const name = item._initialProduct?.name?.toLowerCase() ?? ''
       const code = item._initialProduct?.code?.toLowerCase() ?? ''
@@ -335,7 +343,18 @@ const filteredItems = computed(() => {
     })
 })
 
-onMounted(() => {
+onMounted(async () => {
+  if (!isView.value) {
+    const query = new GenericQueryBuilder()
+      .withFilter('code', FilterOperator.EQUAL, 'IDR')
+      .withLimit(1)
+      .build()
+    const result = await CurrenciesService.list(query)
+    if (result.data.length > 0) {
+      defaultCurrency.value = { id: result.data[0].id, code: result.data[0].code }
+    }
+  }
+
   if (props.priceList) {
     form.value.code = props.priceList.code
     form.value.description = props.priceList.description
@@ -363,19 +382,33 @@ onMounted(() => {
       _smallestUomSymbol: item.product?.smallestUom?.symbol,
     }))
   }
+
+  if (!isView.value) {
+    ensurePlaceholder()
+  }
 })
 
+function ensurePlaceholder() {
+  const hasPlaceholder = form.value.items.some((item) => item._isPlaceholder)
+  if (!hasPlaceholder) {
+    form.value.items.push({
+      productId: undefined,
+      currencyId: defaultCurrency.value?.id,
+      taxIncluded: false,
+      tiers: [{ minQuantity: '0', price: '' }],
+      _initialCurrency: defaultCurrency.value,
+      _isPlaceholder: true,
+    })
+  }
+}
+
 function addItem() {
-  form.value.items.push({
-    productId: undefined,
-    currencyId: undefined,
-    taxIncluded: false,
-    tiers: [{ minQuantity: '0', price: '' }],
-  })
+  ensurePlaceholder()
 }
 
 function removeItem(index: number) {
   form.value.items.splice(index, 1)
+  ensurePlaceholder()
 }
 
 function addTier(itemIdx: number) {
@@ -396,6 +429,7 @@ function onProductSelected(
   },
 ) {
   form.value.items[itemIdx]._initialProduct = opt
+  form.value.items[itemIdx]._isPlaceholder = false
   const levels = opt.uomGroup?.levels
   if (levels && levels.length > 0) {
     const smallest = levels[levels.length - 1]
@@ -403,6 +437,7 @@ function onProductSelected(
   } else {
     form.value.items[itemIdx]._smallestUomSymbol = undefined
   }
+  ensurePlaceholder()
 }
 
 function formatDate(d: Date): string {
@@ -426,6 +461,7 @@ function validate(): boolean {
   }
 
   errors.value.items = form.value.items.map((item) => {
+    if (item._isPlaceholder) return { tiers: [] }
     const tierErrors = item.tiers.map((tier) => {
       if (!tier.price.trim()) return t('priceLists.validation.priceRequired')
       return ''
@@ -449,15 +485,17 @@ function onSave() {
     startDate: formatDate(form.value.startDate!),
     endDate: noEndDate.value ? null : form.value.endDate ? formatDate(form.value.endDate) : null,
     active: form.value.active,
-    items: form.value.items.map((item) => ({
-      productId: item.productId!,
-      currencyId: item.currencyId!,
-      taxIncluded: item.taxIncluded,
-      tiers: item.tiers.map((tier) => ({
-        minQuantity: tier.minQuantity,
-        price: tier.price,
+    items: form.value.items
+      .filter((item) => !item._isPlaceholder)
+      .map((item) => ({
+        productId: item.productId!,
+        currencyId: item.currencyId!,
+        taxIncluded: item.taxIncluded,
+        tiers: item.tiers.map((tier) => ({
+          minQuantity: tier.minQuantity,
+          price: tier.price,
+        })),
       })),
-    })),
   }
 
   emit('submit', dto)

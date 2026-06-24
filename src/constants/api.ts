@@ -145,6 +145,9 @@ export const API_ENDPOINTS = {
   EMPLOYEES: '/v1/employees',
   EMPLOYEE_TYPES: '/gen/v1/employee-types',
 
+  // File endpoints
+  FILES: '/v1/files',
+
   // Customer master endpoints (new)
   GEN_CUSTOMER_OUTLET_TYPES: '/gen/v1/customer-outlet-types',
   GEN_CUSTOMER_CHANNELS: '/gen/v1/customer-channels',
@@ -153,6 +156,70 @@ export const API_ENDPOINTS = {
 
   // Customer V1 endpoint (new full-feature CRUD with child entities)
   CUSTOMERS_V1_FULL: '/v1/customers',
+
+  // Warehouse endpoints
+  GEN_WAREHOUSES: '/gen/v1/warehouses',
+
+  // Vehicle endpoints
+  GEN_VEHICLES: '/gen/v1/vehicles',
+  GEN_VEHICLE_TYPES: '/gen/v1/vehicle-types',
+
+  // Goods Receipt endpoints
+  GOODS_RECEIPTS: '/v1/goods-receipts',
+  GEN_GOODS_RECEIPT_HEADERS: '/gen/v1/goods-receipt-headers',
+
+  // Inventory endpoints
+  GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
+  INVENTORY_SUMMARY: '/v1/inventory/summary',
+
+  // Booking Order endpoints
+  BOOKING_ORDER_SALES_ORDERS: '/v1/booking-orders/sales-orders',
+  BOOKING_ORDER_EVALUATE: '/v1/booking-orders/evaluate',
+  BOOKING_ORDERS: '/v1/booking-orders',
+
+  // Sales Order Config endpoints
+  SALES_ORDER_CONFIGS: '/v1/sales-order-configs',
+  SALES_ORDER_CONFIG_MY_BRANCH: '/v1/sales-order-configs/my-branch',
+  SALES_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/sales-order-configs/${branchId}`,
+
+  // Booking Order Config endpoints
+  BOOKING_ORDER_CONFIGS: '/v1/booking-order-configs',
+  BOOKING_ORDER_CONFIG_MY_BRANCH: '/v1/booking-order-configs/my-branch',
+  BOOKING_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/booking-order-configs/${branchId}`,
+
+  // Delivery Order endpoints
+  DELIVERY_ORDERS: '/v1/delivery-orders',
+  DELIVERY_ORDER_BY_ID: (id: number) => `/v1/delivery-orders/${id}`,
+  DELIVERY_ORDER_CANCEL: (id: number) => `/v1/delivery-orders/${id}/cancel`,
+
+  // Delivery Note endpoints
+  DELIVERY_NOTES: '/v1/delivery-notes',
+  DELIVERY_NOTE_BY_ID: (id: number) => `/v1/delivery-notes/${id}`,
+  DELIVERY_NOTE_CANCEL: (id: number) => `/v1/delivery-notes/${id}/cancel`,
+  DELIVERY_NOTE_AVAILABLE_DOS: '/v1/delivery-notes/available-delivery-orders',
+
+  // Picking List endpoints
+  PICKING_LISTS: '/v1/picking-lists',
+  PICKING_LIST_BY_ID: (id: number) => `/v1/picking-lists/${id}`,
+
+  // Invoice endpoints
+  INVOICES: '/v1/invoices',
+  INVOICE_BY_ID: (id: number) => `/v1/invoices/${id}`,
+
+  // Goods Issue Note endpoints
+  GOODS_ISSUE_NOTES: '/v1/goods-issue-notes',
+  GOODS_ISSUE_NOTE_BY_ID: (id: number) => `/v1/goods-issue-notes/${id}`,
+  GOODS_ISSUE_NOTE_AVAILABLE_PLS: '/v1/goods-issue-notes/available-picking-lists',
+
+  // Delivery Confirmation endpoints
+  DELIVERY_CONFIRMATIONS: '/v1/delivery-confirmations',
+  DELIVERY_CONFIRMATION_BY_ID: (id: number) => `/v1/delivery-confirmations/${id}`,
+  DELIVERY_CONFIRMATION_AVAILABLE_DNS: '/v1/delivery-confirmations/available-delivery-notes',
+  DELIVERY_CONFIRMATION_CONFIRM_DO: (id: number, doId: number) =>
+    `/v1/delivery-confirmations/${id}/delivery-orders/${doId}/confirm`,
+
+  // Stock Movements endpoints
+  STOCK_MOVEMENTS: '/v1/stock-movements',
 } as const
 
 // Type for API endpoints (useful for validation)

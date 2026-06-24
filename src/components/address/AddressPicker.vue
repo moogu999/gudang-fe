@@ -10,7 +10,9 @@
         rows="2"
         class="w-full"
         :disabled="disabled"
-        @update:model-value="emit('update:modelValue', { ...modelValue, address: $event as string })"
+        @update:model-value="
+          emit('update:modelValue', { ...modelValue, address: $event as string })
+        "
       />
     </div>
 
@@ -105,7 +107,10 @@
         :disabled="disabled || !modelValue.districtId"
         :placeholder="t('customers.labels.selectSubDistrict')"
         @update:model-value="
-          emit('update:modelValue', { ...modelValue, subDistrictId: typeof $event === 'number' ? $event : null })
+          emit('update:modelValue', {
+            ...modelValue,
+            subDistrictId: typeof $event === 'number' ? $event : null,
+          })
         "
       />
     </div>
@@ -119,7 +124,9 @@
         :model-value="modelValue.zipCode"
         class="w-full"
         :disabled="disabled"
-        @update:model-value="emit('update:modelValue', { ...modelValue, zipCode: $event as string })"
+        @update:model-value="
+          emit('update:modelValue', { ...modelValue, zipCode: $event as string })
+        "
       />
     </div>
   </div>
@@ -131,7 +138,14 @@ import { useI18n } from 'vue-i18n'
 import Textarea from 'primevue/textarea'
 import InputText from 'primevue/inputtext'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
-import { CountriesService, ProvincesService, CitiesService, DistrictsService, SubDistrictsService } from '@/services'
+import {
+  CountriesService,
+  ProvincesService,
+  CitiesService,
+  DistrictsService,
+  SubDistrictsService,
+} from '@/services'
+import FilterOperator from '@/constants/filterOperator'
 
 const { t } = useI18n()
 
@@ -167,25 +181,49 @@ const emit = defineEmits<{
 
 const provinceFilters = computed(() =>
   props.modelValue.countryId
-    ? [{ filterBy: 'countryId', filterOperator: 'eq', filterValue: props.modelValue.countryId }]
+    ? [
+        {
+          filterBy: 'countryId',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: props.modelValue.countryId,
+        },
+      ]
     : [],
 )
 
 const cityFilters = computed(() =>
   props.modelValue.provinceId
-    ? [{ filterBy: 'provinceId', filterOperator: 'eq', filterValue: props.modelValue.provinceId }]
+    ? [
+        {
+          filterBy: 'provinceId',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: props.modelValue.provinceId,
+        },
+      ]
     : [],
 )
 
 const districtFilters = computed(() =>
   props.modelValue.cityId
-    ? [{ filterBy: 'cityId', filterOperator: 'eq', filterValue: props.modelValue.cityId }]
+    ? [
+        {
+          filterBy: 'cityId',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: props.modelValue.cityId,
+        },
+      ]
     : [],
 )
 
 const subDistrictFilters = computed(() =>
   props.modelValue.districtId
-    ? [{ filterBy: 'districtId', filterOperator: 'eq', filterValue: props.modelValue.districtId }]
+    ? [
+        {
+          filterBy: 'districtId',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: props.modelValue.districtId,
+        },
+      ]
     : [],
 )
 

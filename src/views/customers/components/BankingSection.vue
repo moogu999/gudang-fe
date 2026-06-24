@@ -39,13 +39,15 @@
             <div class="mb-1 flex flex-wrap gap-1">
               <span
                 v-if="bank.isDefault"
-                class="rounded bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700"
+                class="bg-primary-100 text-primary-700 rounded px-2 py-0.5 text-xs font-medium"
               >
                 {{ t('customers.fields.isDefault') }}
               </span>
             </div>
             <p class="text-sm font-medium">{{ bank.bankName }}</p>
-            <p class="text-sm text-stone-500">{{ bank.accountNumber }} · {{ bank.accountHolder }}</p>
+            <p class="text-sm text-stone-500">
+              {{ bank.accountNumber }} · {{ bank.accountHolder }}
+            </p>
           </div>
           <div v-if="!disabled" class="flex gap-1">
             <Button

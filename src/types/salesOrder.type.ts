@@ -1,4 +1,7 @@
 import type { UomConversionLevel } from './uomConversionLevel.type'
+import type { PinnedUom } from './pinnedUom.type'
+
+export type SalesOrderStatus = 'draft' | 'need_approval' | 'approved' | 'applied'
 
 export interface ManualDiscount {
   id?: number
@@ -37,6 +40,11 @@ export interface LineBonus {
   bonusProductCode: string
   bonusProductName: string
   qty: string
+  uomGroup?: {
+    name: string
+    levels: UomConversionLevel[]
+  } | null
+  pinnedUom?: PinnedUom | null
 }
 
 export interface ChoicePoolItem {
@@ -57,6 +65,7 @@ export interface ChoiceOffer {
 export interface ResolvedLine {
   productId: number
   price: string
+  taxIncluded: boolean
   priceListId: number | null
   priceListCode: string | null
   discount: string
@@ -84,8 +93,11 @@ export interface ResolveSalesOrderResponse {
 // Sales Order Header Entity
 export interface SalesOrderHeader {
   manualDiscounts?: ManualDiscount[]
+  headerDiscounts?: LineDiscount[]
+  headerBonuses?: LineBonus[]
   id: number
   no: string
+  status: SalesOrderStatus
   orderDate: string // ISO date
   priceDate: string | null
   deliveryDate: string | null
@@ -104,7 +116,7 @@ export interface SalesOrderHeader {
   creditLimitApproval: boolean
   subtotalAmount: string
   discountAmount: string
-  dppAmount: string
+  taxBaseAmount: string
   taxAmount: string
   totalAmount: string
   createdBy: number | null
@@ -124,9 +136,11 @@ export interface SalesOrderDetail {
   subAmount: string
   discount: string
   priceListId?: number | null
+  taxIncluded?: boolean
   discounts?: LineDiscount[]
   bonuses?: LineBonus[]
   manualDiscounts?: ManualDiscount[]
+  pinnedUom?: PinnedUom | null
   createdAt: string
   updatedAt: string | null
 }
@@ -140,6 +154,7 @@ export interface ManualDiscountDto {
 
 export interface CreateSalesOrderRequest {
   no?: string
+  status?: SalesOrderStatus
   orderDate: string // ISO date
   priceDate?: string | null
   deliveryDate?: string | null
@@ -154,6 +169,8 @@ export interface CreateSalesOrderRequest {
   manualDiscounts?: ManualDiscountDto[]
   createdBy: number
 }
+
+export type UpdateSalesOrderRequest = CreateSalesOrderRequest
 
 export interface CreateSalesOrderDetailDto {
   productId: number
@@ -175,11 +192,13 @@ export interface SalesOrderDetailRow {
   // Resolution fields (read-only, set by backend resolve)
   _priceListId?: number | null
   _priceListCode?: string | null
+  _taxIncluded?: boolean
   _discounts?: LineDiscount[]
   _bonuses?: LineBonus[]
   _choiceOffers?: ChoiceOffer[]
   _choicePicks?: Record<string, number[]> // promotionId (as string) → chosen productIds
   _manualDiscounts?: ManualDiscount[]
+  pinnedUom?: PinnedUom | null
   // Allow dynamic internal-only fields (e.g. _quantityTiersRaw for tier input tracking)
   [key: string]: unknown
 }

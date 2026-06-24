@@ -1,3 +1,5 @@
+import { PERMISSIONS } from '@/constants'
+
 /**
  * Main navigation menu configuration
  *
@@ -94,6 +96,45 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Fleet',
+    labelKey: 'navigation.fleet',
+    icon: 'pi pi-truck',
+    items: [
+      {
+        label: 'Vehicles',
+        labelKey: 'navigation.vehicles',
+        route: '/vehicles',
+      },
+    ],
+  },
+  {
+    label: 'Inventory',
+    labelKey: 'navigation.inventory',
+    icon: 'pi pi-warehouse',
+    items: [
+      {
+        label: 'Warehouses',
+        labelKey: 'navigation.warehouses',
+        route: '/warehouses',
+      },
+      {
+        label: 'Goods Receipts',
+        labelKey: 'navigation.goodsReceipts',
+        route: '/goods-receipts',
+      },
+      {
+        label: 'Inventory Status',
+        labelKey: 'navigation.inventoryStatus',
+        route: '/inventory-status',
+      },
+      {
+        label: 'Stock Movements',
+        labelKey: 'navigation.stockMovements',
+        route: '/stock-movements',
+      },
+    ],
+  },
+  {
     label: 'Pricing',
     labelKey: 'navigation.pricing',
     icon: 'pi pi-tag',
@@ -124,6 +165,50 @@ const mainMenu = [
         label: 'Sales Orders',
         labelKey: 'navigation.salesOrders',
         route: '/sales-orders',
+      },
+      {
+        label: 'Booking Orders',
+        labelKey: 'navigation.bookingOrders',
+        route: '/booking-orders',
+      },
+      {
+        label: 'Delivery Orders',
+        labelKey: 'navigation.deliveryOrders',
+        route: '/delivery-orders',
+      },
+      {
+        label: 'Delivery Notes',
+        labelKey: 'navigation.deliveryNotes',
+        route: '/delivery-notes',
+      },
+      {
+        label: 'Picking Lists',
+        labelKey: 'navigation.pickingLists',
+        route: '/picking-lists',
+      },
+      {
+        label: 'Goods Issue Notes',
+        labelKey: 'navigation.goodsIssueNotes',
+        route: '/goods-issue-notes',
+      },
+      {
+        label: 'Delivery Confirmations',
+        labelKey: 'navigation.deliveryConfirmations',
+        route: '/delivery-confirmations',
+      },
+      {
+        label: 'Invoices',
+        labelKey: 'navigation.invoices',
+        route: '/invoices',
+      },
+      {
+        label: 'Config',
+        labelKey: 'navigation.configs',
+        route: '/configs',
+        permissionsAny: [
+          PERMISSIONS.SALES_ORDER_CONFIG_READ,
+          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
+        ],
       },
       {
         label: 'Promotions',

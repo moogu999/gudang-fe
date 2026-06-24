@@ -1,7 +1,9 @@
 <template>
   <Dialog
     :visible="visible"
-    :header="mode === 'add' ? t('customers.labels.addBankAccount') : t('customers.labels.editBankAccount')"
+    :header="
+      mode === 'add' ? t('customers.labels.addBankAccount') : t('customers.labels.editBankAccount')
+    "
     modal
     :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
     :style="{ width: '40vw' }"
@@ -54,11 +56,7 @@
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <Button
-          :label="t('common.actions.cancel')"
-          severity="secondary"
-          @click="emit('hide')"
-        />
+        <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('hide')" />
         <Button :label="t('common.actions.save')" @click="onSave" />
       </div>
     </template>

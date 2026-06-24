@@ -1,5 +1,6 @@
 <template>
   <Toast position="top-center" :group="toastGroup" />
+  <ConfirmDialog group="soApproveConfirm" />
 
   <div v-if="isLoading" class="flex items-center justify-center py-8">
     <ProgressSpinner />
@@ -12,8 +13,16 @@
     :resolver="resolver"
     @submit="onFormSubmit"
   >
+    <!-- Status tag (VIEW / EDIT modes) -->
+    <div v-if="mode !== DialogMode.ADD && currentStatus" class="mb-4">
+      <Tag
+        :severity="statusSeverity(currentStatus)"
+        :value="t(`salesOrders.status.${currentStatus}`)"
+      />
+    </div>
+
     <!-- Two Column Layout for Header Fields -->
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+    <div v-if="!hideHeader" class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
       <!-- Left Column: Order Information -->
       <div class="space-y-4">
         <h3 class="mb-2 text-sm font-semibold text-stone-700 sm:text-base">
@@ -51,13 +60,13 @@
             />
             <small class="text-surface-500">{{ t('salesOrders.codeMode.assignedOnSave') }}</small>
           </div>
-          <!-- Manual mode (ADD) or VIEW mode: editable / read-only -->
+          <!-- Manual mode (ADD) or VIEW/EDIT mode: editable / read-only -->
           <InputText
             v-else
             id="no"
             name="no"
             autocomplete="off"
-            :disabled="mode === DialogMode.VIEW"
+            :disabled="mode === DialogMode.VIEW || mode === DialogMode.EDIT"
             class="w-full"
           />
           <Message v-if="$form.no?.invalid" severity="error" size="small" variant="simple">{{
@@ -109,10 +118,12 @@
             }}</label>
             <DatePicker
               id="deliveryDate"
-              name="deliveryDate"
+              v-model="deliveryDate"
               date-format="dd/mm/yy"
               :disabled="mode === DialogMode.VIEW"
               class="w-full"
+              @date-select="onDeliveryDateChange"
+              @clear-click="onDeliveryDateChange(undefined)"
             />
           </div>
 
@@ -122,10 +133,12 @@
             }}</label>
             <DatePicker
               id="expiredDate"
-              name="expiredDate"
+              v-model="expiredDate"
               date-format="dd/mm/yy"
               :disabled="mode === DialogMode.VIEW"
               class="w-full"
+              @date-select="onExpiredDateChange"
+              @clear-click="onExpiredDateChange(undefined)"
             />
           </div>
         </div>
@@ -225,6 +238,7 @@
           <InputNumber
             id="downPaymentAmount"
             name="downPaymentAmount"
+            :locale="locale"
             :min-fraction-digits="0"
             :max-fraction-digits="2"
             :disabled="mode === DialogMode.VIEW"
@@ -234,7 +248,7 @@
       </div>
     </div>
 
-    <Divider class="my-6" />
+    <Divider v-if="!hideHeader" class="my-6" />
 
     <!-- Details Section -->
     <SalesOrderDetailsTable
@@ -283,7 +297,7 @@
         <div class="space-y-2">
           <div class="flex justify-between">
             <span>{{ t('salesOrders.summary.grossTotal') }}</span>
-            <span>{{ formatCurrency(calculatedTotals.grossTotal) }}</span>
+            <span>{{ formatCurrency(calculatedTotals.netSubtotal) }}</span>
           </div>
 
           <div class="flex justify-between text-red-600">
@@ -311,12 +325,21 @@
     <!-- Action Buttons -->
     <div class="mt-6 flex justify-end gap-2">
       <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('cancel')" />
-      <Button
-        v-if="mode !== DialogMode.VIEW"
-        type="submit"
-        :label="t('common.actions.save')"
-        :loading="isSaving || isResolving"
-      />
+      <template v-if="mode !== DialogMode.VIEW">
+        <Button
+          type="submit"
+          severity="secondary"
+          :label="t('salesOrders.actions.saveAsDraft')"
+          :loading="isSaving || isResolving"
+          @click="chosenStatus = 'draft'"
+        />
+        <Button
+          type="submit"
+          :label="t('salesOrders.actions.saveAndApprove')"
+          :loading="isSaving || isResolving"
+          @click="chosenStatus = 'approved'"
+        />
+      </template>
     </div>
   </Form>
 </template>
@@ -325,11 +348,14 @@
 import { ref, reactive, computed, watch, onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { useDebounceFn } from '@vueuse/core'
 import { z } from 'zod'
 import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import DatePicker from 'primevue/datepicker'
@@ -353,10 +379,12 @@ import {
   SalesOrderHeadersService,
   SalesOrderDetailsService,
   TaxConfigurationService,
+  SalesOrderConfigService,
   GenericQueryBuilder,
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import type { SalesOrderConfig, SalesOrderStatus } from '@/types'
 import type {
   SalesOrderDetailRow,
   CreateSalesOrderRequest,
@@ -366,12 +394,13 @@ import type {
   Employee,
   ManualDiscount,
 } from '@/types'
-import { decomposeBaseQty } from '@/utils/uomHelper'
+import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
+const confirm = useConfirm()
 const authStore = useAuthStore()
 
 const {
@@ -386,8 +415,9 @@ const {
 const toastGroup = 'salesOrderForm'
 
 interface Props {
-  mode: DialogMode.ADD | DialogMode.VIEW
+  mode: DialogMode.ADD | DialogMode.VIEW | DialogMode.EDIT
   salesOrderId?: number
+  hideHeader?: boolean
 }
 
 const props = defineProps<Props>()
@@ -396,6 +426,17 @@ const emit = defineEmits<{
   cancel: []
   submitted: []
 }>()
+
+// Status tracking
+const chosenStatus = ref<'draft' | 'approved'>('approved')
+const currentStatus = ref<SalesOrderStatus | undefined>()
+
+function statusSeverity(status: SalesOrderStatus) {
+  if (status === 'approved') return 'success'
+  if (status === 'applied') return 'info'
+  if (status === 'need_approval') return 'warn'
+  return 'secondary'
+}
 
 // State
 const isLoading = ref(false)
@@ -406,6 +447,7 @@ const headerDiscountAmount = ref(0)
 const taxRate = ref(0)
 const customerTaxable = ref(false)
 const savedTaxAmount = ref(0)
+const savedTotalAmount = ref(0)
 const headerDiscounts = ref<import('@/types').LineDiscount[]>([])
 const headerBonuses = ref<import('@/types').LineBonus[]>([])
 const headerChoiceOffers = ref<import('@/types').ChoiceOffer[]>([])
@@ -424,6 +466,13 @@ const currentPriceDate = ref<Date | undefined>()
 // Salesman metadata for display
 const selectedSalesmanBranch = ref<string | undefined>()
 const selectedSalesmanCompany = ref<string | undefined>()
+
+// SO config auto-fill
+const soConfig = ref<SalesOrderConfig | null>(null)
+const deliveryDate = ref<Date | undefined>()
+const expiredDate = ref<Date | undefined>()
+const deliveryDateAutoFilled = ref(true)
+const expiredDateAutoFilled = ref(true)
 
 // Computed custom filters for the salesman InfiniteSelect
 const salesmanFilters = computed(() => {
@@ -446,8 +495,6 @@ const initialValues = reactive({
   no: '',
   orderDate: undefined as Date | undefined,
   priceDate: undefined as Date | undefined,
-  deliveryDate: undefined as Date | undefined,
-  expiredDate: undefined as Date | undefined,
   customerId: undefined as number | undefined,
   employeeId: undefined as number | undefined,
   remark: '',
@@ -467,8 +514,6 @@ const resolver = computed(() =>
       customerId: z.number({ message: t('salesOrders.validation.customerRequired') }),
       employeeId: z.number({ message: t('salesOrders.validation.salesmanRequired') }),
       priceDate: z.date().optional().nullable(),
-      deliveryDate: z.date().optional().nullable(),
-      expiredDate: z.date().optional().nullable(),
       remark: z.string().optional(),
       isCash: z.boolean().optional(),
       downPaymentAmount: z.number().min(0).optional(),
@@ -478,42 +523,91 @@ const resolver = computed(() =>
 
 // Computed totals for summary section
 const calculatedTotals = computed(() => {
-  const grossTotal = details.value.reduce((sum, row) => {
-    return sum + (row.quantity || 0) * (row.price || 0)
-  }, 0)
-  const lineDiscountTotal = details.value.reduce((sum, row) => {
-    return sum + (row.discount || 0)
-  }, 0)
+  // Split line subAmounts by tax inclusion status
+  let subTotalInclusive = 0
+  let subTotalExclusive = 0
+  let lineDiscountTotal = 0
+  let rawGrossTotal = 0
 
-  const lineManualDiscountTotal = details.value.reduce((sum, row) => {
-    const rowGross = (row.quantity || 0) * (row.price || 0)
-    return (
-      sum +
-      (row._manualDiscounts ?? []).reduce((s, d) => {
+  details.value.forEach((row) => {
+    const gross = (row.quantity || 0) * (row.price || 0)
+    rawGrossTotal += gross
+    const lineDisc = row.discount || 0
+
+    // In VIEW mode the backend has already folded manual discounts into detail.discount,
+    // so we must not add them again. In ADD mode detail.discount is promotion-only.
+    let totalLineDisc: number
+    if (props.mode === DialogMode.VIEW) {
+      totalLineDisc = lineDisc
+    } else {
+      const manualDisc = (row._manualDiscounts ?? []).reduce((s, d) => {
         const v = parseFloat(d.value) || 0
-        return s + (d.discountType === 'flat' ? v : Math.round(rowGross * v / 100 * 100) / 100)
+        return s + (d.discountType === 'flat' ? v : Math.round(((gross * v) / 100) * 100) / 100)
       }, 0)
-    )
-  }, 0)
+      totalLineDisc = lineDisc + manualDisc
+    }
 
-  const headerManualDiscountTotal = headerManualDiscounts.value.reduce((sum, d) => {
-    const v = parseFloat(d.value) || 0
-    return sum + (d.discountType === 'flat' ? v : Math.round(grossTotal * v / 100 * 100) / 100)
-  }, 0)
+    lineDiscountTotal += totalLineDisc
+    const sub = gross - totalLineDisc
+    if (row._taxIncluded) subTotalInclusive += sub
+    else subTotalExclusive += sub
+  })
 
-  const discountTotal =
-    lineDiscountTotal + headerDiscountAmount.value + lineManualDiscountTotal + headerManualDiscountTotal
-  const dppTotal = grossTotal - discountTotal
+  // grossTotal = sum of line sub-amounts (post line-discount); mirrors backend SubtotalAmount.
+  const grossTotal = subTotalInclusive + subTotalExclusive
+
+  // Header manual discount percentage must be applied to the raw gross (before any discounts),
+  // matching the backend's ApplyManualDiscounts logic.
+  // In VIEW mode headerDiscountAmount already includes header manual discounts (saved by backend).
+  const headerManualDiscountTotal =
+    props.mode === DialogMode.VIEW
+      ? 0
+      : headerManualDiscounts.value.reduce((sum, d) => {
+          const v = parseFloat(d.value) || 0
+          return (
+            sum +
+            (d.discountType === 'flat' ? v : Math.round(((rawGrossTotal * v) / 100) * 100) / 100)
+          )
+        }, 0)
+
+  const discountTotal = lineDiscountTotal + headerDiscountAmount.value + headerManualDiscountTotal
+
+  // grossTotal already excludes line discounts, so only subtract header-level discounts here.
+  // (Subtracting discountTotal would double-count the line discounts already removed above.)
+  const taxBase = grossTotal - headerDiscountAmount.value - headerManualDiscountTotal
+
+  // Proportionally split taxBase between inclusive and exclusive line portions
+  const inclusiveFraction = grossTotal > 0 ? subTotalInclusive / grossTotal : 0
+  const taxBaseInclusive = taxBase * inclusiveFraction
+  const taxBaseExclusive = taxBase - taxBaseInclusive
+
+  // Embedded tax extracted from inclusive-price lines (always shown)
+  const embeddedTax =
+    taxRate.value > 0
+      ? Math.round(((taxBaseInclusive * taxRate.value) / (100 + taxRate.value)) * 100) / 100
+      : 0
+
+  // Additive tax on exclusive-price lines (only if customer is taxable)
+  const additiveTax = customerTaxable.value
+    ? Math.round(((taxBaseExclusive * taxRate.value) / 100) * 100) / 100
+    : 0
 
   const taxAmount =
     props.mode === DialogMode.VIEW
       ? savedTaxAmount.value
-      : customerTaxable.value
-        ? Math.round(dppTotal * (taxRate.value / 100) * 100) / 100
-        : 0
+      : Math.round((embeddedTax + additiveTax) * 100) / 100
 
-  const total = dppTotal + taxAmount
-  return { grossTotal, discountTotal, taxAmount, total }
+  // In VIEW mode use the saved total to avoid double-counting embedded tax
+  const total =
+    props.mode === DialogMode.VIEW
+      ? savedTotalAmount.value
+      : Math.round((taxBase + additiveTax) * 100) / 100
+
+  // Net subtotal: gross minus embedded tax, so summary math holds:
+  // netSubtotal - discountTotal + taxAmount = total
+  const netSubtotal = total + discountTotal - taxAmount
+
+  return { grossTotal, netSubtotal, discountTotal, taxAmount, total }
 })
 
 // Format number with decimals
@@ -588,6 +682,7 @@ async function resolveOrder() {
         discount: parseFloat(resolved.discount),
         _priceListId: resolved.priceListId,
         _priceListCode: resolved.priceListCode,
+        _taxIncluded: resolved.taxIncluded ?? false,
         _discounts: resolved.discounts,
         _bonuses: resolved.bonuses,
         _choiceOffers: resolved.choiceOffers,
@@ -605,7 +700,7 @@ const scheduleResolve = useDebounceFn(resolveOrder, 400)
 
 // Trigger resolve when customer or salesman changes
 watch(currentCustomerId, async (id) => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
   if (!id) {
     customerTaxable.value = false
@@ -620,7 +715,7 @@ watch(currentCustomerId, async (id) => {
 })
 
 watch(currentEmployeeId, () => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
 })
 
@@ -630,7 +725,7 @@ const detailsResolveKey = computed(() =>
 )
 
 watch(detailsResolveKey, () => {
-  if (props.mode !== DialogMode.ADD) return
+  if (props.mode !== DialogMode.ADD && props.mode !== DialogMode.EDIT) return
   scheduleResolve()
 })
 
@@ -643,6 +738,35 @@ function onOrderDateSelect(date: Date) {
 function onPriceDateSelect(date: Date) {
   currentPriceDate.value = date
 }
+
+function onDeliveryDateChange(val: Date | undefined) {
+  deliveryDateAutoFilled.value = false
+  deliveryDate.value = val
+}
+
+function onExpiredDateChange(val: Date | undefined) {
+  expiredDateAutoFilled.value = false
+  expiredDate.value = val
+}
+
+// Auto-fill delivery/expiry dates from SO config when order date changes
+watch(
+  currentOrderDate,
+  (newDate) => {
+    if (!soConfig.value || !newDate || props.mode !== DialogMode.ADD) return
+    if (deliveryDateAutoFilled.value) {
+      const d = new Date(newDate)
+      d.setDate(d.getDate() + soConfig.value.deliveryDateOffset)
+      deliveryDate.value = d
+    }
+    if (expiredDateAutoFilled.value) {
+      const d = new Date(newDate)
+      d.setDate(d.getDate() + soConfig.value.expiredDateOffset)
+      expiredDate.value = d
+    }
+  },
+  { immediate: true },
+)
 
 // ─── Customer change handler ──────────────────────────────────────────────────
 
@@ -675,23 +799,6 @@ function validateDetails(): boolean {
         ),
       )
       return false
-    }
-
-    // Validate no tier skipping
-    const tiers = row._quantityTiers
-    const levels = row.product?.uomGroup?.levels
-    if (tiers && levels && levels.length > 1) {
-      for (let i = 1; i < tiers.length; i++) {
-        if ((tiers[i] ?? 0) > 0 && tiers.slice(0, i).every((t) => (t ?? 0) === 0)) {
-          toast.add(
-            commonErrorToast(
-              new Error(t('salesOrders.validation.tierSkippingNotAllowed', { row: index + 1 })),
-              toastGroup,
-            ),
-          )
-          return false
-        }
-      }
     }
 
     // Validate all choice offers have complete picks
@@ -728,12 +835,33 @@ function validateDetails(): boolean {
 
 // ─── Form submission ──────────────────────────────────────────────────────────
 
+const pendingRequest = ref<CreateSalesOrderRequest | null>(null)
+
+async function doSubmit() {
+  if (!pendingRequest.value) return
+  isSaving.value = true
+  try {
+    if (props.mode === DialogMode.EDIT) {
+      await SalesOrdersService.update(props.salesOrderId!, pendingRequest.value)
+      toast.add(commonSuccessToast(t('salesOrders.messages.updated'), toastGroup))
+    } else {
+      await SalesOrdersService.create(pendingRequest.value)
+      toast.add(commonSuccessToast(t('salesOrders.messages.created'), toastGroup))
+    }
+    emit('submitted')
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    isSaving.value = false
+  }
+}
+
 async function onFormSubmit(event: FormSubmitEvent) {
   if (!event.valid) return
   if (!validateDetails()) return
 
   let no: string
-  if (noMode.value === 'auto' && numberSeriesId.value !== null) {
+  if (props.mode === DialogMode.ADD && noMode.value === 'auto' && numberSeriesId.value !== null) {
     no = await generateCode()
   } else {
     no = event.states.no.value
@@ -741,10 +869,11 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
   const request: CreateSalesOrderRequest = {
     no,
+    status: chosenStatus.value,
     orderDate: event.states.orderDate.value.toISOString().split('T')[0],
     priceDate: event.states.priceDate.value?.toISOString().split('T')[0] || null,
-    deliveryDate: event.states.deliveryDate.value?.toISOString().split('T')[0] || null,
-    expiredDate: event.states.expiredDate.value?.toISOString().split('T')[0] || null,
+    deliveryDate: deliveryDate.value?.toISOString().split('T')[0] || null,
+    expiredDate: expiredDate.value?.toISOString().split('T')[0] || null,
     customerId: event.states.customerId.value,
     employeeId: event.states.employeeId.value,
     remark: event.states.remark.value || null,
@@ -798,15 +927,19 @@ async function onFormSubmit(event: FormSubmitEvent) {
     createdBy: authStore.userId!,
   }
 
-  isSaving.value = true
-  try {
-    await SalesOrdersService.create(request)
-    toast.add(commonSuccessToast(t('salesOrders.messages.created'), toastGroup))
-    emit('submitted')
-  } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
-  } finally {
-    isSaving.value = false
+  pendingRequest.value = request
+
+  if (chosenStatus.value === 'approved') {
+    confirm.require({
+      group: 'soApproveConfirm',
+      header: t('salesOrders.confirm.header'),
+      message: t('salesOrders.confirm.message'),
+      rejectProps: { label: t('common.actions.cancel'), severity: 'secondary', outlined: true },
+      acceptProps: { label: t('salesOrders.actions.saveAndApprove') },
+      accept: doSubmit,
+    })
+  } else {
+    await doSubmit()
   }
 }
 
@@ -822,17 +955,26 @@ async function loadSalesOrder() {
     initialValues.no = header.no
     initialValues.orderDate = new Date(header.orderDate)
     initialValues.priceDate = header.priceDate ? new Date(header.priceDate) : undefined
-    initialValues.deliveryDate = header.deliveryDate ? new Date(header.deliveryDate) : undefined
-    initialValues.expiredDate = header.expiredDate ? new Date(header.expiredDate) : undefined
+    deliveryDate.value = header.deliveryDate ? new Date(header.deliveryDate) : undefined
+    expiredDate.value = header.expiredDate ? new Date(header.expiredDate) : undefined
     initialValues.customerId = header.customerId
     initialValues.employeeId = header.employeeId ?? undefined
     initialValues.remark = header.remark || ''
     initialValues.isCash = header.isCash
     initialValues.downPaymentAmount = parseFloat(header.downPaymentAmount)
 
+    currentStatus.value = header.status
+    currentOrderDate.value = new Date(header.orderDate)
+    currentPriceDate.value = header.priceDate ? new Date(header.priceDate) : undefined
+    currentCustomerId.value = header.customerId
+    currentEmployeeId.value = header.employeeId ?? undefined
+
     headerDiscountAmount.value = parseFloat(header.discountAmount)
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
+    savedTotalAmount.value = parseFloat(header.totalAmount) || 0
     headerManualDiscounts.value = header.manualDiscounts ?? []
+    headerDiscounts.value = header.headerDiscounts ?? []
+    headerBonuses.value = header.headerBonuses ?? []
 
     if (header.customer) {
       initialCustomer.value = { id: header.customerId, name: header.customer.name }
@@ -852,7 +994,7 @@ async function loadSalesOrder() {
     const detailsResponse = await SalesOrderDetailsService.list(query)
 
     details.value = detailsResponse.data.map((detail) => {
-      const levels = detail.product?.uomGroup?.levels
+      const levels = pinnedToLevels(detail.pinnedUom) ?? detail.product?.uomGroup?.levels
       const qty = parseFloat(detail.quantity)
       return {
         _localId: crypto.randomUUID(),
@@ -865,11 +1007,13 @@ async function loadSalesOrder() {
         subAmount: parseFloat(detail.subAmount),
         _priceListId: detail.priceListId ?? null,
         _priceListCode: null,
+        _taxIncluded: detail.taxIncluded ?? false,
         _discounts: detail.discounts ?? [],
         _bonuses: detail.bonuses ?? [],
         _choiceOffers: [],
         _choicePicks: {},
         _manualDiscounts: detail.manualDiscounts ?? [],
+        pinnedUom: detail.pinnedUom ?? null,
       }
     })
   } catch (e) {
@@ -881,15 +1025,17 @@ async function loadSalesOrder() {
 
 // Lifecycle
 onBeforeMount(async () => {
-  const [typesResponse, taxConfig] = await Promise.all([
+  const [typesResponse, taxConfig, config] = await Promise.all([
     EmployeeTypesService.list(),
     TaxConfigurationService.get().catch(() => ({ percentage: '0' })),
+    props.mode === DialogMode.ADD ? SalesOrderConfigService.getMyBranch() : Promise.resolve(null),
   ])
   const salesmanType = typesResponse.data.find((t) => t.name === 'Salesman')
   salesmanTypeId.value = salesmanType?.id
   taxRate.value = parseFloat(taxConfig.percentage) || 0
+  soConfig.value = config
 
-  if (props.mode === DialogMode.VIEW && props.salesOrderId) {
+  if ((props.mode === DialogMode.VIEW || props.mode === DialogMode.EDIT) && props.salesOrderId) {
     await loadSalesOrder()
   }
 })

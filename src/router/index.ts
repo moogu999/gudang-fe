@@ -13,6 +13,14 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
 
+    // Print routes (no layout, requires auth)
+    {
+      path: '/delivery-orders/:id/print',
+      name: 'DeliveryOrderPrint',
+      component: () => import('@/views/delivery-orders/DeliveryOrderPrintView.vue'),
+      meta: { requiresAuth: true, requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
+    },
+
     // Protected routes (with MainLayout)
     {
       path: '/',
@@ -134,19 +142,46 @@ const router = createRouter({
           meta: { requiredPermission: PERMISSIONS.UOM_GROUP_READ },
         },
         {
+          path: 'booking-orders',
+          name: 'BookingOrders',
+          component: () => import('@/views/booking-orders/BookingOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.BOOKING_ORDER_READ },
+        },
+        {
+          path: 'delivery-orders',
+          name: 'DeliveryOrders',
+          component: () => import('@/views/delivery-orders/DeliveryOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
+        },
+        {
+          path: 'delivery-orders/:id',
+          name: 'DeliveryOrderDetail',
+          component: () => import('@/views/delivery-orders/DeliveryOrderDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_ORDER_READ },
+        },
+        {
           path: 'sales-orders',
           name: 'SalesOrders',
           component: () => import('@/views/sales-orders/SalesOrdersView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_READ },
         },
         {
           path: 'sales-orders/create',
           name: 'SalesOrderCreate',
           component: () => import('@/views/sales-orders/SalesOrderCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_WRITE },
+        },
+        {
+          path: 'sales-orders/:id/edit',
+          name: 'SalesOrderEdit',
+          component: () => import('@/views/sales-orders/SalesOrderEditView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_WRITE },
         },
         {
           path: 'sales-orders/:id',
           name: 'SalesOrderDetail',
           component: () => import('@/views/sales-orders/SalesOrderDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.SALES_ORDER_READ },
         },
         {
           path: 'number-series',
@@ -206,7 +241,7 @@ const router = createRouter({
           path: 'price-matrix-priorities',
           name: 'PriceMatrixPriorities',
           component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
-          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_READ },
+          meta: { requiredPermission: PERMISSIONS.PRICE_MATRIX_PRIORITY_READ },
         },
         {
           path: 'promotions',
@@ -263,6 +298,161 @@ const router = createRouter({
           component: () => import('@/views/employees/EmployeeDetailView.vue'),
           props: (route) => ({ mode: 'view', id: Number(route.params.id) }),
           meta: { requiredPermission: PERMISSIONS.EMPLOYEE_READ },
+        },
+        {
+          path: 'warehouses',
+          name: 'Warehouses',
+          component: () => import('@/views/warehouses/WarehousesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.WAREHOUSE_READ },
+        },
+        {
+          path: 'vehicles',
+          name: 'Vehicles',
+          component: () => import('@/views/vehicles/VehiclesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.VEHICLE_READ },
+        },
+        {
+          path: 'vehicles/new',
+          name: 'VehicleNew',
+          component: () => import('@/views/vehicles/VehicleDetailView.vue'),
+          props: { mode: 'add' },
+          meta: { requiredPermission: PERMISSIONS.VEHICLE_WRITE },
+        },
+        {
+          path: 'vehicles/:id',
+          name: 'VehicleDetail',
+          component: () => import('@/views/vehicles/VehicleDetailView.vue'),
+          props: (route) => ({ mode: 'view', id: Number(route.params.id) }),
+          meta: { requiredPermission: PERMISSIONS.VEHICLE_READ },
+        },
+        {
+          path: 'goods-receipts',
+          name: 'GoodsReceipts',
+          component: () => import('@/views/goods-receipts/GoodsReceiptsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ },
+        },
+        {
+          path: 'goods-receipts/create',
+          name: 'GoodsReceiptCreate',
+          component: () => import('@/views/goods-receipts/GoodsReceiptCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_WRITE },
+        },
+        {
+          path: 'goods-receipts/:id',
+          name: 'GoodsReceiptDetail',
+          component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ },
+        },
+        {
+          path: 'inventory-status',
+          name: 'InventoryStatus',
+          component: () => import('@/views/inventory-status/InventoryStatusView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVENTORY_READ },
+        },
+        {
+          path: 'configs',
+          name: 'Configs',
+          component: () => import('@/views/configs/ConfigsView.vue'),
+        },
+        {
+          path: 'sales-order-configs',
+          redirect: { path: '/configs', query: { tab: 'so' } },
+        },
+        {
+          path: 'booking-order-configs',
+          redirect: { path: '/configs', query: { tab: 'bo' } },
+        },
+        {
+          path: 'delivery-notes',
+          name: 'DeliveryNotes',
+          component: () => import('@/views/delivery-notes/DeliveryNotesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_READ },
+        },
+        {
+          path: 'delivery-notes/create',
+          name: 'DeliveryNoteCreate',
+          component: () => import('@/views/delivery-notes/DeliveryNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_WRITE },
+        },
+        {
+          path: 'delivery-notes/:id/edit',
+          name: 'DeliveryNoteEdit',
+          component: () => import('@/views/delivery-notes/DeliveryNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_WRITE },
+        },
+        {
+          path: 'delivery-notes/:id',
+          name: 'DeliveryNoteDetail',
+          component: () => import('@/views/delivery-notes/DeliveryNoteDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_NOTE_READ },
+        },
+        {
+          path: 'picking-lists',
+          name: 'PickingLists',
+          component: () => import('@/views/picking-lists/PickingListsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PICKING_LIST_READ },
+        },
+        {
+          path: 'picking-lists/:id',
+          name: 'PickingListDetail',
+          component: () => import('@/views/picking-lists/PickingListDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.PICKING_LIST_READ },
+        },
+        {
+          path: 'invoices',
+          name: 'Invoices',
+          component: () => import('@/views/invoices/InvoicesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVOICE_READ },
+        },
+        {
+          path: 'invoices/:id',
+          name: 'InvoiceDetail',
+          component: () => import('@/views/invoices/InvoiceDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.INVOICE_READ },
+        },
+        {
+          path: 'goods-issue-notes',
+          name: 'GoodsIssueNotes',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNotesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_READ },
+        },
+        {
+          path: 'goods-issue-notes/create',
+          name: 'GoodsIssueNoteCreate',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_WRITE },
+        },
+        {
+          path: 'goods-issue-notes/:id',
+          name: 'GoodsIssueNoteDetail',
+          component: () => import('@/views/goods-issue-notes/GoodsIssueNoteDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_ISSUE_NOTE_READ },
+        },
+        {
+          path: 'delivery-confirmations',
+          name: 'DeliveryConfirmations',
+          component: () => import('@/views/delivery-confirmations/DeliveryConfirmationsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_READ },
+        },
+        {
+          path: 'delivery-confirmations/create',
+          name: 'DeliveryConfirmationCreate',
+          component: () =>
+            import('@/views/delivery-confirmations/DeliveryConfirmationCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_WRITE },
+        },
+        {
+          path: 'delivery-confirmations/:id',
+          name: 'DeliveryConfirmationDetail',
+          component: () =>
+            import('@/views/delivery-confirmations/DeliveryConfirmationDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.DELIVERY_CONFIRMATION_READ },
+        },
+        {
+          path: 'stock-movements',
+          name: 'StockMovements',
+          component: () => import('@/views/stock-movements/StockMovementsView.vue'),
+          meta: { requiredPermission: PERMISSIONS.STOCK_MOVEMENT_READ },
         },
       ],
     },

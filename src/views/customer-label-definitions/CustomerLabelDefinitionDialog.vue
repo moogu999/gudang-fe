@@ -221,11 +221,8 @@ async function onFormSubmit(event: FormSubmitEvent) {
 }
 
 async function addDefinition(event: FormSubmitEvent) {
-  // TODO: companyId should come from the auth store or company context.
-  // The backend will need to provide this. Using 1 as a placeholder.
   await CustomerLabelDefinitionsService.create({
     name: event.states.name.value,
-    companyId: 1,
     createdBy: authStore.userId!,
   })
 

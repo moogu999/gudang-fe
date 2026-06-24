@@ -1,0 +1,36 @@
+import type { PinnedUom } from './pinnedUom.type'
+
+export type InvoiceStatus = 'draft' | 'applied' | 'cancelled'
+
+export interface InvoiceListItem {
+  id: number
+  no: string
+  status: InvoiceStatus
+  deliveryOrderId: number
+  deliveryOrderNo: string
+  salesOrderHeaderId: number
+  soNo: string
+  customerName?: string
+  totalAmount: string
+  createdAt: string
+}
+
+export interface InvoiceDetailLine {
+  productId: number
+  productCode: string
+  productName: string
+  quantity: string
+  price: string
+  discount: string
+  subAmount: string
+  isBonus: boolean
+  pinnedUom?: PinnedUom | null
+}
+
+export interface InvoiceDetail extends InvoiceListItem {
+  subtotalAmount: string
+  discountAmount: string
+  taxBaseAmount: string
+  taxAmount: string
+  lines: InvoiceDetailLine[]
+}

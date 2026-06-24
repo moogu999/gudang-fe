@@ -81,9 +81,11 @@ export type {
 export * from './productLabelDefinition.type'
 export * from './customerLabelDefinition.type'
 export type {
+  SalesOrderStatus,
   SalesOrderHeader,
   SalesOrderDetail,
   CreateSalesOrderRequest,
+  UpdateSalesOrderRequest,
   CreateSalesOrderDetailDto,
   ManualDiscount,
   ManualDiscountDto,
@@ -175,8 +177,130 @@ export type {
   EmployeeSummary,
 } from './employee.type'
 
+// File upload types
+export type { FileRecord, UploadFileDto } from './file.type'
+
+// Warehouse types
+export type { Warehouse, CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.type'
+
+// Vehicle types
+export type { VehicleType } from './vehicleType.type'
+export type {
+  VehicleOwnership,
+  VehicleCargoType,
+  VehicleStatus,
+  Vehicle,
+  CreateVehicleDto,
+  UpdateVehicleDto,
+} from './vehicle.type'
+
+// Goods Receipt types
+export type {
+  ArrivalType,
+  StockType,
+  GRProductLite,
+  GoodsReceiptHeader,
+  GoodsReceiptDetailRow,
+  GoodsReceiptDetailResponse,
+  GoodsReceiptResponse,
+  CreateGoodsReceiptRequest,
+  CreateGoodsReceiptDetailDto,
+} from './goodsReceipt.type'
+
+// Inventory Balance types
+export type {
+  InventoryBalanceStatus,
+  InventoryBalance,
+  InventorySummary,
+} from './inventoryBalance.type'
+
 // CSV upload types
 export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
+
+// Sales Order Config types
+export type { SalesOrderConfig, UpsertSalesOrderConfigDto } from './salesOrderConfig.type'
+
+// Booking Order types
+export type {
+  BookableSalesOrder,
+  FulfillmentStatus,
+  FulfillmentItem,
+  BonusFulfillmentItem,
+  SalesOrderFulfillment,
+  CreateBookingOrderResult,
+} from './bookingOrder.type'
+
+// Booking Order Config types
+export type { BookingOrderConfig, UpsertBookingOrderConfigDto } from './bookingOrderConfig.type'
+
+// Delivery Order types
+export type {
+  DeliveryOrderStatus,
+  DeliveryOrderListItem,
+  DeliveryOrderViewLine,
+  DeliveryOrderBonusLine,
+  DeliveryOrderDetail,
+  DeliveryOrderUomLevel,
+  DeliveryOrderUomGroup,
+} from './deliveryOrder.type'
+
+// Delivery Note types
+export type {
+  DeliveryNoteStatus,
+  DeliveryNoteListItem,
+  DeliveryNoteDeliveryOrder,
+  DeliveryNotePickingListRef,
+  DeliveryNoteDetail,
+  AvailableDeliveryOrder,
+  CreateDeliveryNoteRequest,
+  CreateDeliveryNoteResponse,
+} from './deliveryNote.type'
+
+// Picking List types
+export type {
+  PickingListListItem,
+  PickingListDetailItem,
+  PickingListDetail,
+} from './pickingList.type'
+
+// Invoice types
+export type {
+  InvoiceStatus,
+  InvoiceListItem,
+  InvoiceDetailLine,
+  InvoiceDetail,
+} from './invoice.type'
+
+// Goods Issue Note types
+export type {
+  GoodsIssueNoteStatus,
+  GoodsIssueNoteListItem,
+  GoodsIssueNoteItem,
+  GoodsIssueNoteDetail,
+  CreateGoodsIssueNoteRequest,
+  AvailablePickingList,
+} from './goodsIssueNote.type'
+
+// Delivery Confirmation types
+export type {
+  DeliveryConfirmationStatus,
+  DeliveryConfirmationDOStatus,
+  DeliveryConfirmationOutcome,
+  DeliveryConfirmationListItem,
+  DeliveryConfirmationItemLine,
+  DeliveryConfirmationDODetail,
+  DeliveryConfirmationDetail,
+  AvailableDeliveryNote,
+  CreateDeliveryConfirmationRequest,
+  CreateDeliveryConfirmationResponse,
+  ConfirmDeliveryOrderRequest,
+} from './deliveryConfirmation.type'
+
+// Pinned UOM types
+export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
+
+// Stock Movement types
+export type { StockMovement, BalanceSnapshot, StockMovementFilters } from './stockMovement.type'
 
 // Component types
 export type { Column } from './table.type'

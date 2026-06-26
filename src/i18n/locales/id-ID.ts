@@ -113,6 +113,15 @@ export default {
     goodsReceipts: 'Penerimaan Barang',
     inventoryStatus: 'Status Inventaris',
     stockMovements: 'Pergerakan Stok',
+    searchMenu: 'Cari menu...',
+    searchNoResults: 'Menu tidak ditemukan.',
+  },
+  pageTitle: {
+    create: 'Tambah {entity}',
+    edit: 'Ubah {entity}',
+    view: 'Detail {entity}',
+    signIn: 'Masuk',
+    notFound: 'Halaman Tidak Ditemukan',
   },
   table: {
     search: 'Cari',

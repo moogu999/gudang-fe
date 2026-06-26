@@ -112,6 +112,15 @@ export default {
     goodsReceipts: 'Goods Receipts',
     inventoryStatus: 'Inventory Status',
     stockMovements: 'Stock Movements',
+    searchMenu: 'Search menu...',
+    searchNoResults: 'No menu found.',
+  },
+  pageTitle: {
+    create: 'Create {entity}',
+    edit: 'Edit {entity}',
+    view: '{entity} Details',
+    signIn: 'Sign In',
+    notFound: 'Page Not Found',
   },
   table: {
     search: 'Search',

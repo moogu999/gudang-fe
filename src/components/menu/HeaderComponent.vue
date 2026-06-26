@@ -35,26 +35,78 @@
   />
 
   <!-- Desktop search -->
-  <div class="hidden w-full flex-1 md:block">
-    <form>
-      <div class="relative">
-        <IconField>
-          <InputIcon class="pi pi-search" />
-          <InputText :placeholder="t('table.searchPlaceholder')" />
-        </IconField>
-      </div>
-    </form>
+  <div class="relative hidden w-full max-w-sm md:block">
+    <i
+      class="pi pi-search pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-stone-400"
+    />
+    <AutoComplete
+      v-model="searchSelection"
+      :suggestions="searchResults"
+      option-label="label"
+      :placeholder="t('navigation.searchMenu')"
+      :complete-on-focus="true"
+      :delay="100"
+      scroll-height="20rem"
+      class="w-full"
+      input-class="w-full !pl-10"
+      @complete="onSearchComplete"
+      @option-select="onMenuSelect"
+    >
+      <template #option="{ option }">
+        <div class="flex items-center gap-3">
+          <span :class="[option.icon, 'text-stone-500']" />
+          <div class="flex flex-col">
+            <span>{{ option.label }}</span>
+            <small v-if="option.section" class="text-stone-500">{{ option.section }}</small>
+          </div>
+        </div>
+      </template>
+      <template #empty>
+        <div class="px-3 py-2 text-stone-500">{{ t('navigation.searchNoResults') }}</div>
+      </template>
+    </AutoComplete>
   </div>
+
+  <!-- Spacer to keep language switcher and avatar right-aligned on desktop -->
+  <div class="hidden flex-1 md:block"></div>
 
   <!-- Mobile search drawer -->
   <Drawer v-model:visible="isSearchDrawerOpen" position="top" :pt="{ root: 'h-auto' }">
     <template #header>
       <h3>{{ t('table.search') }}</h3>
     </template>
-    <IconField class="w-full">
-      <InputIcon class="pi pi-search" />
-      <InputText :placeholder="t('table.searchPlaceholder')" class="w-full" autofocus />
-    </IconField>
+    <div class="relative w-full">
+      <i
+        class="pi pi-search pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-stone-400"
+      />
+      <AutoComplete
+        v-model="searchSelection"
+        :suggestions="searchResults"
+        option-label="label"
+        :placeholder="t('navigation.searchMenu')"
+        :complete-on-focus="true"
+        :delay="100"
+        scroll-height="60vh"
+        class="w-full"
+        input-class="w-full !pl-10"
+        autofocus
+        @complete="onSearchComplete"
+        @option-select="onMenuSelect"
+      >
+        <template #option="{ option }">
+          <div class="flex items-center gap-3">
+            <span :class="[option.icon, 'text-stone-500']" />
+            <div class="flex flex-col">
+              <span>{{ option.label }}</span>
+              <small v-if="option.section" class="text-stone-500">{{ option.section }}</small>
+            </div>
+          </div>
+        </template>
+        <template #empty>
+          <div class="px-3 py-2 text-stone-500">{{ t('navigation.searchNoResults') }}</div>
+        </template>
+      </AutoComplete>
+    </div>
   </Drawer>
 
   <LanguageSwitcherComponent />
@@ -70,9 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
+import AutoComplete, { type AutoCompleteOptionSelectEvent } from 'primevue/autocomplete'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
@@ -85,7 +135,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore, useSidebarStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services'
 import LanguageSwitcherComponent from './LanguageSwitcherComponent.vue'
-import { useResponsiveSize } from '@/composables'
+import { useResponsiveSize, useMenuSearch, type MenuSearchResult } from '@/composables'
 
 const { t } = useI18n()
 const { buttonSize } = useResponsiveSize()
@@ -107,6 +157,25 @@ function toggleDrawer() {
 const isSearchDrawerOpen = ref(false)
 function openMobileSearchDrawer() {
   isSearchDrawerOpen.value = true
+}
+
+// Menu search — find and navigate to accessible menus/submenus
+const { search } = useMenuSearch()
+const searchResults = ref<MenuSearchResult[]>([])
+// AutoComplete drives this via v-model: a string while typing, the selected item once
+// an option is chosen.
+const searchSelection = ref<string | MenuSearchResult | null>(null)
+
+function onSearchComplete(event: { query: string }) {
+  searchResults.value = search(event.query)
+}
+
+function onMenuSelect(event: AutoCompleteOptionSelectEvent) {
+  const item = event.value as MenuSearchResult
+  router.push(item.route)
+  // Reset input and close the mobile drawer after navigating.
+  searchSelection.value = null
+  isSearchDrawerOpen.value = false
 }
 
 // Auth

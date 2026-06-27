@@ -1,7 +1,7 @@
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { mainMenu } from '@/components/menu/menu'
 import { usePermissions } from './usePermissions'
-import type { PermissionId } from '@/constants'
 
 /**
  * A single searchable, navigable menu entry (a leaf with a route).
@@ -38,25 +38,18 @@ interface RawMenuItem {
  */
 export function useMenuSearch() {
   const { t } = useI18n()
-  const { canAccessRoute, hasPermission } = usePermissions()
+  const { canAccessMenuItem } = usePermissions()
 
   /**
-   * Whether the current user can access a given menu item.
-   * Mirrors the permission logic used by the sidebar (PanelMenuComponent).
+   * Flat list of accessible, navigable menu entries with translated labels.
+   *
+   * Cached as a `computed` so it is rebuilt only when its reactive dependencies
+   * change (the active locale via `t()` and the permissions store via
+   * `canAccessMenuItem`) — not on every keystroke. As a bonus, the labels stay
+   * in sync with the active locale automatically.
    */
-  function canAccess(item: RawMenuItem): boolean {
-    if (item.permissionsAny && Array.isArray(item.permissionsAny)) {
-      return item.permissionsAny.some((p) => hasPermission(p as PermissionId))
-    }
-    return item.route ? canAccessRoute(item.route) : true
-  }
-
-  /**
-   * Build the flat list of accessible, navigable menu entries with translated labels.
-   * Recomputed on each call so labels follow the active locale.
-   */
-  function buildEntries(): MenuSearchResult[] {
-    const entries: MenuSearchResult[] = []
+  const entries = computed<MenuSearchResult[]>(() => {
+    const result: MenuSearchResult[] = []
 
     for (const section of mainMenu as RawMenuItem[]) {
       const sectionLabel = section.labelKey ? t(section.labelKey) : (section.label ?? '')
@@ -64,8 +57,8 @@ export function useMenuSearch() {
 
       if (section.items) {
         for (const item of section.items) {
-          if (!item.route || !canAccess(item)) continue
-          entries.push({
+          if (!item.route || !canAccessMenuItem(item)) continue
+          result.push({
             label: item.labelKey ? t(item.labelKey) : (item.label ?? ''),
             section: sectionLabel,
             route: item.route,
@@ -76,8 +69,8 @@ export function useMenuSearch() {
       }
 
       // Top-level item with a direct route (e.g. Superset).
-      if (section.route && canAccess(section)) {
-        entries.push({
+      if (section.route && canAccessMenuItem(section)) {
+        result.push({
           label: sectionLabel,
           section: '',
           route: section.route,
@@ -86,18 +79,17 @@ export function useMenuSearch() {
       }
     }
 
-    return entries
-  }
+    return result
+  })
 
   /**
    * Search accessible menu entries by label or section (case-insensitive).
    * An empty query returns the full accessible list.
    */
   function search(query: string): MenuSearchResult[] {
-    const entries = buildEntries()
     const q = query.trim().toLowerCase()
-    if (!q) return entries
-    return entries.filter(
+    if (!q) return entries.value
+    return entries.value.filter(
       (e) => e.label.toLowerCase().includes(q) || e.section.toLowerCase().includes(q),
     )
   }

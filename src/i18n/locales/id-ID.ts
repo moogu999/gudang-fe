@@ -115,6 +115,7 @@ export default {
     stockMovements: 'Pergerakan Stok',
     searchMenu: 'Cari menu...',
     searchNoResults: 'Menu tidak ditemukan.',
+    searchAccessDenied: 'Anda tidak memiliki izin untuk mengakses halaman tersebut.',
   },
   pageTitle: {
     create: 'Tambah {entity}',

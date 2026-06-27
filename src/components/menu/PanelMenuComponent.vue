@@ -47,7 +47,6 @@ import { useI18n } from 'vue-i18n'
 import PanelMenu from 'primevue/panelmenu'
 import { mainMenu } from './menu'
 import { usePermissions } from '@/composables'
-import type { PermissionId } from '@/constants'
 import { useSidebarStore } from '@/stores'
 
 const props = defineProps<{
@@ -55,7 +54,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { canAccessRoute, hasPermission } = usePermissions()
+const { canAccessRoute, canAccessMenuItem } = usePermissions()
 const sidebarStore = useSidebarStore()
 
 /**
@@ -139,12 +138,7 @@ const filteredMenu = computed(() => {
 
       // If menu has subitems, filter them
       if (menuItem.items) {
-        const accessibleItems = menuItem.items.filter((item) => {
-          if (item.permissionsAny && Array.isArray(item.permissionsAny)) {
-            return item.permissionsAny.some((p: number) => hasPermission(p as PermissionId))
-          }
-          return item.route ? canAccessRoute(item.route) : true
-        })
+        const accessibleItems = menuItem.items.filter((item) => canAccessMenuItem(item))
 
         if (accessibleItems.length === 0) {
           return null

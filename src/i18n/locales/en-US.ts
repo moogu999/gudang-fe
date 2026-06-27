@@ -114,6 +114,7 @@ export default {
     stockMovements: 'Stock Movements',
     searchMenu: 'Search menu...',
     searchNoResults: 'No menu found.',
+    searchAccessDenied: "You don't have permission to access that page.",
   },
   pageTitle: {
     create: 'Create {entity}',

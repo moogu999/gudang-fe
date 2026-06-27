@@ -638,9 +638,13 @@ router.afterEach((to) => {
 })
 
 // Keep the title in sync when the user switches language.
-watch(
+const stopLocaleWatch = watch(
   () => i18n.global.locale.value,
   () => setDocumentTitle(router.currentRoute.value),
 )
+
+// Stop the watcher on Vite HMR so repeated module reloads don't accumulate
+// duplicate watchers that all fire on every locale change.
+import.meta.hot?.dispose(stopLocaleWatch)
 
 export default router

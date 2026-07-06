@@ -242,6 +242,7 @@ export type {
   DeliveryOrderDetail,
   DeliveryOrderUomLevel,
   DeliveryOrderUomGroup,
+  ManualDiscountItem,
 } from './deliveryOrder.type'
 
 // Delivery Note types
@@ -269,6 +270,7 @@ export type {
   InvoiceListItem,
   InvoiceDetailLine,
   InvoiceDetail,
+  InvoiceDiscountItem,
 } from './invoice.type'
 
 // Goods Issue Note types

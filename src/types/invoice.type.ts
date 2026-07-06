@@ -2,6 +2,16 @@ import type { PinnedUom } from './pinnedUom.type'
 
 export type InvoiceStatus = 'draft' | 'applied' | 'cancelled'
 
+export interface InvoiceDiscountItem {
+  source: 'promotion' | 'manual'
+  promotionId?: number | null
+  promotionCode?: string | null
+  discountType: string
+  value: string
+  amount: string
+  reason?: string | null
+}
+
 export interface InvoiceListItem {
   id: number
   no: string
@@ -24,6 +34,7 @@ export interface InvoiceDetailLine {
   discount: string
   subAmount: string
   isBonus: boolean
+  discounts: InvoiceDiscountItem[]
   pinnedUom?: PinnedUom | null
 }
 
@@ -32,5 +43,6 @@ export interface InvoiceDetail extends InvoiceListItem {
   discountAmount: string
   taxBaseAmount: string
   taxAmount: string
+  headerDiscounts: InvoiceDiscountItem[]
   lines: InvoiceDetailLine[]
 }

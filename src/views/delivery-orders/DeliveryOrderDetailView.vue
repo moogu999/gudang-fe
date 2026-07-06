@@ -255,6 +255,22 @@
                       </span>
                     </div>
                   </template>
+                  <template v-if="detail.headerManualDiscounts?.length">
+                    <div
+                      v-for="(disc, i) in detail.headerManualDiscounts"
+                      :key="`manual-${i}`"
+                      class="flex justify-between text-xs text-red-400"
+                    >
+                      <span>{{ disc.reason || t('deliveryOrders.fields.manualDiscount') }}</span>
+                      <span>
+                        {{
+                          disc.discountType === 'percentage'
+                            ? `${disc.value}%`
+                            : formatAmount(disc.amount)
+                        }}
+                      </span>
+                    </div>
+                  </template>
                 </div>
                 <div
                   v-if="parseFloat(detail.taxAmount) > 0"

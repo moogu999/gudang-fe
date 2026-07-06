@@ -130,10 +130,34 @@
                 </div>
                 <div
                   v-if="parseFloat(detail.discountAmount) > 0"
-                  class="flex justify-between text-red-600"
+                  class="flex flex-col gap-0.5 text-red-600"
                 >
-                  <span>{{ t('invoices.fields.discount') }}</span>
-                  <span class="tabular-nums">- {{ formatAmount(detail.discountAmount) }}</span>
+                  <div class="flex justify-between">
+                    <span>{{ t('invoices.fields.discount') }}</span>
+                    <span class="tabular-nums">- {{ formatAmount(detail.discountAmount) }}</span>
+                  </div>
+                  <template v-if="detail.headerDiscounts?.length">
+                    <div
+                      v-for="(disc, i) in detail.headerDiscounts"
+                      :key="i"
+                      class="flex justify-between text-xs text-red-400"
+                    >
+                      <span>
+                        {{
+                          disc.source === 'promotion'
+                            ? disc.promotionCode
+                            : (disc.reason || t('invoices.fields.manualDiscount'))
+                        }}
+                      </span>
+                      <span>
+                        {{
+                          disc.discountType === 'percentage'
+                            ? `${disc.value}%`
+                            : formatAmount(disc.amount)
+                        }}
+                      </span>
+                    </div>
+                  </template>
                 </div>
                 <div
                   v-if="parseFloat(detail.taxAmount) > 0"

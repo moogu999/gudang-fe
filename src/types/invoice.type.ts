@@ -10,6 +10,8 @@ export interface InvoiceDiscountItem {
   value: string
   amount: string
   reason?: string | null
+  taxBaseAmount: string
+  taxAmount: string
 }
 
 export interface InvoiceListItem {
@@ -33,6 +35,8 @@ export interface InvoiceDetailLine {
   price: string
   discount: string
   subAmount: string
+  taxBaseAmount: string
+  taxAmount: string
   isBonus: boolean
   discounts: InvoiceDiscountItem[]
   pinnedUom?: PinnedUom | null

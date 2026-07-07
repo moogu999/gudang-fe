@@ -8,6 +8,8 @@ export interface ManualDiscountItem {
   value: string
   amount: string
   reason?: string | null
+  taxBaseAmount: string
+  taxAmount: string
 }
 
 export type DeliveryOrderStatus = 'open' | 'applied' | 'cancelled'
@@ -49,6 +51,8 @@ export interface DeliveryOrderViewLine {
   discount: string
   subAmount: string
   taxIncluded: boolean
+  taxBaseAmount: string
+  taxAmount: string
   priceListId?: number | null
   discounts?: LineDiscount[]
   manualDiscounts?: ManualDiscountItem[]

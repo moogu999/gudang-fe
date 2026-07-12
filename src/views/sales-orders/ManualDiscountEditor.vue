@@ -7,10 +7,12 @@
     <!-- Applied discounts list -->
     <table v-if="modelValue.length" class="mb-3 w-full text-xs">
       <colgroup>
-        <col style="width: 45%" />
-        <col style="width: 18%" />
-        <col style="width: 18%" />
-        <col style="width: 15%" />
+        <col style="width: 30%" />
+        <col style="width: 14%" />
+        <col style="width: 14%" />
+        <col style="width: 13%" />
+        <col style="width: 13%" />
+        <col style="width: 13%" />
         <col v-if="!disabled" style="width: 4%" />
       </colgroup>
       <thead>
@@ -19,6 +21,8 @@
           <th class="pb-1 text-left">{{ t('salesOrders.manualDiscount.type') }}</th>
           <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.value') }}</th>
           <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.amount') }}</th>
+          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.taxBase') }}</th>
+          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.tax') }}</th>
           <th v-if="!disabled" class="pb-1" style="width: 2rem" />
         </tr>
       </thead>
@@ -36,6 +40,8 @@
             {{ disc.discountType === 'percentage' ? `${disc.value}%` : formatValue(disc.value) }}
           </td>
           <td class="py-0.5 text-right text-red-600">-{{ formatValue(previewAmount(disc)) }}</td>
+          <td class="py-0.5 text-right text-red-600">{{ formatValue(disc.taxBaseAmount) }}</td>
+          <td class="py-0.5 text-right text-red-600">{{ formatValue(disc.taxAmount) }}</td>
           <td v-if="!disabled" class="py-0.5 text-right">
             <Button
               icon="pi pi-trash"
@@ -192,6 +198,9 @@ function addDiscount() {
     value: String(v),
     amount: String(grossAmount),
     reason: addReason.value.trim(),
+    // Not known until the backend computes it on resolve/save — left blank until then.
+    taxBaseAmount: '',
+    taxAmount: '',
   }
 
   emit('update:modelValue', [...props.modelValue, newDiscount])

@@ -264,7 +264,8 @@
     <!-- Invoice-level Manual Discounts -->
     <div class="mt-4 rounded-lg border border-stone-200 p-4">
       <ManualDiscountEditor
-        v-model="headerManualDiscounts"
+        :model-value="headerManualDiscountsPreview"
+        @update:model-value="headerManualDiscounts = $event"
         :disabled="mode === DialogMode.VIEW"
         :gross="calculatedTotals.grossTotal"
       />
@@ -303,6 +304,15 @@
           <div class="flex justify-between text-red-600">
             <span>{{ t('salesOrders.summary.discountTotal') }}</span>
             <span>- {{ formatCurrency(calculatedTotals.discountTotal) }}</span>
+          </div>
+
+          <Divider />
+
+          <!-- Total = Tax Base + Tax always holds under the bottom-up model, unlike
+               Subtotal - Discount + Tax above, which only holds for all-exclusive orders. -->
+          <div class="flex justify-between">
+            <span>{{ t('salesOrders.summary.taxBase') }}</span>
+            <span>{{ formatCurrency(calculatedTotals.taxBase) }}</span>
           </div>
 
           <div v-if="calculatedTotals.taxAmount > 0" class="flex justify-between text-orange-600">
@@ -448,6 +458,8 @@ const taxRate = ref(0)
 const customerTaxable = ref(false)
 const savedTaxAmount = ref(0)
 const savedTotalAmount = ref(0)
+const savedSubtotalAmount = ref(0)
+const savedTaxBaseAmount = ref(0)
 const headerDiscounts = ref<import('@/types').LineDiscount[]>([])
 const headerBonuses = ref<import('@/types').LineBonus[]>([])
 const headerChoiceOffers = ref<import('@/types').ChoiceOffer[]>([])
@@ -521,17 +533,57 @@ const resolver = computed(() =>
   ),
 )
 
+// Compute one row's own DPP/tax on a gross amount, given whether it's tax-inclusive.
+// Mirrors the backend's taxcalc.Compute (gudang-be/internal/pkg/taxcalc/taxcalc.go).
+function computeRowTax(amount: number, taxIncluded: boolean): { taxBase: number; tax: number } {
+  if (taxRate.value === 0 || amount === 0) return { taxBase: amount, tax: 0 }
+  if (taxIncluded) {
+    const tax = Math.round(((amount * taxRate.value) / (100 + taxRate.value)) * 100) / 100
+    return { taxBase: amount - tax, tax }
+  }
+  if (!customerTaxable.value) return { taxBase: amount, tax: 0 }
+  const tax = Math.round(((amount * taxRate.value) / 100) * 100) / 100
+  return { taxBase: amount, tax }
+}
+
+// Compute a header-level discount row's own (negative) DPP/tax: the discount's amount is
+// split proportionally across the order's inclusive/exclusive raw-gross mix, then the
+// embedded/additive formula runs on each portion. Mirrors the backend's
+// CalculateHeaderDiscountRowTax (gudang-be/internal/sales_order/domain/sales_order_header.go).
+function computeHeaderDiscountTax(
+  amount: number,
+  grossInclusive: number,
+  grossExclusive: number,
+): { taxBase: number; tax: number } {
+  const total = grossInclusive + grossExclusive
+  if (total === 0) return { taxBase: 0, tax: 0 }
+  const inclusivePortion = Math.round(((amount * grossInclusive) / total) * 100) / 100
+  const exclusivePortion = amount - inclusivePortion
+  const r1 = computeRowTax(inclusivePortion, true)
+  const r2 = computeRowTax(exclusivePortion, false)
+  return { taxBase: -(r1.taxBase + r2.taxBase), tax: -(r1.tax + r2.tax) }
+}
+
 // Computed totals for summary section
 const calculatedTotals = computed(() => {
   // Split line subAmounts by tax inclusion status
   let subTotalInclusive = 0
   let subTotalExclusive = 0
+  let grossInclusive = 0
+  let grossExclusive = 0
   let lineDiscountTotal = 0
   let rawGrossTotal = 0
+  // Bottom-up header DPP/tax: sum of every row's real value (product lines + all discount rows).
+  let taxBaseSum = 0
+  let taxSum = 0
 
   details.value.forEach((row) => {
     const gross = (row.quantity || 0) * (row.price || 0)
     rawGrossTotal += gross
+    const taxIncluded = row._taxIncluded ?? false
+    if (taxIncluded) grossInclusive += gross
+    else grossExclusive += gross
+
     const lineDisc = row.discount || 0
 
     // In VIEW mode the backend has already folded manual discounts into detail.discount,
@@ -545,11 +597,28 @@ const calculatedTotals = computed(() => {
         return s + (d.discountType === 'flat' ? v : Math.round(((gross * v) / 100) * 100) / 100)
       }, 0)
       totalLineDisc = lineDisc + manualDisc
+
+      // Real per-row DPP/tax from resolve: the product line's own tax (on full gross) plus
+      // every line promo discount's own (negative) tax.
+      taxBaseSum += parseFloat(row._taxBaseAmount ?? '0') || 0
+      taxSum += parseFloat(row._taxAmount ?? '0') || 0
+      ;(row._discounts ?? []).forEach((d) => {
+        taxBaseSum += parseFloat(d.taxBaseAmount) || 0
+        taxSum += parseFloat(d.taxAmount) || 0
+      })
+
+      // Line manual discounts aren't previewed by resolve — replicate the backend's per-row
+      // formula locally so the live preview stays consistent with what gets persisted.
+      ;(row._manualDiscounts ?? []).forEach((d) => {
+        const { taxBase, tax } = computeRowTax(parseFloat(d.amount) || 0, taxIncluded)
+        taxBaseSum -= taxBase
+        taxSum -= tax
+      })
     }
 
     lineDiscountTotal += totalLineDisc
     const sub = gross - totalLineDisc
-    if (row._taxIncluded) subTotalInclusive += sub
+    if (taxIncluded) subTotalInclusive += sub
     else subTotalExclusive += sub
   })
 
@@ -572,42 +641,71 @@ const calculatedTotals = computed(() => {
 
   const discountTotal = lineDiscountTotal + headerDiscountAmount.value + headerManualDiscountTotal
 
-  // grossTotal already excludes line discounts, so only subtract header-level discounts here.
-  // (Subtracting discountTotal would double-count the line discounts already removed above.)
-  const taxBase = grossTotal - headerDiscountAmount.value - headerManualDiscountTotal
+  if (props.mode !== DialogMode.VIEW) {
+    // Real per-row DPP/tax from resolve for header promo discounts.
+    headerDiscounts.value.forEach((d) => {
+      taxBaseSum += parseFloat(d.taxBaseAmount) || 0
+      taxSum += parseFloat(d.taxAmount) || 0
+    })
 
-  // Proportionally split taxBase between inclusive and exclusive line portions
-  const inclusiveFraction = grossTotal > 0 ? subTotalInclusive / grossTotal : 0
-  const taxBaseInclusive = taxBase * inclusiveFraction
-  const taxBaseExclusive = taxBase - taxBaseInclusive
-
-  // Embedded tax extracted from inclusive-price lines (always shown)
-  const embeddedTax =
-    taxRate.value > 0
-      ? Math.round(((taxBaseInclusive * taxRate.value) / (100 + taxRate.value)) * 100) / 100
-      : 0
-
-  // Additive tax on exclusive-price lines (only if customer is taxable)
-  const additiveTax = customerTaxable.value
-    ? Math.round(((taxBaseExclusive * taxRate.value) / 100) * 100) / 100
-    : 0
+    // Header manual discounts aren't previewed by resolve — replicate the backend's
+    // proportional-split formula locally (decision #4 of the master plan).
+    headerManualDiscounts.value.forEach((d) => {
+      const { taxBase, tax } = computeHeaderDiscountTax(
+        parseFloat(d.amount) || 0,
+        grossInclusive,
+        grossExclusive,
+      )
+      taxBaseSum += taxBase
+      taxSum += tax
+    })
+  }
 
   const taxAmount =
-    props.mode === DialogMode.VIEW
-      ? savedTaxAmount.value
-      : Math.round((embeddedTax + additiveTax) * 100) / 100
+    props.mode === DialogMode.VIEW ? savedTaxAmount.value : Math.round(taxSum * 100) / 100
 
-  // In VIEW mode use the saved total to avoid double-counting embedded tax
+  // Backend's TotalAmount = TaxBaseAmount + TaxAmount — the only invariant that holds
+  // universally under the bottom-up model, regardless of inclusive/exclusive mix.
+  const taxBase =
+    props.mode === DialogMode.VIEW ? savedTaxBaseAmount.value : Math.round(taxBaseSum * 100) / 100
   const total =
     props.mode === DialogMode.VIEW
       ? savedTotalAmount.value
-      : Math.round((taxBase + additiveTax) * 100) / 100
+      : Math.round((taxBase + taxAmount) * 100) / 100
 
-  // Net subtotal: gross minus embedded tax, so summary math holds:
-  // netSubtotal - discountTotal + taxAmount = total
-  const netSubtotal = total + discountTotal - taxAmount
+  // Subtotal = sum of every line's raw undiscounted gross (quantity*price), matching the
+  // backend's persisted SubtotalAmount (decision #3 of the master plan). This is shown as
+  // informational context only — it does NOT chain arithmetically into Total via Discount/Tax
+  // except in the all-tax-exclusive special case (see taxBase/total above for the real formula).
+  // In VIEW mode, read the persisted value directly to avoid any client-side rounding drift.
+  const netSubtotal = props.mode === DialogMode.VIEW ? savedSubtotalAmount.value : rawGrossTotal
 
-  return { grossTotal, netSubtotal, discountTotal, taxAmount, total }
+  return {
+    grossTotal,
+    netSubtotal,
+    discountTotal,
+    taxBase,
+    taxAmount,
+    total,
+    grossInclusive,
+    grossExclusive,
+  }
+})
+
+// Live-preview DPP/tax for each header manual discount row (blank from ManualDiscountEditor
+// until save, since resolve doesn't preview manual discounts — see decision #4 of the master
+// plan for the formula). VIEW mode already has the real persisted values, so pass through as-is.
+const headerManualDiscountsPreview = computed(() => {
+  if (props.mode === DialogMode.VIEW) return headerManualDiscounts.value
+  const { grossInclusive, grossExclusive } = calculatedTotals.value
+  return headerManualDiscounts.value.map((d) => {
+    const { taxBase, tax } = computeHeaderDiscountTax(
+      parseFloat(d.amount) || 0,
+      grossInclusive,
+      grossExclusive,
+    )
+    return { ...d, taxBaseAmount: String(taxBase), taxAmount: String(tax) }
+  })
 })
 
 // Format number with decimals
@@ -683,6 +781,8 @@ async function resolveOrder() {
         _priceListId: resolved.priceListId,
         _priceListCode: resolved.priceListCode,
         _taxIncluded: resolved.taxIncluded ?? false,
+        _taxBaseAmount: resolved.taxBaseAmount,
+        _taxAmount: resolved.taxAmount,
         _discounts: resolved.discounts,
         _bonuses: resolved.bonuses,
         _choiceOffers: resolved.choiceOffers,
@@ -972,6 +1072,8 @@ async function loadSalesOrder() {
     headerDiscountAmount.value = parseFloat(header.discountAmount)
     savedTaxAmount.value = parseFloat(header.taxAmount) || 0
     savedTotalAmount.value = parseFloat(header.totalAmount) || 0
+    savedSubtotalAmount.value = parseFloat(header.subtotalAmount) || 0
+    savedTaxBaseAmount.value = parseFloat(header.taxBaseAmount) || 0
     headerManualDiscounts.value = header.manualDiscounts ?? []
     headerDiscounts.value = header.headerDiscounts ?? []
     headerBonuses.value = header.headerBonuses ?? []
@@ -1008,6 +1110,8 @@ async function loadSalesOrder() {
         _priceListId: detail.priceListId ?? null,
         _priceListCode: null,
         _taxIncluded: detail.taxIncluded ?? false,
+        _taxBaseAmount: detail.taxBaseAmount,
+        _taxAmount: detail.taxAmount,
         _discounts: detail.discounts ?? [],
         _bonuses: detail.bonuses ?? [],
         _choiceOffers: [],

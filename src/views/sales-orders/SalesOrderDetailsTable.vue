@@ -179,6 +179,18 @@
         </template>
       </Column>
 
+      <!-- Tax Base / Tax (product line's own, computed on full undiscounted gross) -->
+      <Column :header="t('salesOrders.details.taxBase')">
+        <template #body="{ data }">
+          {{ formatValue((data as SalesOrderDetailRow)._taxBaseAmount) }}
+        </template>
+      </Column>
+      <Column :header="t('salesOrders.details.tax')">
+        <template #body="{ data }">
+          {{ formatValue((data as SalesOrderDetailRow)._taxAmount) }}
+        </template>
+      </Column>
+
       <!-- Row editor -->
       <Column
         v-if="mode !== DialogMode.VIEW"
@@ -211,10 +223,12 @@
             </p>
             <table class="mb-3 w-full text-xs">
               <colgroup>
-                <col style="width: 45%" />
-                <col style="width: 18%" />
-                <col style="width: 18%" />
-                <col style="width: 19%" />
+                <col style="width: 33%" />
+                <col style="width: 14%" />
+                <col style="width: 14%" />
+                <col style="width: 13%" />
+                <col style="width: 13%" />
+                <col style="width: 13%" />
               </colgroup>
               <thead>
                 <tr class="border-b border-stone-200 text-stone-400">
@@ -222,6 +236,8 @@
                   <th class="pb-1 text-left">{{ t('salesOrders.details.discountType') }}</th>
                   <th class="pb-1 text-right">{{ t('salesOrders.details.discountValue') }}</th>
                   <th class="pb-1 text-right">{{ t('salesOrders.details.discountAmount') }}</th>
+                  <th class="pb-1 text-right">{{ t('salesOrders.details.taxBase') }}</th>
+                  <th class="pb-1 text-right">{{ t('salesOrders.details.tax') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,6 +261,10 @@
                     }}
                   </td>
                   <td class="py-0.5 text-right text-red-600">-{{ formatValue(disc.amount) }}</td>
+                  <td class="py-0.5 text-right text-red-600">
+                    {{ formatValue(disc.taxBaseAmount) }}
+                  </td>
+                  <td class="py-0.5 text-right text-red-600">{{ formatValue(disc.taxAmount) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -414,6 +434,8 @@
                   <th class="pb-1 text-left">{{ t('salesOrders.details.discountType') }}</th>
                   <th class="pb-1 text-right">{{ t('salesOrders.details.discountValue') }}</th>
                   <th class="pb-1 text-right">{{ t('salesOrders.details.discountAmount') }}</th>
+                  <th class="pb-1 text-right">{{ t('salesOrders.details.taxBase') }}</th>
+                  <th class="pb-1 text-right">{{ t('salesOrders.details.tax') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -437,6 +459,10 @@
                     }}
                   </td>
                   <td class="py-0.5 text-right text-red-600">-{{ formatValue(disc.amount) }}</td>
+                  <td class="py-0.5 text-right text-red-600">
+                    {{ formatValue(disc.taxBaseAmount) }}
+                  </td>
+                  <td class="py-0.5 text-right text-red-600">{{ formatValue(disc.taxAmount) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -646,6 +672,8 @@ watch(
         local._priceListId = newRow._priceListId
         local._priceListCode = newRow._priceListCode
         local._taxIncluded = newRow._taxIncluded
+        local._taxBaseAmount = newRow._taxBaseAmount
+        local._taxAmount = newRow._taxAmount
         local._discounts = newRow._discounts
         local._bonuses = newRow._bonuses
         local._choiceOffers = newRow._choiceOffers

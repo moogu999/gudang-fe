@@ -3,6 +3,15 @@ import type { LineDiscount } from './salesOrder.type'
 
 export type { LineDiscount }
 
+export interface ManualDiscountItem {
+  discountType: string
+  value: string
+  amount: string
+  reason?: string | null
+  taxBaseAmount: string
+  taxAmount: string
+}
+
 export type DeliveryOrderStatus = 'open' | 'applied' | 'cancelled'
 
 export interface DeliveryOrderUomLevel {
@@ -42,8 +51,11 @@ export interface DeliveryOrderViewLine {
   discount: string
   subAmount: string
   taxIncluded: boolean
+  taxBaseAmount: string
+  taxAmount: string
   priceListId?: number | null
   discounts?: LineDiscount[]
+  manualDiscounts?: ManualDiscountItem[]
   uomGroup?: DeliveryOrderUomGroup | null
   pinnedUom?: PinnedUom | null
 }
@@ -87,6 +99,7 @@ export interface DeliveryOrderDetail {
   invoiceId?: number | null
   invoiceNo?: string | null
   headerDiscounts?: LineDiscount[]
+  headerManualDiscounts?: ManualDiscountItem[]
   lines: DeliveryOrderViewLine[]
   bonusLines: DeliveryOrderBonusLine[]
 }

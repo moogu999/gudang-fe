@@ -9,6 +9,8 @@ export interface ManualDiscount {
   value: string
   amount: string
   reason: string
+  taxBaseAmount: string
+  taxAmount: string
 }
 
 // Lightweight product type that includes UOM conversion levels (returned by sales order detail API)
@@ -30,6 +32,8 @@ export interface LineDiscount {
   discountType: string
   value: string
   amount: string
+  taxBaseAmount: string
+  taxAmount: string
 }
 
 export interface LineBonus {
@@ -69,6 +73,8 @@ export interface ResolvedLine {
   priceListId: number | null
   priceListCode: string | null
   discount: string
+  taxBaseAmount: string
+  taxAmount: string
   discounts: LineDiscount[]
   bonuses: LineBonus[]
   choiceOffers: ChoiceOffer[]
@@ -135,6 +141,8 @@ export interface SalesOrderDetail {
   price: string
   subAmount: string
   discount: string
+  taxBaseAmount: string
+  taxAmount: string
   priceListId?: number | null
   taxIncluded?: boolean
   discounts?: LineDiscount[]
@@ -193,6 +201,8 @@ export interface SalesOrderDetailRow {
   _priceListId?: number | null
   _priceListCode?: string | null
   _taxIncluded?: boolean
+  _taxBaseAmount?: string
+  _taxAmount?: string
   _discounts?: LineDiscount[]
   _bonuses?: LineBonus[]
   _choiceOffers?: ChoiceOffer[]

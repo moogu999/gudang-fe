@@ -63,7 +63,14 @@
       <!-- Line items card -->
       <ResponsiveCard>
         <template #content>
-          <DataTable :value="detail.lines" class="mb-4 text-sm" size="small">
+          <DataTable
+            v-model:expanded-rows="expandedRows"
+            :value="detail.lines"
+            data-key="productId"
+            class="mb-4 text-sm"
+            size="small"
+          >
+            <Column expander style="width: 3rem" />
             <Column :header="t('invoices.fields.product')">
               <template #body="{ data }">
                 <div class="flex flex-col gap-0.5">
@@ -105,6 +112,11 @@
                 {{ data.isBonus ? '-' : formatAmount(data.price) }}
               </template>
             </Column>
+            <Column :header="t('invoices.fields.gross')" class="text-right">
+              <template #body="{ data }">
+                {{ data.isBonus ? '-' : formatAmount(String(lineGross(data))) }}
+              </template>
+            </Column>
             <Column :header="t('invoices.fields.discount')" class="text-right">
               <template #body="{ data }">
                 {{ parseFloat(data.discount) > 0 ? formatAmount(data.discount) : '-' }}
@@ -115,10 +127,205 @@
                 {{ data.isBonus ? '-' : formatAmount(data.subAmount) }}
               </template>
             </Column>
+            <Column :header="t('invoices.fields.taxBase')" class="text-right">
+              <template #body="{ data }">
+                {{ data.isBonus ? '-' : formatAmount(data.taxBaseAmount) }}
+              </template>
+            </Column>
+            <Column :header="t('invoices.fields.tax')" class="text-right">
+              <template #body="{ data }">
+                {{ data.isBonus ? '-' : formatAmount(data.taxAmount) }}
+              </template>
+            </Column>
             <template #empty>
               <div class="py-4 text-center text-stone-500">{{ t('table.noResults') }}</div>
             </template>
+
+            <!-- Row expansion: per-line promotion / manual discount breakdown -->
+            <template #expansion="{ data }">
+              <div class="bg-stone-50 px-4 py-3">
+                <template v-if="promotionDiscounts((data as InvoiceDetailLine).discounts).length">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                    {{ t('invoices.fields.promotionDiscounts') }}
+                  </p>
+                  <table class="mb-3 w-full text-xs">
+                    <thead>
+                      <tr class="border-b border-stone-200 text-stone-400">
+                        <th class="pb-1 text-left">{{ t('invoices.fields.promotionCode') }}</th>
+                        <th class="pb-1 text-left">{{ t('invoices.fields.discountType') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.discountValue') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.discountAmount') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.taxBase') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.tax') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(disc, i) in promotionDiscounts(
+                          (data as InvoiceDetailLine).discounts,
+                        )"
+                        :key="i"
+                        class="border-b border-stone-100"
+                      >
+                        <td class="py-0.5">{{ disc.promotionCode }}</td>
+                        <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                        <td class="py-0.5 text-right">
+                          {{
+                            disc.discountType === 'percentage'
+                              ? `${disc.value}%`
+                              : formatAmount(disc.value)
+                          }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          -{{ formatAmount(disc.amount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxBaseAmount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxAmount) }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template>
+
+                <template v-if="manualDiscounts((data as InvoiceDetailLine).discounts).length">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                    {{ t('invoices.fields.manualDiscounts') }}
+                  </p>
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="border-b border-stone-200 text-stone-400">
+                        <th class="pb-1 text-left">{{ t('invoices.fields.reason') }}</th>
+                        <th class="pb-1 text-left">{{ t('invoices.fields.discountType') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.discountValue') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.discountAmount') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.taxBase') }}</th>
+                        <th class="pb-1 text-right">{{ t('invoices.fields.tax') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(disc, i) in manualDiscounts((data as InvoiceDetailLine).discounts)"
+                        :key="i"
+                        class="border-b border-stone-100"
+                      >
+                        <td class="py-0.5">
+                          {{ disc.reason || t('invoices.fields.manualDiscount') }}
+                        </td>
+                        <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                        <td class="py-0.5 text-right">
+                          {{
+                            disc.discountType === 'percentage'
+                              ? `${disc.value}%`
+                              : formatAmount(disc.value)
+                          }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          -{{ formatAmount(disc.amount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxBaseAmount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxAmount) }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template>
+
+                <p
+                  v-if="!(data as InvoiceDetailLine).discounts?.length"
+                  class="text-xs text-stone-400"
+                >
+                  {{ t('salesOrders.details.noPromotions') }}
+                </p>
+              </div>
+            </template>
           </DataTable>
+
+          <!-- Header-level discounts, kept out of the summary panel -->
+          <div v-if="detail.headerDiscounts?.length" class="mb-4">
+            <p class="mb-2 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+              {{ t('invoices.fields.headerDiscounts') }}
+            </p>
+            <template v-if="promotionDiscounts(detail.headerDiscounts).length">
+              <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                {{ t('invoices.fields.promotionDiscounts') }}
+              </p>
+              <table class="mb-3 w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-200 text-stone-400">
+                    <th class="pb-1 text-left">{{ t('invoices.fields.promotionCode') }}</th>
+                    <th class="pb-1 text-left">{{ t('invoices.fields.discountType') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.discountValue') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.discountAmount') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.taxBase') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.tax') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(disc, i) in promotionDiscounts(detail.headerDiscounts)"
+                    :key="i"
+                    class="border-b border-stone-100 text-red-600"
+                  >
+                    <td class="py-0.5">{{ disc.promotionCode }}</td>
+                    <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                    <td class="py-0.5 text-right">
+                      {{
+                        disc.discountType === 'percentage'
+                          ? `${disc.value}%`
+                          : formatAmount(disc.value)
+                      }}
+                    </td>
+                    <td class="py-0.5 text-right">-{{ formatAmount(disc.amount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxBaseAmount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxAmount) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </template>
+            <template v-if="manualDiscounts(detail.headerDiscounts).length">
+              <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                {{ t('invoices.fields.manualDiscounts') }}
+              </p>
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-200 text-stone-400">
+                    <th class="pb-1 text-left">{{ t('invoices.fields.reason') }}</th>
+                    <th class="pb-1 text-left">{{ t('invoices.fields.discountType') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.discountValue') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.discountAmount') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.taxBase') }}</th>
+                    <th class="pb-1 text-right">{{ t('invoices.fields.tax') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(disc, i) in manualDiscounts(detail.headerDiscounts)"
+                    :key="i"
+                    class="border-b border-stone-100 text-red-600"
+                  >
+                    <td class="py-0.5">{{ disc.reason || t('invoices.fields.manualDiscount') }}</td>
+                    <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                    <td class="py-0.5 text-right">
+                      {{
+                        disc.discountType === 'percentage'
+                          ? `${disc.value}%`
+                          : formatAmount(disc.value)
+                      }}
+                    </td>
+                    <td class="py-0.5 text-right">-{{ formatAmount(disc.amount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxBaseAmount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxAmount) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </template>
+          </div>
 
           <!-- Financial summary -->
           <div class="flex justify-end">
@@ -129,11 +336,20 @@
                   <span class="tabular-nums">{{ formatAmount(detail.subtotalAmount) }}</span>
                 </div>
                 <div
-                  v-if="parseFloat(detail.discountAmount) > 0"
+                  v-if="summaryTotals.discountTotal > 0"
                   class="flex justify-between text-red-600"
                 >
                   <span>{{ t('invoices.fields.discount') }}</span>
-                  <span class="tabular-nums">- {{ formatAmount(detail.discountAmount) }}</span>
+                  <span class="tabular-nums"
+                    >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
+                  >
+                </div>
+                <Divider class="my-1" />
+                <!-- Total = Tax Base + Tax always holds under the bottom-up model, unlike
+                     Subtotal - Discount + Tax above, which only holds for all-exclusive orders. -->
+                <div class="flex justify-between">
+                  <span class="text-stone-500">{{ t('invoices.fields.taxBase') }}</span>
+                  <span class="tabular-nums">{{ formatAmount(detail.taxBaseAmount) }}</span>
                 </div>
                 <div
                   v-if="parseFloat(detail.taxAmount) > 0"
@@ -163,7 +379,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -176,7 +392,7 @@ import Column from 'primevue/column'
 import Divider from 'primevue/divider'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import { InvoicesService, commonErrorToast } from '@/services'
-import type { InvoiceDetail, InvoiceDetailLine, InvoiceStatus } from '@/types'
+import type { InvoiceDetail, InvoiceDetailLine, InvoiceDiscountItem, InvoiceStatus } from '@/types'
 import type { UomConversionLevel } from '@/types'
 import DateFormat from '@/constants/dateFormat'
 import dayjs from 'dayjs'
@@ -190,6 +406,30 @@ const toast = useToast()
 const toastGroup = 'invoiceDetail'
 const detail = ref<InvoiceDetail | null>(null)
 const isLoading = ref(false)
+const expandedRows = ref<Record<number, boolean>>({})
+
+function lineGross(line: InvoiceDetailLine): number {
+  return parseFloat(line.quantity) * parseFloat(line.price)
+}
+
+function promotionDiscounts(discounts: InvoiceDiscountItem[] | undefined): InvoiceDiscountItem[] {
+  return (discounts ?? []).filter((d) => d.source === 'promotion')
+}
+
+function manualDiscounts(discounts: InvoiceDiscountItem[] | undefined): InvoiceDiscountItem[] {
+  return (discounts ?? []).filter((d) => d.source === 'manual')
+}
+
+// Sums line-level discounts on top of the header discount so the on-screen
+// Subtotal − Discount + Tax = Total equation holds (mirrors DeliveryOrderDetailView.vue).
+const summaryTotals = computed(() => {
+  if (!detail.value) return { discountTotal: 0 }
+  let discountTotal = parseFloat(detail.value.discountAmount)
+  for (const line of detail.value.lines) {
+    discountTotal += parseFloat(line.discount)
+  }
+  return { discountTotal }
+})
 
 function statusSeverity(status: InvoiceStatus) {
   if (status === 'applied') return 'success'

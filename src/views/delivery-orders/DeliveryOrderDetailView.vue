@@ -126,7 +126,14 @@
       <!-- DO lines table -->
       <ResponsiveCard>
         <template #content>
-          <DataTable :value="detail.lines" class="mb-4 text-sm" size="small">
+          <DataTable
+            v-model:expanded-rows="expandedRows"
+            :value="detail.lines"
+            data-key="productId"
+            class="mb-4 text-sm"
+            size="small"
+          >
+            <Column expander style="width: 3rem" />
             <Column :header="t('deliveryOrders.fields.product')">
               <template #body="{ data }">
                 <div class="flex flex-col">
@@ -206,6 +213,9 @@
                 </div>
               </template>
             </Column>
+            <Column :header="t('deliveryOrders.fields.gross')" class="text-right">
+              <template #body="{ data }">{{ formatAmount(String(lineGross(data))) }}</template>
+            </Column>
             <Column :header="t('deliveryOrders.fields.discount')" class="text-right">
               <template #body="{ data }">
                 {{ parseFloat(data.discount) > 0 ? formatAmount(data.discount) : '-' }}
@@ -214,10 +224,226 @@
             <Column :header="t('deliveryOrders.fields.subAmount')" class="text-right">
               <template #body="{ data }">{{ formatAmount(data.subAmount) }}</template>
             </Column>
+            <Column :header="t('deliveryOrders.fields.taxBase')" class="text-right">
+              <template #body="{ data }">{{ formatAmount(data.taxBaseAmount) }}</template>
+            </Column>
+            <Column :header="t('deliveryOrders.fields.tax')" class="text-right">
+              <template #body="{ data }">{{ formatAmount(data.taxAmount) }}</template>
+            </Column>
             <template #empty>
               <div class="py-4 text-center text-stone-500">{{ t('table.noResults') }}</div>
             </template>
+
+            <!-- Row expansion: per-line promotion / manual discount breakdown -->
+            <template #expansion="{ data }">
+              <div class="bg-stone-50 px-4 py-3">
+                <template v-if="(data as DeliveryOrderViewLine).discounts?.length">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                    {{ t('deliveryOrders.fields.promotionDiscounts') }}
+                  </p>
+                  <table class="mb-3 w-full text-xs">
+                    <thead>
+                      <tr class="border-b border-stone-200 text-stone-400">
+                        <th class="pb-1 text-left">
+                          {{ t('deliveryOrders.fields.promotionCode') }}
+                        </th>
+                        <th class="pb-1 text-left">
+                          {{ t('deliveryOrders.fields.discountType') }}
+                        </th>
+                        <th class="pb-1 text-right">
+                          {{ t('deliveryOrders.fields.discountValue') }}
+                        </th>
+                        <th class="pb-1 text-right">
+                          {{ t('deliveryOrders.fields.discountAmount') }}
+                        </th>
+                        <th class="pb-1 text-right">{{ t('deliveryOrders.fields.taxBase') }}</th>
+                        <th class="pb-1 text-right">{{ t('deliveryOrders.fields.tax') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="disc in (data as DeliveryOrderViewLine).discounts"
+                        :key="disc.promotionId"
+                        class="border-b border-stone-100"
+                      >
+                        <td class="py-0.5">
+                          <span>{{ disc.promotionCode }}</span>
+                          <p v-if="disc.promotionDescription" class="text-stone-400">
+                            {{ disc.promotionDescription }}
+                          </p>
+                        </td>
+                        <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                        <td class="py-0.5 text-right">
+                          {{
+                            disc.discountType === 'percentage'
+                              ? `${disc.value}%`
+                              : formatAmount(disc.value)
+                          }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          -{{ formatAmount(disc.amount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxBaseAmount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxAmount) }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template>
+
+                <template v-if="(data as DeliveryOrderViewLine).manualDiscounts?.length">
+                  <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                    {{ t('deliveryOrders.fields.manualDiscounts') }}
+                  </p>
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="border-b border-stone-200 text-stone-400">
+                        <th class="pb-1 text-left">{{ t('deliveryOrders.fields.reason') }}</th>
+                        <th class="pb-1 text-left">
+                          {{ t('deliveryOrders.fields.discountType') }}
+                        </th>
+                        <th class="pb-1 text-right">
+                          {{ t('deliveryOrders.fields.discountValue') }}
+                        </th>
+                        <th class="pb-1 text-right">
+                          {{ t('deliveryOrders.fields.discountAmount') }}
+                        </th>
+                        <th class="pb-1 text-right">{{ t('deliveryOrders.fields.taxBase') }}</th>
+                        <th class="pb-1 text-right">{{ t('deliveryOrders.fields.tax') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(disc, i) in (data as DeliveryOrderViewLine).manualDiscounts"
+                        :key="i"
+                        class="border-b border-stone-100"
+                      >
+                        <td class="py-0.5">
+                          {{ disc.reason || t('deliveryOrders.fields.manualDiscount') }}
+                        </td>
+                        <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                        <td class="py-0.5 text-right">
+                          {{
+                            disc.discountType === 'percentage'
+                              ? `${disc.value}%`
+                              : formatAmount(disc.value)
+                          }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          -{{ formatAmount(disc.amount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxBaseAmount) }}
+                        </td>
+                        <td class="py-0.5 text-right text-red-600">
+                          {{ formatAmount(disc.taxAmount) }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template>
+
+                <p
+                  v-if="
+                    !(data as DeliveryOrderViewLine).discounts?.length &&
+                    !(data as DeliveryOrderViewLine).manualDiscounts?.length
+                  "
+                  class="text-xs text-stone-400"
+                >
+                  {{ t('salesOrders.details.noPromotions') }}
+                </p>
+              </div>
+            </template>
           </DataTable>
+
+          <!-- Header-level discounts (promotion + manual), kept out of the summary panel -->
+          <div
+            v-if="detail.headerDiscounts?.length || detail.headerManualDiscounts?.length"
+            class="mb-4"
+          >
+            <p class="mb-2 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+              {{ t('deliveryOrders.fields.headerDiscounts') }}
+            </p>
+            <template v-if="detail.headerDiscounts?.length">
+              <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                {{ t('deliveryOrders.fields.promotionDiscounts') }}
+              </p>
+              <table class="mb-3 w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-200 text-stone-400">
+                    <th class="pb-1 text-left">{{ t('deliveryOrders.fields.promotionCode') }}</th>
+                    <th class="pb-1 text-left">{{ t('deliveryOrders.fields.discountType') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.discountValue') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.discountAmount') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.taxBase') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.tax') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="disc in detail.headerDiscounts"
+                    :key="disc.promotionId"
+                    class="border-b border-stone-100 text-red-600"
+                  >
+                    <td class="py-0.5">{{ disc.promotionCode }}</td>
+                    <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                    <td class="py-0.5 text-right">
+                      {{
+                        disc.discountType === 'percentage'
+                          ? `${disc.value}%`
+                          : formatAmount(disc.value)
+                      }}
+                    </td>
+                    <td class="py-0.5 text-right">-{{ formatAmount(disc.amount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxBaseAmount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxAmount) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </template>
+            <template v-if="detail.headerManualDiscounts?.length">
+              <p class="mb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase">
+                {{ t('deliveryOrders.fields.manualDiscounts') }}
+              </p>
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-200 text-stone-400">
+                    <th class="pb-1 text-left">{{ t('deliveryOrders.fields.reason') }}</th>
+                    <th class="pb-1 text-left">{{ t('deliveryOrders.fields.discountType') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.discountValue') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.discountAmount') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.taxBase') }}</th>
+                    <th class="pb-1 text-right">{{ t('deliveryOrders.fields.tax') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(disc, i) in detail.headerManualDiscounts"
+                    :key="i"
+                    class="border-b border-stone-100 text-red-600"
+                  >
+                    <td class="py-0.5">
+                      {{ disc.reason || t('deliveryOrders.fields.manualDiscount') }}
+                    </td>
+                    <td class="py-0.5 capitalize">{{ disc.discountType }}</td>
+                    <td class="py-0.5 text-right">
+                      {{
+                        disc.discountType === 'percentage'
+                          ? `${disc.value}%`
+                          : formatAmount(disc.value)
+                      }}
+                    </td>
+                    <td class="py-0.5 text-right">-{{ formatAmount(disc.amount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxBaseAmount) }}</td>
+                    <td class="py-0.5 text-right">{{ formatAmount(disc.taxAmount) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </template>
+          </div>
 
           <!-- Financial summary -->
           <div class="flex justify-end">
@@ -231,30 +457,19 @@
                 </div>
                 <div
                   v-if="summaryTotals.discountTotal > 0"
-                  class="flex flex-col gap-0.5 text-red-600"
+                  class="flex justify-between text-red-600"
                 >
-                  <div class="flex justify-between">
-                    <span>{{ t('deliveryOrders.fields.discount') }}</span>
-                    <span class="tabular-nums"
-                      >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
-                    >
-                  </div>
-                  <template v-if="detail.headerDiscounts?.length">
-                    <div
-                      v-for="disc in detail.headerDiscounts"
-                      :key="disc.promotionId"
-                      class="flex justify-between text-xs text-red-400"
-                    >
-                      <span>{{ disc.promotionCode }}</span>
-                      <span>
-                        {{
-                          disc.discountType === 'percentage'
-                            ? `${disc.value}%`
-                            : formatAmount(disc.amount)
-                        }}
-                      </span>
-                    </div>
-                  </template>
+                  <span>{{ t('deliveryOrders.fields.discount') }}</span>
+                  <span class="tabular-nums"
+                    >- {{ formatAmount(String(summaryTotals.discountTotal)) }}</span
+                  >
+                </div>
+                <Divider class="my-1" />
+                <!-- Total = Tax Base + Tax always holds under the bottom-up model, unlike
+                     Subtotal - Discount + Tax above, which only holds for all-exclusive orders. -->
+                <div class="flex justify-between">
+                  <span class="text-stone-500">{{ t('deliveryOrders.fields.taxBase') }}</span>
+                  <span class="tabular-nums">{{ formatAmount(detail.taxBaseAmount) }}</span>
                 </div>
                 <div
                   v-if="parseFloat(detail.taxAmount) > 0"
@@ -381,6 +596,11 @@ const { hasPermission } = usePermissions()
 const toastGroup = 'deliveryOrderDetail'
 const detail = ref<DeliveryOrderDetail | null>(null)
 const isLoading = ref(false)
+const expandedRows = ref<Record<number, boolean>>({})
+
+function lineGross(line: DeliveryOrderViewLine): number {
+  return parseFloat(line.quantity) * parseFloat(line.price)
+}
 
 const canCancel = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
 
@@ -391,10 +611,11 @@ const summaryTotals = computed(() => {
     discountTotal += parseFloat(line.discount)
   }
   discountTotal += parseFloat(detail.value.discountAmount)
-  const total = parseFloat(detail.value.totalAmount)
-  const taxAmount = parseFloat(detail.value.taxAmount)
-  // netSubtotal - discountTotal + taxAmount = total  (mirrors SO form pattern)
-  const netSubtotal = total + discountTotal - taxAmount
+  // Read the persisted sum-of-gross value directly (decision #3 of the master plan) rather
+  // than reverse-deriving it from total/discount/tax — under the bottom-up model that identity
+  // only holds when every row is tax-inclusive, since exclusive rows add tax on top instead of
+  // embedding it.
+  const netSubtotal = parseFloat(detail.value.subtotalAmount)
   return { netSubtotal, discountTotal }
 })
 

@@ -31,7 +31,7 @@ export class PriceMatricesService {
   }
 
   static async delete(id: number): Promise<void> {
-    return ApiService.delete<void>(`${this.BASE_URL}/${id}`)
+    return ApiService.delete<void>(`${this.CUSTOM_URL}/${id}`)
   }
 
   static async getPriorities(branchId: number): Promise<{ data: PriceMatrixPriorityItem[] }> {

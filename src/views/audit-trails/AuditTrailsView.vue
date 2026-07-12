@@ -53,6 +53,20 @@
             >
               #{{ data['referenceId'] }}
             </a>
+            <a
+              v-else-if="col.field === 'referenceId' && data['referenceType'] === 'price_list'"
+              class="text-primary-500 cursor-pointer hover:underline"
+              @click.prevent="router.push(`/price-lists/${data['referenceId']}`)"
+            >
+              #{{ data['referenceId'] }}
+            </a>
+            <a
+              v-else-if="col.field === 'referenceId' && data['referenceType'] === 'price_matrix'"
+              class="text-primary-500 cursor-pointer hover:underline"
+              @click.prevent="router.push(`/price-matrices/${data['referenceId']}`)"
+            >
+              #{{ data['referenceId'] }}
+            </a>
             <span v-else-if="col.field === 'referenceId'">{{ data['referenceId'] }}</span>
             <Button
               v-if="col.field === ''"

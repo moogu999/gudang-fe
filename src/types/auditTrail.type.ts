@@ -1,4 +1,9 @@
-export type AuditReferenceType = 'promotion' | 'employee' | 'customer'
+export type AuditReferenceType =
+  | 'promotion'
+  | 'employee'
+  | 'customer'
+  | 'price_list'
+  | 'price_matrix'
 
 export type AuditTrailListItem = {
   id: number

@@ -1126,6 +1126,8 @@ export default {
       promotion: 'Promotion',
       employee: 'Employee',
       customer: 'Customer',
+      price_list: 'Price List',
+      price_matrix: 'Price Matrix',
     },
   },
   employees: {

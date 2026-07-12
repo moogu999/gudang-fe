@@ -1122,6 +1122,8 @@ export default {
       promotion: 'Promosi',
       employee: 'Karyawan',
       customer: 'Pelanggan',
+      price_list: 'Daftar Harga',
+      price_matrix: 'Matriks Harga',
     },
   },
   employees: {

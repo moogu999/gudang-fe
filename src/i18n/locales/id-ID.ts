@@ -1121,6 +1121,7 @@ export default {
     references: {
       promotion: 'Promosi',
       employee: 'Karyawan',
+      customer: 'Pelanggan',
     },
   },
   employees: {

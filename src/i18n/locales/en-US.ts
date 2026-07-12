@@ -1125,6 +1125,7 @@ export default {
     references: {
       promotion: 'Promotion',
       employee: 'Employee',
+      customer: 'Customer',
     },
   },
   employees: {

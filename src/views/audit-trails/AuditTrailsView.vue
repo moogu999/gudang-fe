@@ -46,6 +46,13 @@
             >
               #{{ data['referenceId'] }}
             </a>
+            <a
+              v-else-if="col.field === 'referenceId' && data['referenceType'] === 'customer'"
+              class="text-primary-500 cursor-pointer hover:underline"
+              @click.prevent="router.push(`/customers/${data['referenceId']}`)"
+            >
+              #{{ data['referenceId'] }}
+            </a>
             <span v-else-if="col.field === 'referenceId'">{{ data['referenceId'] }}</span>
             <Button
               v-if="col.field === ''"

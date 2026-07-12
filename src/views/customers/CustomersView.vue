@@ -289,6 +289,8 @@ const { confirmDelete, deleteAcceptanceHandler } = useConfirmDelete({
 })
 
 function onDeleteClick(id: number) {
-  confirmDelete(() => CustomersService.delete(id))
+  // Use the v1 endpoint: soft-deletes the customer and records an audit trail,
+  // unlike the generic CRUD delete which hard-deletes without audit.
+  confirmDelete(() => CustomersService.v1Delete(id))
 }
 </script>

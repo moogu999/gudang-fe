@@ -8,7 +8,7 @@
           sidebarStore.isCollapsed ? 'w-full justify-center' : '',
         ]"
       >
-        <h1 v-if="!sidebarStore.isCollapsed" class="text-base sm:text-lg">gudang-fe</h1>
+        <h1 v-if="!sidebarStore.isCollapsed" class="text-base sm:text-lg">N-Force</h1>
         <i v-else class="pi pi-home text-xl"></i>
       </RouterLink>
     </div>

@@ -35,26 +35,40 @@
   />
 
   <!-- Desktop search -->
-  <div class="hidden w-full flex-1 md:block">
-    <form>
-      <div class="relative">
-        <IconField>
-          <InputIcon class="pi pi-search" />
-          <InputText :placeholder="t('table.searchPlaceholder')" />
-        </IconField>
-      </div>
-    </form>
+  <div class="relative hidden w-full max-w-sm md:block">
+    <i
+      class="pi pi-search pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-stone-400"
+    />
+    <MenuSearchAutocomplete
+      v-model="searchSelection"
+      :suggestions="searchResults"
+      scroll-height="20rem"
+      @complete="onSearchComplete"
+      @option-select="onMenuSelect"
+    />
   </div>
+
+  <!-- Spacer to keep language switcher and avatar right-aligned on desktop -->
+  <div class="hidden flex-1 md:block"></div>
 
   <!-- Mobile search drawer -->
   <Drawer v-model:visible="isSearchDrawerOpen" position="top" :pt="{ root: 'h-auto' }">
     <template #header>
       <h3>{{ t('table.search') }}</h3>
     </template>
-    <IconField class="w-full">
-      <InputIcon class="pi pi-search" />
-      <InputText :placeholder="t('table.searchPlaceholder')" class="w-full" autofocus />
-    </IconField>
+    <div class="relative w-full">
+      <i
+        class="pi pi-search pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-stone-400"
+      />
+      <MenuSearchAutocomplete
+        v-model="searchSelection"
+        :suggestions="searchResults"
+        scroll-height="60vh"
+        autofocus
+        @complete="onSearchComplete"
+        @option-select="onMenuSelect"
+      />
+    </div>
   </Drawer>
 
   <LanguageSwitcherComponent />
@@ -70,24 +84,23 @@
 </template>
 
 <script setup lang="ts">
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
+import { type AutoCompleteOptionSelectEvent } from 'primevue/autocomplete'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import Toast from 'primevue/toast'
 import Drawer from 'primevue/drawer'
-import { useTemplateRef, ref } from 'vue'
+import { useTemplateRef, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useSidebarStore } from '@/stores'
-import { commonErrorToast, commonSuccessToast } from '@/services'
+import { commonErrorToast, commonSuccessToast, commonWarnToast } from '@/services'
 import LanguageSwitcherComponent from './LanguageSwitcherComponent.vue'
-import { useResponsiveSize } from '@/composables'
+import MenuSearchAutocomplete from './MenuSearchAutocomplete.vue'
+import { useResponsiveSize, useMenuSearch, type MenuSearchResult } from '@/composables'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { buttonSize } = useResponsiveSize()
 
 const router = useRouter()
@@ -108,6 +121,44 @@ const isSearchDrawerOpen = ref(false)
 function openMobileSearchDrawer() {
   isSearchDrawerOpen.value = true
 }
+
+// Menu search — find and navigate to accessible menus/submenus
+const { search } = useMenuSearch()
+const searchResults = ref<MenuSearchResult[]>([])
+// AutoComplete drives this via v-model: a string while typing, the selected item once
+// an option is chosen.
+const searchSelection = ref<string | MenuSearchResult | null>(null)
+// Last query, kept so we can refresh results (e.g. their labels) when the locale changes.
+const lastSearchQuery = ref('')
+
+function onSearchComplete(event: { query: string }) {
+  lastSearchQuery.value = event.query
+  searchResults.value = search(event.query)
+}
+
+async function onMenuSelect(event: AutoCompleteOptionSelectEvent) {
+  const item = event.value as MenuSearchResult
+  // Reset input and close the mobile drawer after navigating.
+  searchSelection.value = null
+  isSearchDrawerOpen.value = false
+
+  await router.push(item.route)
+
+  // The router guard silently redirects users who lack the required permission to
+  // Home. If we didn't land on the selected route, surface it instead of leaving
+  // the user wondering why nothing happened.
+  if (router.currentRoute.value.path !== item.route) {
+    toast.add(commonWarnToast(t('navigation.searchAccessDenied'), 'headerMenu'))
+  }
+}
+
+// When the language changes while the dropdown is open, re-run the last search so
+// the displayed labels follow the new locale instead of going stale.
+watch(locale, () => {
+  if (searchResults.value.length > 0) {
+    searchResults.value = search(lastSearchQuery.value)
+  }
+})
 
 // Auth
 const authStore = useAuthStore()

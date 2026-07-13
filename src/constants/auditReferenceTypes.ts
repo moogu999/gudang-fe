@@ -32,4 +32,41 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     },
     codeField: 'name',
   },
+  customer: {
+    label: 'Customer',
+    labelKey: 'auditTrails.references.customer',
+    listEndpoint: API_ENDPOINTS.GEN_CUSTOMERS,
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query ? `${API_ENDPOINTS.GEN_CUSTOMERS}?${query}` : API_ENDPOINTS.GEN_CUSTOMERS
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'name',
+  },
+  price_list: {
+    label: 'Price List',
+    labelKey: 'auditTrails.references.price_list',
+    listEndpoint: API_ENDPOINTS.GEN_PRICE_LISTS,
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query
+        ? `${API_ENDPOINTS.GEN_PRICE_LISTS}?${query}`
+        : API_ENDPOINTS.GEN_PRICE_LISTS
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'code',
+  },
+  price_matrix: {
+    label: 'Price Matrix',
+    labelKey: 'auditTrails.references.price_matrix',
+    listEndpoint: API_ENDPOINTS.GEN_PRICE_MATRICES,
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query
+        ? `${API_ENDPOINTS.GEN_PRICE_MATRICES}?${query}`
+        : API_ENDPOINTS.GEN_PRICE_MATRICES
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'code',
+  },
 }

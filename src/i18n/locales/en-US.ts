@@ -113,6 +113,16 @@ export default {
     goodsReceipts: 'Goods Receipts',
     inventoryStatus: 'Inventory Status',
     stockMovements: 'Stock Movements',
+    searchMenu: 'Search menu...',
+    searchNoResults: 'No menu found.',
+    searchAccessDenied: "You don't have permission to access that page.",
+  },
+  pageTitle: {
+    create: 'Create {entity}',
+    edit: 'Edit {entity}',
+    view: '{entity} Details',
+    signIn: 'Sign In',
+    notFound: 'Page Not Found',
   },
   table: {
     search: 'Search',
@@ -1121,6 +1131,9 @@ export default {
     references: {
       promotion: 'Promotion',
       employee: 'Employee',
+      customer: 'Customer',
+      price_list: 'Price List',
+      price_matrix: 'Price Matrix',
     },
   },
   employees: {

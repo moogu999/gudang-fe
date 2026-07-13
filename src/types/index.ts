@@ -298,6 +298,21 @@ export type {
   ConfirmDeliveryOrderRequest,
 } from './deliveryConfirmation.type'
 
+// Goods Return Note types
+export type {
+  GoodsReturnNoteStatus,
+  DriverStockSourceType,
+  GoodsReturnNoteItemStockType,
+  AvailableDriver,
+  DriverStockItem,
+  DriverStockGroup,
+  GoodsReturnNoteListItem,
+  GoodsReturnNoteItemLine,
+  GoodsReturnNoteDetail,
+  CreateGoodsReturnNoteRequest,
+  CreateGoodsReturnNoteResponse,
+} from './goodsReturnNote.type'
+
 // Pinned UOM types
 export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 

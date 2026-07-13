@@ -197,6 +197,11 @@ const mainMenu = [
         route: '/delivery-confirmations',
       },
       {
+        label: 'Goods Return Notes',
+        labelKey: 'navigation.goodsReturnNotes',
+        route: '/goods-return-notes',
+      },
+      {
         label: 'Invoices',
         labelKey: 'navigation.invoices',
         route: '/invoices',

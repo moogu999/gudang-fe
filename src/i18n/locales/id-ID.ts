@@ -89,6 +89,7 @@ export default {
     pickingLists: 'Picking List',
     goodsIssueNotes: 'Bukti Keluar Barang',
     deliveryConfirmations: 'Konfirmasi Pengiriman',
+    goodsReturnNotes: 'Bukti Terima Barang',
     configs: 'Konfigurasi',
     salesOrderConfigs: 'Konfigurasi PO',
     bookingOrderConfigs: 'Konfigurasi BO',
@@ -1887,6 +1888,65 @@ export default {
       noDnSelected: 'Pilih surat jalan terlebih dahulu.',
       noManualNo: 'Masukkan nomor KP terlebih dahulu.',
       reasonRequired: 'Pilih alasan terlebih dahulu.',
+    },
+  },
+  goodsReturnNotes: {
+    title: 'Bukti Terima Barang (BTB)',
+    createTitle: 'Buat Bukti Terima Barang (BTB)',
+    fields: {
+      no: 'No. BTB',
+      returnDate: 'Tanggal Terima',
+      driver: 'Pengemudi',
+      itemCount: 'Jumlah Item',
+      notes: 'Catatan',
+      status: 'Status',
+      createdAt: 'Dibuat Pada',
+    },
+    status: {
+      applied: 'Diterapkan',
+    },
+    sourceType: {
+      partial_delivery: 'Pengiriman Sebagian',
+      failed_delivery: 'Pengiriman Gagal',
+    },
+    actions: {
+      create: 'BTB Baru',
+      submit: 'Terima Stok',
+    },
+    picker: {
+      title: 'Pilih Pengemudi',
+      placeholder: 'Cari pengemudi…',
+      vehicle: 'Kendaraan',
+      openItems: '{count} item terbuka',
+    },
+    numberMode: {
+      label: 'No. BTB',
+      auto: 'Otomatis',
+      manual: 'Manual',
+      manualPlaceholder: 'Masukkan nomor BTB…',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+    detail: {
+      product: 'Produk',
+      warehouse: 'Gudang',
+      fromDo: 'Dari DO {no}',
+      fromDoShort: 'DO',
+      qtyAtDriver: 'Qty di Pengemudi',
+      qtyReceived: 'Qty Diterima',
+      receivedQty: 'Qty Diterima',
+    },
+    summary: {
+      title: 'Item Terpilih',
+    },
+    messages: {
+      confirmSubmit:
+        'Stok terpilih akan berpindah dari Dalam Perjalanan ke Tersedia. Tindakan ini tidak dapat dibatalkan.',
+      submitSuccess: 'Bukti terima barang {no} berhasil dibuat.',
+      notFound: 'Bukti terima barang tidak ditemukan.',
+      noDriverSelected: 'Pilih pengemudi terlebih dahulu.',
+      noItemsSelected: 'Pilih minimal satu item untuk diterima.',
+      noManualNo: 'Masukkan nomor BTB terlebih dahulu.',
+      noPoolItems: 'Pengemudi ini tidak memiliki item terbuka.',
     },
   },
   stockMovements: {

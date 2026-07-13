@@ -80,6 +80,8 @@ export const PERMISSIONS = {
   DELIVERY_CONFIRMATION_READ: 73,
   DELIVERY_CONFIRMATION_WRITE: 74,
   STOCK_MOVEMENT_READ: 75,
+  GOODS_RETURN_NOTE_READ: 76,
+  GOODS_RETURN_NOTE_WRITE: 77,
 } as const
 
 /**
@@ -127,6 +129,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_READ,
   '/delivery-confirmations': PERMISSIONS.DELIVERY_CONFIRMATION_READ,
   '/stock-movements': PERMISSIONS.STOCK_MOVEMENT_READ,
+  '/goods-return-notes': PERMISSIONS.GOODS_RETURN_NOTE_READ,
 }
 
 /**
@@ -161,4 +164,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_WRITE,
   '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_WRITE,
   '/delivery-confirmations': PERMISSIONS.DELIVERY_CONFIRMATION_WRITE,
+  '/goods-return-notes': PERMISSIONS.GOODS_RETURN_NOTE_WRITE,
 }

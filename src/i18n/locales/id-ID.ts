@@ -113,6 +113,16 @@ export default {
     goodsReceipts: 'Penerimaan Barang',
     inventoryStatus: 'Status Inventaris',
     stockMovements: 'Pergerakan Stok',
+    searchMenu: 'Cari menu...',
+    searchNoResults: 'Menu tidak ditemukan.',
+    searchAccessDenied: 'Anda tidak memiliki izin untuk mengakses halaman tersebut.',
+  },
+  pageTitle: {
+    create: 'Tambah {entity}',
+    edit: 'Ubah {entity}',
+    view: 'Detail {entity}',
+    signIn: 'Masuk',
+    notFound: 'Halaman Tidak Ditemukan',
   },
   table: {
     search: 'Cari',
@@ -1116,6 +1126,9 @@ export default {
     references: {
       promotion: 'Promosi',
       employee: 'Karyawan',
+      customer: 'Pelanggan',
+      price_list: 'Daftar Harga',
+      price_matrix: 'Matriks Harga',
     },
   },
   employees: {

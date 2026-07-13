@@ -1,6 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { watch } from 'vue'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores'
 import { PERMISSIONS } from '@/constants'
+import i18n from '@/i18n'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    requiredPermission?: number
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -507,5 +516,135 @@ router.beforeEach(async (to, from, next) => {
 
   next()
 })
+
+// --- Document title management ---
+
+const APP_NAME = 'N-Force'
+
+/**
+ * Maps a route name to its title definition.
+ * - `key`: i18n key resolved as the page/entity name (usually a `navigation.*` key).
+ * - `action`: optional verb composed with the entity name via `pageTitle.*`
+ *   (e.g. action 'create' on entity 'Customers' → "Create Customers").
+ */
+type TitleDef = { key: string; action?: 'create' | 'edit' | 'view' }
+
+const ROUTE_TITLES: Record<string, TitleDef> = {
+  SignIn: { key: 'pageTitle.signIn' },
+  Home: { key: 'navigation.home' },
+  Superset: { key: 'navigation.superset' },
+
+  Users: { key: 'navigation.users' },
+  Roles: { key: 'navigation.roles' },
+  Permissions: { key: 'navigation.permissions' },
+  AuditTrails: { key: 'navigation.auditTrails' },
+  AuditTrailDetail: { key: 'navigation.auditTrails', action: 'view' },
+
+  Companies: { key: 'navigation.companies' },
+  Branches: { key: 'navigation.branches' },
+  Departments: { key: 'navigation.departments' },
+  Divisions: { key: 'navigation.divisions' },
+  SalesOrganizations: { key: 'navigation.salesOrganizations' },
+
+  Customers: { key: 'navigation.customers' },
+  CustomerCreate: { key: 'navigation.customers', action: 'create' },
+  CustomerEdit: { key: 'navigation.customers', action: 'edit' },
+  CustomerDetail: { key: 'navigation.customers', action: 'view' },
+  CustomerLabelDefinitions: { key: 'navigation.customerLabelDefinitions' },
+
+  Products: { key: 'navigation.products' },
+  ProductLabelDefinitions: { key: 'navigation.productLabelDefinitions' },
+  UnitOfMeasurements: { key: 'navigation.unitOfMeasurements' },
+  UomGroups: { key: 'navigation.uomGroups' },
+
+  Employees: { key: 'navigation.employees' },
+  EmployeeNew: { key: 'navigation.employees', action: 'create' },
+  EmployeeDetail: { key: 'navigation.employees', action: 'view' },
+
+  Vehicles: { key: 'navigation.vehicles' },
+  VehicleNew: { key: 'navigation.vehicles', action: 'create' },
+  VehicleDetail: { key: 'navigation.vehicles', action: 'view' },
+
+  Warehouses: { key: 'navigation.warehouses' },
+  GoodsReceipts: { key: 'navigation.goodsReceipts' },
+  GoodsReceiptCreate: { key: 'navigation.goodsReceipts', action: 'create' },
+  GoodsReceiptDetail: { key: 'navigation.goodsReceipts', action: 'view' },
+  InventoryStatus: { key: 'navigation.inventoryStatus' },
+  StockMovements: { key: 'navigation.stockMovements' },
+
+  PriceLists: { key: 'navigation.priceLists' },
+  PriceListCreate: { key: 'navigation.priceLists', action: 'create' },
+  PriceListEdit: { key: 'navigation.priceLists', action: 'edit' },
+  PriceListDetail: { key: 'navigation.priceLists', action: 'view' },
+  PriceMatrices: { key: 'navigation.priceMatrices' },
+  PriceMatrixCreate: { key: 'navigation.priceMatrices', action: 'create' },
+  PriceMatrixEdit: { key: 'navigation.priceMatrices', action: 'edit' },
+  PriceMatrixDetail: { key: 'navigation.priceMatrices', action: 'view' },
+  PriceMatrixPriorities: { key: 'navigation.priceMatrixPriorities' },
+  Promotions: { key: 'navigation.promotions' },
+  PromotionCreate: { key: 'navigation.promotions', action: 'create' },
+  PromotionEdit: { key: 'navigation.promotions', action: 'edit' },
+  PromotionDetail: { key: 'navigation.promotions', action: 'view' },
+
+  SalesOrders: { key: 'navigation.salesOrders' },
+  SalesOrderCreate: { key: 'navigation.salesOrders', action: 'create' },
+  SalesOrderEdit: { key: 'navigation.salesOrders', action: 'edit' },
+  SalesOrderDetail: { key: 'navigation.salesOrders', action: 'view' },
+  BookingOrders: { key: 'navigation.bookingOrders' },
+  DeliveryOrders: { key: 'navigation.deliveryOrders' },
+  DeliveryOrderDetail: { key: 'navigation.deliveryOrders', action: 'view' },
+  DeliveryOrderPrint: { key: 'navigation.deliveryOrders', action: 'view' },
+  DeliveryNotes: { key: 'navigation.deliveryNotes' },
+  DeliveryNoteCreate: { key: 'navigation.deliveryNotes', action: 'create' },
+  DeliveryNoteEdit: { key: 'navigation.deliveryNotes', action: 'edit' },
+  DeliveryNoteDetail: { key: 'navigation.deliveryNotes', action: 'view' },
+  PickingLists: { key: 'navigation.pickingLists' },
+  PickingListDetail: { key: 'navigation.pickingLists', action: 'view' },
+  GoodsIssueNotes: { key: 'navigation.goodsIssueNotes' },
+  GoodsIssueNoteCreate: { key: 'navigation.goodsIssueNotes', action: 'create' },
+  GoodsIssueNoteDetail: { key: 'navigation.goodsIssueNotes', action: 'view' },
+  DeliveryConfirmations: { key: 'navigation.deliveryConfirmations' },
+  DeliveryConfirmationCreate: { key: 'navigation.deliveryConfirmations', action: 'create' },
+  DeliveryConfirmationDetail: { key: 'navigation.deliveryConfirmations', action: 'view' },
+  Invoices: { key: 'navigation.invoices' },
+  InvoiceDetail: { key: 'navigation.invoices', action: 'view' },
+
+  Configs: { key: 'navigation.configs' },
+  NumberSeries: { key: 'navigation.numberSeries' },
+
+  NotFoundPage: { key: 'pageTitle.notFound' },
+}
+
+/**
+ * Resolves the localized page title for a route and applies it to `document.title`.
+ * Falls back to the bare app name when the route has no mapping.
+ */
+function setDocumentTitle(route: RouteLocationNormalized): void {
+  const { t } = i18n.global
+  const def = typeof route.name === 'string' ? ROUTE_TITLES[route.name] : undefined
+
+  if (!def) {
+    document.title = APP_NAME
+    return
+  }
+
+  const entity = t(def.key)
+  const page = def.action ? t(`pageTitle.${def.action}`, { entity }) : entity
+  document.title = page ? `${page} · ${APP_NAME}` : APP_NAME
+}
+
+router.afterEach((to) => {
+  setDocumentTitle(to)
+})
+
+// Keep the title in sync when the user switches language.
+const stopLocaleWatch = watch(
+  () => i18n.global.locale.value,
+  () => setDocumentTitle(router.currentRoute.value),
+)
+
+// Stop the watcher on Vite HMR so repeated module reloads don't accumulate
+// duplicate watchers that all fire on every locale change.
+import.meta.hot?.dispose(stopLocaleWatch)
 
 export default router

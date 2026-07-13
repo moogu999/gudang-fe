@@ -39,7 +39,7 @@ const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const authStore = useAuthStore()
-const appTitle = 'gudang-fe'
+const appTitle = 'N-Force'
 
 // Use actual auth state from store
 const isSignedIn = computed(() => authStore.isAuthenticated)

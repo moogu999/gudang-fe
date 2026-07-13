@@ -66,10 +66,28 @@ export function usePermissions(routePath?: string) {
     return hasPermission(requiredPermission)
   }
 
+  /**
+   * Check whether the current user can access a navigation menu item.
+   *
+   * An item is accessible if it declares `permissionsAny` and the user holds any
+   * of those permissions, or — when no explicit permissions are declared — if the
+   * user can access its route. Items without a route are always accessible.
+   *
+   * Shared by the sidebar (PanelMenuComponent) and the header menu search so the
+   * permission logic stays in one place.
+   */
+  const canAccessMenuItem = (item: { permissionsAny?: number[]; route?: string }): boolean => {
+    if (item.permissionsAny && Array.isArray(item.permissionsAny)) {
+      return item.permissionsAny.some((p) => hasPermission(p as PermissionId))
+    }
+    return item.route ? canAccessRoute(item.route) : true
+  }
+
   return {
     hasPermission,
     canRead,
     canWrite,
     canAccessRoute,
+    canAccessMenuItem,
   }
 }

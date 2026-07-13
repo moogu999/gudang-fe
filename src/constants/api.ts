@@ -220,6 +220,12 @@ export const API_ENDPOINTS = {
 
   // Stock Movements endpoints
   STOCK_MOVEMENTS: '/v1/stock-movements',
+
+  // Goods Return Note endpoints
+  GOODS_RETURN_NOTES: '/v1/goods-return-notes',
+  GOODS_RETURN_NOTE_BY_ID: (id: number) => `/v1/goods-return-notes/${id}`,
+  GOODS_RETURN_NOTE_DRIVER_STOCK: '/v1/goods-return-notes/driver-stock',
+  GOODS_RETURN_NOTE_AVAILABLE_DRIVERS: '/v1/goods-return-notes/available-drivers',
 } as const
 
 // Type for API endpoints (useful for validation)

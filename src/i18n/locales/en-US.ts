@@ -88,6 +88,7 @@ export default {
     pickingLists: 'Picking Lists',
     goodsIssueNotes: 'Goods Issue Notes',
     deliveryConfirmations: 'Delivery Confirmations',
+    goodsReturnNotes: 'Goods Return Notes',
     configs: 'Config',
     salesOrderConfigs: 'SO Config',
     bookingOrderConfigs: 'BO Config',
@@ -1876,6 +1877,65 @@ export default {
       noDnSelected: 'Please select a delivery note.',
       noManualNo: 'Please enter a DC number.',
       reasonRequired: 'Please select a reason.',
+    },
+  },
+  goodsReturnNotes: {
+    title: 'Goods Return Notes',
+    createTitle: 'Create Goods Return Note',
+    fields: {
+      no: 'Return Note Number',
+      returnDate: 'Return Date',
+      driver: 'Driver',
+      itemCount: 'Item Count',
+      notes: 'Notes',
+      status: 'Status',
+      createdAt: 'Created At',
+    },
+    status: {
+      applied: 'Applied',
+    },
+    sourceType: {
+      partial_delivery: 'Partial Delivery',
+      failed_delivery: 'Failed Delivery',
+    },
+    actions: {
+      create: 'New Return Note',
+      submit: 'Receive Stock',
+    },
+    picker: {
+      title: 'Select Driver',
+      placeholder: 'Search driver…',
+      vehicle: 'Vehicle',
+      openItems: '{count} open item(s)',
+    },
+    numberMode: {
+      label: 'Return Note Number',
+      auto: 'Auto',
+      manual: 'Manual',
+      manualPlaceholder: 'Enter return note number…',
+      assignedOnSave: 'Assigned on save',
+    },
+    detail: {
+      product: 'Product',
+      warehouse: 'Warehouse',
+      fromDo: 'From DO {no}',
+      fromDoShort: 'DO',
+      qtyAtDriver: 'Qty at Driver',
+      qtyReceived: 'Qty Received',
+      receivedQty: 'Received Qty',
+    },
+    summary: {
+      title: 'Selected Items',
+    },
+    messages: {
+      confirmSubmit:
+        'Selected stock will move from In Transit to On Hand. This action cannot be undone.',
+      submitSuccess: 'Goods return note {no} created successfully.',
+      notFound: 'Goods return note not found.',
+      noDriverSelected: 'Please select a driver.',
+      noItemsSelected: 'Please select at least one item to receive.',
+      noManualNo: 'Please enter a return note number.',
+      noPoolItems: 'This driver has no open pool items.',
     },
   },
   stockMovements: {

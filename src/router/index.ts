@@ -454,6 +454,24 @@ const router = createRouter({
           component: () => import('@/views/stock-movements/StockMovementsView.vue'),
           meta: { requiredPermission: PERMISSIONS.STOCK_MOVEMENT_READ },
         },
+        {
+          path: 'goods-return-notes',
+          name: 'GoodsReturnNotes',
+          component: () => import('@/views/goods-return-notes/GoodsReturnNotesView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RETURN_NOTE_READ },
+        },
+        {
+          path: 'goods-return-notes/create',
+          name: 'GoodsReturnNoteCreate',
+          component: () => import('@/views/goods-return-notes/GoodsReturnNoteCreateView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RETURN_NOTE_WRITE },
+        },
+        {
+          path: 'goods-return-notes/:id',
+          name: 'GoodsReturnNoteDetail',
+          component: () => import('@/views/goods-return-notes/GoodsReturnNoteDetailView.vue'),
+          meta: { requiredPermission: PERMISSIONS.GOODS_RETURN_NOTE_READ },
+        },
       ],
     },
 

@@ -42,14 +42,18 @@ export function computeBaseQty(tiers: number[], levels: UomConversionLevel[]): n
  *   → [1, 0, 1]
  */
 export function decomposeBaseQty(baseQty: number, levels: UomConversionLevel[]): number[] {
+  // Decompose by magnitude and re-apply the sign per tier, since JS's Math.floor/%
+  // round toward -Infinity for negative operands (e.g. -3 → [-1,-1,-3] instead of
+  // the sign-preserved [0,0,-3]) — return documents store fully negative quantities.
+  const sign = baseQty < 0 ? -1 : 1
   const tiers: number[] = []
-  let remaining = Math.round(baseQty)
+  let remaining = Math.round(Math.abs(baseQty))
   for (let i = 0; i < levels.length; i++) {
     let multiplier = 1
     for (let j = i + 1; j < levels.length; j++) {
       multiplier *= levels[j].qtyPerParent ?? 1
     }
-    tiers.push(Math.floor(remaining / multiplier))
+    tiers.push(sign * Math.floor(remaining / multiplier))
     remaining = remaining % multiplier
   }
   return tiers

@@ -29,6 +29,28 @@
           {{ t('salesOrders.sections.orderInfo') }}
         </h3>
 
+        <!-- Order Type -->
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-semibold">{{ t('salesOrders.fields.type') }}</label>
+          <SelectButton
+            id="salesOrderTypeId"
+            name="salesOrderTypeId"
+            :options="salesOrderTypeOptions"
+            option-label="label"
+            option-value="value"
+            :allow-empty="false"
+            :disabled="mode !== DialogMode.ADD"
+            @update:model-value="onTypeSelect"
+          />
+          <Message
+            v-if="$form.salesOrderTypeId?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.salesOrderTypeId.error.message }}</Message
+          >
+        </div>
+
         <!-- Order Number -->
         <div class="flex flex-col gap-1">
           <label for="no" class="text-sm font-semibold">{{ t('salesOrders.fields.no') }}</label>
@@ -214,6 +236,58 @@
             >
           </div>
         </div>
+
+        <!-- Return Source + Source Invoice (return type, ADD mode only) -->
+        <div
+          v-if="isReturn && mode === DialogMode.ADD"
+          class="space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3"
+        >
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-semibold">{{ t('salesOrders.fields.returnSource') }}</label>
+            <SelectButton
+              :model-value="returnSource"
+              :options="returnSourceOptions"
+              option-label="label"
+              option-value="value"
+              :allow-empty="false"
+              @update:model-value="onReturnSourceSelect"
+            />
+          </div>
+
+          <div v-if="returnSource === 'invoice'" class="flex flex-col gap-1">
+            <label class="text-sm font-semibold">{{ t('salesOrders.fields.sourceInvoice') }}</label>
+            <InfiniteSelect
+              v-if="currentCustomerId"
+              :model-value="sourceInvoiceId"
+              option-label="no"
+              option-value="id"
+              :fetch-fn="
+                (query) => InvoicesService.listAppliedForCustomer(currentCustomerId!, query)
+              "
+              :initial-option="initialSourceInvoice"
+              sort-by="createdAt"
+              sort-operator="desc"
+              @update:model-value="(v) => (sourceInvoiceId = v as number | undefined)"
+              @select-option="(opt) => onSourceInvoiceSelect(opt as InvoiceListItem)"
+            />
+            <Message v-else severity="secondary" size="small" variant="simple">{{
+              t('salesOrders.validation.customerRequired')
+            }}</Message>
+          </div>
+        </div>
+
+        <!-- Source Invoice (return type, VIEW mode only) -->
+        <div
+          v-if="isReturn && mode === DialogMode.VIEW && viewSourceInvoiceId"
+          class="flex flex-col gap-1"
+        >
+          <label class="text-sm font-semibold">{{ t('salesOrders.fields.sourceInvoice') }}</label>
+          <RouterLink
+            :to="{ name: 'InvoiceDetail', params: { id: viewSourceInvoiceId } }"
+            class="text-primary font-medium hover:underline"
+            >{{ viewSourceInvoiceNo }}</RouterLink
+          >
+        </div>
       </div>
 
       <!-- Right Column: Payment & Financial -->
@@ -252,17 +326,19 @@
 
     <!-- Details Section -->
     <SalesOrderDetailsTable
+      :key="detailsTableKey"
       v-model="details"
       :mode="mode"
       :is-resolving="isResolving"
-      :header-discounts="headerDiscounts"
-      :header-bonuses="headerBonuses"
-      :header-choice-offers="headerChoiceOffers"
+      :header-discounts="isReturn ? [] : headerDiscounts"
+      :header-bonuses="isReturn ? [] : headerBonuses"
+      :header-choice-offers="isReturn ? [] : headerChoiceOffers"
       v-model:header-choice-picks="headerChoicePicks"
+      :disable-add="isReturn && returnSource === 'invoice'"
     />
 
-    <!-- Invoice-level Manual Discounts -->
-    <div class="mt-4 rounded-lg border border-stone-200 p-4">
+    <!-- Invoice-level Manual Discounts (not available for returns — no promotions/adjustments) -->
+    <div v-if="!isReturn" class="mt-4 rounded-lg border border-stone-200 p-4">
       <ManualDiscountEditor
         :model-value="headerManualDiscountsPreview"
         @update:model-value="headerManualDiscounts = $event"
@@ -324,8 +400,8 @@
 
           <div class="flex justify-between text-lg">
             <span class="font-bold">{{ t('salesOrders.summary.total') }}</span>
-            <span class="font-bold text-green-600">{{
-              formatCurrency(calculatedTotals.total)
+            <span :class="isReturn ? 'font-bold text-red-600' : 'font-bold text-green-600'">{{
+              formatCurrency(displayTotal)
             }}</span>
           </div>
         </div>
@@ -335,6 +411,12 @@
     <!-- Action Buttons -->
     <div class="mt-6 flex justify-end gap-2">
       <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('cancel')" />
+      <Button
+        v-if="mode === DialogMode.VIEW && isReturn && currentStatus === 'approved' && salesOrderId"
+        :label="t('salesOrders.actions.createReturnDeliveryOrder')"
+        icon="pi pi-truck"
+        @click="emit('createReturnDo', salesOrderId!)"
+      />
       <template v-if="mode !== DialogMode.VIEW">
         <Button
           type="submit"
@@ -356,6 +438,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onBeforeMount } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
@@ -374,6 +457,7 @@ import Checkbox from 'primevue/checkbox'
 import Message from 'primevue/message'
 import Divider from 'primevue/divider'
 import ProgressSpinner from 'primevue/progressspinner'
+import SelectButton from 'primevue/selectbutton'
 import Form from '@primevue/forms/form'
 import type { FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
@@ -388,22 +472,29 @@ import {
   SalesOrdersService,
   SalesOrderHeadersService,
   SalesOrderDetailsService,
+  SalesOrderTypesService,
+  InvoicesService,
   TaxConfigurationService,
   SalesOrderConfigService,
   GenericQueryBuilder,
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
-import type { SalesOrderConfig, SalesOrderStatus } from '@/types'
+import type { SalesOrderConfig, SalesOrderStatus, SalesOrderType, InvoiceListItem } from '@/types'
 import type {
   SalesOrderDetailRow,
   CreateSalesOrderRequest,
   CustomerLite,
   ResolveSalesOrderRequest,
+  ReturnSource,
   EmployeeLite,
   Employee,
   ManualDiscount,
 } from '@/types'
+import {
+  SALES_ORDER_TYPE_CODE_SALES,
+  SALES_ORDER_TYPE_CODE_RETURN,
+} from '@/types/salesOrderType.type'
 import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
@@ -435,6 +526,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   cancel: []
   submitted: []
+  createReturnDo: [salesOrderId: number]
 }>()
 
 // Status tracking
@@ -468,6 +560,98 @@ const headerManualDiscounts = ref<ManualDiscount[]>([])
 const initialCustomer = ref<CustomerLite>()
 const initialSalesman = ref<EmployeeLite>()
 const salesmanTypeId = ref<number | undefined>()
+
+// Sales Order Type / Return state
+const salesOrderTypes = ref<SalesOrderType[]>([])
+const currentSalesOrderTypeId = ref<number | undefined>()
+const currentTypeCode = ref<string | undefined>()
+const returnSource = ref<ReturnSource>('direct')
+const sourceInvoiceId = ref<number | undefined>()
+const initialSourceInvoice = ref<InvoiceListItem>()
+// Populated in VIEW mode from the loaded header, to display (not edit) the source invoice.
+const viewSourceInvoiceId = ref<number | null>(null)
+const viewSourceInvoiceNo = ref<string | null>(null)
+
+const isReturn = computed(() => currentTypeCode.value === SALES_ORDER_TYPE_CODE_RETURN)
+
+// Forces SalesOrderDetailsTable to remount (fresh internal edit state) whenever the
+// return-from-invoice source changes — its watcher merges resolved fields onto rows by
+// _localId while a row edit is in progress, which would otherwise swallow the bulk
+// replacement of details.value with the newly-loaded invoice lines.
+const detailsTableKey = computed(() => `${returnSource.value}:${sourceInvoiceId.value ?? 0}`)
+
+const salesOrderTypeOptions = computed(() =>
+  salesOrderTypes.value.map((type) => ({
+    label: t(`salesOrders.type.${type.code}`),
+    value: type.id,
+  })),
+)
+
+const returnSourceOptions = computed(() => [
+  { label: t('salesOrders.returnSource.direct'), value: 'direct' as ReturnSource },
+  { label: t('salesOrders.returnSource.invoice'), value: 'invoice' as ReturnSource },
+])
+
+const displayTotal = computed(() => {
+  if (props.mode !== DialogMode.VIEW && isReturn.value) return -calculatedTotals.value.total
+  return calculatedTotals.value.total
+})
+
+function onTypeSelect(value: number | undefined) {
+  currentSalesOrderTypeId.value = value
+  const type = salesOrderTypes.value.find((t) => t.id === value)
+  currentTypeCode.value = type?.code
+  if (currentTypeCode.value !== SALES_ORDER_TYPE_CODE_RETURN) {
+    returnSource.value = 'direct'
+    sourceInvoiceId.value = undefined
+    initialSourceInvoice.value = undefined
+  }
+}
+
+function onReturnSourceSelect(value: ReturnSource) {
+  returnSource.value = value
+  sourceInvoiceId.value = undefined
+  initialSourceInvoice.value = undefined
+  details.value = []
+}
+
+async function onSourceInvoiceSelect(invoice: InvoiceListItem) {
+  sourceInvoiceId.value = invoice.id
+  isResolving.value = true
+  try {
+    const inv = await InvoicesService.get(invoice.id)
+    details.value = inv.lines
+      .filter((line) => !line.isBonus)
+      .map((line) => {
+        const qty = parseFloat(line.quantity)
+        return {
+          _localId: crypto.randomUUID(),
+          productId: line.productId,
+          product: { code: line.productCode, name: line.productName },
+          quantity: qty,
+          price: parseFloat(line.price),
+          discount: 0,
+          _priceListId: null,
+          _priceListCode: null,
+          _taxIncluded: false,
+          _taxBaseAmount: line.taxBaseAmount,
+          _taxAmount: line.taxAmount,
+          _discounts: [],
+          _bonuses: [],
+          _choiceOffers: [],
+          _choicePicks: {},
+          _manualDiscounts: [],
+          _sourceInvoiceDetailId: line.id,
+          _invoicedQty: qty,
+          pinnedUom: line.pinnedUom ?? null,
+        }
+      })
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
+  } finally {
+    isResolving.value = false
+  }
+}
 
 // Tracked for live resolve trigger (ADD mode only)
 const currentCustomerId = ref<number | undefined>()
@@ -512,6 +696,7 @@ const initialValues = reactive({
   remark: '',
   isCash: false,
   downPaymentAmount: 0,
+  salesOrderTypeId: undefined as number | undefined,
 })
 
 // Validation schema
@@ -529,6 +714,7 @@ const resolver = computed(() =>
       remark: z.string().optional(),
       isCash: z.boolean().optional(),
       downPaymentAmount: z.number().min(0).optional(),
+      salesOrderTypeId: z.number({ message: t('salesOrders.validation.typeRequired') }),
     }),
   ),
 )
@@ -719,6 +905,9 @@ function formatCurrency(value: number): string {
 // ─── Live Resolve ────────────────────────────────────────────────────────────
 
 async function resolveOrder() {
+  // From-invoice returns copy prices verbatim from the source invoice; no live preview.
+  if (isReturn.value && returnSource.value === 'invoice') return
+
   const customerId = currentCustomerId.value
   const employeeId = currentEmployeeId.value
   if (!customerId || !employeeId) return
@@ -743,6 +932,22 @@ async function resolveOrder() {
   isResolving.value = true
   try {
     const response = await SalesOrdersService.resolve(request)
+
+    // Returns never carry promotions — the live preview endpoint isn't return-type-aware,
+    // so strip any matched discounts/bonuses/choice offers client-side (decision: no
+    // promotions on returns).
+    if (isReturn.value) {
+      response.headerDiscountAmount = '0'
+      response.headerDiscounts = []
+      response.headerBonuses = []
+      response.headerChoiceOffers = []
+      response.details.forEach((d) => {
+        d.discount = '0'
+        d.discounts = []
+        d.bonuses = []
+        d.choiceOffers = []
+      })
+    }
 
     headerDiscountAmount.value = parseFloat(response.headerDiscountAmount) || 0
     headerDiscounts.value = response.headerDiscounts ?? []
@@ -885,6 +1090,13 @@ function onSalesmanSelect(opt: Employee) {
 // ─── Validate details ─────────────────────────────────────────────────────────
 
 function validateDetails(): boolean {
+  if (isReturn.value && returnSource.value === 'invoice' && !sourceInvoiceId.value) {
+    toast.add(
+      commonErrorToast(new Error(t('salesOrders.validation.sourceInvoiceRequired')), toastGroup),
+    )
+    return false
+  }
+
   if (details.value.length === 0) {
     toast.add(commonErrorToast(new Error(t('salesOrders.validation.detailsRequired')), toastGroup))
     return false
@@ -895,6 +1107,21 @@ function validateDetails(): boolean {
       toast.add(
         commonErrorToast(
           new Error(t('salesOrders.validation.detailIncomplete', { row: index + 1 })),
+          toastGroup,
+        ),
+      )
+      return false
+    }
+
+    if (
+      isReturn.value &&
+      returnSource.value === 'invoice' &&
+      row._invoicedQty !== undefined &&
+      row.quantity > row._invoicedQty
+    ) {
+      toast.add(
+        commonErrorToast(
+          new Error(t('salesOrders.validation.returnQtyExceedsInvoiced', { row: index + 1 })),
           toastGroup,
         ),
       )
@@ -979,8 +1206,12 @@ async function onFormSubmit(event: FormSubmitEvent) {
     remark: event.states.remark.value || null,
     downPaymentAmount: String(event.states.downPaymentAmount.value || 0),
     isCash: event.states.isCash.value || false,
+    salesOrderTypeId: event.states.salesOrderTypeId.value,
+    returnSource: isReturn.value ? returnSource.value : undefined,
+    sourceInvoiceId:
+      isReturn.value && returnSource.value === 'invoice' ? sourceInvoiceId.value : undefined,
     details: details.value.map((row) => {
-      const choiceOffers = row._choiceOffers ?? []
+      const choiceOffers = isReturn.value ? [] : (row._choiceOffers ?? [])
       const customerChoices =
         choiceOffers.length > 0
           ? choiceOffers
@@ -992,7 +1223,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
           : undefined
 
       const lineManualDiscounts =
-        (row._manualDiscounts ?? []).length > 0
+        !isReturn.value && (row._manualDiscounts ?? []).length > 0
           ? (row._manualDiscounts ?? []).map((d) => ({
               discountType: d.discountType,
               value: d.value,
@@ -1005,10 +1236,13 @@ async function onFormSubmit(event: FormSubmitEvent) {
         quantity: String(row.quantity!),
         ...(customerChoices ? { customerChoices } : {}),
         ...(lineManualDiscounts ? { manualDiscounts: lineManualDiscounts } : {}),
+        ...(isReturn.value && returnSource.value === 'invoice'
+          ? { sourceInvoiceDetailId: row._sourceInvoiceDetailId ?? null }
+          : {}),
       }
     }),
     headerCustomerChoices:
-      headerChoiceOffers.value.length > 0
+      !isReturn.value && headerChoiceOffers.value.length > 0
         ? headerChoiceOffers.value
             .map((offer) => ({
               promotionId: offer.promotionId,
@@ -1017,7 +1251,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
             .filter((c) => c.productIds.length > 0)
         : undefined,
     manualDiscounts:
-      headerManualDiscounts.value.length > 0
+      !isReturn.value && headerManualDiscounts.value.length > 0
         ? headerManualDiscounts.value.map((d) => ({
             discountType: d.discountType,
             value: d.value,
@@ -1062,7 +1296,12 @@ async function loadSalesOrder() {
     initialValues.remark = header.remark || ''
     initialValues.isCash = header.isCash
     initialValues.downPaymentAmount = parseFloat(header.downPaymentAmount)
+    initialValues.salesOrderTypeId = header.salesOrderTypeId
 
+    currentSalesOrderTypeId.value = header.salesOrderTypeId
+    currentTypeCode.value = header.salesOrderType?.code ?? header.salesOrderTypeCode
+    viewSourceInvoiceId.value = header.sourceInvoiceId ?? null
+    viewSourceInvoiceNo.value = header.sourceInvoice?.no ?? null
     currentStatus.value = header.status
     currentOrderDate.value = new Date(header.orderDate)
     currentPriceDate.value = header.priceDate ? new Date(header.priceDate) : undefined
@@ -1129,18 +1368,39 @@ async function loadSalesOrder() {
 
 // Lifecycle
 onBeforeMount(async () => {
-  const [typesResponse, taxConfig, config] = await Promise.all([
-    EmployeeTypesService.list(),
-    TaxConfigurationService.get().catch(() => ({ percentage: '0' })),
-    props.mode === DialogMode.ADD ? SalesOrderConfigService.getMyBranch() : Promise.resolve(null),
-  ])
-  const salesmanType = typesResponse.data.find((t) => t.name === 'Salesman')
-  salesmanTypeId.value = salesmanType?.id
-  taxRate.value = parseFloat(taxConfig.percentage) || 0
-  soConfig.value = config
+  if (props.mode === DialogMode.ADD) {
+    isLoading.value = true
+  }
 
-  if ((props.mode === DialogMode.VIEW || props.mode === DialogMode.EDIT) && props.salesOrderId) {
-    await loadSalesOrder()
+  try {
+    const [typesResponse, taxConfig, config, soTypesResponse] = await Promise.all([
+      EmployeeTypesService.list(),
+      TaxConfigurationService.get().catch(() => ({ percentage: '0' })),
+      props.mode === DialogMode.ADD ? SalesOrderConfigService.getMyBranch() : Promise.resolve(null),
+      SalesOrderTypesService.list(),
+    ])
+    const salesmanType = typesResponse.data.find((t) => t.name === 'Salesman')
+    salesmanTypeId.value = salesmanType?.id
+    taxRate.value = parseFloat(taxConfig.percentage) || 0
+    soConfig.value = config
+    salesOrderTypes.value = soTypesResponse.data
+
+    if (props.mode === DialogMode.ADD) {
+      const salesType = soTypesResponse.data.find((t) => t.code === SALES_ORDER_TYPE_CODE_SALES)
+      if (salesType) {
+        initialValues.salesOrderTypeId = salesType.id
+        currentSalesOrderTypeId.value = salesType.id
+        currentTypeCode.value = salesType.code
+      }
+    }
+
+    if ((props.mode === DialogMode.VIEW || props.mode === DialogMode.EDIT) && props.salesOrderId) {
+      await loadSalesOrder()
+    }
+  } finally {
+    if (props.mode === DialogMode.ADD) {
+      isLoading.value = false
+    }
   }
 })
 </script>

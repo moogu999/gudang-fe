@@ -84,6 +84,7 @@ export default {
     salesOrders: 'Pesanan Penjualan',
     bookingOrders: 'Pesanan Booking',
     deliveryOrders: 'Pesanan Pengiriman',
+    returnDeliveryOrders: 'Surat Jalan Retur',
     invoices: 'Faktur',
     deliveryNotes: 'Surat Jalan',
     pickingLists: 'Picking List',
@@ -728,6 +729,19 @@ export default {
       taxAmount: 'Pajak',
       downPaymentAmount: 'Uang Muka',
       totalAmount: 'Total',
+      type: 'Tipe Pesanan',
+      returnSource: 'Sumber Retur',
+      sourceInvoice: 'Invoice Sumber',
+    },
+
+    type: {
+      sales: 'Penjualan',
+      return: 'Retur',
+    },
+
+    returnSource: {
+      direct: 'Langsung (harga saat ini)',
+      invoice: 'Dari Invoice',
     },
 
     details: {
@@ -737,6 +751,7 @@ export default {
       productCode: 'Kode',
       product: 'Produk',
       quantity: 'Jumlah',
+      invoicedQty: 'Ditagih',
       price: 'Harga',
       gross: 'Bruto',
       discount: 'Diskon',
@@ -788,8 +803,11 @@ export default {
       orderDateRequired: 'Tanggal pesanan wajib diisi',
       customerRequired: 'Pelanggan wajib dipilih',
       salesmanRequired: 'Salesman wajib dipilih',
+      typeRequired: 'Tipe pesanan wajib dipilih',
+      sourceInvoiceRequired: 'Invoice sumber wajib dipilih',
       detailsRequired: 'Minimal satu item harus ditambahkan',
       detailIncomplete: 'Baris {row}: Produk dan jumlah wajib diisi',
+      returnQtyExceedsInvoiced: 'Baris {row}: jumlah retur tidak boleh melebihi jumlah invoice',
       choicePickRequired: 'Baris {row}: lengkapi semua pilihan item bonus',
       invoiceChoicePickRequired: 'Lengkapi semua pilihan item bonus tingkat invoice',
       manualDiscountReasonRequired: 'Alasan wajib diisi',
@@ -807,6 +825,7 @@ export default {
       saveAsDraft: 'Simpan sebagai Draf',
       saveAndApprove: 'Simpan & Setujui',
       editSalesOrder: 'Edit Pesanan Penjualan',
+      createReturnDeliveryOrder: 'Buat Surat Jalan',
     },
 
     confirm: {
@@ -1241,6 +1260,38 @@ export default {
     },
     actions: {
       viewAuditTrail: 'Lihat Riwayat Perubahan',
+    },
+  },
+  returnDeliveryOrders: {
+    title: 'Surat Jalan Retur',
+    createTitle: 'Buat Surat Jalan Retur',
+    fields: {
+      salesOrder: 'Pesanan Retur',
+      driver: 'Pengemudi',
+      no: 'Nomor Surat Jalan',
+    },
+    labels: {
+      selectSalesOrder: 'Pilih pesanan penjualan retur',
+      selectDriver: 'Pilih pengemudi',
+    },
+    numberMode: {
+      label: 'Nomor Surat Jalan',
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+      manualPlaceholder: 'Masukkan nomor surat jalan…',
+    },
+    validation: {
+      salesOrderRequired: 'Pesanan retur wajib dipilih.',
+      driverRequired: 'Pengemudi wajib dipilih.',
+      noManualNo: 'Silakan masukkan nomor surat jalan.',
+    },
+    messages: {
+      created: 'Surat jalan retur {no} berhasil dibuat.',
+      notFound: 'Pesanan penjualan retur tidak ditemukan.',
+    },
+    actions: {
+      submit: 'Buat Surat Jalan',
     },
   },
   warehouses: {
@@ -1795,6 +1846,7 @@ export default {
     actions: {
       cancel: 'Batalkan DO',
       print: 'Cetak',
+      createReturn: 'Buat Surat Jalan Retur',
     },
     messages: {
       confirmCancel:
@@ -1908,6 +1960,7 @@ export default {
     sourceType: {
       partial_delivery: 'Pengiriman Sebagian',
       failed_delivery: 'Pengiriman Gagal',
+      sales_return: 'Retur Penjualan',
     },
     actions: {
       create: 'BTB Baru',

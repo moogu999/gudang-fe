@@ -23,6 +23,13 @@
             <span v-else-if="col.field === 'totalAmount'">
               {{ formatCurrency(parseFloat(data.totalAmount)) }}
             </span>
+            <div v-else-if="col.field === 'salesOrderType.code'">
+              <Tag
+                v-if="data.salesOrderType?.code"
+                :severity="data.salesOrderType.code === 'return' ? 'danger' : 'secondary'"
+                :value="t(`salesOrders.type.${data.salesOrderType.code}`)"
+              />
+            </div>
             <div v-else-if="col.field === 'status'">
               <Tag
                 v-if="data.status"
@@ -32,7 +39,7 @@
             </div>
             <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
               <Button
-                v-if="data.status === 'draft'"
+                v-if="data.status === 'draft' && data.salesOrderType?.code !== 'return'"
                 icon="pi pi-pencil"
                 size="small"
                 text
@@ -97,6 +104,14 @@ const columns = computed<Column[]>(() => [
     sortable: true,
     exportable: true,
     filterable: true,
+  },
+  {
+    field: 'salesOrderType.code',
+    underlyingField: 'salesOrderTypeId',
+    header: t('salesOrders.fields.type'),
+    sortable: false,
+    exportable: true,
+    filterable: false,
   },
   {
     field: 'status',

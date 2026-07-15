@@ -268,6 +268,17 @@ const router = createRouter({
           },
         },
         {
+          path: 'return-delivery-orders/create',
+          name: 'ReturnDeliveryOrderCreate',
+          component: () =>
+            import('@/views/return-delivery-orders/ReturnDeliveryOrderCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DELIVERY_ORDER_WRITE,
+            titleKey: 'navigation.returnDeliveryOrders',
+            titleAction: 'create',
+          },
+        },
+        {
           path: 'number-series',
           name: 'NumberSeries',
           component: () => import('@/views/number-series/NumberSeriesView.vue'),

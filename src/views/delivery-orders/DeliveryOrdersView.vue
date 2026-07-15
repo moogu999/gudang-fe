@@ -3,9 +3,17 @@
     <Toast position="top-center" :group="overlayGroup" />
     <ConfirmationDialog :group="overlayGroup" :accept-handler="cancelAcceptHandler" />
 
-    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
-      {{ t('deliveryOrders.title') }}
-    </h1>
+    <div class="mb-3 flex items-center justify-between gap-3 sm:mb-5">
+      <h1 class="text-base font-semibold sm:text-lg md:text-2xl">
+        {{ t('deliveryOrders.title') }}
+      </h1>
+      <ResponsiveButton
+        v-if="canCreateReturn"
+        icon="pi pi-plus"
+        :label="t('deliveryOrders.actions.createReturn')"
+        @click="router.push('/return-delivery-orders/create')"
+      />
+    </div>
 
     <ResponsiveCard>
       <template #content>
@@ -116,6 +124,7 @@ import Button from 'primevue/button'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
+import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import { DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants'
@@ -138,6 +147,7 @@ const currentPage = ref(0)
 const isLoading = ref(false)
 
 const canCancel = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_CANCEL))
+const canCreateReturn = computed(() => hasPermission(PERMISSIONS.DELIVERY_ORDER_WRITE))
 
 const cancelAcceptHandler = ref(async () => {})
 

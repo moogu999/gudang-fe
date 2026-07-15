@@ -1,7 +1,7 @@
 import type { PinnedUom } from './pinnedUom.type'
 
 export type GoodsReturnNoteStatus = 'applied'
-export type DriverStockSourceType = 'partial_delivery' | 'failed_delivery'
+export type DriverStockSourceType = 'partial_delivery' | 'failed_delivery' | 'sales_return'
 export type GoodsReturnNoteItemStockType = 'good'
 
 export interface AvailableDriver {

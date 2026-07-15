@@ -9,6 +9,20 @@ export class InvoicesService {
     return ApiService.get<Base<InvoiceListItem>>(url)
   }
 
+  /**
+   * List applied invoices for a customer, for use as the source of a
+   * return-from-invoice sales order.
+   */
+  static async listAppliedForCustomer(
+    customerId: number,
+    queryString?: string,
+  ): Promise<Base<InvoiceListItem>> {
+    const params = new URLSearchParams(queryString)
+    params.set('customerId', String(customerId))
+    params.set('status', 'applied')
+    return ApiService.get<Base<InvoiceListItem>>(`${API_ENDPOINTS.INVOICES}?${params.toString()}`)
+  }
+
   static async get(id: number): Promise<InvoiceDetail> {
     return ApiService.get<InvoiceDetail>(API_ENDPOINTS.INVOICE_BY_ID(id))
   }

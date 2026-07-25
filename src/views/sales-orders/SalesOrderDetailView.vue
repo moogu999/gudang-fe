@@ -16,6 +16,7 @@
           :mode="DialogMode.VIEW"
           :sales-order-id="salesOrderId"
           @cancel="router.back()"
+          @create-return-do="onCreateReturnDo"
         />
         <Message v-else severity="error">{{ t('salesOrders.messages.notFound') }}</Message>
       </template>
@@ -49,4 +50,8 @@ onMounted(() => {
   }
   salesOrderId.value = id
 })
+
+function onCreateReturnDo(soId: number) {
+  router.push(`/return-delivery-orders/create?soId=${soId}`)
+}
 </script>

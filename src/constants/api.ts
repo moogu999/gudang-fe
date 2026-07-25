@@ -226,6 +226,12 @@ export const API_ENDPOINTS = {
   GOODS_RETURN_NOTE_BY_ID: (id: number) => `/v1/goods-return-notes/${id}`,
   GOODS_RETURN_NOTE_DRIVER_STOCK: '/v1/goods-return-notes/driver-stock',
   GOODS_RETURN_NOTE_AVAILABLE_DRIVERS: '/v1/goods-return-notes/available-drivers',
+
+  // Sales Order Type endpoints
+  GEN_SALES_ORDER_TYPES: '/gen/v1/sales-order-types',
+
+  // Return Delivery Order endpoints
+  RETURN_DELIVERY_ORDERS: '/v1/return-delivery-orders',
 } as const
 
 // Type for API endpoints (useful for validation)

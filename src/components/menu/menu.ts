@@ -177,6 +177,11 @@ const mainMenu = [
         route: '/delivery-orders',
       },
       {
+        label: 'Return Delivery Orders',
+        labelKey: 'navigation.returnDeliveryOrders',
+        route: '/return-delivery-orders/create',
+      },
+      {
         label: 'Delivery Notes',
         labelKey: 'navigation.deliveryNotes',
         route: '/delivery-notes',

@@ -28,6 +28,7 @@ export interface InvoiceListItem {
 }
 
 export interface InvoiceDetailLine {
+  id: number
   productId: number
   productCode: string
   productName: string

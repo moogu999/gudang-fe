@@ -100,6 +100,7 @@ export type {
   ResolvedLine,
   ResolveSalesOrderRequest,
   ResolveSalesOrderResponse,
+  ReturnSource,
 } from './salesOrder.type'
 
 // Number Series types
@@ -318,6 +319,20 @@ export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 
 // Stock Movement types
 export type { StockMovement, BalanceSnapshot, StockMovementFilters } from './stockMovement.type'
+
+// Sales Order Type types
+export type {
+  SalesOrderType,
+  CreateSalesOrderTypeDto,
+  UpdateSalesOrderTypeDto,
+} from './salesOrderType.type'
+export { SALES_ORDER_TYPE_CODE_SALES, SALES_ORDER_TYPE_CODE_RETURN } from './salesOrderType.type'
+
+// Return Delivery Order types
+export type {
+  CreateReturnDeliveryOrderDto,
+  ReturnDeliveryOrderResult,
+} from './returnDeliveryOrder.type'
 
 // Component types
 export type { Column } from './table.type'

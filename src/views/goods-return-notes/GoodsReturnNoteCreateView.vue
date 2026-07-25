@@ -133,7 +133,7 @@
                 {{ t('goodsReturnNotes.detail.fromDo', { no: group.deliveryOrderNo }) }}
               </p>
               <Tag
-                :severity="group.sourceType === 'failed_delivery' ? 'danger' : 'warn'"
+                :severity="sourceTypeSeverity(group.sourceType)"
                 :value="t(`goodsReturnNotes.sourceType.${group.sourceType}`)"
               />
             </div>
@@ -252,7 +252,12 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
-import type { AvailableDriver, DriverStockItem, DriverStockGroup } from '@/types'
+import type {
+  AvailableDriver,
+  DriverStockItem,
+  DriverStockGroup,
+  DriverStockSourceType,
+} from '@/types'
 import { pinnedToLevels } from '@/utils/uomHelper'
 import dayjs from 'dayjs'
 
@@ -314,6 +319,12 @@ const selectedLines = computed(() =>
     .map((item) => ({ item, state: selection[item.driverStockItemId] }))
     .filter(({ state }) => state.receivedQty > 0),
 )
+
+function sourceTypeSeverity(sourceType: DriverStockSourceType): 'danger' | 'warn' | 'info' {
+  if (sourceType === 'failed_delivery') return 'danger'
+  if (sourceType === 'sales_return') return 'info'
+  return 'warn'
+}
 
 function formatQty(decStr: string): string {
   const num = parseFloat(decStr)

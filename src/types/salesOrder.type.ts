@@ -110,6 +110,11 @@ export interface SalesOrderHeader {
   expiredDate: string | null
   customerId: number
   customer?: CustomerLite
+  salesOrderTypeId: number
+  salesOrderTypeCode?: string
+  salesOrderType?: { code: string; name: string }
+  sourceInvoiceId?: number | null
+  sourceInvoice?: { no: string } | null
   employeeId: number | null
   branchId: number | null
   salesOrganizationId: number | null
@@ -160,6 +165,8 @@ export interface ManualDiscountDto {
   reason: string
 }
 
+export type ReturnSource = 'direct' | 'invoice'
+
 export interface CreateSalesOrderRequest {
   no?: string
   status?: SalesOrderStatus
@@ -172,6 +179,9 @@ export interface CreateSalesOrderRequest {
   remark?: string | null
   downPaymentAmount?: string // Backend expects string for decimal
   isCash?: boolean
+  salesOrderTypeId: number
+  returnSource?: ReturnSource | null
+  sourceInvoiceId?: number | null
   details: CreateSalesOrderDetailDto[]
   headerCustomerChoices?: { promotionId: number; productIds: number[] }[]
   manualDiscounts?: ManualDiscountDto[]
@@ -185,6 +195,7 @@ export interface CreateSalesOrderDetailDto {
   quantity: string // Backend expects string for decimal
   customerChoices?: { promotionId: number; productIds: number[] }[]
   manualDiscounts?: ManualDiscountDto[]
+  sourceInvoiceDetailId?: number | null
 }
 
 // Local state for inline editing
@@ -203,6 +214,9 @@ export interface SalesOrderDetailRow {
   _taxIncluded?: boolean
   _taxBaseAmount?: string
   _taxAmount?: string
+  // Return-from-invoice fields (frontend-only tracking)
+  _sourceInvoiceDetailId?: number
+  _invoicedQty?: number
   _discounts?: LineDiscount[]
   _bonuses?: LineBonus[]
   _choiceOffers?: ChoiceOffer[]

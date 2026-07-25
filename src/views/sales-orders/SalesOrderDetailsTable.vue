@@ -8,7 +8,7 @@
           <span class="text-xs text-stone-500">{{ t('salesOrders.details.resolving') }}</span>
         </template>
         <Button
-          v-if="mode !== DialogMode.VIEW"
+          v-if="mode !== DialogMode.VIEW && !disableAdd"
           :label="t('salesOrders.details.addDetail')"
           icon="pi pi-plus"
           size="small"
@@ -98,32 +98,52 @@
               {{ (data as SalesOrderDetailRow).quantity!.toLocaleString(locale) }}
               {{ getUomLevels(data as SalesOrderDetailRow)!.at(-1)?.uom?.symbol }}
             </span>
+            <span
+              v-if="(data as SalesOrderDetailRow)._invoicedQty != null"
+              class="text-xs text-stone-400"
+            >
+              {{ t('salesOrders.details.invoicedQty') }}:
+              {{ (data as SalesOrderDetailRow)._invoicedQty!.toLocaleString(locale) }}
+            </span>
           </div>
         </template>
         <template v-if="mode !== DialogMode.VIEW" #editor="{ data }">
-          <template v-if="(getUomLevels(data as SalesOrderDetailRow)?.length ?? 0) > 1">
-            <InputText
-              :model-value="getTierString(data as SalesOrderDetailRow)"
-              :placeholder="
-                getUomLevels(data as SalesOrderDetailRow)!
-                  .map((l) => l.uom?.symbol ?? '?')
-                  .join('/')
-              "
-              class="w-full font-mono"
-              @input="
-                (e: Event) =>
-                  handleTierInput(data as SalesOrderDetailRow, (e.target as HTMLInputElement).value)
-              "
+          <div class="flex flex-col gap-0.5">
+            <template v-if="(getUomLevels(data as SalesOrderDetailRow)?.length ?? 0) > 1">
+              <InputText
+                :model-value="getTierString(data as SalesOrderDetailRow)"
+                :placeholder="
+                  getUomLevels(data as SalesOrderDetailRow)!
+                    .map((l) => l.uom?.symbol ?? '?')
+                    .join('/')
+                "
+                class="w-full font-mono"
+                @input="
+                  (e: Event) =>
+                    handleTierInput(
+                      data as SalesOrderDetailRow,
+                      (e.target as HTMLInputElement).value,
+                    )
+                "
+              />
+            </template>
+            <InputNumber
+              v-else
+              v-model="(data as SalesOrderDetailRow).quantity"
+              :locale="locale"
+              :min-fraction-digits="0"
+              :max-fraction-digits="2"
+              :max="(data as SalesOrderDetailRow)._invoicedQty"
+              class="w-full"
             />
-          </template>
-          <InputNumber
-            v-else
-            v-model="(data as SalesOrderDetailRow).quantity"
-            :locale="locale"
-            :min-fraction-digits="0"
-            :max-fraction-digits="2"
-            class="w-full"
-          />
+            <span
+              v-if="(data as SalesOrderDetailRow)._invoicedQty != null"
+              class="text-xs text-stone-400"
+            >
+              {{ t('salesOrders.details.invoicedQty') }}:
+              {{ (data as SalesOrderDetailRow)._invoicedQty!.toLocaleString(locale) }}
+            </span>
+          </div>
         </template>
       </Column>
 
@@ -607,6 +627,7 @@ interface Props {
   headerBonuses?: LineBonus[]
   headerChoiceOffers?: ChoiceOffer[]
   headerChoicePicks?: Record<string, number[]>
+  disableAdd?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -615,6 +636,7 @@ const props = withDefaults(defineProps<Props>(), {
   headerBonuses: () => [],
   headerChoiceOffers: () => [],
   headerChoicePicks: () => ({}),
+  disableAdd: false,
 })
 
 const emit = defineEmits<{
@@ -640,7 +662,7 @@ function createPlaceholderRow(): SalesOrderDetailRow {
 }
 
 function ensurePlaceholder() {
-  if (props.mode === DialogMode.VIEW) return
+  if (props.mode === DialogMode.VIEW || props.disableAdd) return
   const hasPlaceholder = localRows.value.some((r) => r._isPlaceholder)
   if (!hasPlaceholder) {
     const placeholder = createPlaceholderRow()
@@ -732,6 +754,9 @@ function onProductSelect(data: SalesOrderDetailRow, option: object) {
   // Clear tier data when product changes
   data._quantityTiers = undefined
   data['_quantityTiersRaw'] = undefined
+  // Product no longer matches the invoice line this row was seeded from
+  data._sourceInvoiceDetailId = undefined
+  data._invoicedQty = undefined
 }
 
 function getUomLevels(data: SalesOrderDetailRow): UomConversionLevel[] | undefined {

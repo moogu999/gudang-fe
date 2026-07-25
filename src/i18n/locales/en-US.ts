@@ -83,6 +83,7 @@ export default {
     salesOrders: 'Sales Orders',
     bookingOrders: 'Booking Orders',
     deliveryOrders: 'Delivery Orders',
+    returnDeliveryOrders: 'Return Delivery Orders',
     invoices: 'Invoices',
     deliveryNotes: 'Delivery Notes',
     pickingLists: 'Picking Lists',
@@ -727,6 +728,19 @@ export default {
       taxAmount: 'Tax',
       downPaymentAmount: 'Down Payment',
       totalAmount: 'Total',
+      type: 'Order Type',
+      returnSource: 'Return Source',
+      sourceInvoice: 'Source Invoice',
+    },
+
+    type: {
+      sales: 'Sales',
+      return: 'Return',
+    },
+
+    returnSource: {
+      direct: 'Direct (current prices)',
+      invoice: 'From Invoice',
     },
 
     details: {
@@ -736,6 +750,7 @@ export default {
       productCode: 'Code',
       product: 'Product',
       quantity: 'Quantity',
+      invoicedQty: 'Invoiced',
       price: 'Price',
       gross: 'Gross',
       discount: 'Discount',
@@ -787,8 +802,11 @@ export default {
       orderDateRequired: 'Order date is required',
       customerRequired: 'Customer is required',
       salesmanRequired: 'Salesman is required',
+      typeRequired: 'Order type is required',
+      sourceInvoiceRequired: 'Source invoice is required',
       detailsRequired: 'At least one item is required',
       detailIncomplete: 'Row {row}: Product and quantity are required',
+      returnQtyExceedsInvoiced: 'Row {row}: return quantity cannot exceed the invoiced quantity',
       choicePickRequired: 'Row {row}: please complete all bonus item selections',
       invoiceChoicePickRequired: 'Please complete all invoice-level bonus item selections',
       manualDiscountReasonRequired: 'Reason is required',
@@ -806,6 +824,7 @@ export default {
       saveAsDraft: 'Save as Draft',
       saveAndApprove: 'Save & Approve',
       editSalesOrder: 'Edit Sales Order',
+      createReturnDeliveryOrder: 'Create Delivery Order',
     },
 
     confirm: {
@@ -1245,6 +1264,38 @@ export default {
     },
     actions: {
       viewAuditTrail: 'View Audit Trail',
+    },
+  },
+  returnDeliveryOrders: {
+    title: 'Return Delivery Orders',
+    createTitle: 'Create Return Delivery Order',
+    fields: {
+      salesOrder: 'Return Sales Order',
+      driver: 'Driver',
+      no: 'Delivery Order Number',
+    },
+    labels: {
+      selectSalesOrder: 'Select a return sales order',
+      selectDriver: 'Select a driver',
+    },
+    numberMode: {
+      label: 'DO Number',
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+      manualPlaceholder: 'Enter DO number…',
+    },
+    validation: {
+      salesOrderRequired: 'Return sales order is required.',
+      driverRequired: 'Driver is required.',
+      noManualNo: 'Please enter a DO number.',
+    },
+    messages: {
+      created: 'Return delivery order {no} created successfully.',
+      notFound: 'Return sales order not found.',
+    },
+    actions: {
+      submit: 'Create Delivery Order',
     },
   },
   warehouses: {
@@ -1798,6 +1849,7 @@ export default {
     actions: {
       cancel: 'Cancel DO',
       print: 'Print',
+      createReturn: 'Create Return DO',
     },
     messages: {
       confirmCancel: 'This will release all reserved stock back to available inventory. Proceed?',
@@ -1910,6 +1962,7 @@ export default {
     sourceType: {
       partial_delivery: 'Partial Delivery',
       failed_delivery: 'Failed Delivery',
+      sales_return: 'Sales Return',
     },
     actions: {
       create: 'New Return Note',

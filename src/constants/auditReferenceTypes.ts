@@ -69,4 +69,15 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     },
     codeField: 'code',
   },
+  product: {
+    label: 'Product',
+    labelKey: 'auditTrails.references.product',
+    listEndpoint: API_ENDPOINTS.GEN_PRODUCTS,
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query ? `${API_ENDPOINTS.GEN_PRODUCTS}?${query}` : API_ENDPOINTS.GEN_PRODUCTS
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'code',
+  },
 }

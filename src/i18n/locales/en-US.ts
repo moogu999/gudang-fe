@@ -1153,6 +1153,7 @@ export default {
       customer: 'Customer',
       price_list: 'Price List',
       price_matrix: 'Price Matrix',
+      product: 'Product',
     },
   },
   employees: {

@@ -1149,6 +1149,7 @@ export default {
       customer: 'Pelanggan',
       price_list: 'Daftar Harga',
       price_matrix: 'Matriks Harga',
+      product: 'Produk',
     },
   },
   employees: {

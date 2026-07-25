@@ -108,6 +108,9 @@ export default {
     priceMatrixPriorities: 'Prioritas Matriks Harga',
     promotions: 'Promosi',
     auditTrails: 'Jejak Audit',
+    approvals: 'Persetujuan',
+    myApprovals: 'Persetujuan Saya',
+    approvalFlows: 'Alur Persetujuan',
     fleet: 'Armada',
     vehicles: 'Kendaraan',
     inventory: 'Inventaris',
@@ -153,6 +156,7 @@ export default {
       name: 'Nama',
       role: 'Peran',
       department: 'Departemen',
+      employee: 'Karyawan',
     },
     labels: {
       addRole: 'Tambah Peran',
@@ -179,7 +183,8 @@ export default {
       passwordUppercase: 'Kata sandi harus mengandung minimal satu huruf kapital.',
       passwordLowercase: 'Kata sandi harus mengandung minimal satu huruf kecil.',
       passwordNumber: 'Kata sandi harus mengandung minimal satu angka.',
-      passwordSpecialChar: 'Kata sandi harus mengandung minimal satu karakter khusus (@$!%*?&).',
+      passwordSpecialChar:
+        "Kata sandi harus mengandung minimal satu karakter khusus ({'@'}$!%*?&).",
       passwordMismatch: 'Kata sandi tidak cocok.',
     },
     messages: {
@@ -1585,10 +1590,13 @@ export default {
       branch: 'Cabang',
       deliveryDateOffset: 'Offset Pengiriman',
       expiredDateOffset: 'Offset Kedaluwarsa',
+      approvalFlow: 'Alur Persetujuan',
     },
     labels: {
       days: 'hari',
       selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalFlowHint: 'Kosongkan jika pesanan dari cabang ini tidak memerlukan persetujuan.',
     },
     validation: {
       branchRequired: 'Cabang wajib diisi.',
@@ -2042,6 +2050,99 @@ export default {
       onHand: 'Tersedia',
       reserved: 'Dipesan',
       inTransit: 'Dalam Perjalanan',
+    },
+  },
+  approvalFlows: {
+    title: 'Alur Persetujuan',
+    addFlow: 'Tambah Alur Persetujuan',
+    editFlow: 'Edit Alur Persetujuan',
+    viewFlow: 'Lihat Alur Persetujuan',
+    fields: {
+      name: 'Nama',
+      module: 'Modul',
+      description: 'Deskripsi',
+      isActive: 'Aktif',
+      tiers: 'Tingkatan',
+    },
+    labels: {
+      tierN: 'Tingkat {n}',
+      primaryApprover: 'Penyetuju Utama',
+      alternateApprover: 'Penyetuju Alternatif {n}',
+    },
+    placeholders: {
+      tierName: 'contoh: Supervisor',
+    },
+    actions: {
+      addTier: 'Tambah Tingkat',
+      removeTier: 'Hapus Tingkat',
+      addAlternate: 'Tambah Alternatif',
+      removeAlternate: 'Hapus Alternatif',
+    },
+    warnings: {
+      noUserAccount:
+        'Karyawan ini belum tertaut ke akun pengguna sehingga tidak dapat masuk untuk menyetujui.',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+      moduleRequired: 'Modul wajib diisi.',
+      tiersRequired: 'Minimal satu tingkat diperlukan.',
+      tierNameRequired: 'Nama tingkat wajib diisi.',
+      primaryRequired: 'Penyetuju utama wajib diisi.',
+      emptyAlternate: 'Pilih penyetuju untuk setiap slot alternatif, atau hapus slotnya.',
+      duplicateApprover: 'Karyawan yang sama tidak boleh muncul dua kali dalam satu tingkat.',
+    },
+    messages: {
+      created: 'Alur persetujuan berhasil dibuat.',
+      updated: 'Alur persetujuan berhasil diperbarui.',
+      notFound: 'Alur persetujuan tidak ditemukan.',
+    },
+  },
+  myApprovals: {
+    title: 'Persetujuan Saya',
+    noEmployeeLink:
+      'Akun pengguna Anda belum tertaut ke karyawan, sehingga Anda tidak dapat menyetujui apa pun.',
+    fields: {
+      module: 'Modul',
+      reference: 'Referensi',
+      currentTier: 'Tingkat Saat Ini',
+      requestedAt: 'Diajukan Pada',
+    },
+  },
+  approvals: {
+    sectionTitle: 'Persetujuan',
+    status: {
+      pending: 'Menunggu',
+      approved: 'Disetujui',
+      rejected: 'Ditolak',
+      cancelled: 'Dibatalkan',
+    },
+    tierStatus: {
+      pending: 'Menunggu',
+      approved: 'Disetujui',
+      rejected: 'Ditolak',
+    },
+    actions: {
+      submit: 'Ajukan Persetujuan',
+      approve: 'Setujui',
+      reject: 'Tolak',
+      cancel: 'Batalkan Pengajuan',
+    },
+    labels: {
+      rejectComment: 'Alasan penolakan',
+    },
+    validation: {
+      rejectCommentRequired: 'Alasan penolakan wajib diisi.',
+    },
+    timeline: {
+      none: 'Tidak ada pengajuan persetujuan untuk dokumen ini.',
+      approverPool: 'Penyetuju: {names}',
+      actedAt: 'Ditindaklanjuti pada {date}',
+    },
+    messages: {
+      submitted: 'Berhasil diajukan untuk persetujuan.',
+      approved: 'Berhasil disetujui.',
+      rejected: 'Berhasil ditolak.',
+      cancelled: 'Pengajuan dibatalkan.',
     },
   },
 }

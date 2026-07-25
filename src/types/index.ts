@@ -336,3 +336,24 @@ export type {
 
 // Component types
 export type { Column } from './table.type'
+
+// Approval types
+export type {
+  ApprovalStatus,
+  ApprovalTierStatus,
+  ApprovalFlowTierApprover,
+  ApprovalFlowTier,
+  ApprovalFlow,
+  ApprovalModule,
+  CreateApprovalFlowTierApproverDto,
+  CreateApprovalFlowTierDto,
+  CreateApprovalFlowDto,
+  UpdateApprovalFlowDto,
+  ApprovalRequestTierApprover,
+  ApprovalRequestTier,
+  ApprovalRequest,
+  ApprovalRequestDetail,
+  PendingForMeResponse,
+  SubmitApprovalRequestDto,
+  ActApprovalRequestDto,
+} from './approval.type'

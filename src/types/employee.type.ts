@@ -46,6 +46,7 @@ export interface Employee {
   accessNcommand: boolean
   accessNforce: boolean
   isDraft: boolean
+  hasUserAccount: boolean
   createdAt: string
   updatedAt?: string
 }

@@ -10,6 +10,7 @@
     filter-match-mode="serverSide"
     :placeholder="displayPlaceholder"
     :disabled="disabled"
+    :option-disabled="optionDisabledFn"
     @filter="handleFilter"
     :virtual-scroller-options="virtualScrollerOptions"
     :pt="{
@@ -68,6 +69,8 @@ interface Props {
   initialOption?: T
   disabled?: boolean
   customFilters?: CustomFilter[]
+  /** Option values (matched against optionValue) to render as disabled, e.g. already picked elsewhere in a form. */
+  disabledValues?: (string | number)[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,9 +80,20 @@ const props = withDefaults(defineProps<Props>(), {
   useCursor: false,
   disabled: false,
   customFilters: () => [],
+  disabledValues: () => [],
 })
 
 const displayPlaceholder = computed(() => props.placeholder || t('common.labels.selectOption'))
+
+const optionDisabledFn = computed(() => {
+  if (!props.disabledValues || props.disabledValues.length === 0) return undefined
+  return (option: T) => {
+    const value = props.optionValue
+      ? (option as Record<string, unknown>)[props.optionValue]
+      : option
+    return props.disabledValues!.includes(value as string | number)
+  }
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: SelectValue<T>]

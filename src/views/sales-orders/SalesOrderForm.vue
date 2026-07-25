@@ -21,6 +21,28 @@
       />
     </div>
 
+    <!-- Approval timeline + actions (VIEW / EDIT modes only — SO submission to approval is automatic) -->
+    <Panel
+      v-if="mode !== DialogMode.ADD && salesOrderId"
+      v-model:collapsed="isApprovalCollapsed"
+      toggleable
+      :header="t('approvals.sectionTitle')"
+      class="mb-4"
+    >
+      <ApprovalTimeline
+        ref="approvalTimelineRef"
+        module-key="sales_order"
+        :reference-id="salesOrderId"
+        :show-status-header="false"
+      />
+      <Divider />
+      <ApprovalActionBar
+        module-key="sales_order"
+        :reference-id="salesOrderId"
+        @changed="onApprovalChanged"
+      />
+    </Panel>
+
     <!-- Two Column Layout for Header Fields -->
     <div v-if="!hideHeader" class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
       <!-- Left Column: Order Information -->
@@ -458,9 +480,12 @@ import Message from 'primevue/message'
 import Divider from 'primevue/divider'
 import ProgressSpinner from 'primevue/progressspinner'
 import SelectButton from 'primevue/selectbutton'
+import Panel from 'primevue/panel'
 import Form from '@primevue/forms/form'
 import type { FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import ApprovalTimeline from '@/components/approval/ApprovalTimeline.vue'
+import ApprovalActionBar from '@/components/approval/ApprovalActionBar.vue'
 import SalesOrderDetailsTable from './SalesOrderDetailsTable.vue'
 import ManualDiscountEditor from './ManualDiscountEditor.vue'
 import DialogMode from '@/constants/dialogMode'
@@ -532,6 +557,8 @@ const emit = defineEmits<{
 // Status tracking
 const chosenStatus = ref<'draft' | 'approved'>('approved')
 const currentStatus = ref<SalesOrderStatus | undefined>()
+const approvalTimelineRef = ref<InstanceType<typeof ApprovalTimeline> | null>(null)
+const isApprovalCollapsed = ref(false)
 
 function statusSeverity(status: SalesOrderStatus) {
   if (status === 'approved') return 'success'
@@ -1363,6 +1390,19 @@ async function loadSalesOrder() {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
+  }
+}
+
+// Re-syncs just the status tag after an approve/reject action — a full
+// loadSalesOrder() would flash the whole form to its loading spinner.
+async function onApprovalChanged() {
+  await approvalTimelineRef.value?.refresh()
+  if (!props.salesOrderId) return
+  try {
+    const header = await SalesOrderHeadersService.getById(props.salesOrderId)
+    currentStatus.value = header.status
+  } catch (e) {
+    toast.add(commonErrorToast(e, toastGroup))
   }
 }
 

@@ -115,6 +115,36 @@
         </div>
       </div>
 
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="employee" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('users.fields.employee')
+        }}</label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InfiniteSelect
+            id="employeeId"
+            name="employeeId"
+            option-label="name"
+            option-value="id"
+            :fetch-fn="(query) => EmployeesService.list(query)"
+            :initial-option="initialEmployee"
+            sort-by="name"
+            sort-operator="asc"
+            show-clear
+            :disabled="mode === DialogMode.VIEW"
+            :pt="{
+              root: 'w-full',
+            }"
+          />
+          <Message
+            v-if="$form.employeeId?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.employeeId.error.message }}</Message
+          >
+        </div>
+      </div>
+
       <div class="flex justify-end gap-2" v-if="mode !== DialogMode.VIEW">
         <Button
           type="button"
@@ -182,7 +212,9 @@ import RolesTab from '@/views/users/RolesTab.vue'
 import BranchesTab from '@/views/users/BranchesTab.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { DepartmentsService } from '@/services/departments.service'
+import { EmployeesService } from '@/services/employees.service'
 import type { Department } from '@/types/department.type'
+import type { Employee } from '@/types/employee.type'
 
 const { t } = useI18n()
 
@@ -222,6 +254,9 @@ const emits = defineEmits(['close'])
 // Department selection
 const initialDepartment = ref<Department | undefined>()
 
+// Employee selection
+const initialEmployee = ref<Employee | undefined>()
+
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.user) {
     return
@@ -237,6 +272,15 @@ onBeforeMount(() => {
       name: props.user.department.name,
     } as Department
   }
+
+  // Set employee if exists
+  if (props.user.employeeId && props.user.employee) {
+    initialValues.employeeId = props.user.employeeId
+    initialEmployee.value = {
+      id: props.user.employeeId,
+      name: props.user.employee.name,
+    } as Employee
+  }
 })
 
 // Toast
@@ -249,6 +293,7 @@ const initialValues = reactive({
   password: '',
   confirmPassword: '',
   departmentId: undefined as number | undefined,
+  employeeId: undefined as number | undefined,
 })
 
 // Password validation schema (computed to support reactive i18n)
@@ -328,6 +373,7 @@ async function addUser(event: FormSubmitEvent) {
     email: event.states.email.value,
     password: event.states.password.value,
     departmentId: event.states.departmentId.value || undefined,
+    employeeId: event.states.employeeId.value || undefined,
     createdBy: authStore.userId!,
   })
 
@@ -338,6 +384,7 @@ async function editUser(event: FormSubmitEvent) {
   const updateData: {
     password?: string
     departmentId?: number | null
+    employeeId?: number | null
     updatedBy: string
   } = {
     updatedBy: authStore.email!,
@@ -352,6 +399,12 @@ async function editUser(event: FormSubmitEvent) {
   const newDepartmentId = event.states.departmentId.value ?? null
   if (newDepartmentId !== props.user!.departmentId) {
     updateData.departmentId = newDepartmentId
+  }
+
+  // Update employee if it changed
+  const newEmployeeId = event.states.employeeId.value ?? null
+  if (newEmployeeId !== props.user!.employeeId) {
+    updateData.employeeId = newEmployeeId
   }
 
   await UsersService.update(props.user!.id, updateData)

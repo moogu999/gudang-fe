@@ -88,15 +88,17 @@ export class UsersService {
    * ```
    */
   static async update(id: number, data: UpdateUserDto): Promise<void> {
-    const { password, departmentId, updatedBy } = data
+    const { password, departmentId, employeeId, updatedBy } = data
     const payload: {
       password?: string
       departmentId?: number | null
+      employeeId?: number | null
       updatedBy?: string
     } = {}
 
     if (password) payload.password = password
     if (departmentId !== undefined) payload.departmentId = departmentId
+    if (employeeId !== undefined) payload.employeeId = employeeId
     if (updatedBy) payload.updatedBy = updatedBy
 
     return ApiService.patch<void>(`${this.V1_URL}/${id}`, payload)

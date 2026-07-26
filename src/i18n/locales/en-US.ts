@@ -49,6 +49,8 @@ export default {
     messages: {
       confirmDelete: 'Are you sure you want to delete this {entity}?',
       deleteSuccess: '{entity} deleted successfully',
+      deleteInUse:
+        "This {entity} is still being used by other data, so it can't be deleted yet. Remove it from wherever it's used first, then try again.",
       createSuccess: '{entity} created successfully',
       updateSuccess: '{entity} updated successfully',
       error: 'An error occurred',

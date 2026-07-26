@@ -50,6 +50,8 @@ export default {
     messages: {
       confirmDelete: 'Apakah Anda yakin ingin menghapus {entity} ini?',
       deleteSuccess: '{entity} berhasil dihapus',
+      deleteInUse:
+        '{entity} ini masih dipakai di data lain, jadi belum bisa dihapus. Lepaskan dulu dari data yang memakainya, lalu coba lagi.',
       createSuccess: '{entity} berhasil dibuat',
       updateSuccess: '{entity} berhasil diperbarui',
       error: 'Terjadi kesalahan',

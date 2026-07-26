@@ -159,10 +159,12 @@ async function fetchData(cursor?: string) {
     const query = queryBuilder.build()
     const response = await props.fetchFn(query)
 
+    const fetched = (response.data ?? []).filter(hasUsableLabel)
+
     if (cursor) {
-      options.value = [...options.value, ...response.data] as T[]
+      options.value = [...options.value, ...fetched] as T[]
     } else {
-      options.value = response.data
+      options.value = fetched as T[]
     }
 
     nextCursor.value = response.meta.nextCursor || null
@@ -199,11 +201,19 @@ function handleSelect(value: SelectValue<T>) {
   }
 }
 
+// PrimeVue's Select reads `label.length` while resolving its classes, so an
+// option missing the optionLabel field makes the whole render throw and Vue
+// stops patching the DOM from there on. Drop such options instead.
+function hasUsableLabel(option: T): boolean {
+  const label = (option as Record<string, unknown>)[props.optionLabel]
+  return label !== undefined && label !== null
+}
+
 onMounted(async () => {
   await fetchData()
 
   // If initialOption is provided and not in the loaded options, add it
-  if (props.initialOption) {
+  if (props.initialOption && hasUsableLabel(props.initialOption)) {
     const optionValueKey = props.optionValue
     const initialValue = optionValueKey
       ? (props.initialOption as Record<string, unknown>)[optionValueKey]

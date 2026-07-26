@@ -42,20 +42,56 @@ Re-export from `src/types/index.ts` barrel.
 
 ## Reference-type registry — `src/constants/auditReferenceTypes.ts`
 
+Each registered type carries a `fetchFn` (lazy-imports `ApiService` and calls the
+entity's own list endpoint) so the filter can render a searchable reference picker:
+
 ```ts
 import { API_ENDPOINTS } from './api'
+import type { Base } from '@/types/api.type'
 
-export const AUDIT_REFERENCE_TYPES = {
+export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
   promotion: {
     label: 'Promotion',
     labelKey: 'auditTrails.references.promotion',
     listEndpoint: API_ENDPOINTS.GEN_PROMOTIONS,
-    codeField: 'code', // used as InfiniteSelect display label
+    fetchFn: async (query: string) => {
+      const { default: ApiService } = await import('@/services/api')
+      const url = query ? `${API_ENDPOINTS.GEN_PROMOTIONS}?${query}` : API_ENDPOINTS.GEN_PROMOTIONS
+      return ApiService.get<Base<Record<string, unknown>>>(url)
+    },
+    codeField: 'code', // used as the InfiniteSelect display label
   },
-} as const
+}
 ```
 
-Pilot ships `promotion`; future additions just register here.
+Pilot ships `promotion`; every future entity that opts into audit MUST also be
+registered here — see the checklist below.
+
+## Registering a new reference type on `/audit-trails` (MANDATORY per module)
+
+Backend emitting audit rows is **not enough** for a good page experience. Whenever
+a module starts recording audit (e.g. `customer`, `employee`, `price_list`), do all
+four FE steps so the entry is filterable, labeled, and click-through. Rows still
+appear in the list without these (the list has no type whitelist), but the type
+won't be selectable in the filter, the Reference Type column shows the raw i18n
+key, and the Reference ID isn't a link.
+
+1. **Type union** — add the `reference_type` string to `AuditReferenceType` in
+   `src/types/auditTrail.type.ts` (e.g. `'promotion' | 'employee' | 'customer'`).
+2. **Registry entry** — add a `<type>` entry to `AUDIT_REFERENCE_TYPES` with
+   `{ label, labelKey, listEndpoint, fetchFn, codeField }`. `listEndpoint`/`fetchFn`
+   point at the entity's list endpoint; `codeField` is what the picker shows
+   (the reference `InfiniteSelect` sorts by `code`).
+3. **i18n label** — add `auditTrails.references.<type>` to **both**
+   `src/i18n/locales/en-US.ts` and `id-ID.ts` (otherwise the column renders the
+   raw key).
+4. **Reference deep-link** — add a `v-else-if` branch in `AuditTrailsView.vue`
+   that links `referenceId` to the entity detail route (`/<entity>/{id}`),
+   mirroring the existing promotion/employee branches. Verify the target route
+   exists in `src/router/index.ts`.
+
+The detail view (`AuditTrailDetailView.vue`) and diff viewer are generic — no
+per-type changes needed there.
 
 ## Service — `src/services/auditTrails.service.ts`
 
@@ -155,7 +191,7 @@ Add keys:
 - `auditTrails.filters.{type,reference,dateRange}`
 - `auditTrails.columns.{referenceType,referenceId,description,createdBy,createdAt}`
 - `auditTrails.detail.{title,createdAt,changedBy,previous,current,created,deleted}`
-- `auditTrails.references.promotion`
+- `auditTrails.references.<type>` — one per registered reference type (e.g. `promotion`, `employee`, `customer`); add whenever a new module opts into audit (see "Registering a new reference type" above)
 
 ## Dependency
 

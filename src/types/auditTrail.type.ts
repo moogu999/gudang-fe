@@ -4,6 +4,7 @@ export type AuditReferenceType =
   | 'customer'
   | 'price_list'
   | 'price_matrix'
+  | 'product'
 
 export type AuditTrailListItem = {
   id: number

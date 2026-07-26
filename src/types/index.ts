@@ -69,6 +69,8 @@ export type {
   UpdateUomConversionLevelDto,
 } from './uomConversionLevel.type'
 export type { UomGroup, CreateUomGroupDto, UpdateUomGroupDto } from './uomGroup.type'
+export type { PaymentTerm, CreatePaymentTermDto, UpdatePaymentTermDto } from './paymentTerm.type'
+export type { Supplier, CreateSupplierDto, UpdateSupplierDto } from './supplier.type'
 export type { TrackingType, TrackingTypeLite } from './trackingType.type'
 export type {
   Product,

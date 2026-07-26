@@ -87,6 +87,10 @@ export const PERMISSIONS = {
   APPROVAL_FLOW_WRITE: 80,
   APPROVAL_REQUEST_READ: 81,
   APPROVAL_ACT: 82,
+  SUPPLIER_READ: 83,
+  SUPPLIER_WRITE: 84,
+  PAYMENT_TERM_READ: 85,
+  PAYMENT_TERM_WRITE: 86,
 } as const
 
 /**
@@ -138,6 +142,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/goods-return-notes': PERMISSIONS.GOODS_RETURN_NOTE_READ,
   '/approval-flows': PERMISSIONS.APPROVAL_FLOW_READ,
   '/my-approvals': PERMISSIONS.APPROVAL_REQUEST_READ,
+  '/suppliers': PERMISSIONS.SUPPLIER_READ,
+  '/payment-terms': PERMISSIONS.PAYMENT_TERM_READ,
 }
 
 /**
@@ -176,4 +182,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/goods-return-notes': PERMISSIONS.GOODS_RETURN_NOTE_WRITE,
   '/approval-flows': PERMISSIONS.APPROVAL_FLOW_WRITE,
   '/my-approvals': PERMISSIONS.APPROVAL_ACT,
+  '/suppliers': PERMISSIONS.SUPPLIER_WRITE,
+  '/payment-terms': PERMISSIONS.PAYMENT_TERM_WRITE,
 }

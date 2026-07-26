@@ -109,6 +109,9 @@ export default {
     priceMatrixPriorities: 'Price Matrix Priority',
     promotions: 'Promotions',
     auditTrails: 'Audit Trails',
+    approvals: 'Approvals',
+    myApprovals: 'My Approvals',
+    approvalFlows: 'Approval Flows',
     fleet: 'Fleet',
     vehicles: 'Vehicles',
     inventory: 'Inventory',
@@ -154,6 +157,7 @@ export default {
       name: 'Name',
       role: 'Role',
       department: 'Department',
+      employee: 'Employee',
     },
     labels: {
       addRole: 'Add Role',
@@ -180,7 +184,7 @@ export default {
       passwordUppercase: 'Password must contain at least one uppercase letter.',
       passwordLowercase: 'Password must contain at least one lowercase letter.',
       passwordNumber: 'Password must contain at least one number.',
-      passwordSpecialChar: 'Password must contain at least one special character (@$!%*?&).',
+      passwordSpecialChar: "Password must contain at least one special character ({'@'}$!%*?&).",
       passwordMismatch: 'Passwords do not match.',
     },
     messages: {
@@ -1592,10 +1596,13 @@ export default {
       branch: 'Branch',
       deliveryDateOffset: 'Delivery Offset',
       expiredDateOffset: 'Expiry Offset',
+      approvalFlow: 'Approval Flow',
     },
     labels: {
       days: 'days',
       selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalFlowHint: 'Leave empty if orders from this branch do not need approval.',
     },
     validation: {
       branchRequired: 'Branch is required.',
@@ -2047,6 +2054,98 @@ export default {
       onHand: 'On Hand',
       reserved: 'Reserved',
       inTransit: 'In Transit',
+    },
+  },
+  approvalFlows: {
+    title: 'Approval Flows',
+    addFlow: 'Add Approval Flow',
+    editFlow: 'Edit Approval Flow',
+    viewFlow: 'View Approval Flow',
+    fields: {
+      name: 'Name',
+      module: 'Module',
+      description: 'Description',
+      isActive: 'Active',
+      tiers: 'Tiers',
+    },
+    labels: {
+      tierN: 'Tier {n}',
+      primaryApprover: 'Primary Approver',
+      alternateApprover: 'Alternate Approver {n}',
+    },
+    placeholders: {
+      tierName: 'e.g. Supervisor',
+    },
+    actions: {
+      addTier: 'Add Tier',
+      removeTier: 'Remove Tier',
+      addAlternate: 'Add Alternate',
+      removeAlternate: 'Remove Alternate',
+    },
+    warnings: {
+      noUserAccount: 'This employee has no linked user account and cannot log in to approve.',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+      moduleRequired: 'Module is required.',
+      tiersRequired: 'At least one tier is required.',
+      tierNameRequired: 'Tier name is required.',
+      primaryRequired: 'A primary approver is required.',
+      emptyAlternate: 'Select an approver for every alternate slot, or remove it.',
+      duplicateApprover: 'The same employee cannot appear twice in one tier.',
+    },
+    messages: {
+      created: 'Approval flow is created.',
+      updated: 'Approval flow is updated.',
+      notFound: 'Approval flow not found.',
+    },
+  },
+  myApprovals: {
+    title: 'My Approvals',
+    noEmployeeLink:
+      'Your user account is not linked to an employee, so you cannot approve anything.',
+    fields: {
+      module: 'Module',
+      reference: 'Reference',
+      currentTier: 'Current Tier',
+      requestedAt: 'Requested At',
+    },
+  },
+  approvals: {
+    sectionTitle: 'Approval',
+    status: {
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      cancelled: 'Cancelled',
+    },
+    tierStatus: {
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+    },
+    actions: {
+      submit: 'Submit for Approval',
+      approve: 'Approve',
+      reject: 'Reject',
+      cancel: 'Cancel Request',
+    },
+    labels: {
+      rejectComment: 'Reason for rejection',
+    },
+    validation: {
+      rejectCommentRequired: 'A reason is required to reject.',
+    },
+    timeline: {
+      none: 'No approval request for this document.',
+      approverPool: 'Approver(s): {names}',
+      actedAt: 'Acted at {date}',
+    },
+    messages: {
+      submitted: 'Submitted for approval.',
+      approved: 'Approved.',
+      rejected: 'Rejected.',
+      cancelled: 'Request cancelled.',
     },
   },
 }

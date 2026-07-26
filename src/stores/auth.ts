@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
   const email = ref<string | null>(null)
   const permissions = ref<number[]>([])
   const branchIds = ref<number[]>([])
+  const employeeId = ref<number | null>(null)
 
   // Track initialization state
   const isInitialized = ref<boolean>(false)
@@ -50,6 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
     email.value = userInfo.email
     permissions.value = userInfo.permissions
     branchIds.value = userInfo.branchIds ?? []
+    employeeId.value = userInfo.employeeId ?? null
   }
 
   /**
@@ -66,6 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
       email.value = null
       permissions.value = []
       branchIds.value = []
+      employeeId.value = null
     }
   }
 
@@ -83,6 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
       email.value = null
       permissions.value = []
       branchIds.value = []
+      employeeId.value = null
       throw error
     }
   }
@@ -108,12 +112,14 @@ export const useAuthStore = defineStore('auth', () => {
         email.value = userInfo.email
         permissions.value = userInfo.permissions
         branchIds.value = userInfo.branchIds ?? []
+        employeeId.value = userInfo.employeeId ?? null
       } catch {
         isAuthenticated.value = false
         userId.value = null
         email.value = null
         permissions.value = []
         branchIds.value = []
+        employeeId.value = null
       } finally {
         isInitialized.value = true
       }
@@ -153,6 +159,7 @@ export const useAuthStore = defineStore('auth', () => {
     email,
     permissions,
     branchIds,
+    employeeId,
 
     // Computed
     hasPermission,

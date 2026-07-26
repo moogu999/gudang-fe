@@ -232,6 +232,19 @@ export const API_ENDPOINTS = {
 
   // Return Delivery Order endpoints
   RETURN_DELIVERY_ORDERS: '/v1/return-delivery-orders',
+
+  // Approval endpoints
+  GEN_APPROVAL_FLOWS: '/gen/v1/approval-flows',
+  APPROVAL_FLOWS: '/v1/approval-flows',
+  APPROVAL_FLOW_BY_ID: (id: number) => `/v1/approval-flows/${id}`,
+  APPROVAL_MODULES: '/v1/approval-modules',
+  APPROVAL_REQUESTS: '/v1/approval-requests',
+  APPROVAL_REQUESTS_PENDING_ME: '/v1/approval-requests/pending-me',
+  APPROVAL_REQUEST_APPROVE: (id: number) => `/v1/approval-requests/${id}/approve`,
+  APPROVAL_REQUEST_REJECT: (id: number) => `/v1/approval-requests/${id}/reject`,
+  APPROVAL_REQUEST_CANCEL: (id: number) => `/v1/approval-requests/${id}/cancel`,
+  APPROVAL_REQUEST_BY_REFERENCE: (moduleKey: string, referenceId: number) =>
+    `/v1/approval-requests/by-reference/${moduleKey}/${referenceId}`,
 } as const
 
 // Type for API endpoints (useful for validation)

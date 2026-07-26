@@ -61,4 +61,5 @@ export interface MeResponse {
   email: string
   permissions: number[]
   branchIds: number[]
+  employeeId: number | null
 }

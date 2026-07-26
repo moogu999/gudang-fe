@@ -4,6 +4,7 @@ export interface SalesOrderConfig {
   branchName: string
   deliveryDateOffset: number
   expiredDateOffset: number
+  approvalFlowId: number | null
   createdAt: string
   updatedAt?: string
 }
@@ -11,4 +12,5 @@ export interface SalesOrderConfig {
 export interface UpsertSalesOrderConfigDto {
   deliveryDateOffset: number
   expiredDateOffset: number
+  approvalFlowId?: number | null
 }

@@ -228,6 +228,23 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Approvals',
+    labelKey: 'navigation.approvals',
+    icon: 'pi pi-check-square',
+    items: [
+      {
+        label: 'My Approvals',
+        labelKey: 'navigation.myApprovals',
+        route: '/my-approvals',
+      },
+      {
+        label: 'Approval Flows',
+        labelKey: 'navigation.approvalFlows',
+        route: '/approval-flows',
+      },
+    ],
+  },
+  {
     label: 'Access Controls',
     labelKey: 'navigation.accessControls',
     icon: 'pi pi-lock',

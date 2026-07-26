@@ -145,6 +145,15 @@ const columns = computed<Column[]>(() => [
     filterable: true,
   },
   {
+    field: 'employee.name',
+    underlyingField: 'employeeId',
+    header: t('users.fields.employee'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+    hideOnMobile: true,
+  },
+  {
     field: 'createdAt',
     header: t('common.labels.createdAt'),
     exportable: true,

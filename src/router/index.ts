@@ -724,6 +724,56 @@ const router = createRouter({
             titleAction: 'view',
           },
         },
+        {
+          path: 'approval-flows',
+          name: 'ApprovalFlows',
+          component: () => import('@/views/approval-flows/ApprovalFlowsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.APPROVAL_FLOW_READ,
+            titleKey: 'navigation.approvalFlows',
+          },
+        },
+        {
+          path: 'approval-flows/create',
+          name: 'ApprovalFlowCreate',
+          component: () => import('@/views/approval-flows/ApprovalFlowCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.APPROVAL_FLOW_WRITE,
+            titleKey: 'navigation.approvalFlows',
+            titleAction: 'create',
+          },
+        },
+        {
+          path: 'approval-flows/:id/edit',
+          name: 'ApprovalFlowEdit',
+          component: () => import('@/views/approval-flows/ApprovalFlowDetailView.vue'),
+          props: (route) => ({ mode: 'edit', id: Number(route.params.id) }),
+          meta: {
+            requiredPermission: PERMISSIONS.APPROVAL_FLOW_WRITE,
+            titleKey: 'navigation.approvalFlows',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'approval-flows/:id',
+          name: 'ApprovalFlowDetail',
+          component: () => import('@/views/approval-flows/ApprovalFlowDetailView.vue'),
+          props: (route) => ({ mode: 'view', id: Number(route.params.id) }),
+          meta: {
+            requiredPermission: PERMISSIONS.APPROVAL_FLOW_READ,
+            titleKey: 'navigation.approvalFlows',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'my-approvals',
+          name: 'MyApprovals',
+          component: () => import('@/views/my-approvals/MyApprovalsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.APPROVAL_REQUEST_READ,
+            titleKey: 'navigation.myApprovals',
+          },
+        },
       ],
     },
 

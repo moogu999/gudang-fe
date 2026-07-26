@@ -19,6 +19,12 @@
         >
           <span :class="item.icon" />
           <span v-if="!collapsed" class="ml-2">{{ getTranslatedLabel(item) }}</span>
+          <Badge
+            v-if="item.route === '/my-approvals' && pendingApprovalCount > 0"
+            :value="pendingApprovalCount"
+            severity="danger"
+            :class="collapsed ? 'absolute top-1 right-1' : 'ml-auto'"
+          />
         </a>
       </RouterLink>
 
@@ -42,11 +48,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import PanelMenu from 'primevue/panelmenu'
+import Badge from 'primevue/badge'
 import { mainMenu } from './menu'
-import { usePermissions } from '@/composables'
+import { usePermissions, useApprovalBadge } from '@/composables'
 import { useSidebarStore } from '@/stores'
 
 const props = defineProps<{
@@ -56,6 +63,9 @@ const props = defineProps<{
 const { t } = useI18n()
 const { canAccessRoute, canAccessMenuItem } = usePermissions()
 const sidebarStore = useSidebarStore()
+const { pendingApprovalCount, refreshApprovalBadge } = useApprovalBadge()
+
+onMounted(refreshApprovalBadge)
 
 /**
  * Custom menu item type with i18n support

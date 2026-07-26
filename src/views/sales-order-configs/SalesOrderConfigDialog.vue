@@ -82,6 +82,38 @@
         </div>
       </div>
 
+      <!-- Approval Flow -->
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="approvalFlowId" class="w-full text-sm font-semibold sm:text-base md:w-48">
+          {{ t('salesOrderConfigs.fields.approvalFlow') }}
+        </label>
+        <div class="flex w-full flex-auto flex-col gap-1">
+          <InfiniteSelect
+            id="approvalFlowId"
+            name="approvalFlowId"
+            option-label="name"
+            option-value="id"
+            :fetch-fn="fetchApprovalFlows"
+            :initial-option="initialApprovalFlow"
+            :placeholder="t('salesOrderConfigs.labels.noApprovalRequired')"
+            show-clear
+            :disabled="mode === DialogMode.VIEW"
+            class="w-full"
+          />
+          <small class="text-surface-500">{{
+            t('salesOrderConfigs.labels.approvalFlowHint')
+          }}</small>
+          <Message
+            v-if="$form.approvalFlowId?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.approvalFlowId.error.message }}
+          </Message>
+        </div>
+      </div>
+
       <div v-if="mode !== DialogMode.VIEW" class="flex justify-end gap-2">
         <Button
           type="button"
@@ -118,9 +150,10 @@ import Message from 'primevue/message'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import DialogMode from '@/constants/dialogMode'
-import { BranchesService, SalesOrderConfigService } from '@/services'
+import { BranchesService, SalesOrderConfigService, ApprovalsService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
-import type { SalesOrderConfig } from '@/types'
+import type { Base } from '@/types/api.type'
+import type { SalesOrderConfig, ApprovalFlow } from '@/types'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -140,17 +173,30 @@ const emit = defineEmits(['close'])
 
 const toastGroup = 'salesOrderConfigDialog'
 const isLoading = ref(false)
+const initialApprovalFlow = ref<ApprovalFlow | undefined>()
 
 const initialValues = reactive({
   branchId: undefined as number | undefined,
   deliveryDateOffset: 0,
   expiredDateOffset: 0,
+  approvalFlowId: undefined as number | undefined,
 })
+
+async function fetchApprovalFlows(): Promise<Base<ApprovalFlow>> {
+  const flows = await ApprovalsService.listFlows('sales_order')
+  const active = flows.filter((f) => f.isActive)
+  return { data: active, meta: { total: active.length, limit: active.length, offset: 0 } }
+}
 
 onBeforeMount(() => {
   if ((props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW) && props.config) {
     initialValues.deliveryDateOffset = props.config.deliveryDateOffset
     initialValues.expiredDateOffset = props.config.expiredDateOffset
+
+    if (props.config.approvalFlowId) {
+      initialValues.approvalFlowId = props.config.approvalFlowId
+      initialApprovalFlow.value = { id: props.config.approvalFlowId, name: '' } as ApprovalFlow
+    }
   }
 })
 
@@ -169,6 +215,7 @@ const resolver = computed(() =>
         .number({ message: t('salesOrderConfigs.validation.expiredDateOffsetRequired') })
         .int()
         .min(0),
+      approvalFlowId: z.number().optional(),
     }),
   ),
 )
@@ -184,6 +231,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
     await SalesOrderConfigService.upsert(branchId, {
       deliveryDateOffset: event.states.deliveryDateOffset.value,
       expiredDateOffset: event.states.expiredDateOffset.value,
+      approvalFlowId: event.states.approvalFlowId.value ?? null,
     })
 
     const message =

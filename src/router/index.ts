@@ -774,6 +774,24 @@ const router = createRouter({
             titleKey: 'navigation.myApprovals',
           },
         },
+        {
+          path: 'payment-terms',
+          name: 'PaymentTerms',
+          component: () => import('@/views/payment-terms/PaymentTermsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PAYMENT_TERM_READ,
+            titleKey: 'navigation.paymentTerms',
+          },
+        },
+        {
+          path: 'suppliers',
+          name: 'Suppliers',
+          component: () => import('@/views/suppliers/SuppliersView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SUPPLIER_READ,
+            titleKey: 'navigation.suppliers',
+          },
+        },
       ],
     },
 

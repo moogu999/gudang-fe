@@ -90,6 +90,9 @@ export const API_ENDPOINTS = {
   // UOM Group endpoints
   GEN_UOM_GROUPS: '/gen/v1/uom-groups',
 
+  // Payment Term endpoints
+  GEN_PAYMENT_TERMS: '/gen/v1/payment-terms',
+
   // Tracking Type endpoints
   GEN_TRACKING_TYPES: '/gen/v1/tracking-types',
 
@@ -144,6 +147,9 @@ export const API_ENDPOINTS = {
   // Employee endpoints
   EMPLOYEES: '/v1/employees',
   EMPLOYEE_TYPES: '/gen/v1/employee-types',
+
+  // Supplier endpoints
+  SUPPLIERS: '/v1/suppliers',
 
   // File endpoints
   FILES: '/v1/files',

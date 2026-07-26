@@ -228,6 +228,23 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Purchasing',
+    labelKey: 'navigation.purchasing',
+    icon: 'pi pi-shopping-bag',
+    items: [
+      {
+        label: 'Term of Payment',
+        labelKey: 'navigation.paymentTerms',
+        route: '/payment-terms',
+      },
+      {
+        label: 'Suppliers',
+        labelKey: 'navigation.suppliers',
+        route: '/suppliers',
+      },
+    ],
+  },
+  {
     label: 'Approvals',
     labelKey: 'navigation.approvals',
     icon: 'pi pi-check-square',

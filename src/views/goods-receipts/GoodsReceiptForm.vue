@@ -50,7 +50,13 @@
           <label for="receiptDate" class="text-sm font-semibold">{{
             t('goodsReceipts.fields.receiptDate')
           }}</label>
-          <DatePicker id="receiptDate" name="receiptDate" date-format="dd/mm/yy" class="w-full" />
+          <DatePicker
+            id="receiptDate"
+            name="receiptDate"
+            date-format="dd/mm/yy"
+            :max-date="maxReceiptDate"
+            class="w-full"
+          />
           <Message
             v-if="$form.receiptDate?.invalid"
             severity="error"
@@ -241,6 +247,17 @@ const emit = defineEmits<{
 const isSaving = ref(false)
 const details = ref<GoodsReceiptDetailRow[]>([])
 
+// Goods are recorded as they arrive, so a receipt can never be dated ahead of today.
+// The picker blocks later days; the resolver re-checks against a freshly read clock,
+// which also covers a form left open past midnight.
+function endOfToday(): Date {
+  const date = new Date()
+  date.setHours(23, 59, 59, 999)
+  return date
+}
+
+const maxReceiptDate = computed(() => endOfToday())
+
 const arrivalTypeOptions = computed(() => [
   { value: 'regular', label: t('goodsReceipts.arrivalTypes.regular') },
   { value: 'consignment', label: t('goodsReceipts.arrivalTypes.consignment') },
@@ -271,7 +288,11 @@ const resolver = computed(() =>
         noMode.value === 'auto'
           ? z.string().optional()
           : z.string().min(1, t('goodsReceipts.validation.noRequired')),
-      receiptDate: z.date({ message: t('goodsReceipts.validation.receiptDateRequired') }),
+      receiptDate: z
+        .date({ message: t('goodsReceipts.validation.receiptDateRequired') })
+        .refine((date) => date <= endOfToday(), {
+          message: t('goodsReceipts.validation.receiptDateFuture'),
+        }),
       warehouseId: z.number({ message: t('goodsReceipts.validation.warehouseRequired') }),
       arrivalType: z.string().min(1, t('goodsReceipts.validation.arrivalTypeRequired')),
       stockType: z.string().min(1, t('goodsReceipts.validation.stockTypeRequired')),

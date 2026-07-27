@@ -1557,6 +1557,7 @@ export default {
     validation: {
       noRequired: 'Receipt number is required.',
       receiptDateRequired: 'Receipt date is required.',
+      receiptDateFuture: 'Receipt date cannot be later than today.',
       warehouseRequired: 'Warehouse is required.',
       arrivalTypeRequired: 'Arrival type is required.',
       stockTypeRequired: 'Stock type is required.',

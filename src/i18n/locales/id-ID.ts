@@ -1554,6 +1554,7 @@ export default {
     validation: {
       noRequired: 'Nomor penerimaan wajib diisi.',
       receiptDateRequired: 'Tanggal terima wajib diisi.',
+      receiptDateFuture: 'Tanggal terima tidak boleh melebihi hari ini.',
       warehouseRequired: 'Gudang wajib dipilih.',
       arrivalTypeRequired: 'Jenis kedatangan wajib dipilih.',
       stockTypeRequired: 'Jenis stok wajib dipilih.',

@@ -587,6 +587,7 @@ export default {
       productCreated: 'Produk berhasil dibuat.',
       productUpdated: 'Produk berhasil diperbarui.',
       productNotFound: 'Produk tidak ditemukan.',
+      duplicateCode: 'Kode "{code}" sudah dipakai produk lain. Silakan gunakan kode yang berbeda.',
     },
   },
   unitOfMeasurements: {

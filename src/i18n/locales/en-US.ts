@@ -585,6 +585,7 @@ export default {
       productCreated: 'Product is created.',
       productUpdated: 'Product is updated.',
       productNotFound: 'Product not found.',
+      duplicateCode: 'Code "{code}" is already used by another product. Please use a different code.',
     },
   },
   unitOfMeasurements: {

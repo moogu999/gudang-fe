@@ -20,11 +20,11 @@
             <span v-else-if="col.field === 'warehouseName'">
               {{ data.warehouseName || '-' }}
             </span>
-            <span v-else-if="col.field === 'arrivalType'" class="capitalize">
-              {{ data.arrivalType || '-' }}
+            <span v-else-if="col.field === 'arrivalType'">
+              {{ arrivalTypeLabel(data.arrivalType) }}
             </span>
-            <span v-else-if="col.field === 'stockType'" class="capitalize">
-              {{ data.stockType || '-' }}
+            <span v-else-if="col.field === 'stockType'">
+              {{ stockTypeLabel(data.stockType) }}
             </span>
             <span v-else-if="col.field === 'totalAmount'">
               {{ formatNumber(parseFloat(data.totalAmount || '0')) }}
@@ -51,10 +51,12 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import { API_ENDPOINTS } from '@/constants/api'
 import DateFormat from '@/constants/dateFormat'
+import { useGoodsReceiptLabels } from '@/composables'
 import type { Column } from '@/types'
 
 const { t } = useI18n()
 const router = useRouter()
+const { arrivalTypeLabel, stockTypeLabel } = useGoodsReceiptLabels()
 
 const url = API_ENDPOINTS.GEN_GOODS_RECEIPT_HEADERS
 

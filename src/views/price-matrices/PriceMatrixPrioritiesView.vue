@@ -15,7 +15,7 @@
           </label>
           <InfiniteSelect
             id="branchId"
-            option-label="name"
+            :option-label="branchLabel"
             option-value="id"
             :fetch-fn="(query) => BranchesService.list(query)"
             :placeholder="t('priceMatrixPriority.branchPlaceholder')"
@@ -111,6 +111,7 @@ import { usePermissions } from '@/composables'
 import { PriceMatricesService } from '@/services/price-matrices.service'
 import { BranchesService } from '@/services/branches.service'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { branchLabel } from '@/utils/branchHelper'
 import type { PriceMatrixPriorityItem, PriceMatrixSummary } from '@/types/price-matrix.type'
 
 const { t } = useI18n()

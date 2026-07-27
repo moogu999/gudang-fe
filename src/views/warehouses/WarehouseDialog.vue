@@ -52,7 +52,7 @@
           <InfiniteSelect
             id="branchId"
             name="branchId"
-            option-label="code"
+            :option-label="branchLabel"
             option-value="id"
             :fetch-fn="(query) => BranchesService.list(query)"
             :disabled="mode === DialogMode.VIEW"
@@ -105,6 +105,7 @@ import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
 import type { Warehouse } from '@/types/warehouse.type'
+import { branchLabel } from '@/utils/branchHelper'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 
 const { t } = useI18n()
@@ -138,6 +139,7 @@ onBeforeMount(() => {
     initialBranch.value = {
       id: props.warehouse.branchId,
       code: props.warehouse.branchCode,
+      name: props.warehouse.branchName,
     }
   }
 })

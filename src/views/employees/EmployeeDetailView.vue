@@ -267,7 +267,7 @@
                 <InfiniteSelect
                   id="branchId"
                   name="branchId"
-                  option-label="name"
+                  :option-label="branchLabel"
                   option-value="id"
                   :fetch-fn="(q) => BranchesService.list(q)"
                   :initial-option="initialBranch"
@@ -489,6 +489,7 @@ import {
   SalesOrganizationsService,
 } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { branchLabel } from '@/utils/branchHelper'
 import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.type'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants'

@@ -18,7 +18,7 @@
             v-if="mode === DialogMode.ADD"
             id="branchId"
             name="branchId"
-            option-label="name"
+            :option-label="branchLabel"
             option-value="id"
             :fetch-fn="(query) => BranchesService.list(query)"
             :placeholder="t('salesOrderConfigs.labels.selectBranch')"
@@ -152,6 +152,7 @@ import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import DialogMode from '@/constants/dialogMode'
 import { BranchesService, SalesOrderConfigService, ApprovalsService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { branchLabel } from '@/utils/branchHelper'
 import type { Base } from '@/types/api.type'
 import type { SalesOrderConfig, ApprovalFlow } from '@/types'
 

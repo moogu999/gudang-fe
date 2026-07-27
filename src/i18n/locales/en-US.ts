@@ -1563,7 +1563,7 @@ export default {
       detailsRequired: 'At least one line item is required.',
       detailProductRequired: 'Row {row}: product is required.',
       detailQtyRequired: 'Row {row}: quantity must be greater than 0.',
-      detailPriceRequired: 'Row {row}: price must be 0 or greater.',
+      detailPriceRequired: 'Row {row}: price is required and cannot be negative.',
     },
     messages: {
       created: 'Goods receipt posted successfully.',

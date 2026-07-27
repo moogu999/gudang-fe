@@ -1560,7 +1560,7 @@ export default {
       detailsRequired: 'Minimal satu item harus diisi.',
       detailProductRequired: 'Baris {row}: produk wajib dipilih.',
       detailQtyRequired: 'Baris {row}: qty harus lebih dari 0.',
-      detailPriceRequired: 'Baris {row}: harga harus 0 atau lebih.',
+      detailPriceRequired: 'Baris {row}: harga wajib diisi dan tidak boleh negatif.',
     },
     messages: {
       created: 'Penerimaan barang berhasil diposting.',

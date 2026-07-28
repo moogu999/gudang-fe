@@ -1699,6 +1699,7 @@ export default {
       productCode: 'Code',
       productName: 'Name',
       uom: 'UOM',
+      stockType: 'Stock Type',
       onHand: 'On Hand',
       inTransit: 'In Transit',
       reserved: 'Reserved',
@@ -1710,6 +1711,10 @@ export default {
       out: 'Stockout',
       normal: 'Normal',
       unknown: '-',
+    },
+    stockTypes: {
+      good: 'Good',
+      bad: 'Bad',
     },
   },
   bookingOrders: {
@@ -2167,6 +2172,10 @@ export default {
       failed_delivery: 'Failed Delivery',
       sales_return: 'Sales Return',
     },
+    stockTypes: {
+      good: 'Good',
+      bad: 'Bad',
+    },
     actions: {
       create: 'New Return Note',
       submit: 'Receive Stock',
@@ -2192,6 +2201,7 @@ export default {
       qtyAtDriver: 'Qty at Driver',
       qtyReceived: 'Qty Received',
       receivedQty: 'Received Qty',
+      stockType: 'Stock Type',
     },
     summary: {
       title: 'Selected Items',

@@ -172,6 +172,22 @@
                   />
                 </template>
               </Column>
+              <Column :header="t('goodsReturnNotes.detail.stockType')">
+                <template #body="{ data }">
+                  <SelectButton
+                    :model-value="selection[data.driverStockItemId].stockType"
+                    :options="stockTypeOptions"
+                    option-label="label"
+                    option-value="value"
+                    :allow-empty="false"
+                    :disabled="!selection[data.driverStockItemId].checked"
+                    @update:model-value="
+                      (value: GoodsReturnNoteItemStockType) =>
+                        (selection[data.driverStockItemId].stockType = value)
+                    "
+                  />
+                </template>
+              </Column>
               <template #empty>
                 <div class="py-4 text-center text-stone-500">{{ t('table.noResults') }}</div>
               </template>
@@ -243,6 +259,7 @@ import DatePicker from 'primevue/datepicker'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import Checkbox from 'primevue/checkbox'
+import SelectButton from 'primevue/selectbutton'
 import Tag from 'primevue/tag'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
@@ -257,6 +274,7 @@ import type {
   DriverStockItem,
   DriverStockGroup,
   DriverStockSourceType,
+  GoodsReturnNoteItemStockType,
 } from '@/types'
 import { pinnedToLevels } from '@/utils/uomHelper'
 import dayjs from 'dayjs'
@@ -287,6 +305,7 @@ const submitAcceptHandler = ref(async () => {})
 interface LineState {
   checked: boolean
   receivedQty: number
+  stockType: GoodsReturnNoteItemStockType
 }
 
 const selection = reactive<Record<number, LineState>>({})
@@ -325,6 +344,15 @@ function sourceTypeSeverity(sourceType: DriverStockSourceType): 'danger' | 'warn
   if (sourceType === 'sales_return') return 'info'
   return 'warn'
 }
+
+function defaultStockType(sourceType: DriverStockSourceType): GoodsReturnNoteItemStockType {
+  return sourceType === 'sales_return' ? 'bad' : 'good'
+}
+
+const stockTypeOptions = computed(() => [
+  { value: 'good', label: t('goodsReturnNotes.stockTypes.good') },
+  { value: 'bad', label: t('goodsReturnNotes.stockTypes.bad') },
+])
 
 function formatQty(decStr: string): string {
   const num = parseFloat(decStr)
@@ -377,6 +405,7 @@ async function fetchDriverStock(driverEmployeeId: number) {
       selection[item.driverStockItemId] = {
         checked: false,
         receivedQty: parseFloat(item.outstandingQty),
+        stockType: defaultStockType(item.sourceType),
       }
     }
   } catch (e) {
@@ -437,6 +466,7 @@ function onSubmitClick() {
         items: selectedLines.value.map(({ item, state }) => ({
           driverStockItemId: item.driverStockItemId,
           receivedQty: state.receivedQty.toString(),
+          stockType: state.stockType,
         })),
       })
       toast.add(

@@ -1696,6 +1696,7 @@ export default {
       productCode: 'Kode',
       productName: 'Nama',
       uom: 'Satuan',
+      stockType: 'Jenis Stok',
       onHand: 'Stok Tersedia',
       inTransit: 'Dalam Transit',
       reserved: 'Direservasi',
@@ -1707,6 +1708,10 @@ export default {
       out: 'Habis',
       normal: 'Normal',
       unknown: '-',
+    },
+    stockTypes: {
+      good: 'Baik',
+      bad: 'Rusak',
     },
   },
   bookingOrders: {
@@ -2167,6 +2172,10 @@ export default {
       failed_delivery: 'Pengiriman Gagal',
       sales_return: 'Retur Penjualan',
     },
+    stockTypes: {
+      good: 'Baik',
+      bad: 'Rusak',
+    },
     actions: {
       create: 'BTB Baru',
       submit: 'Terima Stok',
@@ -2192,6 +2201,7 @@ export default {
       qtyAtDriver: 'Qty di Pengemudi',
       qtyReceived: 'Qty Diterima',
       receivedQty: 'Qty Diterima',
+      stockType: 'Jenis Stok',
     },
     summary: {
       title: 'Item Terpilih',

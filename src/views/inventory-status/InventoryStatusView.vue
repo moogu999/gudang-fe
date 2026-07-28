@@ -97,6 +97,11 @@
             <span v-else-if="col.field === 'value'">{{
               formatNumber(parseFloat(data.value || '0'))
             }}</span>
+            <Tag
+              v-else-if="col.field === 'stockType'"
+              :severity="data.stockType === 'bad' ? 'danger' : 'success'"
+              :value="t(`inventoryStatus.stockTypes.${data.stockType}`)"
+            />
             <div v-else-if="col.field === 'composition'">
               <div class="flex h-2 w-24 overflow-hidden rounded-full bg-stone-100">
                 <template
@@ -186,6 +191,13 @@ const columns = computed<Column[]>(() => [
     field: 'uomGroupName',
     header: t('inventoryStatus.fields.uom'),
     sortable: false,
+    exportable: true,
+    filterable: false,
+  },
+  {
+    field: 'stockType',
+    header: t('inventoryStatus.fields.stockType'),
+    sortable: true,
     exportable: true,
     filterable: false,
   },

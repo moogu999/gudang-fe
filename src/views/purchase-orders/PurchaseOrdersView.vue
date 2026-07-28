@@ -1,0 +1,159 @@
+<template>
+  <div>
+    <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
+      {{ t('purchaseOrders.title') }}
+    </h1>
+
+    <Toolbar v-if="canWrite" class="mb-5">
+      <template #end>
+        <ResponsiveButton :label="t('purchaseOrders.addPurchaseOrder')" @click="addPurchaseOrder" />
+      </template>
+    </Toolbar>
+
+    <ResponsiveCard>
+      <template #content>
+        <TableComponent :url="url" :columns="columns">
+          <template #content="{ col, data }">
+            <span v-if="col.field === 'supplier.name'">
+              {{ data.supplier?.name || '-' }}
+            </span>
+            <span v-else-if="col.field === 'paymentTerm.name'">
+              {{ data.paymentTerm?.name || '-' }}
+            </span>
+            <span v-else-if="col.field === 'orderDate'">
+              {{ dayjs(data.orderDate).format(DateFormat.DATE) }}
+            </span>
+            <span v-else-if="col.field === 'totalAmount'">
+              {{ formatCurrency(parseFloat(data.totalAmount)) }}
+            </span>
+            <div v-else-if="col.field === 'status'">
+              <Tag
+                v-if="data.status"
+                :severity="statusSeverity(data.status)"
+                :value="t(`purchaseOrders.status.${data.status}`)"
+              />
+            </div>
+            <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
+              <Button
+                v-if="data.status === 'draft' && canWrite"
+                icon="pi pi-pencil"
+                size="small"
+                text
+                severity="secondary"
+                @click="editPurchaseOrder(data.id)"
+              />
+              <Button icon="pi pi-eye" size="small" text @click="viewPurchaseOrder(data.id)" />
+            </div>
+          </template>
+        </TableComponent>
+      </template>
+    </ResponsiveCard>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import Button from 'primevue/button'
+import Toolbar from 'primevue/toolbar'
+import Tag from 'primevue/tag'
+import dayjs from 'dayjs'
+import TableComponent from '@/components/table/TableComponent.vue'
+import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
+import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
+import { API_ENDPOINTS } from '@/constants/api'
+import DateFormat from '@/constants/dateFormat'
+import { usePermissions } from '@/composables'
+import type { Column } from '@/types'
+import type { PurchaseOrderStatus } from '@/types/purchaseOrder.type'
+
+const { t } = useI18n()
+const router = useRouter()
+
+const { canWrite } = usePermissions('/purchase-orders')
+
+const url = API_ENDPOINTS.GEN_PURCHASE_ORDER_HEADERS
+
+// Table columns
+const columns = computed<Column[]>(() => [
+  {
+    field: 'no',
+    header: t('purchaseOrders.fields.no'),
+    sortable: true,
+    exportable: true,
+    filterable: true,
+  },
+  {
+    field: 'orderDate',
+    header: t('purchaseOrders.fields.orderDate'),
+    sortable: true,
+    exportable: true,
+    filterable: true,
+  },
+  {
+    field: 'supplier.name',
+    underlyingField: 'supplierId',
+    header: t('purchaseOrders.fields.supplier'),
+    sortable: false,
+    exportable: true,
+    filterable: false,
+  },
+  {
+    field: 'paymentTerm.name',
+    underlyingField: 'paymentTermId',
+    header: t('purchaseOrders.fields.paymentTerm'),
+    sortable: false,
+    exportable: true,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
+    field: 'totalAmount',
+    header: t('purchaseOrders.fields.totalAmount'),
+    sortable: true,
+    exportable: true,
+    filterable: true,
+  },
+  {
+    field: 'status',
+    header: t('common.labels.status'),
+    sortable: false,
+    exportable: true,
+    filterable: false,
+  },
+  {
+    field: 'actions',
+    header: t('common.labels.actions'),
+    sortable: false,
+    exportable: false,
+    filterable: false,
+  },
+])
+
+function statusSeverity(status: PurchaseOrderStatus) {
+  if (status === 'approved') return 'success'
+  if (status === 'applied') return 'info'
+  if (status === 'need_approval') return 'warn'
+  return 'secondary'
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function addPurchaseOrder() {
+  router.push('/purchase-orders/create')
+}
+
+function editPurchaseOrder(id: number) {
+  router.push(`/purchase-orders/${id}/edit`)
+}
+
+function viewPurchaseOrder(id: number) {
+  router.push(`/purchase-orders/${id}`)
+}
+</script>

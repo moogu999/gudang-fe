@@ -82,6 +82,8 @@ export default {
     uomGroups: 'Grup Satuan',
     productLabelDefinitions: 'Definisi Label Produk',
     purchasing: 'Pembelian',
+    purchaseOrders: 'Purchase Order',
+    purchaseOrderConfigs: 'Konfigurasi PO Pembelian',
     paymentTerms: 'Termin Pembayaran',
     suppliers: 'Pemasok',
     customerLabelDefinitions: 'Definisi Label Pelanggan',
@@ -908,6 +910,111 @@ export default {
       notFound: 'Pesanan penjualan tidak ditemukan',
     },
   },
+  purchaseOrders: {
+    title: 'Purchase Order',
+    addPurchaseOrder: 'Tambah Purchase Order',
+    viewPurchaseOrder: 'Lihat Purchase Order',
+
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+
+    sections: {
+      supplier: 'Informasi Supplier',
+      orderDetail: 'Detail Pesanan',
+    },
+
+    fields: {
+      no: 'Nomor PO',
+      supplier: 'Supplier',
+      paymentTerm: 'Term of Payment',
+      orderDate: 'Tanggal PO',
+      expectedDeliveryDate: 'Tanggal Kirim Diharapkan',
+      reference: 'Referensi / Kesepakatan',
+      remark: 'Catatan',
+      branch: 'Cabang',
+      status: 'Status',
+      totalAmount: 'Total',
+    },
+
+    details: {
+      title: 'Item Pesanan',
+      addDetail: 'Tambah Item',
+      empty: 'Belum ada item',
+      productCode: 'Kode',
+      product: 'Produk',
+      uom: 'Satuan',
+      quantity: 'Jumlah',
+      price: 'Harga',
+      gross: 'Bruto',
+      discount: 'Diskon',
+      subAmount: 'Subtotal',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      manualDiscountNote: 'DISKON MANUAL · {reason}',
+    },
+
+    summary: {
+      title: 'Ringkasan Pesanan',
+      grossTotal: 'Subtotal',
+      discountTotal: 'Diskon',
+      taxBase: 'DPP',
+      tax: 'Pajak',
+      total: 'Total',
+    },
+
+    manualDiscount: {
+      title: 'Diskon Manual',
+      add: 'Tambah',
+      type: 'Tipe',
+      flat: 'Nominal',
+      percentage: 'Persentase',
+      value: 'Nilai',
+      amount: 'Jumlah',
+      reason: 'Alasan',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      reasonPlaceholder: 'mis. negosiasi dengan principal…',
+    },
+
+    validation: {
+      noRequired: 'Nomor PO wajib diisi',
+      supplierRequired: 'Supplier wajib dipilih',
+      paymentTermRequired: 'Term of Payment wajib dipilih',
+      orderDateRequired: 'Tanggal PO wajib diisi',
+      detailsRequired: 'Minimal satu item harus ditambahkan',
+      detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+      branchRequired: 'Cabang wajib dipilih',
+      manualDiscountReasonRequired: 'Alasan wajib diisi',
+      manualDiscountValueInvalid: 'Nilai harus lebih dari 0',
+    },
+
+    status: {
+      draft: 'Draf',
+      need_approval: 'Butuh Persetujuan',
+      approved: 'Disetujui',
+      applied: 'Diterapkan',
+    },
+
+    actions: {
+      saveAsDraft: 'Simpan Draf',
+      submitForApproval: 'Submit untuk Approval',
+      editPurchaseOrder: 'Edit Purchase Order',
+    },
+
+    confirm: {
+      header: 'Konfirmasi Submit',
+      message: 'Purchase order akan disubmit untuk approval. Lanjutkan?',
+    },
+
+    messages: {
+      created: 'Purchase order berhasil dibuat',
+      updated: 'Purchase order berhasil diperbarui',
+      notFound: 'Purchase order tidak ditemukan',
+    },
+  },
   csv: {
     import: 'Impor CSV',
     downloadTemplate: 'Unduh Template',
@@ -1668,6 +1775,30 @@ export default {
       branchRequired: 'Cabang wajib diisi.',
       deliveryDateOffsetRequired: 'Offset tanggal pengiriman wajib diisi.',
       expiredDateOffsetRequired: 'Offset tanggal kedaluwarsa wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  purchaseOrderConfigs: {
+    title: 'Konfigurasi Purchase Order',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Kosongkan jika purchase order dari cabang ini tidak memerlukan persetujuan.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
     },
     messages: {
       created: 'Konfigurasi berhasil dibuat.',

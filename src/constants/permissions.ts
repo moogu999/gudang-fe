@@ -91,6 +91,10 @@ export const PERMISSIONS = {
   SUPPLIER_WRITE: 84,
   PAYMENT_TERM_READ: 85,
   PAYMENT_TERM_WRITE: 86,
+  PURCHASE_ORDER_READ: 87,
+  PURCHASE_ORDER_WRITE: 88,
+  PURCHASE_ORDER_CONFIG_READ: 89,
+  PURCHASE_ORDER_CONFIG_WRITE: 90,
 } as const
 
 /**
@@ -144,6 +148,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/my-approvals': PERMISSIONS.APPROVAL_REQUEST_READ,
   '/suppliers': PERMISSIONS.SUPPLIER_READ,
   '/payment-terms': PERMISSIONS.PAYMENT_TERM_READ,
+  '/purchase-orders': PERMISSIONS.PURCHASE_ORDER_READ,
+  '/purchase-order-configs': PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
 }
 
 /**
@@ -184,4 +190,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/my-approvals': PERMISSIONS.APPROVAL_ACT,
   '/suppliers': PERMISSIONS.SUPPLIER_WRITE,
   '/payment-terms': PERMISSIONS.PAYMENT_TERM_WRITE,
+  '/purchase-orders': PERMISSIONS.PURCHASE_ORDER_WRITE,
+  '/purchase-order-configs': PERMISSIONS.PURCHASE_ORDER_CONFIG_WRITE,
 }

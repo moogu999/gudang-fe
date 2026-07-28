@@ -487,7 +487,7 @@ import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import ApprovalTimeline from '@/components/approval/ApprovalTimeline.vue'
 import ApprovalActionBar from '@/components/approval/ApprovalActionBar.vue'
 import SalesOrderDetailsTable from './SalesOrderDetailsTable.vue'
-import ManualDiscountEditor from './ManualDiscountEditor.vue'
+import ManualDiscountEditor from '@/components/discount/ManualDiscountEditor.vue'
 import DialogMode from '@/constants/dialogMode'
 import FilterOperator from '@/constants/filterOperator'
 import {

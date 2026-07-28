@@ -27,6 +27,7 @@
 
     <SalesOrderConfigsView v-if="activeConfig === 'so'" ref="soRef" :embedded="true" />
     <BookingOrderConfigsView v-if="activeConfig === 'bo'" ref="boRef" :embedded="true" />
+    <PurchaseOrderConfigsView v-if="activeConfig === 'po'" ref="poRef" :embedded="true" />
   </div>
 </template>
 
@@ -39,6 +40,7 @@ import Select from 'primevue/select'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import SalesOrderConfigsView from '@/views/sales-order-configs/SalesOrderConfigsView.vue'
 import BookingOrderConfigsView from '@/views/booking-order-configs/BookingOrderConfigsView.vue'
+import PurchaseOrderConfigsView from '@/views/purchase-order-configs/PurchaseOrderConfigsView.vue'
 import { usePermissions } from '@/composables'
 
 const { t } = useI18n()
@@ -47,11 +49,13 @@ const router = useRouter()
 
 const { canRead: canReadSO, canWrite: canWriteSO } = usePermissions('/sales-order-configs')
 const { canRead: canReadBO, canWrite: canWriteBO } = usePermissions('/booking-order-configs')
+const { canRead: canReadPO, canWrite: canWritePO } = usePermissions('/purchase-order-configs')
 
 const configOptions = computed(() => {
   const options: { label: string; value: string }[] = []
   if (canReadSO.value) options.push({ label: t('navigation.salesOrderConfigs'), value: 'so' })
   if (canReadBO.value) options.push({ label: t('navigation.bookingOrderConfigs'), value: 'bo' })
+  if (canReadPO.value) options.push({ label: t('navigation.purchaseOrderConfigs'), value: 'po' })
   return options
 })
 
@@ -70,6 +74,7 @@ function onActiveConfigChange(val: string | null) {
 const canWriteActive = computed(() => {
   if (activeConfig.value === 'so') return canWriteSO.value
   if (activeConfig.value === 'bo') return canWriteBO.value
+  if (activeConfig.value === 'po') return canWritePO.value
   return false
 })
 
@@ -77,9 +82,11 @@ const showToolbar = computed(() => configOptions.value.length > 1 || canWriteAct
 
 const soRef = ref<InstanceType<typeof SalesOrderConfigsView> | null>(null)
 const boRef = ref<InstanceType<typeof BookingOrderConfigsView> | null>(null)
+const poRef = ref<InstanceType<typeof PurchaseOrderConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
   else if (activeConfig.value === 'bo') boRef.value?.openAddDialog()
+  else if (activeConfig.value === 'po') poRef.value?.openAddDialog()
 }
 </script>

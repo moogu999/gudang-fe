@@ -792,6 +792,49 @@ const router = createRouter({
             titleKey: 'navigation.suppliers',
           },
         },
+        {
+          path: 'purchase-orders',
+          name: 'PurchaseOrders',
+          component: () => import('@/views/purchase-orders/PurchaseOrdersView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PURCHASE_ORDER_READ,
+            titleKey: 'navigation.purchaseOrders',
+          },
+        },
+        {
+          path: 'purchase-orders/create',
+          name: 'PurchaseOrderCreate',
+          component: () => import('@/views/purchase-orders/PurchaseOrderCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PURCHASE_ORDER_WRITE,
+            titleKey: 'navigation.purchaseOrders',
+            titleAction: 'create',
+          },
+        },
+        {
+          path: 'purchase-orders/:id/edit',
+          name: 'PurchaseOrderEdit',
+          component: () => import('@/views/purchase-orders/PurchaseOrderEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PURCHASE_ORDER_WRITE,
+            titleKey: 'navigation.purchaseOrders',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'purchase-orders/:id',
+          name: 'PurchaseOrderDetail',
+          component: () => import('@/views/purchase-orders/PurchaseOrderDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PURCHASE_ORDER_READ,
+            titleKey: 'navigation.purchaseOrders',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'purchase-order-configs',
+          redirect: { path: '/configs', query: { tab: 'po' } },
+        },
       ],
     },
 

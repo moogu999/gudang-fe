@@ -223,6 +223,23 @@ export type { CsvUploadError, CsvUploadResponse } from './csvUpload.type'
 // Sales Order Config types
 export type { SalesOrderConfig, UpsertSalesOrderConfigDto } from './salesOrderConfig.type'
 
+// Purchase Order types
+export type {
+  PurchaseOrderStatus,
+  PurchaseOrderHeader,
+  PurchaseOrderDetail,
+  CreatePurchaseOrderRequest,
+  UpdatePurchaseOrderRequest,
+  CreatePurchaseOrderDetailDto,
+  ManualDiscount as PurchaseOrderManualDiscount,
+  ManualDiscountDto as PurchaseOrderManualDiscountDto,
+  PurchaseOrderDetailRow,
+  SupplierLite as PurchaseOrderSupplierLite,
+} from './purchaseOrder.type'
+
+// Purchase Order Config types
+export type { PurchaseOrderConfig, UpsertPurchaseOrderConfigDto } from './purchaseOrderConfig.type'
+
 // Booking Order types
 export type {
   BookableSalesOrder,

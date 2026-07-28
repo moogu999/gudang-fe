@@ -212,15 +212,6 @@ const mainMenu = [
         route: '/invoices',
       },
       {
-        label: 'Config',
-        labelKey: 'navigation.configs',
-        route: '/configs',
-        permissionsAny: [
-          PERMISSIONS.SALES_ORDER_CONFIG_READ,
-          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
-        ],
-      },
-      {
         label: 'Promotions',
         labelKey: 'navigation.promotions',
         route: '/promotions',
@@ -232,6 +223,11 @@ const mainMenu = [
     labelKey: 'navigation.purchasing',
     icon: 'pi pi-shopping-bag',
     items: [
+      {
+        label: 'Purchase Orders',
+        labelKey: 'navigation.purchaseOrders',
+        route: '/purchase-orders',
+      },
       {
         label: 'Term of Payment',
         labelKey: 'navigation.paymentTerms',
@@ -297,6 +293,16 @@ const mainMenu = [
         label: 'Number Series',
         labelKey: 'navigation.numberSeries',
         route: '/number-series',
+      },
+      {
+        label: 'Config',
+        labelKey: 'navigation.configs',
+        route: '/configs',
+        permissionsAny: [
+          PERMISSIONS.SALES_ORDER_CONFIG_READ,
+          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
+          PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
+        ],
       },
     ],
   },

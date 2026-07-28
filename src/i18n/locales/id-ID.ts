@@ -50,6 +50,8 @@ export default {
     messages: {
       confirmDelete: 'Apakah Anda yakin ingin menghapus {entity} ini?',
       deleteSuccess: '{entity} berhasil dihapus',
+      deleteInUse:
+        '{entity} ini masih dipakai di data lain, jadi belum bisa dihapus. Lepaskan dulu dari data yang memakainya, lalu coba lagi.',
       createSuccess: '{entity} berhasil dibuat',
       updateSuccess: '{entity} berhasil diperbarui',
       error: 'Terjadi kesalahan',
@@ -585,6 +587,7 @@ export default {
       productCreated: 'Produk berhasil dibuat.',
       productUpdated: 'Produk berhasil diperbarui.',
       productNotFound: 'Produk tidak ditemukan.',
+      duplicateCode: 'Kode "{code}" sudah dipakai produk lain. Silakan gunakan kode yang berbeda.',
     },
   },
   unitOfMeasurements: {
@@ -1551,13 +1554,14 @@ export default {
     validation: {
       noRequired: 'Nomor penerimaan wajib diisi.',
       receiptDateRequired: 'Tanggal terima wajib diisi.',
+      receiptDateFuture: 'Tanggal terima tidak boleh melebihi hari ini.',
       warehouseRequired: 'Gudang wajib dipilih.',
       arrivalTypeRequired: 'Jenis kedatangan wajib dipilih.',
       stockTypeRequired: 'Jenis stok wajib dipilih.',
       detailsRequired: 'Minimal satu item harus diisi.',
       detailProductRequired: 'Baris {row}: produk wajib dipilih.',
       detailQtyRequired: 'Baris {row}: qty harus lebih dari 0.',
-      detailPriceRequired: 'Baris {row}: harga harus 0 atau lebih.',
+      detailPriceRequired: 'Baris {row}: harga wajib diisi dan tidak boleh negatif.',
     },
     messages: {
       created: 'Penerimaan barang berhasil diposting.',

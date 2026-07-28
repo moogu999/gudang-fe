@@ -999,7 +999,8 @@ async function onFormSubmit(event: FormSubmitEvent) {
       })
       await flushPendingDocs(created.id)
       toast.add(commonSuccessToast(t('vehicles.messages.vehicleCreated'), toastGroup))
-      setTimeout(() => router.replace(`/vehicles/${created.id}`), 800)
+      // Back to the list, replacing the create form so Back doesn't reopen it
+      setTimeout(() => router.replace('/vehicles'), 800)
     } else {
       await VehiclesService.update(props.id!, {
         plateNumber,

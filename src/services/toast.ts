@@ -5,9 +5,14 @@ import type { ToastMessageOptions } from 'primevue'
  * Creates a standard error toast notification
  * @param e The error object or message
  * @param group The toast group identifier
+ * @param life How long the toast stays on screen, for messages that need more reading time
  * @returns ToastMessageOptions for error display
  */
-function commonErrorToast(e: unknown, group: string): ToastMessageOptions {
+function commonErrorToast(
+  e: unknown,
+  group: string,
+  life: ToastLife = ToastLife.TWO_SECONDS,
+): ToastMessageOptions {
   // Extract error message from Error object or use as-is if it's a string
   const errorMessage = e instanceof Error ? e.message : String(e)
 
@@ -15,7 +20,7 @@ function commonErrorToast(e: unknown, group: string): ToastMessageOptions {
     severity: 'error',
     summary: 'Error',
     detail: errorMessage,
-    life: ToastLife.TWO_SECONDS,
+    life: life,
     group: group,
   }
 }

@@ -5,7 +5,7 @@ import axios, {
   type AxiosError,
 } from 'axios'
 import { API_ENDPOINTS } from '@/constants/api'
-import type { ErrorResponse } from '@/types/api.type'
+import { ApiError, type ErrorResponse } from '@/types/api.type'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -40,6 +40,7 @@ class ApiService {
 
         // Extract error message from API response
         const errorMessage = error.response?.data?.message || error.message
+        const status = error.response?.status
 
         // Only handle 401 errors that haven't been retried yet
         const is401Error = error.response?.status === 401
@@ -47,7 +48,7 @@ class ApiService {
 
         if (!is401Error || !originalRequest || isRetryAttempt) {
           console.error('API error:', errorMessage)
-          return Promise.reject(new Error(errorMessage))
+          return Promise.reject(new ApiError(errorMessage, status))
         }
 
         const requestUrl = originalRequest.url || ''
@@ -58,7 +59,7 @@ class ApiService {
           if (!isAuthMeEndpoint) {
             this.handleAuthFailure()
           }
-          return Promise.reject(new Error(errorMessage))
+          return Promise.reject(new ApiError(errorMessage, status))
         }
 
         // If already refreshing, queue this request

@@ -259,7 +259,10 @@ import {
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { useAuthStore } from '@/stores'
 import DialogMode from '@/constants/dialogMode'
+import HttpStatus from '@/constants/httpStatus'
+import ToastLife from '@/constants/toastLife'
 import type { Product, ProductLabelValue } from '@/types'
+import { ApiError } from '@/types/api.type'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import ProductSetLabelsDialog from './ProductSetLabelsDialog.vue'
 import { useNumberSeries } from '@/composables'
@@ -393,6 +396,9 @@ function handleClose() {
 
 const isLoading = ref(false)
 
+// Code being saved, so a duplicate-code error can name it back to the user
+const submittedCode = ref('')
+
 async function onFormSubmit(event: FormSubmitEvent) {
   if (!event.valid) {
     return
@@ -409,6 +415,19 @@ async function onFormSubmit(event: FormSubmitEvent) {
 
     emits('close')
   } catch (e) {
+    // 409 means the code collides with an existing product. The backend message is
+    // in English and phrased around database fields, so show a localized one instead,
+    // and give it longer on screen since it asks the user to change something.
+    if (e instanceof ApiError && e.status === HttpStatus.CONFLICT) {
+      toast.add(
+        commonErrorToast(
+          t('products.messages.duplicateCode', { code: submittedCode.value }),
+          toastGroup,
+          ToastLife.FIVE_SECONDS,
+        ),
+      )
+      return
+    }
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
     isLoading.value = false
@@ -423,6 +442,7 @@ async function addProduct(event: FormSubmitEvent) {
   } else {
     code = event.states.code.value
   }
+  submittedCode.value = code
 
   await ProductsService.create({
     code,
@@ -438,6 +458,8 @@ async function addProduct(event: FormSubmitEvent) {
 }
 
 async function editProduct(event: FormSubmitEvent) {
+  submittedCode.value = event.states.code.value
+
   await ProductsService.update(props.product!.id, {
     code: event.states.code.value,
     name: event.states.name.value,

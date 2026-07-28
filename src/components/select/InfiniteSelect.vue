@@ -57,7 +57,12 @@ interface CustomFilter {
 
 interface Props {
   modelValue?: SelectValue<T>
-  optionLabel: string
+  /**
+   * Field name to read the label from, or a function building it from the option
+   * (e.g. `(b) => `${b.code} - ${b.name}``). A function labels both the dropdown
+   * list and the selected value, so the two always read the same.
+   */
+  optionLabel: string | ((option: T) => string)
   optionValue?: string
   fetchFn: (query: string) => Promise<Base<T>>
   filter?: boolean
@@ -205,7 +210,10 @@ function handleSelect(value: SelectValue<T>) {
 // option missing the optionLabel field makes the whole render throw and Vue
 // stops patching the DOM from there on. Drop such options instead.
 function hasUsableLabel(option: T): boolean {
-  const label = (option as Record<string, unknown>)[props.optionLabel]
+  const label =
+    typeof props.optionLabel === 'function'
+      ? props.optionLabel(option)
+      : (option as Record<string, unknown>)[props.optionLabel]
   return label !== undefined && label !== null
 }
 

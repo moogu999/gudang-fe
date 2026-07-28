@@ -49,6 +49,8 @@ export default {
     messages: {
       confirmDelete: 'Are you sure you want to delete this {entity}?',
       deleteSuccess: '{entity} deleted successfully',
+      deleteInUse:
+        "This {entity} is still being used by other data, so it can't be deleted yet. Remove it from wherever it's used first, then try again.",
       createSuccess: '{entity} created successfully',
       updateSuccess: '{entity} updated successfully',
       error: 'An error occurred',
@@ -583,6 +585,7 @@ export default {
       productCreated: 'Product is created.',
       productUpdated: 'Product is updated.',
       productNotFound: 'Product not found.',
+      duplicateCode: 'Code "{code}" is already used by another product. Please use a different code.',
     },
   },
   unitOfMeasurements: {
@@ -1554,13 +1557,14 @@ export default {
     validation: {
       noRequired: 'Receipt number is required.',
       receiptDateRequired: 'Receipt date is required.',
+      receiptDateFuture: 'Receipt date cannot be later than today.',
       warehouseRequired: 'Warehouse is required.',
       arrivalTypeRequired: 'Arrival type is required.',
       stockTypeRequired: 'Stock type is required.',
       detailsRequired: 'At least one line item is required.',
       detailProductRequired: 'Row {row}: product is required.',
       detailQtyRequired: 'Row {row}: quantity must be greater than 0.',
-      detailPriceRequired: 'Row {row}: price must be 0 or greater.',
+      detailPriceRequired: 'Row {row}: price is required and cannot be negative.',
     },
     messages: {
       created: 'Goods receipt posted successfully.',

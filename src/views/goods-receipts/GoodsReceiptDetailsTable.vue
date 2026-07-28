@@ -58,23 +58,7 @@
       <Column field="quantity" :header="t('goodsReceipts.details.quantity')">
         <template #body="{ data }">
           <div class="flex flex-col gap-0.5">
-            <span>
-              <template v-if="(getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1">
-                {{
-                  decomposeBaseQty(
-                    (data as GoodsReceiptDetailRow).quantity as number,
-                    getUomLevels(data as GoodsReceiptDetailRow)!,
-                  ).join(' / ')
-                }}
-              </template>
-              <template v-else>
-                {{
-                  (data as GoodsReceiptDetailRow).quantity != null
-                    ? String((data as GoodsReceiptDetailRow).quantity)
-                    : ''
-                }}
-              </template>
-            </span>
+            <span>{{ formatQty(data as GoodsReceiptDetailRow) }}</span>
             <span v-if="getUomLabel(data as GoodsReceiptDetailRow)" class="text-xs text-stone-400">
               {{ getUomLabel(data as GoodsReceiptDetailRow) }}
             </span>
@@ -174,14 +158,19 @@ import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { useToast } from 'primevue/usetoast'
 import type { GoodsReceiptDetailRow, UomConversionLevel } from '@/types'
 import { computeBaseQty, decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
+import { commonWarnToast } from '@/services/toast'
 import { ProductsService } from '@/services'
 
 const { t, locale } = useI18n()
+const toast = useToast()
 
 interface Props {
   modelValue: GoodsReceiptDetailRow[]
+  /** Toast group of the parent form, so row validation surfaces in its Toast. */
+  toastGroup: string
 }
 
 const props = defineProps<Props>()
@@ -201,13 +190,21 @@ function createPlaceholderRow(): GoodsReceiptDetailRow {
   }
 }
 
+// Seeds a blank row so an empty table is ready to type into. Once the table holds
+// rows, adding more is the "add item" button's job — seeding here as well would
+// leave a second blank row hanging under every saved one.
 function ensurePlaceholder() {
-  const hasPlaceholder = localRows.value.some((r) => r._isPlaceholder)
-  if (!hasPlaceholder) {
-    const placeholder = createPlaceholderRow()
-    localRows.value.push(placeholder)
-    editingRows.value = [...editingRows.value, placeholder]
-  }
+  if (localRows.value.length > 0) return
+  addRow()
+}
+
+// Appends a blank row in edit mode. It stays a placeholder — and so stays out of
+// what the parent form submits — until the row editor saves it with a product and
+// a quantity.
+function addRow() {
+  const placeholder = createPlaceholderRow()
+  localRows.value.push(placeholder)
+  editingRows.value = [...editingRows.value, placeholder]
 }
 
 onMounted(() => {
@@ -221,7 +218,10 @@ watch(
       skipNextWatch = false
       return
     }
-    localRows.value = [...newRows]
+    // Blank rows are filtered out of what the parent holds, so keep the ones still
+    // open in the editor — a plain reassignment would drop them while being typed in.
+    const pending = localRows.value.filter((r) => r._isPlaceholder)
+    localRows.value = [...newRows, ...pending]
     ensurePlaceholder()
   },
   { deep: true },
@@ -235,27 +235,44 @@ function emitRows() {
   )
 }
 
-function addRow() {
-  ensurePlaceholder()
-}
-
 function removeRow(index: number) {
   localRows.value.splice(index, 1)
   emitRows()
   ensurePlaceholder()
 }
 
+// Product, quantity and price are all required for a row to count as an item.
+// Returns the message explaining the first problem found, or null when the row is
+// complete. `row` is the 1-based row number shown in the table.
+function rowError(data: GoodsReceiptDetailRow, row: number): string | null {
+  if (!data.productId) {
+    return t('goodsReceipts.validation.detailProductRequired', { row })
+  }
+  if (!data.quantity || (data.quantity as number) <= 0) {
+    return t('goodsReceipts.validation.detailQtyRequired', { row })
+  }
+  if (data.price === undefined || data.price === null || (data.price as number) < 0) {
+    return t('goodsReceipts.validation.detailPriceRequired', { row })
+  }
+  return null
+}
+
 function onRowEditSave(event: { newData: GoodsReceiptDetailRow; index: number }) {
   const { newData, index } = event
-  if (
-    newData._isPlaceholder &&
-    newData.productId &&
-    newData.quantity &&
-    (newData.quantity as number) > 0
-  ) {
-    newData._isPlaceholder = false
-  }
+
+  // Keep whatever was typed, so nothing is lost whether the row is accepted or not.
   localRows.value[index] = newData
+
+  const error = rowError(newData, index + 1)
+  if (error) {
+    // DataTable has already closed the editor by now, so reopen it: an incomplete row
+    // has to stay editable instead of sitting in the table looking like a saved item.
+    editingRows.value = [...editingRows.value, newData]
+    toast.add(commonWarnToast(error, props.toastGroup))
+    return
+  }
+
+  newData._isPlaceholder = false
   emitRows()
   ensurePlaceholder()
 }
@@ -271,6 +288,20 @@ function getUomLevels(data: GoodsReceiptDetailRow): UomConversionLevel[] | undef
     pinnedToLevels(data.pinnedUom) ??
     (data.product as { uomGroup?: { levels?: UomConversionLevel[] } } | undefined)?.uomGroup?.levels
   )
+}
+
+// Renders the quantity as UOM tiers ("1 / 0 / 6") when the product has a multi-level
+// UOM group, or as a plain number otherwise. Returns an empty string for a row with
+// no quantity yet — decomposing an absent quantity would print "NaN / NaN / NaN".
+function formatQty(data: GoodsReceiptDetailRow): string {
+  if (data.quantity == null) return ''
+
+  const levels = getUomLevels(data)
+  if ((levels?.length ?? 0) > 1) {
+    return decomposeBaseQty(data.quantity as number, levels!).join(' / ')
+  }
+
+  return String(data.quantity)
 }
 
 function getUomLabel(data: GoodsReceiptDetailRow): string {

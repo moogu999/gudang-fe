@@ -57,12 +57,12 @@
                 <span class="text-sm font-semibold">{{
                   t('goodsReceipts.fields.arrivalType')
                 }}</span>
-                <span class="text-sm capitalize">{{ arrivalTypeLabel }}</span>
+                <span class="text-sm">{{ arrivalType }}</span>
               </div>
 
               <div class="flex flex-col gap-1">
                 <span class="text-sm font-semibold">{{ t('goodsReceipts.fields.stockType') }}</span>
-                <span class="text-sm capitalize">{{ stockTypeLabel }}</span>
+                <span class="text-sm">{{ stockType }}</span>
               </div>
 
               <div v-if="receipt.remark" class="flex flex-col gap-1">
@@ -186,6 +186,7 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import { GoodsReceiptsService, commonErrorToast } from '@/services'
 import type { GoodsReceiptDetailResponse, GoodsReceiptResponse, UomConversionLevel } from '@/types'
 import DateFormat from '@/constants/dateFormat'
+import { useGoodsReceiptLabels } from '@/composables'
 import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 
 const { t } = useI18n()
@@ -197,25 +198,13 @@ const toastGroup = 'goodsReceiptDetail'
 const isLoading = ref(true)
 const receipt = ref<GoodsReceiptResponse | null>(null)
 
-const arrivalTypeLabel = computed(() => {
-  const map: Record<string, string> = {
-    regular: t('goodsReceipts.arrivalTypes.regular'),
-    consignment: t('goodsReceipts.arrivalTypes.consignment'),
-    bonus: t('goodsReceipts.arrivalTypes.bonus'),
-    transfer: t('goodsReceipts.arrivalTypes.transfer'),
-    return_in: t('goodsReceipts.arrivalTypes.returnIn'),
-    other: t('goodsReceipts.arrivalTypes.other'),
-  }
-  return receipt.value ? (map[receipt.value.arrivalType] ?? receipt.value.arrivalType) : ''
-})
+const { arrivalTypeLabel, stockTypeLabel } = useGoodsReceiptLabels()
 
-const stockTypeLabel = computed(() => {
-  const map: Record<string, string> = {
-    good: t('goodsReceipts.stockTypes.good'),
-    bad: t('goodsReceipts.stockTypes.bad'),
-  }
-  return receipt.value ? (map[receipt.value.stockType] ?? receipt.value.stockType) : ''
-})
+const arrivalType = computed(() =>
+  receipt.value ? arrivalTypeLabel(receipt.value.arrivalType) : '',
+)
+
+const stockType = computed(() => (receipt.value ? stockTypeLabel(receipt.value.stockType) : ''))
 
 function formatQty(value: string): string {
   const n = parseFloat(value)

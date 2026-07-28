@@ -45,7 +45,7 @@
       <InfiniteSelect
         v-model="filterBranchId"
         :fetch-fn="(q) => BranchesService.list(q)"
-        option-label="name"
+        :option-label="branchLabel"
         option-value="id"
         :placeholder="t('employees.fields.branch')"
         sort-by="name"
@@ -152,6 +152,7 @@ import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { useConfirmDelete } from '@/composables'
 import { EmployeesService, EmployeeTypesService, BranchesService } from '@/services'
 import { API_ENDPOINTS } from '@/constants/api'
+import { branchLabel } from '@/utils/branchHelper'
 import type { Column } from '@/types/table.type'
 import type { Employee, EmployeeType, EmployeeSummary } from '@/types/employee.type'
 

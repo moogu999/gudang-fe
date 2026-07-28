@@ -3,6 +3,9 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { ApiError } from '@/types/api.type'
+import HttpStatus from '@/constants/httpStatus'
+import ToastLife from '@/constants/toastLife'
 
 interface UseConfirmDeleteOptions {
   overlayGroup: string
@@ -53,6 +56,19 @@ export function useConfirmDelete(options: UseConfirmDeleteOptions) {
 
         onSuccess?.()
       } catch (e) {
+        // 409 means other records still reference this one. The backend message
+        // names database tables, so show a localized explanation instead, and
+        // give it longer on screen since it asks the user to do something.
+        if (e instanceof ApiError && e.status === HttpStatus.CONFLICT) {
+          toast.add(
+            commonErrorToast(
+              t('common.messages.deleteInUse', { entity: entityName }),
+              overlayGroup,
+              ToastLife.FIVE_SECONDS,
+            ),
+          )
+          return
+        }
         toast.add(commonErrorToast(e, overlayGroup))
       }
     }

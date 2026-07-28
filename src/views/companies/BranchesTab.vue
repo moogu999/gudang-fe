@@ -16,7 +16,7 @@
         }}</label>
         <div class="flex flex-auto flex-col gap-1">
           <InfiniteSelect
-            option-label="name"
+            :option-label="branchLabel"
             option-value="id"
             :fetch-fn="(query) => BranchesService.list(query)"
             @update:model-value="addBranch"
@@ -63,6 +63,7 @@ import { useToast } from 'primevue/usetoast'
 import { commonErrorToast } from '@/services/toast'
 import { BranchesService, CompanyBranchesService } from '@/services'
 import DateFormat from '@/constants/dateFormat'
+import { branchLabel } from '@/utils/branchHelper'
 import dayjs from 'dayjs'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores'

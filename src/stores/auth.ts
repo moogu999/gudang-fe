@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
   const permissions = ref<number[]>([])
   const branchIds = ref<number[]>([])
   const employeeId = ref<number | null>(null)
+  const primaryBranchId = ref<number | null>(null)
 
   // Track initialization state
   const isInitialized = ref<boolean>(false)
@@ -52,6 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
     permissions.value = userInfo.permissions
     branchIds.value = userInfo.branchIds ?? []
     employeeId.value = userInfo.employeeId ?? null
+    primaryBranchId.value = userInfo.primaryBranchId ?? null
   }
 
   /**
@@ -69,6 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
       permissions.value = []
       branchIds.value = []
       employeeId.value = null
+      primaryBranchId.value = null
     }
   }
 
@@ -87,6 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
       permissions.value = []
       branchIds.value = []
       employeeId.value = null
+      primaryBranchId.value = null
       throw error
     }
   }
@@ -113,6 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
         permissions.value = userInfo.permissions
         branchIds.value = userInfo.branchIds ?? []
         employeeId.value = userInfo.employeeId ?? null
+        primaryBranchId.value = userInfo.primaryBranchId ?? null
       } catch {
         isAuthenticated.value = false
         userId.value = null
@@ -120,6 +125,7 @@ export const useAuthStore = defineStore('auth', () => {
         permissions.value = []
         branchIds.value = []
         employeeId.value = null
+        primaryBranchId.value = null
       } finally {
         isInitialized.value = true
       }
@@ -160,6 +166,7 @@ export const useAuthStore = defineStore('auth', () => {
     permissions,
     branchIds,
     employeeId,
+    primaryBranchId,
 
     // Computed
     hasPermission,

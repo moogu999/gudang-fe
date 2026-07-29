@@ -897,6 +897,17 @@ onBeforeMount(async () => {
       props.goodsReceiptId
     ) {
       await loadGoodsReceipt()
+    } else if (
+      props.mode === DialogMode.ADD &&
+      showBranchPicker.value &&
+      authStore.primaryBranchId
+    ) {
+      const branches = await loadUserBranches()
+      const defaultBranch = branches.find((b) => b.id === authStore.primaryBranchId)
+      if (defaultBranch) {
+        initialValues.branchId = defaultBranch.id
+        initialBranch.value = defaultBranch
+      }
     }
   } finally {
     if (props.mode === DialogMode.ADD) {

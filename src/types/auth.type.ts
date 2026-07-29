@@ -62,4 +62,5 @@ export interface MeResponse {
   permissions: number[]
   branchIds: number[]
   employeeId: number | null
+  primaryBranchId: number | null
 }

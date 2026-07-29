@@ -45,7 +45,9 @@
       />
     </div>
 
-    <!-- Date Range -->
+    <!-- Date Range: a filled range reads "2026-07-01 - 2026-07-29", which needs
+         about 205px of input plus another ~40px for the show-icon button, so the
+         field is sized past that rather than to the eye. -->
     <div class="flex flex-col gap-1">
       <label class="text-sm font-semibold">{{ t('stockMovements.filters.dateRange') }}</label>
       <DatePicker
@@ -55,7 +57,7 @@
         show-clear
         show-icon
         date-format="yy-mm-dd"
-        class="w-60"
+        class="w-72"
         @update:model-value="onDateRangeChange"
       />
     </div>

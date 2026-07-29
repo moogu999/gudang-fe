@@ -2,7 +2,7 @@ import type { PinnedUom } from './pinnedUom.type'
 
 export type GoodsReturnNoteStatus = 'applied'
 export type DriverStockSourceType = 'partial_delivery' | 'failed_delivery' | 'sales_return'
-export type GoodsReturnNoteItemStockType = 'good'
+export type GoodsReturnNoteItemStockType = 'good' | 'bad'
 
 export interface AvailableDriver {
   driverEmployeeId: number
@@ -72,7 +72,11 @@ export interface CreateGoodsReturnNoteRequest {
   driverEmployeeId: number
   returnDate: string
   notes?: string | null
-  items: { driverStockItemId: number; receivedQty: string }[]
+  items: {
+    driverStockItemId: number
+    receivedQty: string
+    stockType?: GoodsReturnNoteItemStockType
+  }[]
 }
 
 export interface CreateGoodsReturnNoteResponse {

@@ -81,6 +81,9 @@ export default {
     uomGroups: 'UOM Groups',
     productLabelDefinitions: 'Product Label Definitions',
     purchasing: 'Purchasing',
+    purchaseOrders: 'Purchase Orders',
+    purchaseOrderConfigs: 'PO Config',
+    goodsReceiptConfigs: 'GR Config',
     paymentTerms: 'Term of Payment',
     suppliers: 'Suppliers',
     customerLabelDefinitions: 'Customer Label Definitions',
@@ -585,7 +588,8 @@ export default {
       productCreated: 'Product is created.',
       productUpdated: 'Product is updated.',
       productNotFound: 'Product not found.',
-      duplicateCode: 'Code "{code}" is already used by another product. Please use a different code.',
+      duplicateCode:
+        'Code "{code}" is already used by another product. Please use a different code.',
     },
   },
   unitOfMeasurements: {
@@ -904,6 +908,112 @@ export default {
       created: 'Sales order created successfully',
       updated: 'Sales order updated successfully',
       notFound: 'Sales order not found',
+    },
+  },
+  purchaseOrders: {
+    title: 'Purchase Orders',
+    addPurchaseOrder: 'Add Purchase Order',
+    viewPurchaseOrder: 'View Purchase Order',
+
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+
+    sections: {
+      supplier: 'Supplier Information',
+      orderDetail: 'Order Detail',
+    },
+
+    fields: {
+      no: 'PO Number',
+      supplier: 'Supplier',
+      paymentTerm: 'Term of Payment',
+      orderDate: 'PO Date',
+      expectedDeliveryDate: 'Expected Delivery Date',
+      reference: 'Reference / Agreement',
+      remark: 'Remarks',
+      branch: 'Branch',
+      status: 'Status',
+      totalAmount: 'Total',
+    },
+
+    details: {
+      title: 'Order Items',
+      addDetail: 'Add Item',
+      empty: 'No items added',
+      productCode: 'Code',
+      product: 'Product',
+      uom: 'UOM',
+      quantity: 'Quantity',
+      price: 'Price',
+      gross: 'Gross',
+      discount: 'Discount',
+      subAmount: 'Subtotal',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+      manualDiscountNote: 'MANUAL DISCOUNT · {reason}',
+    },
+
+    summary: {
+      title: 'Order Summary',
+      grossTotal: 'Subtotal',
+      discountTotal: 'Discount',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+      total: 'Total',
+    },
+
+    manualDiscount: {
+      title: 'Manual Discounts',
+      add: 'Add',
+      type: 'Type',
+      flat: 'Flat',
+      percentage: 'Percentage',
+      value: 'Value',
+      amount: 'Amount',
+      reason: 'Reason',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+      reasonPlaceholder: 'e.g. negotiated with principal…',
+    },
+
+    validation: {
+      noRequired: 'PO number is required',
+      supplierRequired: 'Supplier is required',
+      paymentTermRequired: 'Term of Payment is required',
+      orderDateRequired: 'PO date is required',
+      detailsRequired: 'At least one item is required',
+      detailIncomplete: 'Row {row}: Product, quantity, and price are required',
+      branchRequired: 'Branch is required',
+      manualDiscountReasonRequired: 'Reason is required',
+      manualDiscountValueInvalid: 'Value must be greater than 0',
+    },
+
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+      partially_received: 'Partially Received',
+      applied: 'Applied',
+    },
+
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      editPurchaseOrder: 'Edit Purchase Order',
+    },
+
+    confirm: {
+      header: 'Confirm Submission',
+      message: 'This will submit the purchase order for approval. Continue?',
+    },
+
+    messages: {
+      created: 'Purchase order created successfully',
+      updated: 'Purchase order updated successfully',
+      notFound: 'Purchase order not found',
     },
   },
   csv: {
@@ -1507,14 +1617,17 @@ export default {
       no: 'No.',
       receiptDate: 'Receipt Date',
       warehouse: 'Warehouse',
+      branch: 'Branch',
+      purchaseOrder: 'Purchase Order',
+      supplier: 'Supplier',
+      supplierDoNo: 'Supplier DO No.',
       arrivalType: 'Arrival Type',
-      stockType: 'Stock Type',
       total: 'Total',
       remark: 'Remark',
     },
     sections: {
       receiptInfo: 'Receipt Information',
-      typeInfo: 'Type & Notes',
+      typeInfo: 'Reference & Type',
     },
     arrivalTypes: {
       regular: 'Regular',
@@ -1528,6 +1641,10 @@ export default {
       good: 'Good',
       bad: 'Bad',
     },
+    labels: {
+      selectPurchaseOrder: 'Select an open Purchase Order (optional)',
+      noPurchaseOrder: 'Not linked to a Purchase Order',
+    },
     details: {
       title: 'Line Items',
       addDetail: 'Add Item',
@@ -1535,39 +1652,56 @@ export default {
       product: 'Name',
       uom: 'UOM',
       quantity: 'Qty',
+      poQuantity: 'Qty PO',
+      receivedQuantity: 'Qty Received',
+      stockType: 'Stock',
       price: 'Price',
-      subAmount: 'Sub Amount',
+      gross: 'Gross',
+      subAmount: 'Subtotal',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+      splitLine: 'Split line (good / bad)',
       empty: 'No items. Click "Add Item" to begin.',
     },
     summary: {
       title: 'Summary',
       totalQty: 'Total Qty',
       subtotal: 'Subtotal',
+      taxBase: 'Tax Base',
       tax: 'Tax',
       total: 'Total',
     },
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+    },
     actions: {
-      confirm: 'Confirm Receipt',
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      editGoodsReceipt: 'Edit Goods Receipt',
     },
     confirm: {
-      header: 'Confirm Goods Receipt',
-      message:
-        'Are you sure you want to post this goods receipt? Stock balances will be updated immediately.',
+      header: 'Confirm Submission',
+      message: 'This will submit the goods receipt for approval. Continue?',
     },
     validation: {
       noRequired: 'Receipt number is required.',
       receiptDateRequired: 'Receipt date is required.',
       receiptDateFuture: 'Receipt date cannot be later than today.',
       warehouseRequired: 'Warehouse is required.',
+      branchRequired: 'Branch is required.',
       arrivalTypeRequired: 'Arrival type is required.',
-      stockTypeRequired: 'Stock type is required.',
       detailsRequired: 'At least one line item is required.',
       detailProductRequired: 'Row {row}: product is required.',
       detailQtyRequired: 'Row {row}: quantity must be greater than 0.',
       detailPriceRequired: 'Row {row}: price is required and cannot be negative.',
+      overReceipt:
+        'Received qty cannot exceed the PO qty ({qty} {uom}). Excess goods must be returned to the driver or recorded via a separate GR outside this PO.',
     },
     messages: {
-      created: 'Goods receipt posted successfully.',
+      created: 'Goods receipt saved successfully.',
+      updated: 'Goods receipt updated successfully.',
       notFound: 'Goods receipt not found.',
     },
   },
@@ -1592,17 +1726,23 @@ export default {
       productCode: 'Code',
       productName: 'Name',
       uom: 'UOM',
+      stockType: 'Stock Type',
       onHand: 'On Hand',
       inTransit: 'In Transit',
       reserved: 'Reserved',
       available: 'Available',
       composition: 'Composition',
+      averageCost: 'Average Cost',
       value: 'Inventory Value',
     },
     status: {
       out: 'Stockout',
       normal: 'Normal',
       unknown: '-',
+    },
+    stockTypes: {
+      good: 'Good',
+      bad: 'Bad',
     },
   },
   bookingOrders: {
@@ -1671,6 +1811,52 @@ export default {
       branchRequired: 'Branch is required.',
       deliveryDateOffsetRequired: 'Delivery date offset is required.',
       expiredDateOffsetRequired: 'Expiry date offset is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  purchaseOrderConfigs: {
+    title: 'Purchase Order Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint: 'Leave empty if purchase orders from this branch do not need approval.',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  goodsReceiptConfigs: {
+    title: 'Goods Receipt Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint: 'Leave empty if goods receipts from this branch do not need approval.',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
     },
     messages: {
       created: 'Config is created.',
@@ -2037,6 +2223,10 @@ export default {
       failed_delivery: 'Failed Delivery',
       sales_return: 'Sales Return',
     },
+    stockTypes: {
+      good: 'Good',
+      bad: 'Bad',
+    },
     actions: {
       create: 'New Return Note',
       submit: 'Receive Stock',
@@ -2062,6 +2252,7 @@ export default {
       qtyAtDriver: 'Qty at Driver',
       qtyReceived: 'Qty Received',
       receivedQty: 'Received Qty',
+      stockType: 'Stock Type',
     },
     summary: {
       title: 'Selected Items',
@@ -2097,6 +2288,8 @@ export default {
       onHandAfter: 'On-Hand After',
       reservedAfter: 'Reserved After',
       inTransitAfter: 'In-Transit After',
+      unitCost: 'Unit Cost',
+      costAmount: 'Cost Amount',
       referenceNo: 'Reference No',
       createdBy: 'Moved By',
     },
@@ -2106,6 +2299,8 @@ export default {
       release: 'Release',
       issue: 'Issue',
       delivery: 'Delivery',
+      return_receipt: 'Return Receipt',
+      sales_return_receipt: 'Sales Return Receipt',
     },
     stockTypes: {
       good: 'Good',

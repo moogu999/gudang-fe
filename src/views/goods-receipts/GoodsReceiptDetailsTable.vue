@@ -3,6 +3,7 @@
     <div class="mb-3 flex items-center justify-between">
       <h4 class="text-sm font-semibold sm:text-base">{{ t('goodsReceipts.details.title') }}</h4>
       <Button
+        v-if="mode !== DialogMode.VIEW"
         :label="t('goodsReceipts.details.addDetail')"
         icon="pi pi-plus"
         size="small"
@@ -13,7 +14,7 @@
     <DataTable
       v-model:editing-rows="editingRows"
       :value="localRows"
-      edit-mode="row"
+      :edit-mode="mode !== DialogMode.VIEW ? 'row' : undefined"
       data-key="_localId"
       striped-rows
       responsive-layout="scroll"
@@ -104,6 +105,22 @@
         </template>
       </Column>
 
+      <!-- Stock type -->
+      <Column field="stockType" :header="t('goodsReceipts.details.stockType')">
+        <template #body="{ data }">
+          {{ stockTypeLabel((data as GoodsReceiptDetailRow).stockType) }}
+        </template>
+        <template #editor="{ data }">
+          <Select
+            v-model="(data as GoodsReceiptDetailRow).stockType"
+            :options="stockTypeOptions"
+            option-label="label"
+            option-value="value"
+            class="w-full"
+          />
+        </template>
+      </Column>
+
       <!-- Price (editable) -->
       <Column field="price" :header="t('goodsReceipts.details.price')">
         <template #body="{ data }">
@@ -120,18 +137,42 @@
         </template>
       </Column>
 
-      <!-- Sub Amount (computed) -->
+      <!-- Gross (qty × price) -->
+      <Column :header="t('goodsReceipts.details.gross')">
+        <template #body="{ data }">
+          {{ formatValue(computeGross(data as GoodsReceiptDetailRow)) }}
+        </template>
+      </Column>
+
+      <!-- Subtotal (computed — no discount concept on Goods Receipt, so subtotal == gross) -->
       <Column :header="t('goodsReceipts.details.subAmount')">
         <template #body="{ data }">
           {{ formatValue(computeSubAmount(data as GoodsReceiptDetailRow)) }}
         </template>
       </Column>
 
+      <!-- Tax Base / Tax -->
+      <Column :header="t('goodsReceipts.details.taxBase')">
+        <template #body="{ data }">
+          {{ formatValue(computeTaxBase(data as GoodsReceiptDetailRow)) }}
+        </template>
+      </Column>
+      <Column :header="t('goodsReceipts.details.tax')">
+        <template #body="{ data }">
+          {{ formatValue(computeTax(data as GoodsReceiptDetailRow)) }}
+        </template>
+      </Column>
+
       <!-- Row editor -->
-      <Column :row-editor="true" style="width: 8rem" body-style="text-align:center" />
+      <Column
+        v-if="mode !== DialogMode.VIEW"
+        :row-editor="true"
+        style="width: 8rem"
+        body-style="text-align:center"
+      />
 
       <!-- Delete -->
-      <Column style="width: 3rem">
+      <Column v-if="mode !== DialogMode.VIEW" style="width: 3rem">
         <template #body="{ index, data }">
           <Button
             v-if="!(data as GoodsReceiptDetailRow)._isPlaceholder"
@@ -157,23 +198,36 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
+import Select from 'primevue/select'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { useToast } from 'primevue/usetoast'
 import type { GoodsReceiptDetailRow, UomConversionLevel } from '@/types'
 import { computeBaseQty, decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { commonWarnToast } from '@/services/toast'
 import { ProductsService } from '@/services'
+import { useGoodsReceiptLabels } from '@/composables'
+import DialogMode from '@/constants/dialogMode'
 
 const { t, locale } = useI18n()
 const toast = useToast()
+const { stockTypeLabel } = useGoodsReceiptLabels()
+
+const stockTypeOptions = computed(() => [
+  { value: 'good', label: t('goodsReceipts.stockTypes.good') },
+  { value: 'bad', label: t('goodsReceipts.stockTypes.bad') },
+])
 
 interface Props {
   modelValue: GoodsReceiptDetailRow[]
+  mode: DialogMode
   /** Toast group of the parent form, so row validation surfaces in its Toast. */
   toastGroup: string
+  taxRate?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  taxRate: 0,
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: GoodsReceiptDetailRow[]]
@@ -187,6 +241,7 @@ function createPlaceholderRow(): GoodsReceiptDetailRow {
   return {
     _localId: crypto.randomUUID(),
     _isPlaceholder: true,
+    stockType: 'good',
   }
 }
 
@@ -194,6 +249,7 @@ function createPlaceholderRow(): GoodsReceiptDetailRow {
 // rows, adding more is the "add item" button's job — seeding here as well would
 // leave a second blank row hanging under every saved one.
 function ensurePlaceholder() {
+  if (props.mode === DialogMode.VIEW) return
   if (localRows.value.length > 0) return
   addRow()
 }
@@ -330,8 +386,21 @@ function handleTierInput(data: GoodsReceiptDetailRow, rawValue: string) {
   data.quantity = computeBaseQty(tiers, levels)
 }
 
-function computeSubAmount(data: GoodsReceiptDetailRow): number {
+function computeGross(data: GoodsReceiptDetailRow): number {
   return ((data.quantity ?? 0) as number) * ((data.price ?? 0) as number)
+}
+
+// No discount concept on Goods Receipt, so subtotal and tax base both equal gross.
+function computeSubAmount(data: GoodsReceiptDetailRow): number {
+  return computeGross(data)
+}
+
+function computeTaxBase(data: GoodsReceiptDetailRow): number {
+  return computeGross(data)
+}
+
+function computeTax(data: GoodsReceiptDetailRow): number {
+  return Math.round(((computeTaxBase(data) * props.taxRate) / 100) * 100) / 100
 }
 
 const numberFormatter = computed(

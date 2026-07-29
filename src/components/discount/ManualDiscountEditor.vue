@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="mb-2 text-xs font-semibold tracking-wide text-stone-500 uppercase">
-      {{ t('salesOrders.manualDiscount.title') }}
+      {{ t(`${i18nPrefix}.manualDiscount.title`) }}
     </p>
 
     <!-- Applied discounts list -->
@@ -17,12 +17,12 @@
       </colgroup>
       <thead>
         <tr class="border-b border-stone-200 text-stone-400">
-          <th class="pb-1 text-left">{{ t('salesOrders.manualDiscount.reason') }}</th>
-          <th class="pb-1 text-left">{{ t('salesOrders.manualDiscount.type') }}</th>
-          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.value') }}</th>
-          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.amount') }}</th>
-          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.taxBase') }}</th>
-          <th class="pb-1 text-right">{{ t('salesOrders.manualDiscount.tax') }}</th>
+          <th class="pb-1 text-left">{{ t(`${i18nPrefix}.manualDiscount.reason`) }}</th>
+          <th class="pb-1 text-left">{{ t(`${i18nPrefix}.manualDiscount.type`) }}</th>
+          <th class="pb-1 text-right">{{ t(`${i18nPrefix}.manualDiscount.value`) }}</th>
+          <th class="pb-1 text-right">{{ t(`${i18nPrefix}.manualDiscount.amount`) }}</th>
+          <th class="pb-1 text-right">{{ t(`${i18nPrefix}.manualDiscount.taxBase`) }}</th>
+          <th class="pb-1 text-right">{{ t(`${i18nPrefix}.manualDiscount.tax`) }}</th>
           <th v-if="!disabled" class="pb-1" style="width: 2rem" />
         </tr>
       </thead>
@@ -32,8 +32,8 @@
           <td class="py-0.5 capitalize">
             {{
               disc.discountType === 'flat'
-                ? t('salesOrders.manualDiscount.flat')
-                : t('salesOrders.manualDiscount.percentage')
+                ? t(`${i18nPrefix}.manualDiscount.flat`)
+                : t(`${i18nPrefix}.manualDiscount.percentage`)
             }}
           </td>
           <td class="py-0.5 text-right">
@@ -61,7 +61,7 @@
       <div class="flex items-end gap-2">
         <div class="flex flex-col gap-1">
           <label class="text-xs font-medium text-stone-500">{{
-            t('salesOrders.manualDiscount.type')
+            t(`${i18nPrefix}.manualDiscount.type`)
           }}</label>
           <Select
             v-model="addType"
@@ -74,7 +74,7 @@
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-xs font-medium text-stone-500">{{
-            t('salesOrders.manualDiscount.value')
+            t(`${i18nPrefix}.manualDiscount.value`)
           }}</label>
           <InputNumber
             v-model="addValue"
@@ -93,18 +93,18 @@
       <div class="flex items-end gap-2">
         <div class="flex flex-1 flex-col gap-1">
           <label class="text-xs font-medium text-stone-500">
-            {{ t('salesOrders.manualDiscount.reason') }}
+            {{ t(`${i18nPrefix}.manualDiscount.reason`) }}
             <span class="text-red-500">*</span>
           </label>
           <InputText
             v-model="addReason"
             class="w-full"
             size="small"
-            :placeholder="t('salesOrders.manualDiscount.reasonPlaceholder')"
+            :placeholder="t(`${i18nPrefix}.manualDiscount.reasonPlaceholder`)"
           />
         </div>
         <Button
-          :label="t('salesOrders.manualDiscount.add')"
+          :label="t(`${i18nPrefix}.manualDiscount.add`)"
           icon="pi pi-plus"
           size="small"
           :disabled="!canAdd"
@@ -115,8 +115,8 @@
       <Message v-if="showValidation && !canAdd" severity="error" size="small" variant="simple">
         {{
           !addReason.trim()
-            ? t('salesOrders.validation.manualDiscountReasonRequired')
-            : t('salesOrders.validation.manualDiscountValueInvalid')
+            ? t(`${i18nPrefix}.validation.manualDiscountReasonRequired`)
+            : t(`${i18nPrefix}.validation.manualDiscountValueInvalid`)
         }}
       </Message>
     </div>
@@ -131,19 +131,33 @@ import Select from 'primevue/select'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import type { ManualDiscount } from '@/types'
 
 const { t, locale } = useI18n()
+
+// Deliberately not imported from a specific module's types (e.g. salesOrder.type.ts) — this
+// editor is shared across Sales Order and Purchase Order, whose ManualDiscount shapes are
+// structurally identical but declared independently per module.
+interface ManualDiscount {
+  discountType: 'flat' | 'percentage'
+  value: string
+  amount: string
+  reason: string
+  taxBaseAmount: string
+  taxAmount: string
+}
 
 interface Props {
   modelValue: ManualDiscount[]
   disabled?: boolean
   gross?: number
+  /** i18n namespace prefix for this discount type's labels, e.g. 'salesOrders' or 'purchaseOrders'. */
+  i18nPrefix?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   gross: 0,
+  i18nPrefix: 'salesOrders',
 })
 
 const emit = defineEmits<{
@@ -156,8 +170,8 @@ const addReason = ref('')
 const showValidation = ref(false)
 
 const typeOptions = computed(() => [
-  { label: t('salesOrders.manualDiscount.flat'), value: 'flat' },
-  { label: t('salesOrders.manualDiscount.percentage'), value: 'percentage' },
+  { label: t(`${props.i18nPrefix}.manualDiscount.flat`), value: 'flat' },
+  { label: t(`${props.i18nPrefix}.manualDiscount.percentage`), value: 'percentage' },
 ])
 
 const canAdd = computed(

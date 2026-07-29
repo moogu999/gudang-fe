@@ -59,6 +59,10 @@
             >
               {{ formatDelta(data[col.field]) }}
             </span>
+            <span v-if="col.field === 'unitCost'">{{ formatCost(data.unitCost) }}</span>
+            <span v-if="col.field === 'costAmount'" :class="getDeltaClass(data.costAmount)">
+              {{ formatCost(data.costAmount, true) }}
+            </span>
           </template>
         </TableComponent>
       </template>
@@ -206,6 +210,22 @@ const columns = computed<Column[]>(() => [
     hideOnMobile: true,
   },
   {
+    field: 'unitCost',
+    header: t('stockMovements.columns.unitCost'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
+    field: 'costAmount',
+    header: t('stockMovements.columns.costAmount'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
+  },
+  {
     field: 'referenceNo',
     header: t('stockMovements.columns.referenceNo'),
     exportable: true,
@@ -275,6 +295,17 @@ function getEmail(user: unknown): string {
     return (user as { email: string }).email
   }
   return '—'
+}
+
+function formatCost(value: string | null | undefined, signed = false): string {
+  if (value === null || value === undefined || value === '') return '-'
+  const num = parseFloat(value)
+  if (isNaN(num)) return '-'
+  const formatted = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num)
+  return signed && num > 0 ? `+${formatted}` : formatted
 }
 
 function formatDelta(value: string): string {

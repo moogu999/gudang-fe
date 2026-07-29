@@ -5,7 +5,7 @@
     <div class="mb-4 flex items-center gap-3">
       <Button icon="pi pi-arrow-left" severity="secondary" text @click="router.back()" />
       <h1 class="text-base font-bold sm:text-lg md:text-2xl">
-        {{ t('goodsReceipts.viewGoodsReceipt') }}
+        {{ t('goodsReceipts.actions.editGoodsReceipt') }}
       </h1>
     </div>
 
@@ -13,8 +13,9 @@
       <template #content>
         <GoodsReceiptForm
           v-if="goodsReceiptId !== undefined"
-          :mode="DialogMode.VIEW"
+          :mode="DialogMode.EDIT"
           :goods-receipt-id="goodsReceiptId"
+          @submitted="onSubmitted"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('goodsReceipts.messages.notFound') }}</Message>
@@ -38,7 +39,7 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
-const toastGroup = 'goodsReceiptDetail'
+const toastGroup = 'goodsReceiptEdit'
 const goodsReceiptId = ref<number | undefined>()
 
 onMounted(() => {
@@ -49,4 +50,8 @@ onMounted(() => {
   }
   goodsReceiptId.value = id
 })
+
+function onSubmitted() {
+  setTimeout(() => router.push('/goods-receipts'), 1000)
+}
 </script>

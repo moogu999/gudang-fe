@@ -94,9 +94,17 @@
             <span v-else-if="col.field === 'inTransit'">{{ formatQty(data.inTransit) }}</span>
             <span v-else-if="col.field === 'reserved'">{{ formatQty(data.reserved) }}</span>
             <span v-else-if="col.field === 'available'">{{ formatQty(data.available) }}</span>
+            <span v-else-if="col.field === 'averageCost'">{{
+              formatNumber(parseFloat(data.averageCost || '0'))
+            }}</span>
             <span v-else-if="col.field === 'value'">{{
               formatNumber(parseFloat(data.value || '0'))
             }}</span>
+            <Tag
+              v-else-if="col.field === 'stockType'"
+              :severity="data.stockType === 'bad' ? 'danger' : 'success'"
+              :value="t(`inventoryStatus.stockTypes.${data.stockType}`)"
+            />
             <div v-else-if="col.field === 'composition'">
               <div class="flex h-2 w-24 overflow-hidden rounded-full bg-stone-100">
                 <template
@@ -190,6 +198,13 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
   {
+    field: 'stockType',
+    header: t('inventoryStatus.fields.stockType'),
+    sortable: true,
+    exportable: true,
+    filterable: false,
+  },
+  {
     field: 'onHand',
     header: t('inventoryStatus.fields.onHand'),
     sortable: true,
@@ -230,6 +245,14 @@ const columns = computed<Column[]>(() => [
     sortable: true,
     exportable: true,
     filterable: false,
+  },
+  {
+    field: 'averageCost',
+    header: t('inventoryStatus.fields.averageCost'),
+    sortable: false,
+    exportable: true,
+    filterable: false,
+    hideOnMobile: true,
   },
   {
     field: 'value',

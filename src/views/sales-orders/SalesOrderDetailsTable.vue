@@ -604,7 +604,7 @@ import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import ProgressSpinner from 'primevue/progressspinner'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
-import ManualDiscountEditor from './ManualDiscountEditor.vue'
+import ManualDiscountEditor from '@/components/discount/ManualDiscountEditor.vue'
 import DialogMode from '@/constants/dialogMode'
 import type {
   SalesOrderDetailRow,

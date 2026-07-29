@@ -5,48 +5,37 @@
     <div class="mb-4 flex items-center gap-3">
       <Button icon="pi pi-arrow-left" severity="secondary" text @click="router.back()" />
       <h1 class="text-base font-bold sm:text-lg md:text-2xl">
-        {{ t('goodsReceipts.viewGoodsReceipt') }}
+        {{ t('purchaseOrders.addPurchaseOrder') }}
       </h1>
     </div>
 
     <ResponsiveCard>
       <template #content>
-        <GoodsReceiptForm
-          v-if="goodsReceiptId !== undefined"
-          :mode="DialogMode.VIEW"
-          :goods-receipt-id="goodsReceiptId"
+        <PurchaseOrderForm
+          :mode="DialogMode.ADD"
+          @submitted="onSubmitted"
           @cancel="router.back()"
         />
-        <Message v-else severity="error">{{ t('goodsReceipts.messages.notFound') }}</Message>
       </template>
     </ResponsiveCard>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Toast from 'primevue/toast'
 import Button from 'primevue/button'
-import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
-import GoodsReceiptForm from './GoodsReceiptForm.vue'
+import PurchaseOrderForm from './PurchaseOrderForm.vue'
 import DialogMode from '@/constants/dialogMode'
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute()
 
-const toastGroup = 'goodsReceiptDetail'
-const goodsReceiptId = ref<number | undefined>()
+const toastGroup = 'purchaseOrderCreate'
 
-onMounted(() => {
-  const id = Number(route.params.id)
-  if (isNaN(id)) {
-    router.push('/goods-receipts')
-    return
-  }
-  goodsReceiptId.value = id
-})
+function onSubmitted() {
+  setTimeout(() => router.push('/purchase-orders'), 1000)
+}
 </script>

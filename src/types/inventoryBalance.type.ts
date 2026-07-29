@@ -14,7 +14,7 @@ export interface InventoryBalance {
   inTransit: string
   reserved: string
   available: string
-  lastCost: string
+  averageCost: string
   value: string
   status: InventoryBalanceStatus | null
   updatedAt: string | null

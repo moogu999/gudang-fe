@@ -82,6 +82,9 @@ export default {
     uomGroups: 'Grup Satuan',
     productLabelDefinitions: 'Definisi Label Produk',
     purchasing: 'Pembelian',
+    purchaseOrders: 'Purchase Order',
+    purchaseOrderConfigs: 'Konfigurasi PO Pembelian',
+    goodsReceiptConfigs: 'Konfigurasi GR',
     paymentTerms: 'Termin Pembayaran',
     suppliers: 'Pemasok',
     customerLabelDefinitions: 'Definisi Label Pelanggan',
@@ -908,6 +911,112 @@ export default {
       notFound: 'Pesanan penjualan tidak ditemukan',
     },
   },
+  purchaseOrders: {
+    title: 'Purchase Order',
+    addPurchaseOrder: 'Tambah Purchase Order',
+    viewPurchaseOrder: 'Lihat Purchase Order',
+
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+
+    sections: {
+      supplier: 'Informasi Supplier',
+      orderDetail: 'Detail Pesanan',
+    },
+
+    fields: {
+      no: 'Nomor PO',
+      supplier: 'Supplier',
+      paymentTerm: 'Term of Payment',
+      orderDate: 'Tanggal PO',
+      expectedDeliveryDate: 'Tanggal Kirim Diharapkan',
+      reference: 'Referensi / Kesepakatan',
+      remark: 'Catatan',
+      branch: 'Cabang',
+      status: 'Status',
+      totalAmount: 'Total',
+    },
+
+    details: {
+      title: 'Item Pesanan',
+      addDetail: 'Tambah Item',
+      empty: 'Belum ada item',
+      productCode: 'Kode',
+      product: 'Produk',
+      uom: 'Satuan',
+      quantity: 'Jumlah',
+      price: 'Harga',
+      gross: 'Bruto',
+      discount: 'Diskon',
+      subAmount: 'Subtotal',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      manualDiscountNote: 'DISKON MANUAL · {reason}',
+    },
+
+    summary: {
+      title: 'Ringkasan Pesanan',
+      grossTotal: 'Subtotal',
+      discountTotal: 'Diskon',
+      taxBase: 'DPP',
+      tax: 'Pajak',
+      total: 'Total',
+    },
+
+    manualDiscount: {
+      title: 'Diskon Manual',
+      add: 'Tambah',
+      type: 'Tipe',
+      flat: 'Nominal',
+      percentage: 'Persentase',
+      value: 'Nilai',
+      amount: 'Jumlah',
+      reason: 'Alasan',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      reasonPlaceholder: 'mis. negosiasi dengan principal…',
+    },
+
+    validation: {
+      noRequired: 'Nomor PO wajib diisi',
+      supplierRequired: 'Supplier wajib dipilih',
+      paymentTermRequired: 'Term of Payment wajib dipilih',
+      orderDateRequired: 'Tanggal PO wajib diisi',
+      detailsRequired: 'Minimal satu item harus ditambahkan',
+      detailIncomplete: 'Baris {row}: Produk, jumlah, dan harga wajib diisi',
+      branchRequired: 'Cabang wajib dipilih',
+      manualDiscountReasonRequired: 'Alasan wajib diisi',
+      manualDiscountValueInvalid: 'Nilai harus lebih dari 0',
+    },
+
+    status: {
+      draft: 'Draf',
+      need_approval: 'Butuh Persetujuan',
+      approved: 'Disetujui',
+      partially_received: 'Diterima Sebagian',
+      applied: 'Diterapkan',
+    },
+
+    actions: {
+      saveAsDraft: 'Simpan Draf',
+      submitForApproval: 'Submit untuk Approval',
+      editPurchaseOrder: 'Edit Purchase Order',
+    },
+
+    confirm: {
+      header: 'Konfirmasi Submit',
+      message: 'Purchase order akan disubmit untuk approval. Lanjutkan?',
+    },
+
+    messages: {
+      created: 'Purchase order berhasil dibuat',
+      updated: 'Purchase order berhasil diperbarui',
+      notFound: 'Purchase order tidak ditemukan',
+    },
+  },
   csv: {
     import: 'Impor CSV',
     downloadTemplate: 'Unduh Template',
@@ -1504,14 +1613,17 @@ export default {
       no: 'No.',
       receiptDate: 'Tanggal Terima',
       warehouse: 'Gudang',
+      branch: 'Cabang',
+      purchaseOrder: 'Purchase Order',
+      supplier: 'Supplier',
+      supplierDoNo: 'No. Surat Jalan Supplier',
       arrivalType: 'Jenis Kedatangan',
-      stockType: 'Jenis Stok',
       total: 'Total',
       remark: 'Catatan',
     },
     sections: {
       receiptInfo: 'Informasi Penerimaan',
-      typeInfo: 'Jenis & Catatan',
+      typeInfo: 'Referensi & Jenis',
     },
     arrivalTypes: {
       regular: 'Reguler',
@@ -1525,6 +1637,10 @@ export default {
       good: 'Baik',
       bad: 'Rusak',
     },
+    labels: {
+      selectPurchaseOrder: 'Pilih Purchase Order yang masih terbuka (opsional)',
+      noPurchaseOrder: 'Tidak terhubung ke Purchase Order',
+    },
     details: {
       title: 'Detail Item',
       addDetail: 'Tambah Item',
@@ -1532,39 +1648,56 @@ export default {
       product: 'Nama',
       uom: 'Satuan',
       quantity: 'Qty',
+      poQuantity: 'Qty PO',
+      receivedQuantity: 'Qty Diterima',
+      stockType: 'Stok',
       price: 'Harga',
+      gross: 'Bruto',
       subAmount: 'Subtotal',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      splitLine: 'Pisah baris (baik / rusak)',
       empty: 'Belum ada item. Klik "Tambah Item" untuk mulai.',
     },
     summary: {
       title: 'Ringkasan',
       totalQty: 'Total Qty',
       subtotal: 'Subtotal',
+      taxBase: 'DPP',
       tax: 'Pajak',
       total: 'Total',
     },
+    status: {
+      draft: 'Draf',
+      need_approval: 'Perlu Persetujuan',
+      approved: 'Disetujui',
+    },
     actions: {
-      confirm: 'Konfirmasi Terima',
+      saveAsDraft: 'Simpan sebagai Draf',
+      submitForApproval: 'Ajukan Persetujuan',
+      editGoodsReceipt: 'Ubah Penerimaan Barang',
     },
     confirm: {
-      header: 'Konfirmasi Penerimaan Barang',
-      message:
-        'Apakah Anda yakin ingin memposting penerimaan barang ini? Saldo stok akan diperbarui segera.',
+      header: 'Konfirmasi Pengajuan',
+      message: 'Ini akan mengajukan penerimaan barang untuk disetujui. Lanjutkan?',
     },
     validation: {
       noRequired: 'Nomor penerimaan wajib diisi.',
       receiptDateRequired: 'Tanggal terima wajib diisi.',
       receiptDateFuture: 'Tanggal terima tidak boleh melebihi hari ini.',
       warehouseRequired: 'Gudang wajib dipilih.',
+      branchRequired: 'Cabang wajib dipilih.',
       arrivalTypeRequired: 'Jenis kedatangan wajib dipilih.',
-      stockTypeRequired: 'Jenis stok wajib dipilih.',
       detailsRequired: 'Minimal satu item harus diisi.',
       detailProductRequired: 'Baris {row}: produk wajib dipilih.',
       detailQtyRequired: 'Baris {row}: qty harus lebih dari 0.',
       detailPriceRequired: 'Baris {row}: harga wajib diisi dan tidak boleh negatif.',
+      overReceipt:
+        'Qty diterima tidak boleh melebihi qty PO ({qty} {uom}). Kelebihan barang harus dikembalikan ke driver atau dicatat lewat GR terpisah di luar PO.',
     },
     messages: {
-      created: 'Penerimaan barang berhasil diposting.',
+      created: 'Penerimaan barang berhasil disimpan.',
+      updated: 'Penerimaan barang berhasil diperbarui.',
       notFound: 'Penerimaan barang tidak ditemukan.',
     },
   },
@@ -1589,17 +1722,23 @@ export default {
       productCode: 'Kode',
       productName: 'Nama',
       uom: 'Satuan',
+      stockType: 'Jenis Stok',
       onHand: 'Stok Tersedia',
       inTransit: 'Dalam Transit',
       reserved: 'Direservasi',
       available: 'Dapat Digunakan',
       composition: 'Komposisi',
+      averageCost: 'Harga Rata-rata',
       value: 'Nilai HPP',
     },
     status: {
       out: 'Habis',
       normal: 'Normal',
       unknown: '-',
+    },
+    stockTypes: {
+      good: 'Baik',
+      bad: 'Rusak',
     },
   },
   bookingOrders: {
@@ -1668,6 +1807,54 @@ export default {
       branchRequired: 'Cabang wajib diisi.',
       deliveryDateOffsetRequired: 'Offset tanggal pengiriman wajib diisi.',
       expiredDateOffsetRequired: 'Offset tanggal kedaluwarsa wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  purchaseOrderConfigs: {
+    title: 'Konfigurasi Purchase Order',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Kosongkan jika purchase order dari cabang ini tidak memerlukan persetujuan.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  goodsReceiptConfigs: {
+    title: 'Konfigurasi Penerimaan Barang',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Kosongkan jika penerimaan barang dari cabang ini tidak memerlukan persetujuan.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
     },
     messages: {
       created: 'Konfigurasi berhasil dibuat.',
@@ -2036,6 +2223,10 @@ export default {
       failed_delivery: 'Pengiriman Gagal',
       sales_return: 'Retur Penjualan',
     },
+    stockTypes: {
+      good: 'Baik',
+      bad: 'Rusak',
+    },
     actions: {
       create: 'BTB Baru',
       submit: 'Terima Stok',
@@ -2061,6 +2252,7 @@ export default {
       qtyAtDriver: 'Qty di Pengemudi',
       qtyReceived: 'Qty Diterima',
       receivedQty: 'Qty Diterima',
+      stockType: 'Jenis Stok',
     },
     summary: {
       title: 'Item Terpilih',
@@ -2096,6 +2288,8 @@ export default {
       onHandAfter: 'Stok Tersedia Setelah',
       reservedAfter: 'Stok Dipesan Setelah',
       inTransitAfter: 'Stok Dalam Perjalanan Setelah',
+      unitCost: 'Harga Satuan',
+      costAmount: 'Nilai Biaya',
       referenceNo: 'No. Referensi',
       createdBy: 'Dipindahkan Oleh',
     },
@@ -2105,6 +2299,8 @@ export default {
       release: 'Pembatalan Pemesanan',
       issue: 'Pengeluaran',
       delivery: 'Pengiriman',
+      return_receipt: 'Penerimaan Retur',
+      sales_return_receipt: 'Penerimaan Retur Penjualan',
     },
     stockTypes: {
       good: 'Baik',

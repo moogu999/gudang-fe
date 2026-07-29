@@ -6,7 +6,14 @@ export interface StockMovement {
   productCode?: string
   productName?: string
   stockType: string
-  movementType: 'receipt' | 'reserve' | 'release' | 'issue' | 'delivery'
+  movementType:
+    | 'receipt'
+    | 'reserve'
+    | 'release'
+    | 'issue'
+    | 'delivery'
+    | 'return_receipt'
+    | 'sales_return_receipt'
   onHandDelta: string
   reservedDelta: string
   inTransitDelta: string
@@ -14,6 +21,8 @@ export interface StockMovement {
   reservedAfter: string
   inTransitAfter: string
   unitCost?: string | null
+  costAmount?: string | null
+  averageCostAfter?: string | null
   referenceType?: string | null
   referenceId?: number | null
   referenceNo?: string | null

@@ -172,7 +172,12 @@ export const API_ENDPOINTS = {
 
   // Goods Receipt endpoints
   GOODS_RECEIPTS: '/v1/goods-receipts',
+  GOODS_RECEIPT_BY_ID: (id: number) => `/v1/goods-receipts/${id}`,
   GEN_GOODS_RECEIPT_HEADERS: '/gen/v1/goods-receipt-headers',
+  PURCHASE_ORDERS_AVAILABLE_FOR_RECEIPT: '/v1/purchase-orders/available-for-receipt',
+  GOODS_RECEIPT_CONFIGS: '/v1/goods-receipt-configs',
+  GOODS_RECEIPT_CONFIG_MY_BRANCH: '/v1/goods-receipt-configs/my-branch',
+  GOODS_RECEIPT_CONFIG_BY_BRANCH: (branchId: number) => `/v1/goods-receipt-configs/${branchId}`,
 
   // Inventory endpoints
   GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
@@ -238,6 +243,15 @@ export const API_ENDPOINTS = {
 
   // Return Delivery Order endpoints
   RETURN_DELIVERY_ORDERS: '/v1/return-delivery-orders',
+
+  // Purchase Orders
+  PURCHASE_ORDERS: '/v1/purchase-orders',
+  PURCHASE_ORDER_BY_ID: (id: number) => `/v1/purchase-orders/${id}`,
+  GEN_PURCHASE_ORDER_HEADERS: '/gen/v1/purchase-order-headers',
+  GEN_PURCHASE_ORDER_DETAILS: '/gen/v1/purchase-order-details',
+  PURCHASE_ORDER_CONFIGS: '/v1/purchase-order-configs',
+  PURCHASE_ORDER_CONFIG_MY_BRANCH: '/v1/purchase-order-configs/my-branch',
+  PURCHASE_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/purchase-order-configs/${branchId}`,
 
   // Approval endpoints
   GEN_APPROVAL_FLOWS: '/gen/v1/approval-flows',

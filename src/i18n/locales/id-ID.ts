@@ -2299,6 +2299,8 @@ export default {
       release: 'Pembatalan Pemesanan',
       issue: 'Pengeluaran',
       delivery: 'Pengiriman',
+      return_receipt: 'Penerimaan Retur',
+      sales_return_receipt: 'Penerimaan Retur Penjualan',
     },
     stockTypes: {
       good: 'Baik',

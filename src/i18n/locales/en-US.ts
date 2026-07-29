@@ -2299,6 +2299,8 @@ export default {
       release: 'Release',
       issue: 'Issue',
       delivery: 'Delivery',
+      return_receipt: 'Return Receipt',
+      sales_return_receipt: 'Sales Return Receipt',
     },
     stockTypes: {
       good: 'Good',

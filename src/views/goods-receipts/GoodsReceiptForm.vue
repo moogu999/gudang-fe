@@ -191,9 +191,7 @@
                   {{ (option as AvailablePurchaseOrder).supplierName }}</span
                 >
                 <span class="text-xs text-stone-500">
-                  {{
-                    dayjs((option as AvailablePurchaseOrder).orderDate).format(DateFormat.DATE)
-                  }}
+                  {{ dayjs((option as AvailablePurchaseOrder).orderDate).format(DateFormat.DATE) }}
                   ·
                   {{ formatCurrency(parseFloat((option as AvailablePurchaseOrder).totalAmount)) }}
                 </span>

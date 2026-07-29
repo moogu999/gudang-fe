@@ -201,14 +201,20 @@ export type {
 export type {
   ArrivalType,
   StockType,
+  GoodsReceiptStatus,
   GRProductLite,
   GoodsReceiptHeader,
   GoodsReceiptDetailRow,
   GoodsReceiptDetailResponse,
   GoodsReceiptResponse,
   CreateGoodsReceiptRequest,
+  UpdateGoodsReceiptRequest,
   CreateGoodsReceiptDetailDto,
+  AvailablePurchaseOrder,
 } from './goodsReceipt.type'
+
+// Goods Receipt Config types
+export type { GoodsReceiptConfig, UpsertGoodsReceiptConfigDto } from './goodsReceiptConfig.type'
 
 // Inventory Balance types
 export type {

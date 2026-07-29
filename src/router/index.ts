@@ -520,6 +520,16 @@ const router = createRouter({
           },
         },
         {
+          path: 'goods-receipts/:id/edit',
+          name: 'GoodsReceiptEdit',
+          component: () => import('@/views/goods-receipts/GoodsReceiptEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GOODS_RECEIPT_WRITE,
+            titleKey: 'navigation.goodsReceipts',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'goods-receipts/:id',
           name: 'GoodsReceiptDetail',
           component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
@@ -834,6 +844,10 @@ const router = createRouter({
         {
           path: 'purchase-order-configs',
           redirect: { path: '/configs', query: { tab: 'po' } },
+        },
+        {
+          path: 'goods-receipt-configs',
+          redirect: { path: '/configs', query: { tab: 'gr' } },
         },
       ],
     },

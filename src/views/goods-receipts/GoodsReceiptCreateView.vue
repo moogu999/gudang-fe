@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <GoodsReceiptForm @submitted="onSubmitted" @cancel="router.back()" />
+        <GoodsReceiptForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -24,6 +24,7 @@ import Toast from 'primevue/toast'
 import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GoodsReceiptForm from './GoodsReceiptForm.vue'
+import DialogMode from '@/constants/dialogMode'
 
 const { t } = useI18n()
 const router = useRouter()

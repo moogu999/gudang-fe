@@ -2,7 +2,12 @@ import type { PinnedUom } from './pinnedUom.type'
 import type { ProductLiteWithUom } from './salesOrder.type'
 import type { PaymentTermRef } from './supplier.type'
 
-export type PurchaseOrderStatus = 'draft' | 'need_approval' | 'approved' | 'applied'
+export type PurchaseOrderStatus =
+  | 'draft'
+  | 'need_approval'
+  | 'approved'
+  | 'partially_received'
+  | 'applied'
 
 export interface ManualDiscount {
   discountType: 'flat' | 'percentage'
@@ -60,6 +65,7 @@ export interface PurchaseOrderDetail {
   quantity: string // Decimal as string from backend
   price: string
   discount: string
+  receivedQuantity: string
   subAmount: string
   taxBaseAmount: string
   taxAmount: string

@@ -151,7 +151,7 @@ const resolver = computed(() =>
         props.mode === DialogMode.ADD
           ? z.number({ message: t('purchaseOrderConfigs.validation.branchRequired') })
           : z.number().optional(),
-      approvalFlowId: z.number().optional(),
+      approvalFlowId: z.number().nullable().optional(),
     }),
   ),
 )

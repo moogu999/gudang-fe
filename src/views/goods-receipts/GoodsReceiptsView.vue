@@ -15,7 +15,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent ref="table" :url="url" :columns="columns">
+        <TableComponent ref="table" :url="url" :columns="columns" :search-transform="toSearchTerm">
           <template #content="{ col, data }">
             <span v-if="col.field === 'receiptDate'">
               {{ dayjs(data.receiptDate).format(DateFormat.DATE) }}
@@ -25,9 +25,6 @@
             </span>
             <span v-else-if="col.field === 'arrivalType'">
               {{ arrivalTypeLabel(data.arrivalType) }}
-            </span>
-            <span v-else-if="col.field === 'stockType'">
-              {{ stockTypeLabel(data.stockType) }}
             </span>
             <span v-else-if="col.field === 'totalAmount'">
               {{ formatNumber(parseFloat(data.totalAmount || '0')) }}
@@ -87,7 +84,7 @@ import type { GoodsReceiptStatus } from '@/types/goodsReceipt.type'
 
 const { t } = useI18n()
 const router = useRouter()
-const { arrivalTypeLabel, stockTypeLabel } = useGoodsReceiptLabels()
+const { arrivalTypeLabel, toSearchTerm } = useGoodsReceiptLabels()
 const { canWrite } = usePermissions('/goods-receipts')
 
 const overlayGroup = 'goodsReceiptsView'
@@ -119,14 +116,6 @@ const columns = computed<Column[]>(() => [
   {
     field: 'arrivalType',
     header: t('goodsReceipts.fields.arrivalType'),
-    sortable: true,
-    exportable: true,
-    filterable: true,
-    hideOnMobile: true,
-  },
-  {
-    field: 'stockType',
-    header: t('goodsReceipts.fields.stockType'),
     sortable: true,
     exportable: true,
     filterable: true,

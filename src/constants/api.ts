@@ -179,6 +179,15 @@ export const API_ENDPOINTS = {
   GOODS_RECEIPT_CONFIG_MY_BRANCH: '/v1/goods-receipt-configs/my-branch',
   GOODS_RECEIPT_CONFIG_BY_BRANCH: (branchId: number) => `/v1/goods-receipt-configs/${branchId}`,
 
+  // AP Invoice endpoints
+  AP_INVOICES: '/v1/ap-invoices',
+  AP_INVOICE_BY_ID: (id: number) => `/v1/ap-invoices/${id}`,
+  GEN_AP_INVOICE_HEADERS: '/gen/v1/ap-invoice-headers',
+  AP_INVOICE_AVAILABLE_GRS: '/v1/goods-receipts/available-for-invoicing',
+  AP_INVOICE_CONFIGS: '/v1/ap-invoice-configs',
+  AP_INVOICE_CONFIG_MY_BRANCH: '/v1/ap-invoice-configs/my-branch',
+  AP_INVOICE_CONFIG_BY_BRANCH: (branchId: number) => `/v1/ap-invoice-configs/${branchId}`,
+
   // Inventory endpoints
   GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
   INVENTORY_SUMMARY: '/v1/inventory/summary',

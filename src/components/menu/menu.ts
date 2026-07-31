@@ -229,6 +229,11 @@ const mainMenu = [
         route: '/purchase-orders',
       },
       {
+        label: 'AP Invoices',
+        labelKey: 'navigation.apInvoices',
+        route: '/ap-invoices',
+      },
+      {
         label: 'Term of Payment',
         labelKey: 'navigation.paymentTerms',
         route: '/payment-terms',
@@ -303,6 +308,7 @@ const mainMenu = [
           PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
           PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
           PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
+          PERMISSIONS.AP_INVOICE_CONFIG_READ,
         ],
       },
     ],

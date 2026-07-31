@@ -849,6 +849,50 @@ const router = createRouter({
           path: 'goods-receipt-configs',
           redirect: { path: '/configs', query: { tab: 'gr' } },
         },
+        {
+          path: 'ap-invoices',
+          name: 'ApInvoices',
+          component: () => import('@/views/ap-invoices/ApInvoicesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            titleKey: 'navigation.apInvoices',
+          },
+        },
+        {
+          path: 'ap-invoices/create',
+          name: 'ApInvoiceCreate',
+          component: () => import('@/views/ap-invoices/ApInvoiceCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_INVOICE_WRITE,
+            titleKey: 'navigation.apInvoices',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `ap-invoices/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'ap-invoices/:id/edit',
+          name: 'ApInvoiceEdit',
+          component: () => import('@/views/ap-invoices/ApInvoiceEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_INVOICE_WRITE,
+            titleKey: 'navigation.apInvoices',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'ap-invoices/:id',
+          name: 'ApInvoiceDetail',
+          component: () => import('@/views/ap-invoices/ApInvoiceDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            titleKey: 'navigation.apInvoices',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'ap-invoice-configs',
+          redirect: { path: '/configs', query: { tab: 'ap' } },
+        },
       ],
     },
 

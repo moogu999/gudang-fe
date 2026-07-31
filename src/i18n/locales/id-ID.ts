@@ -85,6 +85,8 @@ export default {
     purchaseOrders: 'Purchase Order',
     purchaseOrderConfigs: 'Konfigurasi PO Pembelian',
     goodsReceiptConfigs: 'Konfigurasi GR',
+    apInvoices: 'Faktur Pembelian',
+    apInvoiceConfigs: 'Konfigurasi Faktur Pembelian',
     paymentTerms: 'Termin Pembayaran',
     suppliers: 'Pemasok',
     customerLabelDefinitions: 'Definisi Label Pelanggan',
@@ -1055,6 +1057,7 @@ export default {
     entityTypes: {
       products: 'Produk',
       customers: 'Pelanggan',
+      apInvoices: 'Faktur Pembelian',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
@@ -1649,6 +1652,7 @@ export default {
       uom: 'Satuan',
       quantity: 'Qty',
       poQuantity: 'Qty PO',
+      remainingQuantity: 'Sisa Qty',
       receivedQuantity: 'Qty Diterima',
       stockType: 'Stok',
       price: 'Harga',
@@ -1828,6 +1832,117 @@ export default {
       approvalConfigured: 'Persetujuan dikonfigurasi',
       approvalFlowHint:
         'Kosongkan jika purchase order dari cabang ini tidak memerlukan persetujuan.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  apInvoices: {
+    title: 'Faktur Pembelian',
+    addApInvoice: 'Tambah Faktur Pembelian',
+    viewApInvoice: 'Detail Faktur Pembelian',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Diberikan saat disimpan',
+    },
+    fields: {
+      no: 'No.',
+      supplier: 'Pemasok',
+      legalEntity: 'Badan Hukum',
+      branch: 'Cabang',
+      supplierInvoiceNo: 'No. Faktur Pemasok',
+      taxInvoiceNo: 'No. Faktur Pajak',
+      invoiceDate: 'Tanggal Faktur',
+      paymentTerm: 'Termin Pembayaran',
+      dueDate: 'Jatuh Tempo',
+      remark: 'Catatan',
+    },
+    sections: {
+      header: 'Informasi Faktur',
+      invoiceInfo: 'Faktur & Pembayaran',
+      coveredReceipts: 'Penerimaan Barang Tercakup',
+      summary: 'Ringkasan',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'Cabang ini belum dipetakan ke perusahaan. Petakan melalui Perusahaan \u2192 Cabang sebelum menyimpan.',
+    },
+    picker: {
+      title: 'Penerimaan Barang Siap Difakturkan',
+      searchPlaceholder: 'Cari nomor penerimaan atau PO',
+      addSelected: 'Tambah Terpilih',
+      addAll: 'Tambah Semua di Halaman',
+      selectSupplierFirst: 'Pilih pemasok untuk melihat penerimaan barang yang bisa difakturkan.',
+      receiptNo: 'Penerimaan Barang',
+      ref: 'Ref',
+      receiptDate: 'Tanggal Terima',
+      warehouse: 'Gudang',
+      value: 'Nilai Penerimaan',
+      selectedCount: '{count} penerimaan dipilih',
+      selectedTotal: 'Total nilai: {amount}',
+    },
+    coveredReceipts: {
+      empty: 'Belum ada penerimaan barang yang dilampirkan.',
+      remove: 'Hapus penerimaan',
+    },
+    summary: {
+      taxBase: 'DPP',
+      tax: 'Pajak',
+      total: 'Total',
+    },
+    status: {
+      draft: 'Draf',
+      need_approval: 'Butuh Persetujuan',
+      approved: 'Disetujui',
+    },
+    actions: {
+      saveAsDraft: 'Simpan sebagai Draf',
+      submitForApproval: 'Ajukan Persetujuan',
+      editApInvoice: 'Edit Faktur Pembelian',
+    },
+    confirm: {
+      header: 'Konfirmasi Pengajuan',
+      message: 'Faktur pembelian ini akan diajukan untuk persetujuan. Lanjutkan?',
+    },
+    validation: {
+      noRequired: 'Nomor faktur wajib diisi.',
+      supplierRequired: 'Pemasok wajib diisi.',
+      supplierInvoiceNoRequired: 'Nomor faktur pemasok wajib diisi.',
+      invoiceDateRequired: 'Tanggal faktur wajib diisi.',
+      invoiceDateFuture: 'Tanggal faktur tidak boleh melebihi hari ini.',
+      branchRequired: 'Cabang wajib diisi.',
+      receiptsRequired: 'Minimal satu penerimaan barang harus dicakup.',
+      ppnNegative: 'PPN tidak boleh negatif.',
+      ppnDeviation: 'PPN yang diisi berbeda dari hasil hitung {amount}. Disimpan sesuai isian.',
+    },
+    messages: {
+      created: 'Faktur pembelian berhasil disimpan.',
+      updated: 'Faktur pembelian berhasil diperbarui.',
+      deleted: 'Faktur pembelian berhasil dihapus.',
+      notFound: 'Faktur pembelian tidak ditemukan.',
+      alreadyInvoiced: 'Salah satu penerimaan barang sudah difakturkan.',
+    },
+  },
+  apInvoiceConfigs: {
+    title: 'Konfigurasi Faktur Pembelian',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Kosongkan jika faktur pembelian dari cabang ini tidak memerlukan persetujuan.',
     },
     validation: {
       branchRequired: 'Cabang wajib diisi.',

@@ -51,6 +51,23 @@ export class CompaniesService {
   }
 
   /**
+   * Fetch a single company by ID
+   *
+   * @param id - The unique identifier of the company
+   * @returns Promise resolving to the company object
+   * @throws Error if the company does not exist
+   *
+   * @example
+   * ```typescript
+   * const company = await CompaniesService.get(1)
+   * console.log(company.taxId)
+   * ```
+   */
+  static async get(id: number): Promise<Company> {
+    return ApiService.get<Company>(`${this.BASE_URL}/${id}`)
+  }
+
+  /**
    * Create a new company
    *
    * @param data - Company creation data including code, name, address, tax ID, and creator

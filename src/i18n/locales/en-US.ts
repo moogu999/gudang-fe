@@ -89,6 +89,10 @@ export default {
     creditDebitNotes: 'Credit/Debit Notes',
     creditDebitNoteConfigs: 'Credit/Debit Note Config',
     apOutstanding: 'AP Outstanding',
+    apPayments: 'AP Payments',
+    apPaymentConfigs: 'AP Payment Config',
+    paymentMethods: 'Payment Methods',
+    branchBankAccounts: 'Branch Bank Accounts',
     paymentTerms: 'Term of Payment',
     correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
@@ -1075,6 +1079,7 @@ export default {
       customers: 'Customers',
       apInvoices: 'AP Invoices',
       creditDebitNotes: 'Credit/Debit Notes',
+      apPayments: 'AP Payments',
     },
     validation: {
       nameRequired: 'Name is required.',
@@ -2083,6 +2088,176 @@ export default {
     messages: {
       created: 'Config is created.',
       updated: 'Config is updated.',
+    },
+  },
+  apPayments: {
+    title: 'AP Payments',
+    addApPayment: 'Add AP Payment',
+    viewApPayment: 'AP Payment Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'No.',
+      supplier: 'Supplier',
+      legalEntity: 'Legal Entity',
+      branch: 'Branch',
+      paymentDate: 'Payment Date',
+      paymentMethod: 'Payment Method',
+      branchBankAccount: 'Sending Account',
+      referenceNo: 'Transfer Reference',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Payment Information',
+      paymentMethod: 'Payment Method',
+      picker: 'Open Items',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+    },
+    picker: {
+      selectSupplierFirst: 'Choose a supplier to see its open AP invoices and credit/debit notes.',
+      documentNo: 'Document No.',
+      type: 'Type',
+      dueDate: 'Due Date',
+      outstanding: 'Outstanding',
+      appliedAmount: 'Amount Paid',
+      documentType: {
+        ap_invoice: 'Invoice',
+        credit_note: 'Credit Note',
+        debit_note: 'Debit Note',
+      },
+      overdueDays: 'Overdue {days} days',
+      dueInDays: '{days} days left',
+      selectedSummary:
+        '{count} documents selected ({invoices} invoice + {debits} debit note + {credits} credit note)',
+      net: 'Net',
+      empty: 'No open items applied.',
+    },
+    summary: {
+      title: 'Summary',
+      gross: 'Gross (Invoices + Debit Notes)',
+      credit: 'Credit Applied',
+      net: 'Net Amount',
+    },
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+    },
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      postPayment: 'Post Payment',
+      editApPayment: 'Edit AP Payment',
+    },
+    confirm: {
+      header: 'Confirm',
+      messageSubmit: 'This will submit the AP payment for approval. Continue?',
+      messagePost:
+        'This will post the payment immediately and reduce the picked documents’ outstanding balance. Continue?',
+    },
+    validation: {
+      noRequired: 'Payment number is required.',
+      supplierRequired: 'Supplier is required.',
+      branchRequired: 'Branch is required.',
+      paymentDateRequired: 'Payment date is required.',
+      paymentDateFuture: 'Payment date cannot be later than today.',
+      paymentMethodRequired: 'Payment method is required.',
+      bankAccountRequired: 'Sending account is required for a bank transfer.',
+      referenceNoRequired: 'Transfer reference is required for a bank transfer.',
+      noApplications: 'At least one open item must be applied.',
+      appliedAmountRequired: 'Every picked invoice needs an amount greater than zero.',
+      negativeNet: 'The net amount cannot be negative.',
+    },
+    messages: {
+      created: 'AP payment saved successfully.',
+      updated: 'AP payment updated successfully.',
+      deleted: 'AP payment deleted successfully.',
+      notFound: 'AP payment not found.',
+      thresholdInfo:
+        'This net amount is at or above the branch’s approval threshold of {threshold} and will require approval.',
+      approvalFlowRequired:
+        'Branch {branch} has no approval flow configured for AP Payment. Save as draft, or ask an administrator to configure one under Settings → Config → AP Payment.',
+    },
+  },
+  apPaymentConfigs: {
+    title: 'AP Payment Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+      approvalThreshold: 'Approval Threshold',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint: 'Leave empty if payments from this branch never need approval.',
+      approvalThresholdHint:
+        'Net amount at or above which approval is required. Leave blank to require approval for every payment.',
+      alwaysApproval: 'Every payment requires approval',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  paymentMethods: {
+    title: 'Payment Methods',
+    addPaymentMethod: 'Add Payment Method',
+    editPaymentMethod: 'Edit Payment Method',
+    viewPaymentMethod: 'View Payment Method',
+    fields: {
+      code: 'Code',
+    },
+    labels: {
+      codeHint: 'A short, stable code (e.g. TRANSFER, CASH). The server keys behaviour off it.',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      created: 'Payment method is created.',
+      updated: 'Payment method is updated.',
+    },
+  },
+  branchBankAccounts: {
+    title: 'Branch Bank Accounts',
+    addBranchBankAccount: 'Add Branch Bank Account',
+    editBranchBankAccount: 'Edit Branch Bank Account',
+    viewBranchBankAccount: 'View Branch Bank Account',
+    fields: {
+      branch: 'Branch',
+      bankName: 'Bank Name',
+      accountNumber: 'Account Number',
+      accountHolderName: 'Account Holder Name',
+    },
+    labels: {
+      default: 'Default',
+      defaultHint: 'The default account preselected on a new AP Payment for this branch.',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+      bankNameRequired: 'Bank name is required.',
+      accountNumberRequired: 'Account number is required.',
+      accountHolderNameRequired: 'Account holder name is required.',
+    },
+    messages: {
+      created: 'Branch bank account is created.',
+      updated: 'Branch bank account is updated.',
+      defaultConflict:
+        'This branch already has a default account. Clear the existing default before setting a new one.',
     },
   },
   apOutstanding: {

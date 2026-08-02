@@ -955,6 +955,68 @@ const router = createRouter({
             titleKey: 'navigation.apOutstanding',
           },
         },
+        {
+          path: 'ap-payments',
+          name: 'ApPayments',
+          component: () => import('@/views/ap-payments/ApPaymentsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_PAYMENT_READ,
+            titleKey: 'navigation.apPayments',
+          },
+        },
+        {
+          path: 'ap-payments/create',
+          name: 'ApPaymentCreate',
+          component: () => import('@/views/ap-payments/ApPaymentCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_PAYMENT_WRITE,
+            titleKey: 'navigation.apPayments',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `ap-payments/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'ap-payments/:id/edit',
+          name: 'ApPaymentEdit',
+          component: () => import('@/views/ap-payments/ApPaymentEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_PAYMENT_WRITE,
+            titleKey: 'navigation.apPayments',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'ap-payments/:id',
+          name: 'ApPaymentDetail',
+          component: () => import('@/views/ap-payments/ApPaymentDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_PAYMENT_READ,
+            titleKey: 'navigation.apPayments',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'ap-payment-configs',
+          redirect: { path: '/configs', query: { tab: 'bkk' } },
+        },
+        {
+          path: 'payment-methods',
+          name: 'PaymentMethods',
+          component: () => import('@/views/payment-methods/PaymentMethodsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.PAYMENT_METHOD_READ,
+            titleKey: 'navigation.paymentMethods',
+          },
+        },
+        {
+          path: 'branch-bank-accounts',
+          name: 'BranchBankAccounts',
+          component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
+            titleKey: 'navigation.branchBankAccounts',
+          },
+        },
       ],
     },
 

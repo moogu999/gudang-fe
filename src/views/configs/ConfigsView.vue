@@ -31,6 +31,7 @@
     <GoodsReceiptConfigsView v-if="activeConfig === 'gr'" ref="grRef" :embedded="true" />
     <ApInvoiceConfigsView v-if="activeConfig === 'ap'" ref="apRef" :embedded="true" />
     <CreditDebitNoteConfigsView v-if="activeConfig === 'cdn'" ref="cdnRef" :embedded="true" />
+    <ApPaymentConfigsView v-if="activeConfig === 'bkk'" ref="bkkRef" :embedded="true" />
   </div>
 </template>
 
@@ -47,6 +48,7 @@ import PurchaseOrderConfigsView from '@/views/purchase-order-configs/PurchaseOrd
 import GoodsReceiptConfigsView from '@/views/goods-receipt-configs/GoodsReceiptConfigsView.vue'
 import ApInvoiceConfigsView from '@/views/ap-invoice-configs/ApInvoiceConfigsView.vue'
 import CreditDebitNoteConfigsView from '@/views/credit-debit-note-configs/CreditDebitNoteConfigsView.vue'
+import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsView.vue'
 import { usePermissions } from '@/composables'
 
 const { t } = useI18n()
@@ -59,6 +61,7 @@ const { canRead: canReadPO, canWrite: canWritePO } = usePermissions('/purchase-o
 const { canRead: canReadGR, canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
 const { canRead: canReadAP, canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
 const { canRead: canReadCDN, canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
+const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
 
 const configOptions = computed(() => {
   const options: { label: string; value: string }[] = []
@@ -69,6 +72,7 @@ const configOptions = computed(() => {
   if (canReadAP.value) options.push({ label: t('navigation.apInvoiceConfigs'), value: 'ap' })
   if (canReadCDN.value)
     options.push({ label: t('navigation.creditDebitNoteConfigs'), value: 'cdn' })
+  if (canReadBKK.value) options.push({ label: t('navigation.apPaymentConfigs'), value: 'bkk' })
   return options
 })
 
@@ -91,6 +95,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'gr') return canWriteGR.value
   if (activeConfig.value === 'ap') return canWriteAP.value
   if (activeConfig.value === 'cdn') return canWriteCDN.value
+  if (activeConfig.value === 'bkk') return canWriteBKK.value
   return false
 })
 
@@ -102,6 +107,7 @@ const poRef = ref<InstanceType<typeof PurchaseOrderConfigsView> | null>(null)
 const grRef = ref<InstanceType<typeof GoodsReceiptConfigsView> | null>(null)
 const apRef = ref<InstanceType<typeof ApInvoiceConfigsView> | null>(null)
 const cdnRef = ref<InstanceType<typeof CreditDebitNoteConfigsView> | null>(null)
+const bkkRef = ref<InstanceType<typeof ApPaymentConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -110,5 +116,6 @@ function onAddClick() {
   else if (activeConfig.value === 'gr') grRef.value?.openAddDialog()
   else if (activeConfig.value === 'ap') apRef.value?.openAddDialog()
   else if (activeConfig.value === 'cdn') cdnRef.value?.openAddDialog()
+  else if (activeConfig.value === 'bkk') bkkRef.value?.openAddDialog()
 }
 </script>

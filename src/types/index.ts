@@ -256,6 +256,35 @@ export type {
 // AP Outstanding types
 export type { ApOutstandingDocumentType, ApOutstandingItem } from './apOutstanding.type'
 
+// AP Payment types
+export type {
+  ApPaymentStatus,
+  ApPaymentDocumentType,
+  ApPaymentListRow,
+  ApPaymentApplicationResponse,
+  ApPaymentResponse,
+  ApPaymentApplicationRequest,
+  CreateApPaymentRequest,
+  UpdateApPaymentRequest,
+} from './apPayment.type'
+
+// AP Payment Config types
+export type { ApPaymentConfig, UpsertApPaymentConfigDto } from './apPaymentConfig.type'
+
+// Payment Method types
+export type {
+  PaymentMethod,
+  CreatePaymentMethodDto,
+  UpdatePaymentMethodDto,
+} from './paymentMethod.type'
+
+// Branch Bank Account types
+export type {
+  BranchBankAccount,
+  CreateBranchBankAccountDto,
+  UpdateBranchBankAccountDto,
+} from './branchBankAccount.type'
+
 // Inventory Balance types
 export type {
   InventoryBalanceStatus,

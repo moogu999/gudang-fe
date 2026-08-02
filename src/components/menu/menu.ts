@@ -35,6 +35,11 @@ const mainMenu = [
         route: '/branches',
       },
       {
+        label: 'Branch Bank Accounts',
+        labelKey: 'navigation.branchBankAccounts',
+        route: '/branch-bank-accounts',
+      },
+      {
         label: 'Departments',
         labelKey: 'navigation.departments',
         route: '/departments',
@@ -244,6 +249,11 @@ const mainMenu = [
         route: '/ap-outstanding',
       },
       {
+        label: 'AP Payments',
+        labelKey: 'navigation.apPayments',
+        route: '/ap-payments',
+      },
+      {
         label: 'Term of Payment',
         labelKey: 'navigation.paymentTerms',
         route: '/payment-terms',
@@ -252,6 +262,11 @@ const mainMenu = [
         label: 'Correction Categories',
         labelKey: 'navigation.correctionCategories',
         route: '/correction-categories',
+      },
+      {
+        label: 'Payment Methods',
+        labelKey: 'navigation.paymentMethods',
+        route: '/payment-methods',
       },
       {
         label: 'Suppliers',

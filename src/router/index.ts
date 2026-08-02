@@ -893,6 +893,68 @@ const router = createRouter({
           path: 'ap-invoice-configs',
           redirect: { path: '/configs', query: { tab: 'ap' } },
         },
+        {
+          path: 'correction-categories',
+          name: 'CorrectionCategories',
+          component: () => import('@/views/correction-categories/CorrectionCategoriesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CORRECTION_CATEGORY_READ,
+            titleKey: 'navigation.correctionCategories',
+          },
+        },
+        {
+          path: 'credit-debit-notes',
+          name: 'CreditDebitNotes',
+          component: () => import('@/views/credit-debit-notes/CreditDebitNotesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
+            titleKey: 'navigation.creditDebitNotes',
+          },
+        },
+        {
+          path: 'credit-debit-notes/create',
+          name: 'CreditDebitNoteCreate',
+          component: () => import('@/views/credit-debit-notes/CreditDebitNoteCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_WRITE,
+            titleKey: 'navigation.creditDebitNotes',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `credit-debit-notes/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'credit-debit-notes/:id/edit',
+          name: 'CreditDebitNoteEdit',
+          component: () => import('@/views/credit-debit-notes/CreditDebitNoteEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_WRITE,
+            titleKey: 'navigation.creditDebitNotes',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'credit-debit-notes/:id',
+          name: 'CreditDebitNoteDetail',
+          component: () => import('@/views/credit-debit-notes/CreditDebitNoteDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
+            titleKey: 'navigation.creditDebitNotes',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'credit-debit-note-configs',
+          redirect: { path: '/configs', query: { tab: 'cdn' } },
+        },
+        {
+          path: 'ap-outstanding',
+          name: 'ApOutstanding',
+          component: () => import('@/views/ap-outstanding/ApOutstandingView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            titleKey: 'navigation.apOutstanding',
+          },
+        },
       ],
     },
 

@@ -230,6 +230,32 @@ export type {
 // AP Invoice Config types
 export type { ApInvoiceConfig, UpsertApInvoiceConfigDto } from './apInvoiceConfig.type'
 
+// Credit/Debit Note types
+export type {
+  CreditDebitNoteStatus,
+  CreditDebitNoteType,
+  CreditDebitNoteListRow,
+  CreditDebitNoteResponse,
+  CreateCreditDebitNoteRequest,
+  UpdateCreditDebitNoteRequest,
+} from './creditDebitNote.type'
+
+// Credit/Debit Note Config types
+export type {
+  CreditDebitNoteConfig,
+  UpsertCreditDebitNoteConfigDto,
+} from './creditDebitNoteConfig.type'
+
+// Correction Category types
+export type {
+  CorrectionCategory,
+  CreateCorrectionCategoryDto,
+  UpdateCorrectionCategoryDto,
+} from './correctionCategory.type'
+
+// AP Outstanding types
+export type { ApOutstandingDocumentType, ApOutstandingItem } from './apOutstanding.type'
+
 // Inventory Balance types
 export type {
   InventoryBalanceStatus,

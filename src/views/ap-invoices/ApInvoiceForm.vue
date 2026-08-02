@@ -880,7 +880,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
   }
 
   if (taxAmount.value < 0) {
-    toast.add(commonErrorToast(new Error(t('apInvoices.validation.ppnNegative')), toastGroup))
+    toast.add(commonErrorToast(new Error(t('apInvoices.validation.taxNegative')), toastGroup))
     return
   }
 

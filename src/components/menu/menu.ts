@@ -234,9 +234,24 @@ const mainMenu = [
         route: '/ap-invoices',
       },
       {
+        label: 'Credit/Debit Notes',
+        labelKey: 'navigation.creditDebitNotes',
+        route: '/credit-debit-notes',
+      },
+      {
+        label: 'AP Outstanding',
+        labelKey: 'navigation.apOutstanding',
+        route: '/ap-outstanding',
+      },
+      {
         label: 'Term of Payment',
         labelKey: 'navigation.paymentTerms',
         route: '/payment-terms',
+      },
+      {
+        label: 'Correction Categories',
+        labelKey: 'navigation.correctionCategories',
+        route: '/correction-categories',
       },
       {
         label: 'Suppliers',

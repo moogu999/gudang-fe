@@ -96,7 +96,7 @@ describe('ApInvoiceSummary', () => {
       .findAll('.message')
       .filter((m) => m.attributes('data-severity') === 'warn')
     expect(warnings).toHaveLength(1)
-    expect(warnings[0].text()).toContain('apInvoices.validation.ppnDeviation')
+    expect(warnings[0].text()).toContain('apInvoices.validation.taxDeviation')
   })
 
   it('preserves a saved override when an existing draft is opened for editing', () => {

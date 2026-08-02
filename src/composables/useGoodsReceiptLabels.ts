@@ -54,32 +54,35 @@ export function useGoodsReceiptLabels() {
   }
 
   /**
-   * Rewrites a search term that reads like an on-screen enum label into the raw
+   * Rewrites a search term that reads like an on-screen status label into the raw
    * value the API stores, so searching for what the table actually shows works.
    *
-   * The stored values are English snake_case ("return_in") while the table shows
-   * a translated label ("Retur Masuk"), and typing the label is the only thing a
-   * user would think to do. Anything that isn't an enum label is left untouched,
-   * so ordinary text search over GR number, remark and warehouse is unaffected.
+   * The stored values are English snake_case ("need_approval") while the table
+   * shows a translated label ("Perlu Persetujuan"), and typing the label is the
+   * only thing a user would think to do. Anything that isn't a status label is
+   * left untouched, so ordinary text search over GR number and warehouse is
+   * unaffected.
+   *
+   * Arrival type is deliberately not covered: the API stopped searching that
+   * column, so rewriting the term to an arrival type would throw away what the
+   * user typed in exchange for a value nothing matches on.
    *
    * An ambiguous term is left alone as well: the API takes one search string, so
-   * there is no way to ask it for two enum values at once, and silently picking
-   * one of them would quietly hide the other's rows.
+   * there is no way to ask it for two statuses at once, and silently picking one
+   * of them would quietly hide the other's rows.
    *
    * @param term - Raw text the user typed into the search box
-   * @returns The matching enum value, or the term unchanged
+   * @returns The matching status value, or the term unchanged
    */
   function toSearchTerm(term: string): string {
     const needle = term.trim().toLowerCase()
     if (!needle) return term
 
-    const arrivalTypes = ['regular', 'consignment', 'bonus', 'transfer', 'return_in', 'other']
     const statuses = ['draft', 'need_approval', 'approved']
 
-    const matches = [
-      ...arrivalTypes.filter((v) => arrivalTypeLabel(v).toLowerCase().includes(needle)),
-      ...statuses.filter((v) => t(`goodsReceipts.status.${v}`).toLowerCase().includes(needle)),
-    ]
+    const matches = statuses.filter((v) =>
+      t(`goodsReceipts.status.${v}`).toLowerCase().includes(needle),
+    )
 
     return matches.length === 1 ? matches[0] : term
   }

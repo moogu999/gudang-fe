@@ -3,6 +3,10 @@ import { useGoodsReceiptLabels } from './useGoodsReceiptLabels'
 
 // Indonesian labels, because that is the case the rewrite exists for: the stored
 // values are English snake_case and share no letters with what the table renders.
+//
+// The arrival type labels stay in the map on purpose. They make the "left
+// untouched" case below mean something: the label resolves, and the rewrite
+// still declines to use it.
 const labels: Record<string, string> = {
   'goodsReceipts.arrivalTypes.regular': 'Reguler',
   'goodsReceipts.arrivalTypes.consignment': 'Konsinyasi',
@@ -25,19 +29,21 @@ describe('useGoodsReceiptLabels', () => {
   describe('toSearchTerm', () => {
     const { toSearchTerm } = useGoodsReceiptLabels()
 
-    it('rewrites a translated arrival type label to the stored value', () => {
-      expect(toSearchTerm('Retur Masuk')).toBe('return_in')
-      expect(toSearchTerm('Reguler')).toBe('regular')
-    })
-
     it('rewrites a translated status label to the stored value', () => {
       expect(toSearchTerm('Disetujui')).toBe('approved')
       expect(toSearchTerm('Perlu Persetujuan')).toBe('need_approval')
     })
 
+    it('leaves an arrival type label alone, since the API no longer searches it', () => {
+      // Rewriting these would trade what the user typed for a value the API
+      // matches nothing on, which reads as a search that silently broke.
+      expect(toSearchTerm('Retur Masuk')).toBe('Retur Masuk')
+      expect(toSearchTerm('Reguler')).toBe('Reguler')
+    })
+
     it('matches on a partial label, case-insensitively', () => {
-      expect(toSearchTerm('retur')).toBe('return_in')
-      expect(toSearchTerm('KONSINYASI')).toBe('consignment')
+      expect(toSearchTerm('disetu')).toBe('approved')
+      expect(toSearchTerm('DRAF')).toBe('draft')
     })
 
     it('leaves ordinary search text untouched', () => {
@@ -46,9 +52,9 @@ describe('useGoodsReceiptLabels', () => {
     })
 
     it('leaves an ambiguous term untouched rather than picking one value', () => {
-      // "r" appears in Reguler, Transfer, Retur Masuk and Perlu Persetujuan; the
-      // API takes one search string, so guessing would hide the other matches.
-      expect(toSearchTerm('r')).toBe('r')
+      // "setuju" appears in both Disetujui and Perlu Persetujuan; the API takes
+      // one search string, so guessing would hide the other's rows.
+      expect(toSearchTerm('setuju')).toBe('setuju')
     })
 
     it('leaves a blank term untouched', () => {

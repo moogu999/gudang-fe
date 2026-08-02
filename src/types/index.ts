@@ -216,6 +216,20 @@ export type {
 // Goods Receipt Config types
 export type { GoodsReceiptConfig, UpsertGoodsReceiptConfigDto } from './goodsReceiptConfig.type'
 
+// AP Invoice types
+export type {
+  ApInvoiceStatus,
+  ApInvoiceHeader,
+  ApInvoiceDetailResponse,
+  ApInvoiceResponse,
+  InvoiceableGoodsReceipt,
+  CreateApInvoiceRequest,
+  UpdateApInvoiceRequest,
+} from './apInvoice.type'
+
+// AP Invoice Config types
+export type { ApInvoiceConfig, UpsertApInvoiceConfigDto } from './apInvoiceConfig.type'
+
 // Inventory Balance types
 export type {
   InventoryBalanceStatus,

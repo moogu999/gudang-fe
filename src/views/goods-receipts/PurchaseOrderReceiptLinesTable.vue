@@ -33,12 +33,53 @@
       <!-- Qty PO (read-only) -->
       <Column :header="t('goodsReceipts.details.poQuantity')">
         <template #body="{ data }">
-          {{
-            formatTieredQty(
-              data as GoodsReceiptDetailRow,
-              (data as GoodsReceiptDetailRow)._poQuantity,
-            )
-          }}
+          <div class="flex flex-col gap-0.5">
+            <span>{{
+              formatTieredQty(
+                data as GoodsReceiptDetailRow,
+                (data as GoodsReceiptDetailRow)._poQuantity,
+              )
+            }}</span>
+            <span v-if="getUomLabel(data as GoodsReceiptDetailRow)" class="text-xs text-stone-400">
+              {{ getUomLabel(data as GoodsReceiptDetailRow) }}
+            </span>
+            <span
+              v-if="
+                (getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1 &&
+                (data as GoodsReceiptDetailRow)._poQuantity != null
+              "
+              class="text-xs text-stone-400"
+            >
+              {{ (data as GoodsReceiptDetailRow)._poQuantity!.toLocaleString(locale) }}
+              {{ getUomLevels(data as GoodsReceiptDetailRow)!.at(-1)?.uom?.symbol }}
+            </span>
+          </div>
+        </template>
+      </Column>
+
+      <!-- Qty Remaining (read-only) — PO qty minus everything already received or being
+           entered on other split rows of this same PO line, so the user can see how much
+           is left before typing into Qty diterima. -->
+      <Column :header="t('goodsReceipts.details.remainingQuantity')">
+        <template #body="{ data }">
+          <div class="flex flex-col gap-0.5">
+            <span>{{
+              formatTieredQty(
+                data as GoodsReceiptDetailRow,
+                remainingToReceive(data as GoodsReceiptDetailRow),
+              )
+            }}</span>
+            <span v-if="getUomLabel(data as GoodsReceiptDetailRow)" class="text-xs text-stone-400">
+              {{ getUomLabel(data as GoodsReceiptDetailRow) }}
+            </span>
+            <span
+              v-if="(getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1"
+              class="text-xs text-stone-400"
+            >
+              {{ remainingToReceive(data as GoodsReceiptDetailRow).toLocaleString(locale) }}
+              {{ getUomLevels(data as GoodsReceiptDetailRow)!.at(-1)?.uom?.symbol }}
+            </span>
+          </div>
         </template>
       </Column>
 
@@ -54,6 +95,16 @@
             }}</span>
             <span v-if="getUomLabel(data as GoodsReceiptDetailRow)" class="text-xs text-stone-400">
               {{ getUomLabel(data as GoodsReceiptDetailRow) }}
+            </span>
+            <span
+              v-if="
+                (getUomLevels(data as GoodsReceiptDetailRow)?.length ?? 0) > 1 &&
+                (data as GoodsReceiptDetailRow).quantity != null
+              "
+              class="text-xs text-stone-400"
+            >
+              {{ (data as GoodsReceiptDetailRow).quantity!.toLocaleString(locale) }}
+              {{ getUomLevels(data as GoodsReceiptDetailRow)!.at(-1)?.uom?.symbol }}
             </span>
           </div>
         </template>
@@ -308,6 +359,13 @@ function remainingForLine(data: GoodsReceiptDetailRow): number {
   const poQty = data._poQuantity ?? 0
   const poReceived = data._poReceivedQuantity ?? 0
   return poQty - poReceived
+}
+
+// Remaining still available for this row after accounting for other split rows
+// (sharing the same PO line) within this same GR — the ceiling for this row's own qty field.
+function remainingToReceive(data: GoodsReceiptDetailRow): number {
+  const others = consumedForLine(data.purchaseOrderDetailId, data._localId)
+  return remainingForLine(data) - others
 }
 
 function onRowEditSave(event: { newData: GoodsReceiptDetailRow; index: number }) {

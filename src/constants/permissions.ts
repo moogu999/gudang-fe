@@ -97,6 +97,10 @@ export const PERMISSIONS = {
   PURCHASE_ORDER_CONFIG_WRITE: 90,
   GOODS_RECEIPT_CONFIG_READ: 91,
   GOODS_RECEIPT_CONFIG_WRITE: 92,
+  AP_INVOICE_READ: 93,
+  AP_INVOICE_WRITE: 94,
+  AP_INVOICE_CONFIG_READ: 95,
+  AP_INVOICE_CONFIG_WRITE: 96,
 } as const
 
 /**
@@ -153,6 +157,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/purchase-orders': PERMISSIONS.PURCHASE_ORDER_READ,
   '/purchase-order-configs': PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
   '/goods-receipt-configs': PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
+  '/ap-invoices': PERMISSIONS.AP_INVOICE_READ,
+  '/ap-invoice-configs': PERMISSIONS.AP_INVOICE_CONFIG_READ,
 }
 
 /**
@@ -196,4 +202,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/purchase-orders': PERMISSIONS.PURCHASE_ORDER_WRITE,
   '/purchase-order-configs': PERMISSIONS.PURCHASE_ORDER_CONFIG_WRITE,
   '/goods-receipt-configs': PERMISSIONS.GOODS_RECEIPT_CONFIG_WRITE,
+  '/ap-invoices': PERMISSIONS.AP_INVOICE_WRITE,
+  '/ap-invoice-configs': PERMISSIONS.AP_INVOICE_CONFIG_WRITE,
 }

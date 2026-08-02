@@ -163,6 +163,7 @@ import TableComponent from '@/components/table/TableComponent.vue'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import { API_ENDPOINTS } from '@/constants/api'
+import FilterOperator from '@/constants/filterOperator'
 import { WarehousesService, InventoryService } from '@/services'
 import type { Column } from '@/types'
 import type { InventorySummary } from '@/types/inventoryBalance.type'
@@ -266,10 +267,18 @@ const columns = computed<Column[]>(() => [
 const tableUrl = computed(() => {
   const parts: string[] = []
   if (selectedWarehouseId.value) {
-    parts.push(`filterBy=warehouseId&filterOperator=0&filterValue=${selectedWarehouseId.value}`)
+    parts.push(
+      `filterBy=warehouseId&filterOperator=${FilterOperator.EQUAL}&filterValue=${selectedWarehouseId.value}`,
+    )
   }
   if (activeChip.value === 'out') {
-    parts.push(`filterBy=status&filterOperator=0&filterValue=out`)
+    parts.push(`filterBy=status&filterOperator=${FilterOperator.EQUAL}&filterValue=out`)
+  }
+  if (activeChip.value === 'inTransit') {
+    parts.push(`filterBy=hasInTransit&filterOperator=${FilterOperator.EQUAL}&filterValue=yes`)
+  }
+  if (activeChip.value === 'reserved') {
+    parts.push(`filterBy=hasReserved&filterOperator=${FilterOperator.EQUAL}&filterValue=yes`)
   }
   const qs = parts.join('&')
   return qs ? `${API_ENDPOINTS.GEN_INVENTORY_BALANCES}?${qs}` : API_ENDPOINTS.GEN_INVENTORY_BALANCES

@@ -50,7 +50,7 @@
         show-clear
         show-icon
         date-format="yy-mm-dd"
-        class="w-60"
+        class="w-72"
         @update:model-value="onDateRangeChange"
       />
     </div>

@@ -36,6 +36,7 @@
             severity="secondary"
             @click="clearFilters"
             text
+            :disabled="!hasClearableState"
             :size="buttonSize"
             class="min-h-[44px]"
           >
@@ -180,9 +181,14 @@
               :aria-label="t('table.refresh')"
               class="sm:min-h-0"
             />
-            <Button severity="secondary" @click="clearFilters" text class="sm:min-h-0">{{
-              t('table.clearFilters')
-            }}</Button>
+            <Button
+              severity="secondary"
+              @click="clearFilters"
+              text
+              :disabled="!hasClearableState"
+              class="sm:min-h-0"
+              >{{ t('table.clearFilters') }}</Button
+            >
           </div>
         </div>
       </template>
@@ -251,7 +257,7 @@ import Card from 'primevue/card'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch, type PropType } from 'vue'
 import type { Column as ColumnType } from '@/types/table.type'
 import ApiService from '@/services/api'
 import type { Base } from '@/types/api.type'
@@ -326,6 +332,16 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  /**
+   * Rewrites the typed term before it is sent to the API. Lets a view whose table
+   * renders translated enum labels map those labels back to the values the API
+   * stores, so users can search for what they actually see. Left out, the term is
+   * sent as typed.
+   */
+  searchTransform: {
+    type: Function as PropType<(term: string) => string>,
+    default: undefined,
+  },
 })
 
 // Visible columns based on screen size
@@ -395,11 +411,20 @@ async function clearFilter(callback: () => void, col: ColumnType) {
   await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
 }
 
+// The search term is a filter as far as the user is concerned, so clearing has to
+// drop it too -- otherwise the table stays narrowed by a box the button appears to
+// have just emptied.
 async function clearFilters() {
   currFilters.value = new Map()
+  searchQuery.value = ''
   resetToFirstPage()
   await fetchData(currPage, currSort, searchQuery.value, currFilters.value)
 }
+
+// A table whose columns are all unfilterable and whose search box is empty has
+// nothing for this button to do; on those pages it used to look broken rather
+// than inapplicable.
+const hasClearableState = computed(() => currFilters.value.size > 0 || searchQuery.value !== '')
 
 async function applyFilter(callback: () => void, col: ColumnType) {
   let field: string
@@ -528,7 +553,7 @@ function buildQuery(page: number, sort?: Sort, search?: string, filters?: Filter
   }
 
   if (search) {
-    queryString = queryString.withSearch(search)
+    queryString = queryString.withSearch(props.searchTransform?.(search) ?? search)
   }
 
   if (filters) {

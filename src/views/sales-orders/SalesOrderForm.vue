@@ -200,7 +200,7 @@
               name="employeeId"
               option-label="name"
               option-value="id"
-              :fetch-fn="(query) => EmployeesService.list(query)"
+              :fetch-fn="(query) => EmployeesService.listForSelect(query)"
               :custom-filters="salesmanFilters"
               :initial-option="initialSalesman"
               :disabled="mode === DialogMode.VIEW"

@@ -1,0 +1,84 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { EmployeesService } from './employees.service'
+import ApiService from './api'
+
+// The bug this guards against is silent: /v1/employees ignores parameters it
+// does not recognise, so a wrong query still returns 200 with every employee.
+// Asserting on the URL is the only way to see the difference.
+vi.mock('./api', () => ({
+  default: {
+    get: vi.fn(() => Promise.resolve({ data: [], meta: { total: 0, limit: 10, offset: 0 } })),
+  },
+}))
+
+const get = vi.mocked(ApiService.get)
+
+function requestedParams(): URLSearchParams {
+  const url = get.mock.calls.at(-1)?.[0] as string
+  return new URLSearchParams(url.split('?')[1] ?? '')
+}
+
+describe('EmployeesService.listForSelect', () => {
+  beforeEach(() => get.mockClear())
+
+  it('translates an equality filter into the named parameter', async () => {
+    await EmployeesService.listForSelect('filterBy=employeeTypeId&filterOperator=0&filterValue=1')
+
+    const params = requestedParams()
+    expect(params.get('employeeTypeId')).toBe('1')
+    expect(params.has('filterBy')).toBe(false)
+  })
+
+  it('translates every filter when a select sends more than one', async () => {
+    await EmployeesService.listForSelect(
+      'filterBy=employeeTypeId&filterOperator=0&filterValue=1' +
+        '&filterBy=branchId&filterOperator=0&filterValue=7',
+    )
+
+    const params = requestedParams()
+    expect(params.get('employeeTypeId')).toBe('1')
+    expect(params.get('branchId')).toBe('7')
+  })
+
+  it('drops a filter the endpoint has no parameter for', async () => {
+    // Forwarding it would read as a filter that applied. It would not.
+    await EmployeesService.listForSelect('filterBy=nickname&filterOperator=0&filterValue=Budi')
+
+    expect(requestedParams().has('nickname')).toBe(false)
+  })
+
+  it('drops a range filter, which the named parameters cannot express', async () => {
+    await EmployeesService.listForSelect('filterBy=branchId&filterOperator=1&filterValue=1,5')
+
+    expect(requestedParams().has('branchId')).toBe(false)
+  })
+
+  it('renames the search term to the parameter the endpoint reads', async () => {
+    await EmployeesService.listForSelect('search=budi&limit=10')
+
+    const params = requestedParams()
+    expect(params.get('q')).toBe('budi')
+    expect(params.has('search')).toBe(false)
+  })
+
+  it('converts a page number into a row offset', async () => {
+    await EmployeesService.listForSelect('page=3&limit=10')
+
+    const params = requestedParams()
+    expect(params.get('offset')).toBe('20')
+    expect(params.get('limit')).toBe('10')
+    expect(params.has('page')).toBe(false)
+  })
+
+  it('sends no offset for the first page', async () => {
+    await EmployeesService.listForSelect('page=1&limit=10')
+
+    expect(requestedParams().has('offset')).toBe(false)
+  })
+
+  it('handles an empty query without inventing parameters', async () => {
+    await EmployeesService.listForSelect()
+
+    expect(get).toHaveBeenCalledWith('/v1/employees')
+  })
+})

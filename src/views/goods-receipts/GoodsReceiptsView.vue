@@ -15,7 +15,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent ref="table" :url="url" :columns="columns">
+        <TableComponent ref="table" :url="url" :columns="columns" :search-transform="toSearchTerm">
           <template #content="{ col, data }">
             <span v-if="col.field === 'receiptDate'">
               {{ dayjs(data.receiptDate).format(DateFormat.DATE) }}
@@ -84,7 +84,7 @@ import type { GoodsReceiptStatus } from '@/types/goodsReceipt.type'
 
 const { t } = useI18n()
 const router = useRouter()
-const { arrivalTypeLabel } = useGoodsReceiptLabels()
+const { arrivalTypeLabel, toSearchTerm } = useGoodsReceiptLabels()
 const { canWrite } = usePermissions('/goods-receipts')
 
 const overlayGroup = 'goodsReceiptsView'

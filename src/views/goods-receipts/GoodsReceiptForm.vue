@@ -593,6 +593,17 @@ async function hydrateFromPurchaseOrder(
     })
 }
 
+// Goods are recorded as they arrive, so a receipt can never be dated ahead of today.
+// The picker blocks later days; the resolver re-checks against a freshly read clock,
+// which also covers a form left open past midnight.
+function endOfToday(): Date {
+  const date = new Date()
+  date.setHours(23, 59, 59, 999)
+  return date
+}
+
+const maxReceiptDate = computed(() => endOfToday())
+
 const arrivalTypeOptions = computed(() => [
   { value: 'regular', label: t('goodsReceipts.arrivalTypes.regular') },
   { value: 'consignment', label: t('goodsReceipts.arrivalTypes.consignment') },
@@ -601,15 +612,6 @@ const arrivalTypeOptions = computed(() => [
   { value: 'return_in', label: t('goodsReceipts.arrivalTypes.returnIn') },
   { value: 'other', label: t('goodsReceipts.arrivalTypes.other') },
 ])
-
-// Goods are recorded as they arrive, so a receipt can never be dated ahead of today.
-function endOfToday(): Date {
-  const date = new Date()
-  date.setHours(23, 59, 59, 999)
-  return date
-}
-
-const maxReceiptDate = computed(() => endOfToday())
 
 const initialValues = reactive({
   no: '',

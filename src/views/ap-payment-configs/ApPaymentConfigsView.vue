@@ -19,14 +19,7 @@
           <Column field="branchName" :header="t('apPaymentConfigs.fields.branch')" />
           <Column :header="t('apPaymentConfigs.fields.approvalFlow')">
             <template #body="{ data }">
-              <Tag
-                :severity="data.approvalFlowId ? 'success' : 'secondary'"
-                :value="
-                  data.approvalFlowId
-                    ? t('apPaymentConfigs.labels.approvalConfigured')
-                    : t('apPaymentConfigs.labels.noApprovalRequired')
-                "
-              />
+              <Tag :severity="approvalStatusSeverity(data)" :value="approvalStatusLabel(data)" />
             </template>
           </Column>
           <Column :header="t('apPaymentConfigs.fields.approvalThreshold')">
@@ -115,6 +108,22 @@ function formatNumber(value: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value)
+}
+
+// A null approvalFlowId only ever skips submission-time approval when the threshold
+// caps which payments would need it; with no threshold either, every submission from
+// this branch fails with "no approval flow configured", so that combination is flagged.
+function approvalStatusSeverity(config: ApPaymentConfig): string {
+  if (config.approvalFlowId) return 'success'
+  if (config.approvalThreshold !== null) return 'secondary'
+  return 'danger'
+}
+
+function approvalStatusLabel(config: ApPaymentConfig): string {
+  if (config.approvalFlowId) return t('apPaymentConfigs.labels.approvalConfigured')
+  if (config.approvalThreshold !== null)
+    return t('apPaymentConfigs.labels.noApprovalBelowThreshold')
+  return t('apPaymentConfigs.labels.approvalMisconfigured')
 }
 
 async function loadConfigs() {

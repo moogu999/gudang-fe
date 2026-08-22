@@ -196,13 +196,18 @@ onBeforeMount(() => {
 
 const resolver = computed(() =>
   zodResolver(
-    z.object({
-      branchId:
-        props.mode === DialogMode.ADD
-          ? z.number({ message: t('apPaymentConfigs.validation.branchRequired') })
-          : z.number().optional(),
-      approvalFlowId: z.number().nullable().optional(),
-    }),
+    z
+      .object({
+        branchId:
+          props.mode === DialogMode.ADD
+            ? z.number({ message: t('apPaymentConfigs.validation.branchRequired') })
+            : z.number().optional(),
+        approvalFlowId: z.number().nullable().optional(),
+      })
+      .refine((data) => data.approvalFlowId != null || approvalThreshold.value !== null, {
+        message: t('apPaymentConfigs.validation.approvalFlowRequired'),
+        path: ['approvalFlowId'],
+      }),
   ),
 )
 

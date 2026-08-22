@@ -2199,13 +2199,17 @@ export default {
       selectBranch: 'Select Branch',
       noApprovalRequired: 'No approval required',
       approvalConfigured: 'Approval configured',
-      approvalFlowHint: 'Leave empty if payments from this branch never need approval.',
+      approvalFlowHint:
+        "Required unless an approval threshold is set below. Payments under the threshold won't need this flow, but any payment at or above it will fail to submit without one.",
       approvalThresholdHint:
         'Net amount at or above which approval is required. Leave blank to require approval for every payment.',
       alwaysApproval: 'Every payment requires approval',
+      approvalMisconfigured: 'Misconfigured: submissions will fail',
+      noApprovalBelowThreshold: 'No approval below threshold',
     },
     validation: {
       branchRequired: 'Branch is required.',
+      approvalFlowRequired: 'Approval flow is required unless an approval threshold is set.',
     },
     messages: {
       created: 'Config is created.',

@@ -2199,13 +2199,16 @@ export default {
       noApprovalRequired: 'Tidak perlu persetujuan',
       approvalConfigured: 'Persetujuan dikonfigurasi',
       approvalFlowHint:
-        'Kosongkan jika pembayaran dari cabang ini tidak pernah memerlukan persetujuan.',
+        'Wajib diisi kecuali ambang batas persetujuan diisi di bawah. Pembayaran di bawah ambang batas tidak memerlukan alur ini, tetapi pembayaran yang sama dengan atau melebihi ambang batas akan gagal dikirim tanpa alur.',
       approvalThresholdHint:
         'Jumlah neto yang sama dengan atau melebihi nilai ini memerlukan persetujuan. Kosongkan untuk mewajibkan persetujuan pada setiap pembayaran.',
       alwaysApproval: 'Setiap pembayaran memerlukan persetujuan',
+      approvalMisconfigured: 'Salah konfigurasi: pengajuan akan gagal',
+      noApprovalBelowThreshold: 'Tidak perlu persetujuan di bawah ambang batas',
     },
     validation: {
       branchRequired: 'Cabang wajib diisi.',
+      approvalFlowRequired: 'Alur persetujuan wajib diisi kecuali ambang batas persetujuan diisi.',
     },
     messages: {
       created: 'Konfigurasi berhasil dibuat.',

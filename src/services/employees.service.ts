@@ -7,13 +7,10 @@ import type {
   EmployeeSummary,
 } from '@/types/employee.type'
 import { API_ENDPOINTS } from '@/constants/api'
-import FilterOperator from '@/constants/filterOperator'
+import { createListQueryAdapter } from './listQueryAdapter'
 
-/**
- * The filters `/v1/employees` reads by name. Anything outside this set is not a
- * filter the endpoint knows, and forwarding it would only look like one.
- */
-const LIST_FILTER_PARAMS = new Set([
+/** The filters `/v1/employees` reads by name. */
+const toListQuery = createListQueryAdapter([
   'employeeTypeId',
   'branchId',
   'departmentId',
@@ -22,51 +19,23 @@ const LIST_FILTER_PARAMS = new Set([
   'isDraft',
 ])
 
-/**
- * Adapts the query string `InfiniteSelect` builds into what `/v1/employees`
- * actually reads.
- *
- * `InfiniteSelect` speaks the generic CRUD dialect — `search`, `page`, and
- * `filterBy`/`filterOperator`/`filterValue` triples. This endpoint is
- * hand-written and reads `q`, `offset` and named filters instead. It ignores
- * parameters it does not recognise rather than rejecting them, so an unadapted
- * query returns 200 with every employee in it: the request looks like it
- * worked, and the filter silently did nothing.
- *
- * @param queryString - Query string as built by GenericQueryBuilder
- * @returns The same intent, spelled the way this endpoint reads it
- */
-function toListQuery(queryString?: string): string {
-  const from = new URLSearchParams(queryString ?? '')
-  const to = new URLSearchParams()
-
-  const limit = from.get('limit')
-  if (limit) to.set('limit', limit)
-
-  // The endpoint counts in rows, not pages.
-  const page = Number(from.get('page'))
-  if (page > 1 && limit) to.set('offset', String((page - 1) * Number(limit)))
-
-  const search = from.get('search')
-  if (search) to.set('q', search)
-
-  // The three filter parts arrive as parallel lists, one entry per filter.
-  const filterBys = from.getAll('filterBy')
-  const filterOperators = from.getAll('filterOperator')
-  const filterValues = from.getAll('filterValue')
-
-  filterBys.forEach((by, i) => {
-    // Named filters are equality only; the endpoint has no operator of its own.
-    if (filterOperators[i] !== FilterOperator.EQUAL) return
-    if (!LIST_FILTER_PARAMS.has(by)) return
-    to.set(by, filterValues[i])
-  })
-
-  return to.toString()
-}
-
 export class EmployeesService {
   private static readonly BASE_URL = API_ENDPOINTS.EMPLOYEES
+
+  /**
+   * Translates a generic CRUD query string into the parameters `/v1/employees`
+   * reads.
+   *
+   * Pass this as `TableComponent`'s `query-adapter` when a table points at this
+   * endpoint. {@link listForSelect} already applies it; a table fetches by URL
+   * itself, so it needs the translation handed to it.
+   *
+   * @example
+   * ```vue
+   * <TableComponent :url="url" :query-adapter="EmployeesService.toListQuery" />
+   * ```
+   */
+  static readonly toListQuery = toListQuery
 
   static async list(queryString?: string): Promise<Base<Employee>> {
     const url = queryString ? `${this.BASE_URL}?${queryString}` : this.BASE_URL

@@ -108,7 +108,7 @@
             name="supplierId"
             option-label="name"
             option-value="id"
-            :fetch-fn="(query) => SuppliersService.list(query)"
+            :fetch-fn="(query) => SuppliersService.listForSelect(query)"
             :initial-option="initialSupplier"
             :disabled="mode === DialogMode.VIEW"
             sort-by="name"

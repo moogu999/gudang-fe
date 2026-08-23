@@ -5,7 +5,7 @@ export class GenericQueryBuilder {
     this.queryParams = new URLSearchParams()
   }
 
-  withFilter(filterBy: string, filterOperator: string, filterValue: string | number): this {
+  withFilter(filterBy: string, filterOperator: string, filterValue: string | number | boolean): this {
     this.queryParams.append(`filterBy`, filterBy)
     this.queryParams.append(`filterOperator`, filterOperator)
     this.queryParams.append(`filterValue`, String(filterValue))

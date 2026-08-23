@@ -40,6 +40,23 @@ export class ProductsService {
   private static readonly BASE_URL = API_ENDPOINTS.GEN_PRODUCTS
 
   /**
+   * Spells one label filter the way `/v1/products` reads it.
+   *
+   * A pair is a single value rather than a nested object because the backend's
+   * deepObject binder cannot populate an array of objects — it keeps each
+   * element's scalar value and drops its fields, so nested pairs arrived zeroed
+   * and the filter matched nothing at all.
+   *
+   * @example
+   * ```typescript
+   * ProductsService.labelFilterParam(4, 4) // 'labelFilter=4%3A4'
+   * ```
+   */
+  static labelFilterParam(definitionId: number, optionId: number): string {
+    return `labelFilter=${encodeURIComponent(`${definitionId}:${optionId}`)}`
+  }
+
+  /**
    * Fetch paginated list of products
    * Used primarily by TableComponent for server-side data fetching
    *

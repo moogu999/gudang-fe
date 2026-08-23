@@ -66,7 +66,12 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent ref="table" :url="url" :columns="columns">
+        <TableComponent
+          ref="table"
+          :url="url"
+          :columns="columns"
+          :query-adapter="EmployeesService.toListQuery"
+        >
           <template #content="{ col, data }">
             <!-- Employee info stacked: name + NIP + phone -->
             <div v-if="col.field === 'name'" class="flex items-center gap-3">
@@ -238,10 +243,12 @@ watch(url, async () => {
 // Columns
 const columns = computed<Column[]>(() => [
   {
+    // Not sortable: `/v1/employees` orders by id DESC and reads no sort
+    // parameter, so a sort control here would reorder nothing.
     field: 'name',
     header: t('employees.columns.employee'),
     exportable: false,
-    sortable: true,
+    sortable: false,
     filterable: false,
   },
   {

@@ -82,3 +82,37 @@ describe('EmployeesService.listForSelect', () => {
     expect(get).toHaveBeenCalledWith('/v1/employees')
   })
 })
+
+// The employee list view hands this to TableComponent as `query-adapter`. The
+// table fetches by URL itself, so without the adapter its search box builds
+// `search=` -- a parameter this endpoint drops, leaving the table showing every
+// employee as though nothing had been typed.
+describe('EmployeesService.toListQuery', () => {
+  function adapted(queryString: string): URLSearchParams {
+    return new URLSearchParams(EmployeesService.toListQuery(queryString))
+  }
+
+  it('renames the term the search box builds', () => {
+    const params = adapted('search=budi&page=1&limit=10')
+
+    expect(params.get('q')).toBe('budi')
+    expect(params.has('search')).toBe(false)
+  })
+
+  it('converts the page the paginator builds into a row offset', () => {
+    const params = adapted('search=budi&page=2&limit=10')
+
+    expect(params.get('offset')).toBe('10')
+    expect(params.get('q')).toBe('budi')
+    expect(params.has('page')).toBe(false)
+  })
+
+  it('drops the sort the endpoint has no parameter for', () => {
+    // /v1/employees orders by id DESC and reads no sort parameter. Forwarding
+    // one would read as a sort that applied.
+    const params = adapted('sortBy=name&sortOperator=asc&page=1&limit=10')
+
+    expect(params.has('sortBy')).toBe(false)
+    expect(params.has('sortOperator')).toBe(false)
+  })
+})

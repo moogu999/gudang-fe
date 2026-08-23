@@ -188,6 +188,27 @@ export const API_ENDPOINTS = {
   AP_INVOICE_CONFIG_MY_BRANCH: '/v1/ap-invoice-configs/my-branch',
   AP_INVOICE_CONFIG_BY_BRANCH: (branchId: number) => `/v1/ap-invoice-configs/${branchId}`,
 
+  // Credit/Debit Note endpoints
+  CREDIT_DEBIT_NOTES: '/v1/credit-debit-notes',
+  CREDIT_DEBIT_NOTE_BY_ID: (id: number) => `/v1/credit-debit-notes/${id}`,
+  GEN_CREDIT_DEBIT_NOTES: '/gen/v1/credit-debit-notes',
+  CREDIT_DEBIT_NOTE_CONFIGS: '/v1/credit-debit-note-configs',
+  CREDIT_DEBIT_NOTE_CONFIG_MY_BRANCH: '/v1/credit-debit-note-configs/my-branch',
+  CREDIT_DEBIT_NOTE_CONFIG_BY_BRANCH: (branchId: number) =>
+    `/v1/credit-debit-note-configs/${branchId}`,
+  CORRECTION_CATEGORIES: '/gen/v1/correction-categories',
+  AP_OUTSTANDING: '/v1/ap-outstanding',
+
+  // AP Payment endpoints
+  AP_PAYMENTS: '/v1/ap-payments',
+  AP_PAYMENT_BY_ID: (id: number) => `/v1/ap-payments/${id}`,
+  GEN_AP_PAYMENTS: '/gen/v1/ap-payments',
+  AP_PAYMENT_CONFIGS: '/v1/ap-payment-configs',
+  AP_PAYMENT_CONFIG_MY_BRANCH: '/v1/ap-payment-configs/my-branch',
+  AP_PAYMENT_CONFIG_BY_BRANCH: (branchId: number) => `/v1/ap-payment-configs/${branchId}`,
+  PAYMENT_METHODS: '/gen/v1/payment-methods',
+  BRANCH_BANK_ACCOUNTS: '/gen/v1/branch-bank-accounts',
+
   // Inventory endpoints
   GEN_INVENTORY_BALANCES: '/gen/v1/inventory-balances',
   INVENTORY_SUMMARY: '/v1/inventory/summary',

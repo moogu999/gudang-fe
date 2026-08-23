@@ -86,7 +86,15 @@ export default {
     goodsReceiptConfigs: 'GR Config',
     apInvoices: 'AP Invoices',
     apInvoiceConfigs: 'AP Invoice Config',
+    creditDebitNotes: 'Credit/Debit Notes',
+    creditDebitNoteConfigs: 'Credit/Debit Note Config',
+    apOutstanding: 'AP Outstanding',
+    apPayments: 'AP Payments',
+    apPaymentConfigs: 'AP Payment Config',
+    paymentMethods: 'Payment Methods',
+    branchBankAccounts: 'Branch Bank Accounts',
     paymentTerms: 'Term of Payment',
+    correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
     customerLabelDefinitions: 'Customer Label Definitions',
     sales: 'Sales',
@@ -669,6 +677,19 @@ export default {
       paymentTermUpdated: 'Term of Payment is updated.',
     },
   },
+  correctionCategories: {
+    title: 'Correction Categories',
+    addCorrectionCategory: 'Add Correction Category',
+    editCorrectionCategory: 'Edit Correction Category',
+    viewCorrectionCategory: 'View Correction Category',
+    validation: {
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      created: 'Correction category is created.',
+      updated: 'Correction category is updated.',
+    },
+  },
   suppliers: {
     title: 'Suppliers',
     addSupplier: 'Add Supplier',
@@ -1057,6 +1078,8 @@ export default {
       products: 'Products',
       customers: 'Customers',
       apInvoices: 'AP Invoices',
+      creditDebitNotes: 'Credit/Debit Notes',
+      apPayments: 'AP Payments',
     },
     validation: {
       nameRequired: 'Name is required.',
@@ -1920,8 +1943,8 @@ export default {
       invoiceDateFuture: 'Invoice date cannot be later than today.',
       branchRequired: 'Branch is required.',
       receiptsRequired: 'At least one goods receipt must be covered.',
-      ppnNegative: 'VAT cannot be negative.',
-      ppnDeviation: 'Entered VAT differs from the computed {amount}. Saved as entered.',
+      taxNegative: 'Tax cannot be negative.',
+      taxDeviation: 'Entered tax differs from the computed {amount}. Saved as entered.',
     },
     messages: {
       created: 'AP invoice saved successfully.',
@@ -1929,6 +1952,95 @@ export default {
       deleted: 'AP invoice deleted successfully.',
       notFound: 'AP invoice not found.',
       alreadyInvoiced: 'One of the goods receipts has already been invoiced.',
+    },
+  },
+  creditDebitNotes: {
+    title: 'Credit/Debit Notes',
+    addCreditDebitNote: 'Add Credit/Debit Note',
+    viewCreditDebitNote: 'Credit/Debit Note Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    type: {
+      credit: 'Credit Note',
+      debit: 'Debit Note',
+      creditLong: 'Credit Note — reduces payable',
+      debitLong: 'Debit Note — increases payable',
+    },
+    fields: {
+      no: 'No.',
+      noteType: 'Type',
+      supplier: 'Supplier',
+      legalEntity: 'Legal Entity',
+      branch: 'Branch',
+      supplierNoteNo: "Supplier's Note No.",
+      noteDate: 'Note Date',
+      taxReturnNoteNo: 'Return Note / Replacement Tax Invoice No.',
+      correctionCategory: 'Correction Category',
+      referenceApInvoice: 'Reference AP Invoice',
+      description: 'Correction Description',
+      taxBase: 'Correction Value (Tax Base)',
+      tax: 'Tax',
+      total: 'Total',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Note Information',
+      correction: 'Correction',
+      amounts: 'Amounts',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+    },
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+    },
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      editCreditDebitNote: 'Edit Credit/Debit Note',
+    },
+    confirm: {
+      header: 'Confirm Submission',
+      message:
+        'After approval this becomes an open credit or debit balance against the supplier and can no longer be edited. Continue?',
+    },
+    validation: {
+      noRequired: 'Document number is required.',
+      noteTypeRequired: 'Type is required.',
+      supplierRequired: 'Supplier is required.',
+      supplierNoteNoRequired: "Supplier's note number is required.",
+      noteDateRequired: 'Note date is required.',
+      noteDateFuture: 'Note date cannot be later than today.',
+      correctionCategoryRequired: 'Correction category is required.',
+      descriptionRequired: 'Correction description is required.',
+      taxBaseRequired: 'Correction value (tax base) is required.',
+      taxBasePositive: 'Correction value (tax base) must be greater than zero.',
+      taxReturnNoteNoRequired:
+        'Return note / replacement tax invoice number is required when there is tax.',
+      taxNegative: 'Tax cannot be negative.',
+      taxDeviation: 'Entered tax differs from the computed {amount}. Saved as entered.',
+    },
+    messages: {
+      created: 'Credit/debit note saved successfully.',
+      updated: 'Credit/debit note updated successfully.',
+      deleted: 'Credit/debit note deleted successfully.',
+      notFound: 'Credit/debit note not found.',
+      approvalFlowRequired:
+        'This branch has no approval flow configured for credit/debit notes. Save as draft, or ask an administrator to configure one under Settings → Config → Credit/Debit Note.',
+      taxReturnNoteReminder:
+        'The number must match a real return note / replacement tax invoice before the tax adjustment is creditable. This system does not verify it against the tax authority.',
+      referenceIsAuditTrailOnly:
+        'Referencing an invoice is audit trail only — it does not change that invoice’s amount or status.',
+      supplierNoteNoDuplicate: "This supplier's note number is already used for this supplier.",
+      taxReturnNoteNoDuplicate: 'This tax return note number is already used for this supplier.',
+      apInvoiceNotReferenceable:
+        'The reference AP invoice must belong to the same supplier and legal entity.',
     },
   },
   apInvoiceConfigs: {
@@ -1952,6 +2064,221 @@ export default {
     messages: {
       created: 'Config is created.',
       updated: 'Config is updated.',
+    },
+  },
+  creditDebitNoteConfigs: {
+    title: 'Credit/Debit Note Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval configured — this branch cannot post credit/debit notes',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint:
+        'Unlike other documents, a credit/debit note cannot be posted at all without an approval flow.',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  apPayments: {
+    title: 'AP Payments',
+    addApPayment: 'Add AP Payment',
+    viewApPayment: 'AP Payment Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'No.',
+      supplier: 'Supplier',
+      legalEntity: 'Legal Entity',
+      branch: 'Branch',
+      paymentDate: 'Payment Date',
+      paymentMethod: 'Payment Method',
+      branchBankAccount: 'Sending Account',
+      referenceNo: 'Transfer Reference',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Payment Information',
+      paymentMethod: 'Payment Method',
+      picker: 'Open Items',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+    },
+    picker: {
+      selectSupplierFirst: 'Choose a supplier to see its open AP invoices and credit/debit notes.',
+      documentNo: 'Document No.',
+      type: 'Type',
+      dueDate: 'Due Date',
+      outstanding: 'Outstanding',
+      appliedAmount: 'Amount Paid',
+      documentType: {
+        ap_invoice: 'Invoice',
+        credit_note: 'Credit Note',
+        debit_note: 'Debit Note',
+      },
+      overdueDays: 'Overdue {days} days',
+      dueInDays: '{days} days left',
+      selectedSummary:
+        '{count} documents selected ({invoices} invoice + {debits} debit note + {credits} credit note)',
+      net: 'Net',
+      empty: 'No open items applied.',
+    },
+    summary: {
+      title: 'Summary',
+      gross: 'Gross (Invoices + Debit Notes)',
+      credit: 'Credit Applied',
+      net: 'Net Amount',
+    },
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Approved',
+    },
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      postPayment: 'Post Payment',
+      editApPayment: 'Edit AP Payment',
+    },
+    confirm: {
+      header: 'Confirm',
+      messageSubmit: 'This will submit the AP payment for approval. Continue?',
+      messagePost:
+        'This will post the payment immediately and reduce the picked documents’ outstanding balance. Continue?',
+    },
+    validation: {
+      noRequired: 'Payment number is required.',
+      supplierRequired: 'Supplier is required.',
+      branchRequired: 'Branch is required.',
+      paymentDateRequired: 'Payment date is required.',
+      paymentDateFuture: 'Payment date cannot be later than today.',
+      paymentMethodRequired: 'Payment method is required.',
+      bankAccountRequired: 'Sending account is required for a bank transfer.',
+      referenceNoRequired: 'Transfer reference is required for a bank transfer.',
+      noApplications: 'At least one open item must be applied.',
+      appliedAmountRequired: 'Every picked invoice needs an amount greater than zero.',
+      negativeNet: 'The net amount cannot be negative.',
+    },
+    messages: {
+      created: 'AP payment saved successfully.',
+      updated: 'AP payment updated successfully.',
+      deleted: 'AP payment deleted successfully.',
+      notFound: 'AP payment not found.',
+      thresholdInfo:
+        'This net amount is at or above the branch’s approval threshold of {threshold} and will require approval.',
+      approvalFlowRequired:
+        'Branch {branch} has no approval flow configured for AP Payment. Save as draft, or ask an administrator to configure one under Settings → Config → AP Payment.',
+    },
+  },
+  apPaymentConfigs: {
+    title: 'AP Payment Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+      approvalThreshold: 'Approval Threshold',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint:
+        "Required unless an approval threshold is set below. Payments under the threshold won't need this flow, but any payment at or above it will fail to submit without one.",
+      approvalThresholdHint:
+        'Net amount at or above which approval is required. Leave blank to require approval for every payment.',
+      alwaysApproval: 'Every payment requires approval',
+      approvalMisconfigured: 'Misconfigured: submissions will fail',
+      noApprovalBelowThreshold: 'No approval below threshold',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+      approvalFlowRequired: 'Approval flow is required unless an approval threshold is set.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  paymentMethods: {
+    title: 'Payment Methods',
+    addPaymentMethod: 'Add Payment Method',
+    editPaymentMethod: 'Edit Payment Method',
+    viewPaymentMethod: 'View Payment Method',
+    fields: {
+      code: 'Code',
+    },
+    labels: {
+      codeHint: 'A short, stable code (e.g. TRANSFER, CASH). The server keys behaviour off it.',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      created: 'Payment method is created.',
+      updated: 'Payment method is updated.',
+    },
+  },
+  branchBankAccounts: {
+    title: 'Branch Bank Accounts',
+    addBranchBankAccount: 'Add Branch Bank Account',
+    editBranchBankAccount: 'Edit Branch Bank Account',
+    viewBranchBankAccount: 'View Branch Bank Account',
+    fields: {
+      branch: 'Branch',
+      bankName: 'Bank Name',
+      accountNumber: 'Account Number',
+      accountHolderName: 'Account Holder Name',
+    },
+    labels: {
+      default: 'Default',
+      defaultHint: 'The default account preselected on a new AP Payment for this branch.',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+      bankNameRequired: 'Bank name is required.',
+      accountNumberRequired: 'Account number is required.',
+      accountHolderNameRequired: 'Account holder name is required.',
+    },
+    messages: {
+      created: 'Branch bank account is created.',
+      updated: 'Branch bank account is updated.',
+      defaultConflict:
+        'This branch already has a default account. Clear the existing default before setting a new one.',
+    },
+  },
+  apOutstanding: {
+    title: 'AP Outstanding',
+    fields: {
+      documentType: 'Document Type',
+      documentNo: 'Document No.',
+      supplier: 'Supplier',
+      documentDate: 'Document Date',
+      dueDate: 'Due Date',
+      signedTotalAmount: 'Total',
+      outstandingAmount: 'Outstanding',
+    },
+    documentType: {
+      ap_invoice: 'Invoice',
+      credit_note: 'Credit Note',
+      debit_note: 'Debit Note',
     },
   },
   goodsReceiptConfigs: {

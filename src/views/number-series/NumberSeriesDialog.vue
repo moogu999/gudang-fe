@@ -268,6 +268,16 @@ const entityTypeOptions = computed(() => [
     value: 'ap_invoices',
     disabled: takenEntityTypes.value.has('ap_invoices'),
   },
+  {
+    label: t('numberSeries.entityTypes.creditDebitNotes'),
+    value: 'credit_debit_notes',
+    disabled: takenEntityTypes.value.has('credit_debit_notes'),
+  },
+  {
+    label: t('numberSeries.entityTypes.apPayments'),
+    value: 'ap_payments',
+    disabled: takenEntityTypes.value.has('ap_payments'),
+  },
 ])
 
 // Live preview (client-side only)

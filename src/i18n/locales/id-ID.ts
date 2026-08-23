@@ -87,7 +87,15 @@ export default {
     goodsReceiptConfigs: 'Konfigurasi GR',
     apInvoices: 'Faktur Pembelian',
     apInvoiceConfigs: 'Konfigurasi Faktur Pembelian',
+    creditDebitNotes: 'Nota Kredit/Debit',
+    creditDebitNoteConfigs: 'Konfigurasi Nota Kredit/Debit',
+    apOutstanding: 'Saldo Hutang Terbuka',
+    apPayments: 'Pembayaran Hutang',
+    apPaymentConfigs: 'Konfigurasi Pembayaran Hutang',
+    paymentMethods: 'Metode Pembayaran',
+    branchBankAccounts: 'Rekening Bank Cabang',
     paymentTerms: 'Termin Pembayaran',
+    correctionCategories: 'Kategori Koreksi',
     suppliers: 'Pemasok',
     customerLabelDefinitions: 'Definisi Label Pelanggan',
     sales: 'Penjualan',
@@ -670,6 +678,19 @@ export default {
       paymentTermUpdated: 'Termin pembayaran berhasil diperbarui.',
     },
   },
+  correctionCategories: {
+    title: 'Kategori Koreksi',
+    addCorrectionCategory: 'Tambah Kategori Koreksi',
+    editCorrectionCategory: 'Edit Kategori Koreksi',
+    viewCorrectionCategory: 'Lihat Kategori Koreksi',
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      created: 'Kategori koreksi berhasil dibuat.',
+      updated: 'Kategori koreksi berhasil diperbarui.',
+    },
+  },
   suppliers: {
     title: 'Pemasok',
     addSupplier: 'Tambah Pemasok',
@@ -1058,6 +1079,8 @@ export default {
       products: 'Produk',
       customers: 'Pelanggan',
       apInvoices: 'Faktur Pembelian',
+      creditDebitNotes: 'Nota Kredit/Debit',
+      apPayments: 'Pembayaran Hutang',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
@@ -1917,8 +1940,8 @@ export default {
       invoiceDateFuture: 'Tanggal faktur tidak boleh melebihi hari ini.',
       branchRequired: 'Cabang wajib diisi.',
       receiptsRequired: 'Minimal satu penerimaan barang harus dicakup.',
-      ppnNegative: 'PPN tidak boleh negatif.',
-      ppnDeviation: 'PPN yang diisi berbeda dari hasil hitung {amount}. Disimpan sesuai isian.',
+      taxNegative: 'PPN tidak boleh negatif.',
+      taxDeviation: 'PPN yang diisi berbeda dari hasil hitung {amount}. Disimpan sesuai isian.',
     },
     messages: {
       created: 'Faktur pembelian berhasil disimpan.',
@@ -1926,6 +1949,95 @@ export default {
       deleted: 'Faktur pembelian berhasil dihapus.',
       notFound: 'Faktur pembelian tidak ditemukan.',
       alreadyInvoiced: 'Salah satu penerimaan barang sudah difakturkan.',
+    },
+  },
+  creditDebitNotes: {
+    title: 'Nota Kredit/Debit',
+    addCreditDebitNote: 'Tambah Nota Kredit/Debit',
+    viewCreditDebitNote: 'Detail Nota Kredit/Debit',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Diberikan saat disimpan',
+    },
+    type: {
+      credit: 'Nota Kredit',
+      debit: 'Nota Debit',
+      creditLong: 'Nota Kredit — mengurangi hutang',
+      debitLong: 'Nota Debit — menambah hutang',
+    },
+    fields: {
+      no: 'No.',
+      noteType: 'Tipe',
+      supplier: 'Pemasok',
+      legalEntity: 'Badan Hukum',
+      branch: 'Cabang',
+      supplierNoteNo: 'No. Nota Pemasok',
+      noteDate: 'Tanggal Nota',
+      taxReturnNoteNo: 'No. Nota Retur / Faktur Pajak Pengganti',
+      correctionCategory: 'Kategori Koreksi',
+      referenceApInvoice: 'Referensi Faktur Pembelian',
+      description: 'Uraian Koreksi',
+      taxBase: 'Nilai Koreksi (DPP)',
+      tax: 'PPN',
+      total: 'Total',
+      remark: 'Catatan',
+    },
+    sections: {
+      header: 'Informasi Nota',
+      correction: 'Koreksi',
+      amounts: 'Nominal',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'Cabang ini belum dipetakan ke perusahaan. Petakan melalui Perusahaan → Cabang sebelum menyimpan.',
+    },
+    status: {
+      draft: 'Draf',
+      need_approval: 'Butuh Persetujuan',
+      approved: 'Disetujui',
+    },
+    actions: {
+      saveAsDraft: 'Simpan sebagai Draf',
+      submitForApproval: 'Ajukan Persetujuan',
+      editCreditDebitNote: 'Edit Nota Kredit/Debit',
+    },
+    confirm: {
+      header: 'Konfirmasi Pengajuan',
+      message:
+        'Setelah disetujui, nota ini menjadi saldo kredit atau debit terbuka terhadap pemasok dan tidak dapat diedit lagi. Lanjutkan?',
+    },
+    validation: {
+      noRequired: 'Nomor dokumen wajib diisi.',
+      noteTypeRequired: 'Tipe wajib diisi.',
+      supplierRequired: 'Pemasok wajib diisi.',
+      supplierNoteNoRequired: 'No. nota pemasok wajib diisi.',
+      noteDateRequired: 'Tanggal nota wajib diisi.',
+      noteDateFuture: 'Tanggal nota tidak boleh melebihi hari ini.',
+      correctionCategoryRequired: 'Kategori koreksi wajib diisi.',
+      descriptionRequired: 'Uraian koreksi wajib diisi.',
+      taxBaseRequired: 'Nilai koreksi (DPP) wajib diisi.',
+      taxBasePositive: 'Nilai koreksi (DPP) harus lebih besar dari nol.',
+      taxReturnNoteNoRequired: 'No. Nota Retur / Faktur Pajak Pengganti wajib diisi jika ada PPN.',
+      taxNegative: 'PPN tidak boleh negatif.',
+      taxDeviation: 'PPN yang diisi berbeda dari hasil hitung {amount}. Disimpan sesuai isian.',
+    },
+    messages: {
+      created: 'Nota kredit/debit berhasil disimpan.',
+      updated: 'Nota kredit/debit berhasil diperbarui.',
+      deleted: 'Nota kredit/debit berhasil dihapus.',
+      notFound: 'Nota kredit/debit tidak ditemukan.',
+      approvalFlowRequired:
+        'Cabang ini belum memiliki alur persetujuan untuk nota kredit/debit. Simpan sebagai draf, atau minta administrator mengonfigurasinya di Pengaturan → Konfigurasi → Nota Kredit/Debit.',
+      taxReturnNoteReminder:
+        'Nomor ini harus sesuai dengan Nota Retur / Faktur Pajak Pengganti yang sah agar koreksi pajak dapat dikreditkan. Sistem ini tidak memverifikasinya ke otoritas pajak.',
+      referenceIsAuditTrailOnly:
+        'Referensi faktur hanya sebagai jejak audit — tidak mengubah nominal atau status faktur tersebut.',
+      supplierNoteNoDuplicate: 'Nomor nota pemasok ini sudah digunakan untuk pemasok yang sama.',
+      taxReturnNoteNoDuplicate:
+        'Nomor nota retur pajak ini sudah digunakan untuk pemasok yang sama.',
+      apInvoiceNotReferenceable:
+        'Faktur referensi harus berasal dari pemasok dan badan hukum yang sama.',
     },
   },
   apInvoiceConfigs: {
@@ -1950,6 +2062,223 @@ export default {
     messages: {
       created: 'Konfigurasi berhasil dibuat.',
       updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  creditDebitNoteConfigs: {
+    title: 'Konfigurasi Nota Kredit/Debit',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired:
+        'Belum ada persetujuan — cabang ini tidak dapat memposting nota kredit/debit',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Berbeda dari dokumen lain, nota kredit/debit sama sekali tidak dapat diposting tanpa alur persetujuan.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  apPayments: {
+    title: 'Pembayaran Hutang',
+    addApPayment: 'Tambah Pembayaran Hutang',
+    viewApPayment: 'Detail Pembayaran Hutang',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Ditetapkan saat disimpan',
+    },
+    fields: {
+      no: 'No.',
+      supplier: 'Pemasok',
+      legalEntity: 'Badan Usaha',
+      branch: 'Cabang',
+      paymentDate: 'Tanggal Pembayaran',
+      paymentMethod: 'Metode Pembayaran',
+      branchBankAccount: 'Rekening Pengirim',
+      referenceNo: 'Referensi Transfer',
+      remark: 'Catatan',
+    },
+    sections: {
+      header: 'Informasi Pembayaran',
+      paymentMethod: 'Metode Pembayaran',
+      picker: 'Item Terbuka',
+    },
+    labels: {
+      legalEntityUnresolved:
+        'Cabang ini belum dipetakan ke badan usaha. Petakan di Perusahaan → Cabang sebelum menyimpan.',
+    },
+    picker: {
+      selectSupplierFirst: 'Pilih pemasok untuk melihat faktur dan nota kredit/debit terbukanya.',
+      documentNo: 'No. Dokumen',
+      type: 'Tipe',
+      dueDate: 'Jatuh Tempo',
+      outstanding: 'Saldo Terbuka',
+      appliedAmount: 'Jumlah Dibayar',
+      documentType: {
+        ap_invoice: 'Faktur',
+        credit_note: 'Nota Kredit',
+        debit_note: 'Nota Debit',
+      },
+      overdueDays: 'Terlambat {days} hari',
+      dueInDays: '{days} hari lagi',
+      selectedSummary:
+        '{count} dokumen dipilih ({invoices} faktur + {debits} nota debit + {credits} nota kredit)',
+      net: 'Neto',
+      empty: 'Belum ada item terbuka yang diterapkan.',
+    },
+    summary: {
+      title: 'Ringkasan',
+      gross: 'Bruto (Faktur + Nota Debit)',
+      credit: 'Kredit Diterapkan',
+      net: 'Jumlah Neto',
+    },
+    status: {
+      draft: 'Draf',
+      need_approval: 'Perlu Persetujuan',
+      approved: 'Disetujui',
+    },
+    actions: {
+      saveAsDraft: 'Simpan sebagai Draf',
+      submitForApproval: 'Ajukan Persetujuan',
+      postPayment: 'Posting Pembayaran',
+      editApPayment: 'Edit Pembayaran Hutang',
+    },
+    confirm: {
+      header: 'Konfirmasi',
+      messageSubmit: 'Ini akan mengajukan pembayaran hutang untuk disetujui. Lanjutkan?',
+      messagePost:
+        'Ini akan memposting pembayaran secara langsung dan mengurangi saldo terbuka dokumen yang dipilih. Lanjutkan?',
+    },
+    validation: {
+      noRequired: 'Nomor pembayaran wajib diisi.',
+      supplierRequired: 'Pemasok wajib diisi.',
+      branchRequired: 'Cabang wajib diisi.',
+      paymentDateRequired: 'Tanggal pembayaran wajib diisi.',
+      paymentDateFuture: 'Tanggal pembayaran tidak boleh lebih dari hari ini.',
+      paymentMethodRequired: 'Metode pembayaran wajib diisi.',
+      bankAccountRequired: 'Rekening pengirim wajib diisi untuk transfer bank.',
+      referenceNoRequired: 'Referensi transfer wajib diisi untuk transfer bank.',
+      noApplications: 'Minimal satu item terbuka harus diterapkan.',
+      appliedAmountRequired: 'Setiap faktur yang dipilih memerlukan jumlah lebih dari nol.',
+      negativeNet: 'Jumlah neto tidak boleh negatif.',
+    },
+    messages: {
+      created: 'Pembayaran hutang berhasil disimpan.',
+      updated: 'Pembayaran hutang berhasil diperbarui.',
+      deleted: 'Pembayaran hutang berhasil dihapus.',
+      notFound: 'Pembayaran hutang tidak ditemukan.',
+      thresholdInfo:
+        'Jumlah neto ini mencapai atau melebihi ambang batas persetujuan cabang sebesar {threshold} dan akan memerlukan persetujuan.',
+      approvalFlowRequired:
+        'Cabang {branch} belum memiliki alur persetujuan untuk Pembayaran Hutang. Simpan sebagai draf, atau minta administrator mengonfigurasinya di Pengaturan → Konfigurasi → Pembayaran Hutang.',
+    },
+  },
+  apPaymentConfigs: {
+    title: 'Konfigurasi Pembayaran Hutang',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Edit Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+      approvalThreshold: 'Ambang Batas Persetujuan',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Wajib diisi kecuali ambang batas persetujuan diisi di bawah. Pembayaran di bawah ambang batas tidak memerlukan alur ini, tetapi pembayaran yang sama dengan atau melebihi ambang batas akan gagal dikirim tanpa alur.',
+      approvalThresholdHint:
+        'Jumlah neto yang sama dengan atau melebihi nilai ini memerlukan persetujuan. Kosongkan untuk mewajibkan persetujuan pada setiap pembayaran.',
+      alwaysApproval: 'Setiap pembayaran memerlukan persetujuan',
+      approvalMisconfigured: 'Salah konfigurasi: pengajuan akan gagal',
+      noApprovalBelowThreshold: 'Tidak perlu persetujuan di bawah ambang batas',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+      approvalFlowRequired: 'Alur persetujuan wajib diisi kecuali ambang batas persetujuan diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  paymentMethods: {
+    title: 'Metode Pembayaran',
+    addPaymentMethod: 'Tambah Metode Pembayaran',
+    editPaymentMethod: 'Edit Metode Pembayaran',
+    viewPaymentMethod: 'Lihat Metode Pembayaran',
+    fields: {
+      code: 'Kode',
+    },
+    labels: {
+      codeHint:
+        'Kode singkat dan tetap (mis. TRANSFER, CASH). Server menentukan perilaku berdasarkan ini.',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      created: 'Metode pembayaran berhasil dibuat.',
+      updated: 'Metode pembayaran berhasil diperbarui.',
+    },
+  },
+  branchBankAccounts: {
+    title: 'Rekening Bank Cabang',
+    addBranchBankAccount: 'Tambah Rekening Bank Cabang',
+    editBranchBankAccount: 'Edit Rekening Bank Cabang',
+    viewBranchBankAccount: 'Lihat Rekening Bank Cabang',
+    fields: {
+      branch: 'Cabang',
+      bankName: 'Nama Bank',
+      accountNumber: 'Nomor Rekening',
+      accountHolderName: 'Nama Pemilik Rekening',
+    },
+    labels: {
+      default: 'Utama',
+      defaultHint: 'Rekening yang otomatis dipilih pada Pembayaran Hutang baru untuk cabang ini.',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+      bankNameRequired: 'Nama bank wajib diisi.',
+      accountNumberRequired: 'Nomor rekening wajib diisi.',
+      accountHolderNameRequired: 'Nama pemilik rekening wajib diisi.',
+    },
+    messages: {
+      created: 'Rekening bank cabang berhasil dibuat.',
+      updated: 'Rekening bank cabang berhasil diperbarui.',
+      defaultConflict:
+        'Cabang ini sudah memiliki rekening utama. Hapus status utama pada rekening tersebut sebelum menetapkan yang baru.',
+    },
+  },
+  apOutstanding: {
+    title: 'Saldo Hutang Terbuka',
+    fields: {
+      documentType: 'Tipe Dokumen',
+      documentNo: 'No. Dokumen',
+      supplier: 'Pemasok',
+      documentDate: 'Tanggal Dokumen',
+      dueDate: 'Jatuh Tempo',
+      signedTotalAmount: 'Total',
+      outstandingAmount: 'Sisa',
+    },
+    documentType: {
+      ap_invoice: 'Faktur',
+      credit_note: 'Nota Kredit',
+      debit_note: 'Nota Debit',
     },
   },
   goodsReceiptConfigs: {

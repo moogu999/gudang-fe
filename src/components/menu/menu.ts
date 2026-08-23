@@ -35,6 +35,11 @@ const mainMenu = [
         route: '/branches',
       },
       {
+        label: 'Branch Bank Accounts',
+        labelKey: 'navigation.branchBankAccounts',
+        route: '/branch-bank-accounts',
+      },
+      {
         label: 'Departments',
         labelKey: 'navigation.departments',
         route: '/departments',
@@ -234,9 +239,34 @@ const mainMenu = [
         route: '/ap-invoices',
       },
       {
+        label: 'Credit/Debit Notes',
+        labelKey: 'navigation.creditDebitNotes',
+        route: '/credit-debit-notes',
+      },
+      {
+        label: 'AP Outstanding',
+        labelKey: 'navigation.apOutstanding',
+        route: '/ap-outstanding',
+      },
+      {
+        label: 'AP Payments',
+        labelKey: 'navigation.apPayments',
+        route: '/ap-payments',
+      },
+      {
         label: 'Term of Payment',
         labelKey: 'navigation.paymentTerms',
         route: '/payment-terms',
+      },
+      {
+        label: 'Correction Categories',
+        labelKey: 'navigation.correctionCategories',
+        route: '/correction-categories',
+      },
+      {
+        label: 'Payment Methods',
+        labelKey: 'navigation.paymentMethods',
+        route: '/payment-methods',
       },
       {
         label: 'Suppliers',

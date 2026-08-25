@@ -125,7 +125,7 @@
             name="employeeId"
             option-label="name"
             option-value="id"
-            :fetch-fn="(query) => EmployeesService.list(query)"
+            :fetch-fn="(query) => EmployeesService.listForSelect(query)"
             :initial-option="initialEmployee"
             sort-by="name"
             sort-operator="asc"

@@ -81,6 +81,18 @@ describe('EmployeesService.listForSelect', () => {
 
     expect(get).toHaveBeenCalledWith('/v1/employees')
   })
+
+  // The adapter builds its output from scratch, so a named filter a caller has
+  // already spelled the endpoint's way is dropped, not passed through. Callers
+  // that scope a picker -- EmployeeDetailView's supervisor field -- have to
+  // translate first and append their own filters after.
+  it('drops a named filter that did not arrive as a generic triple', async () => {
+    await EmployeesService.listForSelect('search=budi&limit=10&salesOrganizationId=5')
+
+    const params = requestedParams()
+    expect(params.get('q')).toBe('budi')
+    expect(params.has('salesOrganizationId')).toBe(false)
+  })
 })
 
 // The employee list view hands this to TableComponent as `query-adapter`. The

@@ -2,6 +2,7 @@ import ApiService from './api'
 import type { Base } from '@/types/api.type'
 import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product.type'
 import { API_ENDPOINTS } from '@/constants/api'
+import { labelFilterParam } from './labelFilter'
 
 /**
  * Service for managing product-related operations
@@ -42,19 +43,9 @@ export class ProductsService {
   /**
    * Spells one label filter the way `/v1/products` reads it.
    *
-   * A pair is a single value rather than a nested object because the backend's
-   * deepObject binder cannot populate an array of objects — it keeps each
-   * element's scalar value and drops its fields, so nested pairs arrived zeroed
-   * and the filter matched nothing at all.
-   *
-   * @example
-   * ```typescript
-   * ProductsService.labelFilterParam(4, 4) // 'labelFilter=4%3A4'
-   * ```
+   * @see {@link labelFilterParam} for the format and why it is not nested.
    */
-  static labelFilterParam(definitionId: number, optionId: number): string {
-    return `labelFilter=${encodeURIComponent(`${definitionId}:${optionId}`)}`
-  }
+  static readonly labelFilterParam = labelFilterParam
 
   /**
    * Fetch paginated list of products

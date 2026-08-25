@@ -292,11 +292,18 @@ const columns = computed<Column[]>(() => [
     filterable: supportsColumnControls.value,
   },
   {
+    // Given its own choices for the same reason Suppliers' status column is: a
+    // boolean has no free text to type, and the default filter box only fills
+    // in from a selected row.
     field: 'taxable',
     header: t('products.fields.taxable'),
     exportable: true,
     sortable: supportsColumnControls.value,
     filterable: supportsColumnControls.value,
+    filterOptions: [
+      { label: t('common.labels.yes'), value: true },
+      { label: t('common.labels.no'), value: false },
+    ],
   },
   {
     field: 'trackingType.name',

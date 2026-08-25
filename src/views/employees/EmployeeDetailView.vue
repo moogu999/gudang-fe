@@ -610,16 +610,20 @@ const employmentStatusOptions = computed(() => [
   { label: t('employees.employmentStatus.Freelance'), value: 'Freelance' },
 ])
 
-// Supervisor fetch function filtered by salesOrg
+// Supervisor fetch function filtered by salesOrg.
+//
+// The picker's own query is generic (`search`, `page`), so it goes through the
+// adapter first; the two scoping filters are already spelled the way the
+// endpoint reads them and are appended after, where the adapter cannot drop
+// them for not arriving as filterBy/filterOperator/filterValue.
 const supervisorFetchFn = computed(() => (q?: string) => {
-  let query = q ?? ''
+  const parts = [EmployeesService.toListQuery(q)]
   if (currentSalesOrgId.value) {
-    query = query
-      ? `${query}&salesOrganizationId=${currentSalesOrgId.value}`
-      : `salesOrganizationId=${currentSalesOrgId.value}`
+    parts.push(`salesOrganizationId=${currentSalesOrgId.value}`)
   }
-  query = query ? `${query}&isActive=true` : 'isActive=true'
-  return EmployeesService.list(query)
+  parts.push('isActive=true')
+
+  return EmployeesService.list(parts.filter(Boolean).join('&'))
 })
 
 // Employee type icon mapping

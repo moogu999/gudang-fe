@@ -15,7 +15,9 @@ import FilterOperator from '@/constants/filterOperator'
  * @param filterParams - The named filters the endpoint reads. Anything outside
  *   this set is dropped, because forwarding it would only look like a filter
  *   that applied.
- * @returns A function from the generic query string to the endpoint's own
+ * @returns A function that rewrites a generic query string into the endpoint's
+ *   own parameters, ready to hand to a service's `list()` or to
+ *   `TableComponent`'s `query-adapter`.
  *
  * @example
  * ```typescript

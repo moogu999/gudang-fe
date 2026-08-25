@@ -81,7 +81,7 @@
               v-model="driverEmployeeId"
               option-label="name"
               option-value="id"
-              :fetch-fn="(q) => EmployeesService.list(q)"
+              :fetch-fn="(q) => EmployeesService.listForSelect(q)"
               :initial-option="initialDriver"
               sort-by="name"
               sort-operator="asc"

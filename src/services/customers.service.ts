@@ -9,6 +9,7 @@ import type {
 } from '@/types/customer.type'
 import { API_ENDPOINTS } from '@/constants/api'
 import { createListQueryAdapter } from './listQueryAdapter'
+import { labelFilterParam } from './labelFilter'
 
 /** The filters `/v1/customers` reads by name. */
 const toListQuery = createListQueryAdapter([
@@ -68,18 +69,9 @@ export class CustomersService {
   /**
    * Spells one label filter the way `/v1/customers` reads it.
    *
-   * A pair is a single value rather than a nested object because the backend's
-   * deepObject binder cannot populate an array of objects — it keeps each
-   * element's scalar value and drops its fields, so nested pairs arrive zeroed.
-   *
-   * @example
-   * ```typescript
-   * CustomersService.labelFilterParam(3, 7) // 'labelFilter=3%3A7'
-   * ```
+   * @see {@link labelFilterParam} for the format and why it is not nested.
    */
-  static labelFilterParam(definitionId: number, optionId: number): string {
-    return `labelFilter=${encodeURIComponent(`${definitionId}:${optionId}`)}`
-  }
+  static readonly labelFilterParam = labelFilterParam
 
   /**
    * Fetch paginated list of customers

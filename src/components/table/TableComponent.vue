@@ -609,7 +609,17 @@ function buildQuery(page: number, sort?: Sort, search?: string, filters?: Filter
 
   queryString = queryString.withPagination(page + 1, itemsPerPage.value)
 
-  const built = props.queryAdapter?.(queryString.build()) ?? queryString.build()
+  const generic = queryString.build()
+  const built = props.queryAdapter?.(generic) ?? generic
+
+  // An adapter that empties a non-empty query has dropped the pagination too,
+  // and the bare URL below would then answer page 2 with page 1 — a 200 that
+  // looks like it worked, which is the failure mode this table is being fixed
+  // for. Say so rather than let it pass.
+  if (generic && !built) {
+    console.warn('[TableComponent] query adapter returned nothing', { url: props.url, generic })
+  }
+
   if (!built) {
     return props.url
   }

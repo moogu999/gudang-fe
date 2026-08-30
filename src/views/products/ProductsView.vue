@@ -243,46 +243,67 @@ function onDefinitionChange(index: number) {
 }
 
 // Table
-const url = computed(() => {
-  const activeFilters = labelFilters.value.filter((f) => f.definitionId && f.optionId)
-  if (activeFilters.length === 0) return API_ENDPOINTS.GEN_PRODUCTS
+const activeLabelFilters = computed(() =>
+  labelFilters.value.filter((f) => f.definitionId && f.optionId),
+)
 
-  const params = new URLSearchParams()
-  activeFilters.forEach((f, i) => {
-    params.append(`labelFilter[${i}][definitionId]`, String(f.definitionId))
-    params.append(`labelFilter[${i}][optionId]`, String(f.optionId))
-  })
-  return `${API_ENDPOINTS.PRODUCTS_V1}?${params.toString()}`
+// Only `/v1/products` knows label filters, so the table moves there once one is
+// set. The two endpoints read different query dialects and support different
+// controls, which is why the adapter and the columns below follow this flag.
+const isLabelFiltered = computed(() => activeLabelFilters.value.length > 0)
+
+const url = computed(() => {
+  if (!isLabelFiltered.value) return API_ENDPOINTS.GEN_PRODUCTS
+
+  const params = activeLabelFilters.value
+    .map((f) => ProductsService.labelFilterParam(f.definitionId!, f.optionId!))
+    .join('&')
+  return `${API_ENDPOINTS.PRODUCTS_V1}?${params}`
 })
+
+// No query adapter here, unlike the customers list: `/v1/products` already
+// reads `search` and `page`, the same dialect TableComponent builds. Only its
+// sort and column filters are missing.
+
+// `/v1/products` reads no sort parameter and no named column filters, so while
+// a label filter is on those controls are withdrawn rather than left inert.
+const supportsColumnControls = computed(() => !isLabelFiltered.value)
 
 const columns = computed<Column[]>(() => [
   {
     field: 'code',
     header: t('products.fields.code'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
   },
   {
     field: 'name',
     header: t('products.fields.name'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
   },
   {
     field: 'description',
     header: t('products.fields.description'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
   },
   {
+    // Given its own choices for the same reason Suppliers' status column is: a
+    // boolean has no free text to type, and the default filter box only fills
+    // in from a selected row.
     field: 'taxable',
     header: t('products.fields.taxable'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
+    filterOptions: [
+      { label: t('common.labels.yes'), value: true },
+      { label: t('common.labels.no'), value: false },
+    ],
   },
   {
     field: 'trackingType.name',
@@ -302,7 +323,7 @@ const columns = computed<Column[]>(() => [
     field: 'createdAt',
     header: t('common.labels.createdAt'),
     exportable: true,
-    sortable: true,
+    sortable: supportsColumnControls.value,
     filterable: false,
     class: 'min-w-45',
   },

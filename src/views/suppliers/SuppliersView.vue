@@ -15,7 +15,12 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent ref="table" :url="url" :columns="columns">
+        <TableComponent
+          ref="table"
+          :url="url"
+          :columns="columns"
+          :query-adapter="SuppliersService.toListQuery"
+        >
           <template #content="{ col, data }">
             <span v-if="col.field === 'code'" class="font-mono">{{ data[col.field] }}</span>
 
@@ -140,20 +145,24 @@ function viewSupplier(selectedSupplier: Supplier) {
 // Table
 const url = API_ENDPOINTS.SUPPLIERS
 
+// `/v1/suppliers` orders by id DESC and reads no sort parameter, and the only
+// filters it knows by name are isActive and paymentTermId. Columns are marked
+// against what the endpoint can actually do -- a control it ignores returns the
+// unfiltered list, which reads as a filter that found everything.
 const columns = computed<Column[]>(() => [
   {
     field: 'code',
     header: t('suppliers.fields.code'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'name',
     header: t('suppliers.fields.name'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'npwp',
@@ -179,17 +188,24 @@ const columns = computed<Column[]>(() => [
     filterable: false,
   },
   {
+    // Given its own choices: a boolean has no free text to type, and the
+    // default filter box only fills in from a selected row -- so Apply on an
+    // untouched box silently filtered nothing.
     field: 'isActive',
     header: t('common.labels.status'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
+    filterOptions: [
+      { label: t('common.labels.active'), value: true },
+      { label: t('common.labels.inactive'), value: false },
+    ],
   },
   {
     field: 'createdAt',
     header: t('common.labels.createdAt'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: false,
     class: 'min-w-45',
   },

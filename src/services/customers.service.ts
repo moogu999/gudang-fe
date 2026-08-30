@@ -8,6 +8,18 @@ import type {
   UpdateCustomerV1Dto,
 } from '@/types/customer.type'
 import { API_ENDPOINTS } from '@/constants/api'
+import { createListQueryAdapter } from './listQueryAdapter'
+import { labelFilterParam } from './labelFilter'
+
+/** The filters `/v1/customers` reads by name. */
+const toListQuery = createListQueryAdapter([
+  'outletTypeId',
+  'channelId',
+  'categoryId',
+  'areaId',
+  'isActive',
+  'isDraft',
+])
 
 /**
  * Service for managing customer-related operations
@@ -42,6 +54,24 @@ import { API_ENDPOINTS } from '@/constants/api'
  */
 export class CustomersService {
   private static readonly BASE_URL = API_ENDPOINTS.GEN_CUSTOMERS
+
+  /**
+   * Translates a generic CRUD query string into the parameters `/v1/customers`
+   * reads.
+   *
+   * Pass this as `TableComponent`'s `query-adapter` only while the table points
+   * at `/v1/customers` — the label-filtered list. On `/gen/v1/customers` the
+   * generic dialect is what the endpoint wants, and translating it would break
+   * the search this is meant to fix.
+   */
+  static readonly toListQuery = toListQuery
+
+  /**
+   * Spells one label filter the way `/v1/customers` reads it.
+   *
+   * @see {@link labelFilterParam} for the format and why it is not nested.
+   */
+  static readonly labelFilterParam = labelFilterParam
 
   /**
    * Fetch paginated list of customers

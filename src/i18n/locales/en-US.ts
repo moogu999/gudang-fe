@@ -154,6 +154,7 @@ export default {
     showing: 'Showing {first} to {last} of {total}',
     clearFilters: 'Clear Filters',
     apply: 'Apply',
+    selectValue: 'Select a value',
     no: 'No.',
     details: 'Details',
     addRow: 'Add Row',

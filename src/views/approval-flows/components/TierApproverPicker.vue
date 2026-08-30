@@ -8,7 +8,7 @@
         <InfiniteSelect
           option-label="name"
           option-value="id"
-          :fetch-fn="(q) => EmployeesService.list(q)"
+          :fetch-fn="(q) => EmployeesService.listForSelect(q)"
           :initial-option="primary._initialEmployee"
           :model-value="primary.employeeId"
           :disabled-values="otherEmployeeIds(primary)"
@@ -35,7 +35,7 @@
         <InfiniteSelect
           option-label="name"
           option-value="id"
-          :fetch-fn="(q) => EmployeesService.list(q)"
+          :fetch-fn="(q) => EmployeesService.listForSelect(q)"
           :initial-option="alt._initialEmployee"
           :model-value="alt.employeeId"
           :disabled-values="otherEmployeeIds(alt)"

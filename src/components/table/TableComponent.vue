@@ -223,7 +223,20 @@
           ></Button>
         </template>
         <template #filter="{ filterModel }" v-if="isFilterable(col)">
-          <InputText v-model="filterModel.value" disabled />
+          <!-- Bound to `filters`, not to `filterModel`: in menu mode PrimeVue
+               hands the slot a clone of the filter state, and applyFilter reads
+               the original. A pick written to the clone would never be seen. -->
+          <Select
+            v-if="col.filterOptions"
+            :model-value="filterValueOf(col)"
+            :options="col.filterOptions"
+            option-label="label"
+            option-value="value"
+            :placeholder="t('table.selectValue')"
+            class="w-full"
+            @update:model-value="(value) => setFilterValue(col, value)"
+          />
+          <InputText v-else v-model="filterModel.value" disabled />
         </template>
         <template #filterclear />
         <template #filterapply="{ filterCallback }">
@@ -257,6 +270,7 @@ import Card from 'primevue/card'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
+import Select from 'primevue/select'
 import { computed, onMounted, reactive, ref, watch, type PropType } from 'vue'
 import type { Column as ColumnType } from '@/types/table.type'
 import ApiService from '@/services/api'
@@ -297,7 +311,7 @@ type Sort = {
   operator: number
 }
 
-type Filter = Map<string, string | number>
+type Filter = Map<string, string | number | boolean>
 
 const props = defineProps({
   rows: {
@@ -340,6 +354,17 @@ const props = defineProps({
    */
   searchTransform: {
     type: Function as PropType<(term: string) => string>,
+    default: undefined,
+  },
+  /**
+   * Rewrites the whole query string before it is appended to `url`. Endpoints
+   * outside `/gen/v1` are hand-written and read their own parameter names, so
+   * pass the adapter their service exposes. Left out, the generic dialect is
+   * sent as built -- and an endpoint that drops what it does not recognise
+   * answers a search or a page change with an unfiltered first page.
+   */
+  queryAdapter: {
+    type: Function as PropType<(queryString: string) => string>,
     default: undefined,
   },
 })
@@ -426,21 +451,37 @@ async function clearFilters() {
 // than inapplicable.
 const hasClearableState = computed(() => currFilters.value.size > 0 || searchQuery.value !== '')
 
+// `false` and `0` are values a column can legitimately be filtered to, so these
+// checks test for absence rather than truthiness. Testing truthiness made a
+// status of "Inactive" impossible to filter for: the value was dropped on the
+// way out and the table came back unfiltered.
+function isSet<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined && value !== ''
+}
+
+function filterValueOf(col: ColumnType): string | number | boolean | null {
+  return (filters[col.field] as DataTableFilterMetaData)?.value ?? null
+}
+
+function setFilterValue(col: ColumnType, value: string | number | boolean | null) {
+  filters[col.field] = { value, matchMode: FilterMatchMode.EQUALS }
+}
+
 async function applyFilter(callback: () => void, col: ColumnType) {
   let field: string
-  let value: string | number | undefined
+  let value: string | number | boolean | undefined
   if (!col.underlyingField) {
     field = col.field
     const filter = filters[field] as DataTableFilterMetaData
-    if (filter.value) {
+    if (isSet(filter.value)) {
       value = filter.value
     }
   } else {
     field = col.underlyingField
-    value = selectedRow.value[field]
+    value = selectedRow.value?.[field]
   }
 
-  if (field && value) {
+  if (field && isSet(value)) {
     currFilters.value.set(field, value)
   }
 
@@ -457,9 +498,7 @@ const isFilterable = computed(() => {
 
 const isFiltered = computed(() => {
   return function (col: ColumnType): boolean {
-    return currFilters.value.get(col.underlyingField ? col.underlyingField : col.field)
-      ? true
-      : false
+    return isSet(currFilters.value.get(col.underlyingField ? col.underlyingField : col.field))
   }
 })
 
@@ -467,7 +506,10 @@ const isFiltered = computed(() => {
 const selectedRow = ref()
 watch(selectedRow, (newVal) => {
   for (const col of props.columns) {
-    if (!col.filterable) {
+    // A column with its own choices is filled from the picker, not from
+    // whichever row happens to be selected -- copying the row in would silently
+    // replace what the user just chose.
+    if (!col.filterable || col.filterOptions) {
       continue
     }
 
@@ -559,7 +601,7 @@ function buildQuery(page: number, sort?: Sort, search?: string, filters?: Filter
   if (filters) {
     for (const key of filters.keys()) {
       const filterValue = filters.get(key)
-      if (filterValue) {
+      if (isSet(filterValue)) {
         queryString = queryString.withFilter(key, FilterOperator.EQUAL, filterValue)
       }
     }
@@ -567,9 +609,24 @@ function buildQuery(page: number, sort?: Sort, search?: string, filters?: Filter
 
   queryString = queryString.withPagination(page + 1, itemsPerPage.value)
 
+  const generic = queryString.build()
+  const built = props.queryAdapter?.(generic) ?? generic
+
+  // An adapter that empties a non-empty query has dropped the pagination too,
+  // and the bare URL below would then answer page 2 with page 1 — a 200 that
+  // looks like it worked, which is the failure mode this table is being fixed
+  // for. Say so rather than let it pass.
+  if (generic && !built) {
+    console.warn('[TableComponent] query adapter returned nothing', { url: props.url, generic })
+  }
+
+  if (!built) {
+    return props.url
+  }
+
   const connector = props.url.includes('?') ? '&' : '?'
 
-  return props.url + connector + queryString.build()
+  return props.url + connector + built
 }
 </script>
 

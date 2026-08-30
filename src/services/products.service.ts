@@ -2,6 +2,7 @@ import ApiService from './api'
 import type { Base } from '@/types/api.type'
 import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product.type'
 import { API_ENDPOINTS } from '@/constants/api'
+import { labelFilterParam } from './labelFilter'
 
 /**
  * Service for managing product-related operations
@@ -38,6 +39,13 @@ import { API_ENDPOINTS } from '@/constants/api'
  */
 export class ProductsService {
   private static readonly BASE_URL = API_ENDPOINTS.GEN_PRODUCTS
+
+  /**
+   * Spells one label filter the way `/v1/products` reads it.
+   *
+   * @see {@link labelFilterParam} for the format and why it is not nested.
+   */
+  static readonly labelFilterParam = labelFilterParam
 
   /**
    * Fetch paginated list of products

@@ -82,7 +82,7 @@
               v-model="driverEmployeeId"
               option-label="name"
               option-value="id"
-              :fetch-fn="(query) => EmployeesService.list(query)"
+              :fetch-fn="(query) => EmployeesService.listForSelect(query)"
               :placeholder="t('returnDeliveryOrders.labels.selectDriver')"
               sort-by="name"
               sort-operator="asc"

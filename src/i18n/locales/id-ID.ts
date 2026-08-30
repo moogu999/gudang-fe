@@ -155,6 +155,7 @@ export default {
     showing: 'Menampilkan {first} hingga {last} dari {total}',
     clearFilters: 'Hapus Filter',
     apply: 'Terapkan',
+    selectValue: 'Pilih nilai',
     no: 'No.',
     details: 'Detail',
     addRow: 'Tambah Baris',

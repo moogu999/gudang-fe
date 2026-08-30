@@ -77,7 +77,12 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent ref="table" :url="url" :columns="columns">
+        <TableComponent
+          ref="table"
+          :url="url"
+          :columns="columns"
+          :query-adapter="queryAdapter"
+        >
           <template #content="{ col, data }">
             <span v-if="col.field === 'taxable'">
               <i v-if="data[col.field]" class="pi pi-check text-green-500" />
@@ -171,34 +176,49 @@ function onDefinitionChange(index: number) {
   labelFilters.value[index].optionId = undefined
 }
 
-// Table URL — switches to CUSTOMERS_V1 when active label filters exist
-const url = computed(() => {
-  const activeFilters = labelFilters.value.filter((f) => f.definitionId && f.optionId)
-  if (activeFilters.length === 0) return API_ENDPOINTS.GEN_CUSTOMERS
+const activeLabelFilters = computed(() =>
+  labelFilters.value.filter((f) => f.definitionId && f.optionId),
+)
 
-  const params = activeFilters
-    .map(
-      (f, i) =>
-        `labelFilter[${i}][definitionId]=${f.definitionId}&labelFilter[${i}][optionId]=${f.optionId}`,
-    )
+// Only `/v1/customers` knows label filters, so the table moves there once one is
+// set. The two endpoints read different query dialects and support different
+// controls, which is why the adapter and the columns below follow this flag.
+const isLabelFiltered = computed(() => activeLabelFilters.value.length > 0)
+
+const url = computed(() => {
+  if (!isLabelFiltered.value) return API_ENDPOINTS.GEN_CUSTOMERS
+
+  const params = activeLabelFilters.value
+    .map((f) => CustomersService.labelFilterParam(f.definitionId!, f.optionId!))
     .join('&')
   return `${API_ENDPOINTS.CUSTOMERS_V1}?${params}`
 })
+
+// `/gen/v1/customers` speaks the generic dialect TableComponent already builds;
+// translating it there would break the very search this adapts for elsewhere.
+const queryAdapter = computed(() =>
+  isLabelFiltered.value ? CustomersService.toListQuery : undefined,
+)
+
+// Sorting and column filters belong to the generic endpoint. `/v1/customers`
+// orders by created_at DESC and reads only its named filters, so while a label
+// filter is on, those controls are withdrawn rather than left to do nothing.
+const supportsColumnControls = computed(() => !isLabelFiltered.value)
 
 const columns = computed<Column[]>(() => [
   {
     field: 'code',
     header: t('customers.fields.code'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
   },
   {
     field: 'name',
     header: t('customers.fields.name'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
   },
   {
     field: 'currency.code',
@@ -230,8 +250,8 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'countryId',
     header: t('customers.fields.country'),
     exportable: true,
-    sortable: true,
-    filterable: true,
+    sortable: supportsColumnControls.value,
+    filterable: supportsColumnControls.value,
     hideOnMobile: true,
   },
   {
@@ -256,7 +276,7 @@ const columns = computed<Column[]>(() => [
     field: 'createdAt',
     header: t('common.labels.createdAt'),
     exportable: true,
-    sortable: true,
+    sortable: supportsColumnControls.value,
     filterable: false,
     class: 'min-w-45',
     hideOnMobile: true,

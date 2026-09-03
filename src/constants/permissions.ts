@@ -115,6 +115,8 @@ export const PERMISSIONS = {
   AP_PAYMENT_WRITE: 108,
   AP_PAYMENT_CONFIG_READ: 109,
   AP_PAYMENT_CONFIG_WRITE: 110,
+  CHART_OF_ACCOUNT_READ: 111,
+  CHART_OF_ACCOUNT_WRITE: 112,
 } as const
 
 /**
@@ -180,6 +182,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/ap-payment-configs': PERMISSIONS.AP_PAYMENT_CONFIG_READ,
   '/payment-methods': PERMISSIONS.PAYMENT_METHOD_READ,
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
+  '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_READ,
 }
 
 /**
@@ -232,4 +235,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/ap-payment-configs': PERMISSIONS.AP_PAYMENT_CONFIG_WRITE,
   '/payment-methods': PERMISSIONS.PAYMENT_METHOD_WRITE,
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_WRITE,
+  '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_WRITE,
 }

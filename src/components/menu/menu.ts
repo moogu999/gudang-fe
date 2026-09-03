@@ -276,6 +276,18 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Finance',
+    labelKey: 'navigation.finance',
+    icon: 'pi pi-wallet',
+    items: [
+      {
+        label: 'Chart of Accounts',
+        labelKey: 'navigation.chartOfAccounts',
+        route: '/chart-of-accounts',
+      },
+    ],
+  },
+  {
     label: 'Approvals',
     labelKey: 'navigation.approvals',
     icon: 'pi pi-check-square',

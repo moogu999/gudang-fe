@@ -283,6 +283,13 @@ export const API_ENDPOINTS = {
   PURCHASE_ORDER_CONFIG_MY_BRANCH: '/v1/purchase-order-configs/my-branch',
   PURCHASE_ORDER_CONFIG_BY_BRANCH: (branchId: number) => `/v1/purchase-order-configs/${branchId}`,
 
+  // Chart of Accounts (Finance) endpoints
+  CHART_OF_ACCOUNTS: '/v1/chart-of-accounts',
+  CHART_OF_ACCOUNT_BY_ID: (id: number) => `/v1/chart-of-accounts/${id}`,
+  CHART_OF_ACCOUNTS_TREE: '/v1/chart-of-accounts/tree',
+  GEN_ACCOUNT_TYPES: '/gen/v1/account-types',
+  GEN_CONTROL_ACCOUNT_TYPES: '/gen/v1/control-account-types',
+
   // Approval endpoints
   GEN_APPROVAL_FLOWS: '/gen/v1/approval-flows',
   APPROVAL_FLOWS: '/v1/approval-flows',

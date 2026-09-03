@@ -169,6 +169,19 @@ export type {
 // Audit Trail types
 export type { AuditReferenceType, AuditTrailListItem, AuditTrail } from './auditTrail.type'
 
+// Chart of Accounts types
+export type {
+  NormalBalance,
+  AccountType,
+  ControlAccountType,
+  AccountTypeRef,
+  ControlAccountTypeRef,
+  ChartOfAccount,
+  ChartOfAccountNode,
+  CreateChartOfAccountDto,
+  UpdateChartOfAccountDto,
+} from './chartOfAccount.type'
+
 // Employee types
 export type {
   EmploymentStatus,

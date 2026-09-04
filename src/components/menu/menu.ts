@@ -285,6 +285,11 @@ const mainMenu = [
         labelKey: 'navigation.chartOfAccounts',
         route: '/chart-of-accounts',
       },
+      {
+        label: 'Accounting Periods',
+        labelKey: 'navigation.accountingPeriods',
+        route: '/accounting-periods',
+      },
     ],
   },
   {

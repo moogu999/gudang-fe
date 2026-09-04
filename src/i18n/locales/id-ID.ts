@@ -96,6 +96,8 @@ export default {
     branchBankAccounts: 'Rekening Bank Cabang',
     finance: 'Keuangan',
     chartOfAccounts: 'Bagan Akun',
+    accountingPeriods: 'Periode Akuntansi',
+    accountingPeriodConfigs: 'Konfigurasi Periode Akuntansi',
     paymentTerms: 'Termin Pembayaran',
     correctionCategories: 'Kategori Koreksi',
     suppliers: 'Pemasok',
@@ -789,6 +791,121 @@ export default {
     messages: {
       accountCreated: 'Akun berhasil dibuat.',
       accountUpdated: 'Akun berhasil diperbarui.',
+    },
+  },
+  accountingPeriods: {
+    title: 'Periode Akuntansi',
+    newFiscalYear: 'Tambah Tahun Buku',
+    editFiscalYear: 'Edit Tahun Buku',
+    viewFiscalYear: 'Lihat Tahun Buku',
+    deleteFiscalYear: 'Hapus Tahun Buku',
+    fields: {
+      name: 'Nama',
+      startDate: 'Tanggal Mulai',
+      endDate: 'Tanggal Selesai',
+      generationMode: 'Mode Pembuatan',
+      period: 'Periode',
+      status: 'Status',
+      history: 'Riwayat',
+      actions: 'Aksi',
+      reason: 'Alasan',
+      reopenFlow: 'Alur Persetujuan Buka Kembali',
+    },
+    modes: {
+      monthly: 'Bulanan',
+      custom: 'Kustom',
+    },
+    status: {
+      upcoming: 'Akan Datang',
+      open: 'Terbuka',
+      closed: 'Ditutup',
+      permanentlyClosed: 'Ditutup Permanen',
+    },
+    actions: {
+      open: 'Buka periode',
+      close: 'Tutup periode',
+      requestReopen: 'Ajukan buka kembali',
+      permanentClose: 'Tutup permanen',
+      revertPermanentClose: 'Batalkan penutupan permanen',
+    },
+    labels: {
+      addRow: 'Tambah Baris',
+      removeRow: 'Hapus Baris',
+      prefillMonthly: 'Isi dari Bulanan',
+      periodsWillBeCreated: '{n} periode akan dibuat',
+      noActivity: 'Belum ada aktivitas',
+      legend: 'Keterangan status',
+      reopenPending: 'Buka kembali menunggu persetujuan',
+      selectReopenFlow: 'Pilih alur persetujuan',
+      historyOpened: 'Dibuka {date}',
+      historyClosed: 'Ditutup {date}',
+      historyPermanentlyClosed: 'Ditutup permanen {date}',
+      historyReverted: 'Dibatalkan {date} — {reason}',
+    },
+    helpers: {
+      monthlyPreview: 'Pratinjau periode yang akan dibuat',
+      customEditor:
+        'Tentukan setiap periode secara manual — periode harus menutupi seluruh tahun buku tanpa celah atau tumpang tindih.',
+      frozen:
+        'Jadwal ini tidak dapat diubah lagi — setidaknya satu periode sudah pernah dibuka atau ditutup.',
+      whyDisabled: 'Tidak ada aksi yang tersedia untuk periode ini saat ini.',
+      reopenFlowHint:
+        'Alur persetujuan yang digunakan saat periode tertutup diajukan untuk dibuka kembali. Kosongkan untuk menonaktifkan buka kembali sepenuhnya.',
+    },
+    warnings: {
+      noOpenPeriod:
+        'Tidak ada periode terbuka untuk perusahaan ini. Buka satu periode, atau buat tahun buku berikutnya.',
+      noReopenFlow:
+        'Belum ada alur persetujuan buka kembali — periode tertutup tidak dapat dibuka kembali.',
+      openConsequence:
+        'Membuka {period} akan menutup {n} periode sebelumnya. Aksi ini tidak dapat dibatalkan.',
+      closeConsequence:
+        'Setelah ditutup, tidak ada transaksi yang dapat bertanggal di {period}. {successor} akan menjadi periode terbuka.',
+      closeLastPeriod:
+        '{period} adalah periode terakhir yang ditentukan. Menutupnya membuat perusahaan ini tanpa periode terbuka.',
+      reopenConsequence:
+        'Ini mengirimkan permintaan buka kembali untuk {period} untuk disetujui. {period} tetap tertutup sampai disetujui; {open} akan kembali menjadi Akan Datang saat disetujui.',
+      permanentCloseConsequence:
+        '{period} tidak dapat dibuka kembali. Semua koreksi harus dilakukan sebagai pembalik di periode terbuka.',
+      revertConsequence: '{period} akan kembali menjadi Ditutup dan dapat dibuka kembali lagi.',
+      confirmCheckbox: 'Saya menyetujui aksi ini.',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+      startDateRequired: 'Tanggal mulai wajib diisi.',
+      endDateRequired: 'Tanggal selesai wajib diisi.',
+      endAfterStart: 'Tanggal selesai harus sama atau setelah tanggal mulai.',
+      reasonRequired: 'Alasan wajib diisi.',
+      gap: 'Ada celah antara {after} dan {before}.',
+      overlap: 'Tumpang tindih dengan periode sebelumnya ({after} sampai {before}).',
+      uncoveredStart: 'Harus mulai pada {date} agar menutupi seluruh tahun buku.',
+      uncoveredEnd: 'Harus berakhir pada {date} agar menutupi seluruh tahun buku.',
+      invalidRange: 'Tanggal selesai harus sama atau setelah tanggal mulai.',
+    },
+    messages: {
+      created: 'Tahun buku berhasil dibuat.',
+      updated: 'Tahun buku berhasil diperbarui.',
+      deleted: 'Tahun buku berhasil dihapus.',
+      opened: 'Periode berhasil dibuka.',
+      closed: 'Periode berhasil ditutup.',
+      reopenRequested: 'Permintaan buka kembali berhasil dikirim.',
+      permanentlyClosed: 'Periode berhasil ditutup permanen.',
+      reverted: 'Penutupan permanen berhasil dibatalkan.',
+      configSaved: 'Alur persetujuan buka kembali berhasil disimpan.',
+    },
+  },
+  accountingPeriodConfigs: {
+    title: 'Konfigurasi Periode Akuntansi',
+    editConfig: 'Edit Konfigurasi',
+    fields: {
+      company: 'Perusahaan',
+      reopenFlow: 'Alur Persetujuan Buka Kembali',
+    },
+    labels: {
+      selectCompany: 'Pilih Perusahaan',
+      selectCompanyFirst: 'Pilih perusahaan untuk melihat konfigurasinya.',
+      noApprovalRequired: 'Tidak perlu persetujuan',
+      approvalConfigured: 'Persetujuan sudah dikonfigurasi',
     },
   },
   productLabelDefinitions: {

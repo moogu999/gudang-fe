@@ -182,6 +182,19 @@ export type {
   UpdateChartOfAccountDto,
 } from './chartOfAccount.type'
 
+// Accounting Period (Finance) types
+export type {
+  PeriodStatus,
+  GenerationMode,
+  AccountingPeriod,
+  FiscalYear,
+  FiscalYearDetail,
+  PeriodDraft,
+  CreateFiscalYearDto,
+  UpdateFiscalYearDto,
+  AccountingPeriodConfig,
+} from './accountingPeriod.type'
+
 // Employee types
 export type {
   EmploymentStatus,

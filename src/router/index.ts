@@ -812,6 +812,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'accounting-periods',
+          name: 'AccountingPeriods',
+          component: () => import('@/views/accounting-periods/AccountingPeriodsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ACCOUNTING_PERIOD_READ,
+            titleKey: 'navigation.accountingPeriods',
+          },
+        },
+        {
           path: 'purchase-orders',
           name: 'PurchaseOrders',
           component: () => import('@/views/purchase-orders/PurchaseOrdersView.vue'),

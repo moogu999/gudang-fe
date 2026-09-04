@@ -117,6 +117,9 @@ export const PERMISSIONS = {
   AP_PAYMENT_CONFIG_WRITE: 110,
   CHART_OF_ACCOUNT_READ: 111,
   CHART_OF_ACCOUNT_WRITE: 112,
+  ACCOUNTING_PERIOD_READ: 113,
+  ACCOUNTING_PERIOD_WRITE: 114,
+  ACCOUNTING_PERIOD_REVERT_PERMANENT_CLOSE: 115,
 } as const
 
 /**
@@ -183,6 +186,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/payment-methods': PERMISSIONS.PAYMENT_METHOD_READ,
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
   '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_READ,
+  '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_READ,
 }
 
 /**
@@ -236,4 +240,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/payment-methods': PERMISSIONS.PAYMENT_METHOD_WRITE,
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_WRITE,
   '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_WRITE,
+  '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_WRITE,
 }

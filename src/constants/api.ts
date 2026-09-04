@@ -290,6 +290,19 @@ export const API_ENDPOINTS = {
   GEN_ACCOUNT_TYPES: '/gen/v1/account-types',
   GEN_CONTROL_ACCOUNT_TYPES: '/gen/v1/control-account-types',
 
+  // Accounting Period (Finance) endpoints
+  FISCAL_YEARS: '/v1/fiscal-years',
+  FISCAL_YEAR_BY_ID: (id: number) => `/v1/fiscal-years/${id}`,
+  ACCOUNTING_PERIODS: '/v1/accounting-periods',
+  ACCOUNTING_PERIODS_CURRENT: '/v1/accounting-periods/current',
+  ACCOUNTING_PERIOD_OPEN: (id: number) => `/v1/accounting-periods/${id}/open`,
+  ACCOUNTING_PERIOD_CLOSE: (id: number) => `/v1/accounting-periods/${id}/close`,
+  ACCOUNTING_PERIOD_REQUEST_REOPEN: (id: number) => `/v1/accounting-periods/${id}/request-reopen`,
+  ACCOUNTING_PERIOD_PERMANENT_CLOSE: (id: number) => `/v1/accounting-periods/${id}/permanent-close`,
+  ACCOUNTING_PERIOD_REVERT_PERMANENT_CLOSE: (id: number) =>
+    `/v1/accounting-periods/${id}/revert-permanent-close`,
+  ACCOUNTING_PERIOD_CONFIG: (companyId: number) => `/v1/accounting-period-configs/${companyId}`,
+
   // Approval endpoints
   GEN_APPROVAL_FLOWS: '/gen/v1/approval-flows',
   APPROVAL_FLOWS: '/v1/approval-flows',

@@ -77,12 +77,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <TableComponent
-          ref="table"
-          :url="url"
-          :columns="columns"
-          :query-adapter="queryAdapter"
-        >
+        <TableComponent ref="table" :url="url" :columns="columns" :query-adapter="queryAdapter">
           <template #content="{ col, data }">
             <span v-if="col.field === 'taxable'">
               <i v-if="data[col.field]" class="pi pi-check text-green-500" />

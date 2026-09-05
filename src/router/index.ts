@@ -803,6 +803,24 @@ const router = createRouter({
           },
         },
         {
+          path: 'chart-of-accounts',
+          name: 'ChartOfAccounts',
+          component: () => import('@/views/chart-of-accounts/ChartOfAccountsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CHART_OF_ACCOUNT_READ,
+            titleKey: 'navigation.chartOfAccounts',
+          },
+        },
+        {
+          path: 'accounting-periods',
+          name: 'AccountingPeriods',
+          component: () => import('@/views/accounting-periods/AccountingPeriodsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ACCOUNTING_PERIOD_READ,
+            titleKey: 'navigation.accountingPeriods',
+          },
+        },
+        {
           path: 'purchase-orders',
           name: 'PurchaseOrders',
           component: () => import('@/views/purchase-orders/PurchaseOrdersView.vue'),

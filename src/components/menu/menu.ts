@@ -276,6 +276,23 @@ const mainMenu = [
     ],
   },
   {
+    label: 'Finance',
+    labelKey: 'navigation.finance',
+    icon: 'pi pi-wallet',
+    items: [
+      {
+        label: 'Chart of Accounts',
+        labelKey: 'navigation.chartOfAccounts',
+        route: '/chart-of-accounts',
+      },
+      {
+        label: 'Accounting Periods',
+        labelKey: 'navigation.accountingPeriods',
+        route: '/accounting-periods',
+      },
+    ],
+  },
+  {
     label: 'Approvals',
     labelKey: 'navigation.approvals',
     icon: 'pi pi-check-square',

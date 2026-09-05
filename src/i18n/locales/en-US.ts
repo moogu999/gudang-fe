@@ -849,11 +849,12 @@ export default {
         'This schedule can no longer be edited — at least one period has already been opened or closed.',
       whyDisabled: 'No action is available for this period right now.',
       reopenFlowHint:
-        'The approval flow used when a closed period is requested to reopen. Leave empty to disable reopening entirely.',
+        'The approval flow used when a closed period is requested to reopen. Leave empty to reopen a closed period immediately, without approval.',
     },
     warnings: {
       noOpenPeriod: 'No open period for this company. Open one, or create the next fiscal year.',
-      noReopenFlow: 'No reopen approval flow configured — closed periods cannot be reopened.',
+      noReopenFlow:
+        'No reopen approval flow configured — closed periods will reopen immediately, without approval.',
       openConsequence: 'Opening {period} will close {n} earlier periods. This cannot be undone.',
       closeConsequence:
         'After closing, no transaction can be dated in {period}. {successor} becomes the open period.',
@@ -861,6 +862,8 @@ export default {
         '{period} is the last period defined. Closing it leaves this company with no open period.',
       reopenConsequence:
         'This sends a reopen request for {period} for approval. {period} stays closed until it is approved; {open} will return to Upcoming when it is.',
+      reopenConsequenceImmediate:
+        'No reopen approval flow is configured, so {period} will reopen immediately; {open} will return to Upcoming.',
       permanentCloseConsequence:
         '{period} can no longer be reopened. All corrections must go as a reversal in the open period.',
       revertConsequence: '{period} returns to Closed and becomes reopenable again.',
@@ -885,6 +888,7 @@ export default {
       opened: 'Period is opened.',
       closed: 'Period is closed.',
       reopenRequested: 'Reopen request is submitted.',
+      reopened: 'Period is reopened.',
       permanentlyClosed: 'Period is permanently closed.',
       reverted: 'Permanent close is reverted.',
       configSaved: 'Reopen approval flow is saved.',

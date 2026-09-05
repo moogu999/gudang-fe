@@ -850,13 +850,13 @@ export default {
         'Jadwal ini tidak dapat diubah lagi — setidaknya satu periode sudah pernah dibuka atau ditutup.',
       whyDisabled: 'Tidak ada aksi yang tersedia untuk periode ini saat ini.',
       reopenFlowHint:
-        'Alur persetujuan yang digunakan saat periode tertutup diajukan untuk dibuka kembali. Kosongkan untuk menonaktifkan buka kembali sepenuhnya.',
+        'Alur persetujuan yang digunakan saat periode tertutup diajukan untuk dibuka kembali. Kosongkan agar periode tertutup langsung dibuka kembali tanpa persetujuan.',
     },
     warnings: {
       noOpenPeriod:
         'Tidak ada periode terbuka untuk perusahaan ini. Buka satu periode, atau buat tahun buku berikutnya.',
       noReopenFlow:
-        'Belum ada alur persetujuan buka kembali — periode tertutup tidak dapat dibuka kembali.',
+        'Belum ada alur persetujuan buka kembali — periode tertutup akan langsung dibuka kembali tanpa persetujuan.',
       openConsequence:
         'Membuka {period} akan menutup {n} periode sebelumnya. Aksi ini tidak dapat dibatalkan.',
       closeConsequence:
@@ -865,6 +865,8 @@ export default {
         '{period} adalah periode terakhir yang ditentukan. Menutupnya membuat perusahaan ini tanpa periode terbuka.',
       reopenConsequence:
         'Ini mengirimkan permintaan buka kembali untuk {period} untuk disetujui. {period} tetap tertutup sampai disetujui; {open} akan kembali menjadi Akan Datang saat disetujui.',
+      reopenConsequenceImmediate:
+        'Belum ada alur persetujuan buka kembali, jadi {period} akan langsung dibuka kembali; {open} akan kembali menjadi Akan Datang.',
       permanentCloseConsequence:
         '{period} tidak dapat dibuka kembali. Semua koreksi harus dilakukan sebagai pembalik di periode terbuka.',
       revertConsequence: '{period} akan kembali menjadi Ditutup dan dapat dibuka kembali lagi.',
@@ -889,6 +891,7 @@ export default {
       opened: 'Periode berhasil dibuka.',
       closed: 'Periode berhasil ditutup.',
       reopenRequested: 'Permintaan buka kembali berhasil dikirim.',
+      reopened: 'Periode berhasil dibuka kembali.',
       permanentlyClosed: 'Periode berhasil ditutup permanen.',
       reverted: 'Penutupan permanen berhasil dibatalkan.',
       configSaved: 'Alur persetujuan buka kembali berhasil disimpan.',

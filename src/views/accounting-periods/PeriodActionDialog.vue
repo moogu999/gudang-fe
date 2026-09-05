@@ -18,8 +18,14 @@
       <template v-else-if="action === 'close'">{{
         t('accountingPeriods.warnings.closeLastPeriod', { period: period.name })
       }}</template>
-      <template v-else-if="action === 'request-reopen'">{{
+      <template v-else-if="action === 'request-reopen' && hasReopenFlow">{{
         t('accountingPeriods.warnings.reopenConsequence', {
+          period: period.name,
+          open: openPeriodName,
+        })
+      }}</template>
+      <template v-else-if="action === 'request-reopen'">{{
+        t('accountingPeriods.warnings.reopenConsequenceImmediate', {
           period: period.name,
           open: openPeriodName,
         })
@@ -106,6 +112,10 @@ const props = defineProps({
     type: Array as PropType<AccountingPeriod[]>,
     required: true,
   },
+  hasReopenFlow: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emits = defineEmits(['close'])
@@ -147,7 +157,16 @@ async function onConfirm() {
         break
       case 'request-reopen':
         await AccountingPeriodsService.requestReopen(props.period.id)
-        toast.add(commonSuccessToast(t('accountingPeriods.messages.reopenRequested'), toastGroup))
+        toast.add(
+          commonSuccessToast(
+            t(
+              props.hasReopenFlow
+                ? 'accountingPeriods.messages.reopenRequested'
+                : 'accountingPeriods.messages.reopened',
+            ),
+            toastGroup,
+          ),
+        )
         break
       case 'permanent-close':
         await AccountingPeriodsService.permanentClose(props.period.id)

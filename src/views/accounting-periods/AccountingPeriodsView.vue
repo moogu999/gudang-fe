@@ -240,6 +240,7 @@
         :action="selectedAction"
         :period="selectedPeriod"
         :timeline="companyTimeline"
+        :has-reopen-flow="!!config?.reopenFlowId"
         @close="closePeriodActionDialog"
       />
     </Dialog>

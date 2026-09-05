@@ -293,6 +293,7 @@ export const API_ENDPOINTS = {
   // Accounting Period (Finance) endpoints
   FISCAL_YEARS: '/v1/fiscal-years',
   FISCAL_YEAR_BY_ID: (id: number) => `/v1/fiscal-years/${id}`,
+  FISCAL_YEAR_PERIODS: (id: number) => `/v1/fiscal-years/${id}/periods`,
   ACCOUNTING_PERIODS: '/v1/accounting-periods',
   ACCOUNTING_PERIODS_CURRENT: '/v1/accounting-periods/current',
   ACCOUNTING_PERIOD_OPEN: (id: number) => `/v1/accounting-periods/${id}/open`,
@@ -302,6 +303,23 @@ export const API_ENDPOINTS = {
   ACCOUNTING_PERIOD_REVERT_PERMANENT_CLOSE: (id: number) =>
     `/v1/accounting-periods/${id}/revert-permanent-close`,
   ACCOUNTING_PERIOD_CONFIG: (companyId: number) => `/v1/accounting-period-configs/${companyId}`,
+
+  // Journal Config (Finance) endpoints
+  JOURNAL_DOCUMENT_TYPES: '/v1/journal-document-types',
+  JOURNAL_ROLES: '/v1/journal-roles',
+  JOURNAL_DIMENSIONS: '/v1/journal-dimensions',
+  JOURNAL_CONFIGS: '/v1/journal-configs',
+  JOURNAL_CONFIG_BY_ID: (id: number) => `/v1/journal-configs/${id}`,
+  JOURNAL_CONFIG_ACTIVATE: (id: number) => `/v1/journal-configs/${id}/activate`,
+  JOURNAL_CONFIG_DEACTIVATE: (id: number) => `/v1/journal-configs/${id}/deactivate`,
+  JOURNAL_CONFIG_ROLE_BASES: (id: number, roleId: number) =>
+    `/v1/journal-configs/${id}/roles/${roleId}/bases`,
+  JOURNAL_CONFIG_ROLE_GENERATE: (id: number, roleId: number) =>
+    `/v1/journal-configs/${id}/roles/${roleId}/generate`,
+  JOURNAL_CONFIG_ROLE_MAPPINGS: (id: number, roleId: number) =>
+    `/v1/journal-configs/${id}/roles/${roleId}/mappings`,
+  JOURNAL_CONFIG_ROLE_MAPPING_BY_ID: (id: number, roleId: number, mappingId: number) =>
+    `/v1/journal-configs/${id}/roles/${roleId}/mappings/${mappingId}`,
 
   // Approval endpoints
   GEN_APPROVAL_FLOWS: '/gen/v1/approval-flows',

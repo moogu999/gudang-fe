@@ -821,6 +821,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'journal-config',
+          name: 'JournalConfig',
+          component: () => import('@/views/journal-config/JournalConfigView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.JOURNAL_CONFIG_READ,
+            titleKey: 'navigation.journalConfig',
+          },
+        },
+        {
           path: 'purchase-orders',
           name: 'PurchaseOrders',
           component: () => import('@/views/purchase-orders/PurchaseOrdersView.vue'),

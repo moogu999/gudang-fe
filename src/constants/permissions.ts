@@ -120,6 +120,8 @@ export const PERMISSIONS = {
   ACCOUNTING_PERIOD_READ: 113,
   ACCOUNTING_PERIOD_WRITE: 114,
   ACCOUNTING_PERIOD_REVERT_PERMANENT_CLOSE: 115,
+  JOURNAL_CONFIG_READ: 116,
+  JOURNAL_CONFIG_WRITE: 117,
 } as const
 
 /**
@@ -187,6 +189,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
   '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_READ,
   '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_READ,
+  '/journal-config': PERMISSIONS.JOURNAL_CONFIG_READ,
 }
 
 /**
@@ -241,4 +244,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_WRITE,
   '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_WRITE,
   '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_WRITE,
+  '/journal-config': PERMISSIONS.JOURNAL_CONFIG_WRITE,
 }

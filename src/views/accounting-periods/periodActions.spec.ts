@@ -12,6 +12,7 @@ function period(id: number, status: PeriodStatus): AccountingPeriod {
     startDate: `2026-0${id}-01`,
     endDate: `2026-0${id}-28`,
     status,
+    isYearEnd: false,
     openedAt: null,
     openedBy: null,
     closedAt: null,

@@ -97,6 +97,7 @@ export default {
     chartOfAccounts: 'Chart of Accounts',
     accountingPeriods: 'Accounting Periods',
     accountingPeriodConfigs: 'Accounting Period Config',
+    journalConfig: 'Journal Config',
     paymentTerms: 'Term of Payment',
     correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
@@ -798,6 +799,7 @@ export default {
     editFiscalYear: 'Edit Fiscal Year',
     viewFiscalYear: 'View Fiscal Year',
     deleteFiscalYear: 'Delete Fiscal Year',
+    addPeriod: 'Add Period',
     fields: {
       name: 'Name',
       startDate: 'Start Date',
@@ -809,6 +811,7 @@ export default {
       actions: 'Actions',
       reason: 'Reason',
       reopenFlow: 'Reopen Approval Flow',
+      yearEnd: 'Year End',
     },
     modes: {
       monthly: 'Monthly',
@@ -850,6 +853,10 @@ export default {
       whyDisabled: 'No action is available for this period right now.',
       reopenFlowHint:
         'The approval flow used when a closed period is requested to reopen. Leave empty to reopen a closed period immediately, without approval.',
+      addPeriodHint:
+        'The new period must immediately extend the schedule — right before the first period or right after the last one. Works even if other periods are already open or closed.',
+      yearEndCheckbox:
+        'Move the year-end flag to this new period. It currently sits on the fiscal year’s last period.',
     },
     warnings: {
       noOpenPeriod: 'No open period for this company. Open one, or create the next fiscal year.',
@@ -880,11 +887,14 @@ export default {
       uncoveredStart: 'Must start on {date} to cover the whole fiscal year.',
       uncoveredEnd: 'Must end on {date} to cover the whole fiscal year.',
       invalidRange: 'End date must be on or after the start date.',
+      yearEndRequired: 'Exactly one period must be marked as year end.',
+      yearEndMultiple: 'Only one period can be marked as year end.',
     },
     messages: {
       created: 'Fiscal year is created.',
       updated: 'Fiscal year is updated.',
       deleted: 'Fiscal year is deleted.',
+      periodAdded: 'Period is added.',
       opened: 'Period is opened.',
       closed: 'Period is closed.',
       reopenRequested: 'Reopen request is submitted.',
@@ -892,6 +902,91 @@ export default {
       permanentlyClosed: 'Period is permanently closed.',
       reverted: 'Permanent close is reverted.',
       configSaved: 'Reopen approval flow is saved.',
+    },
+  },
+  journalConfig: {
+    title: 'Journal Config',
+    fields: {
+      company: 'Company',
+      document: 'Document',
+      category: 'Journal Category',
+      includePosting: 'Include Posting',
+      account: 'Account',
+      subAccount: 'Sub Account',
+      status: 'Status',
+    },
+    labels: {
+      selectCompany: 'Select Company',
+      selectDocument: 'Select Document',
+      basisPosting: 'Posting Dimensions',
+      basisSlot: 'Dimension {n}',
+      selectDimension: 'Select dimension',
+      none: 'None',
+      generate: 'Generate',
+      notSet: '(not set)',
+      onlyUnmapped: 'Unmapped only',
+      saveAsDraft: 'Save as Draft',
+      saveAndActivate: 'Save & Activate',
+      cancel: 'Cancel',
+      statusDraft: 'Draft',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      stale: 'No longer in master data',
+      mapped: 'Mapped',
+      unmapped: 'Missing account',
+    },
+    documentTypes: {
+      invoice: 'Invoice',
+      goods_receipt: 'Goods Receipt',
+      ap_payment: 'AP Payment',
+      ar_receipt: 'AR Receipt',
+    },
+    roles: {
+      ar: 'Accounts Receivable',
+      sales_return: 'Sales Return',
+      sales_discount: 'Sales Discount',
+      revenue: 'Revenue',
+      cogs: 'COGS',
+      inventory: 'Inventory',
+      output_vat: 'Output VAT',
+    },
+    dimensions: {
+      company: 'Company',
+      branch: 'Branch',
+      warehouse: 'Warehouse',
+      customer: 'Customer',
+      customer_category: 'Customer Category',
+      product: 'Product',
+    },
+    helpers: {
+      generate:
+        'Combinations come from active master data — re-run Generate whenever new master data is added.',
+      notSetMeaning:
+        '"(not set)" means this entity has no value for this dimension. It is not a wildcard.',
+    },
+    warnings: {
+      unmappedRows: '{count} combination(s) have no account.',
+      unmappedBanner: '{unmapped} of {total} combinations have no {role} account.',
+      basisChangeConfirm:
+        'Changing the posting dimensions will clear the mapped rows for this role and return this config to draft. Continue?',
+      tooManyCombinations:
+        'This selection would generate too many combinations (over 20,000). Narrow the posting dimensions and try again.',
+      unsavedChanges: 'You have unsaved changes on this tab. They will be lost if you continue.',
+    },
+    validation: {
+      tooManyBases: 'A role can have at most 5 posting dimensions.',
+      duplicateDimension: 'This dimension is already used in another slot.',
+    },
+    messages: {
+      created: 'Journal config created.',
+      saved: 'Journal config saved.',
+      basesSaved: 'Posting dimensions updated.',
+      generated:
+        '{added} new combination(s) added, {kept} kept, {staleMarked} no longer in master data.',
+      mappingsSaved: 'Mapping rows saved.',
+      activated: 'Journal config activated.',
+      deactivated: 'Journal config deactivated.',
+      incomplete: 'This config is incomplete — some roles still have unmapped combinations.',
     },
   },
   accountingPeriodConfigs: {

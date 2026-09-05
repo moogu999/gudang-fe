@@ -8,6 +8,7 @@ function draft(overrides: Partial<PeriodDraft> = {}): PeriodDraft {
     name: 'January 2026',
     startDate: new Date(2026, 0, 1),
     endDate: new Date(2026, 0, 31),
+    isYearEnd: false,
     ...overrides,
   }
 }
@@ -25,6 +26,12 @@ describe('generateMonthlyDrafts', () => {
     expect(dayjs(drafts[0]!.endDate).format('YYYY-MM-DD')).toBe('2026-01-31')
     expect(drafts[11]!.name).toBe('December 2026')
     expect(dayjs(drafts[11]!.endDate).format('YYYY-MM-DD')).toBe('2026-12-31')
+  })
+
+  it('marks only the last row as year-end', () => {
+    const drafts = generateMonthlyDrafts(d('2026-01-01'), d('2026-12-31'))
+    expect(drafts.filter((r) => r.isYearEnd)).toHaveLength(1)
+    expect(drafts[11]!.isYearEnd).toBe(true)
   })
 
   it('tiles an Apr–Mar fiscal year into 12 rows crossing the calendar year', () => {
@@ -106,6 +113,24 @@ describe('validateDrafts', () => {
   it('returns two whole-schedule issues for an empty draft list', () => {
     const issues = validateDrafts([], start, end)
     expect(issues.map((i) => i.kind).sort()).toEqual(['uncovered-end', 'uncovered-start'])
+  })
+
+  it('reports year-end-required when no row is marked year-end', () => {
+    const drafts = exactTiling()
+    drafts[11]!.isYearEnd = false
+    const issues = validateDrafts(drafts, start, end)
+    expect(issues).toEqual([
+      { kind: 'year-end-required', index: -1, messageKey: expect.any(String) },
+    ])
+  })
+
+  it('reports year-end-multiple when more than one row is marked year-end', () => {
+    const drafts = exactTiling()
+    drafts[0]!.isYearEnd = true
+    const issues = validateDrafts(drafts, start, end)
+    expect(issues).toEqual([
+      { kind: 'year-end-multiple', index: -1, messageKey: expect.any(String) },
+    ])
   })
 
   it('uses the base draft() factory as a sanity check', () => {

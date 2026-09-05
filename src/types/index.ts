@@ -192,8 +192,33 @@ export type {
   PeriodDraft,
   CreateFiscalYearDto,
   UpdateFiscalYearDto,
+  AddPeriodDto,
   AccountingPeriodConfig,
 } from './accountingPeriod.type'
+
+// Journal Config (Finance) types
+export type {
+  JournalDocumentType,
+  NormalSide,
+  RoleGrain,
+  JournalRole,
+  DimensionSource,
+  JournalDimension,
+  JournalConfigBasis,
+  JournalConfigStatus,
+  JournalConfigRole,
+  JournalConfig,
+  CreateJournalConfigDto,
+  UpdateJournalConfigDto,
+  JournalBasisDto,
+  ReplaceBasesResult,
+  GenerateResult,
+  JournalMappingValue,
+  JournalMapping,
+  SaveMappingDto,
+  RoleCompleteness,
+  ConfigIncompleteError,
+} from './journalConfig.type'
 
 // Employee types
 export type {

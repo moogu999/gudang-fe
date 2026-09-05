@@ -91,6 +91,7 @@
                 <th class="pb-2">{{ t('accountingPeriods.fields.name') }}</th>
                 <th class="pb-2">{{ t('accountingPeriods.fields.startDate') }}</th>
                 <th class="pb-2">{{ t('accountingPeriods.fields.endDate') }}</th>
+                <th class="pb-2">{{ t('accountingPeriods.fields.yearEnd') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -98,6 +99,9 @@
                 <td class="py-1">{{ row.name }}</td>
                 <td class="py-1 font-mono">{{ formatDraftDate(row.startDate) }}</td>
                 <td class="py-1 font-mono">{{ formatDraftDate(row.endDate) }}</td>
+                <td class="py-1">
+                  <i v-if="row.isYearEnd" class="pi pi-check text-primary" />
+                </td>
               </tr>
             </tbody>
           </table>
@@ -143,6 +147,22 @@
             class="w-full sm:w-1/3"
             :disabled="isFrozen"
           />
+          <div
+            class="flex shrink-0 items-center gap-1"
+            v-tooltip.top="t('accountingPeriods.fields.yearEnd')"
+          >
+            <RadioButton
+              :model-value="row.isYearEnd"
+              :value="true"
+              name="yearEndRow"
+              :disabled="isFrozen"
+              :input-id="`yearEnd-${i}`"
+              @update:model-value="setYearEndRow(i)"
+            />
+            <label :for="`yearEnd-${i}`" class="text-surface-500 text-xs sm:hidden">{{
+              t('accountingPeriods.fields.yearEnd')
+            }}</label>
+          </div>
           <Button
             type="button"
             icon="pi pi-trash"
@@ -212,6 +232,7 @@
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
+import RadioButton from 'primevue/radiobutton'
 import SelectButton from 'primevue/selectbutton'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
@@ -304,6 +325,7 @@ onBeforeMount(() => {
       name: p.name,
       startDate: new Date(p.startDate),
       endDate: new Date(p.endDate),
+      isYearEnd: p.isYearEnd,
     }))
   }
 })
@@ -355,11 +377,17 @@ function formatDraftDate(d: Date | null): string {
 }
 
 function addRow() {
-  customRows.value.push({ name: '', startDate: null, endDate: null })
+  customRows.value.push({ name: '', startDate: null, endDate: null, isYearEnd: false })
 }
 
 function removeRow(index: number) {
   customRows.value.splice(index, 1)
+}
+
+function setYearEndRow(index: number) {
+  customRows.value.forEach((row, i) => {
+    row.isYearEnd = i === index
+  })
 }
 
 function prefillFromMonthly() {
@@ -411,6 +439,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
             name: d.name,
             startDate: dayjs(d.startDate!).format('YYYY-MM-DD'),
             endDate: dayjs(d.endDate!).format('YYYY-MM-DD'),
+            isYearEnd: d.isYearEnd,
           }))
         : undefined
 

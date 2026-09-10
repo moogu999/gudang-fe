@@ -949,6 +949,7 @@ export default {
       cogs: 'COGS',
       inventory: 'Inventory',
       output_vat: 'Output VAT',
+      accounts_payable: 'Accounts Payable',
     },
     dimensions: {
       company: 'Company',
@@ -957,6 +958,7 @@ export default {
       customer: 'Customer',
       customer_category: 'Customer Category',
       product: 'Product',
+      supplier: 'Supplier',
     },
     helpers: {
       generate:

@@ -199,8 +199,9 @@ async function onCompanyChange() {
 }
 
 // ---------------------------------------------------------------------------
-// Document type — only "invoice" is selectable in this iteration; the
-// others are seeded as inactive placeholders for future document types.
+// Document type — the Select already disables any document type that isn't
+// active, so every selectable option here is safe to auto-create a config
+// for.
 // ---------------------------------------------------------------------------
 
 const documentTypes = ref<JournalDocumentType[]>([])
@@ -258,7 +259,7 @@ async function loadConfigForSelection() {
       selectedCompanyId.value,
       selectedDocumentTypeId.value,
     )
-    if (!found && documentTypeCode.value === 'invoice') {
+    if (!found) {
       found = await JournalConfigService.create({
         companyId: selectedCompanyId.value,
         documentTypeCode: documentTypeCode.value,

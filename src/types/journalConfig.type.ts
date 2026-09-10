@@ -29,6 +29,7 @@ export type DimensionSource =
   | 'product'
   | 'product_label'
   | 'customer_label'
+  | 'supplier'
 
 /** `refId`/`label` may simply be absent rather than `null` — Go omits nil
  *  pointers as absent JSON keys. Never compare these with `!== null`. */

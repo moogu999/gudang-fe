@@ -952,6 +952,7 @@ export default {
       cogs: 'HPP',
       inventory: 'Persediaan',
       output_vat: 'PPN Keluaran',
+      accounts_payable: 'Utang Usaha',
     },
     dimensions: {
       company: 'Perusahaan',
@@ -960,6 +961,7 @@ export default {
       customer: 'Pelanggan',
       customer_category: 'Kategori Pelanggan',
       product: 'Produk',
+      supplier: 'Supplier',
     },
     helpers: {
       generate:

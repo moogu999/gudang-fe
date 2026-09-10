@@ -953,6 +953,7 @@ export default {
       inventory: 'Persediaan',
       output_vat: 'PPN Keluaran',
       accounts_payable: 'Utang Usaha',
+      accrued_ap: 'Utang Akrual',
     },
     dimensions: {
       company: 'Perusahaan',

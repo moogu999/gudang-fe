@@ -950,6 +950,7 @@ export default {
       inventory: 'Inventory',
       output_vat: 'Output VAT',
       accounts_payable: 'Accounts Payable',
+      accrued_ap: 'Accrued A/P',
     },
     dimensions: {
       company: 'Company',

@@ -298,6 +298,7 @@ const FIXED_DIMENSION_SOURCES = new Set([
   'customer_category',
   'product',
   'supplier',
+  'order_type',
 ])
 
 /** Fixed dimensions are translated; label-derived ones (product_label,

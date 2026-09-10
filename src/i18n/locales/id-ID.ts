@@ -943,6 +943,7 @@ export default {
       goods_receipt: 'Goods Receipt',
       ap_payment: 'AP Payment',
       ar_receipt: 'AR Receipt',
+      delivery_order: 'Delivery Order',
     },
     roles: {
       ar: 'Piutang Outlet',
@@ -963,6 +964,7 @@ export default {
       customer_category: 'Kategori Pelanggan',
       product: 'Produk',
       supplier: 'Supplier',
+      order_type: 'Tipe Order',
     },
     helpers: {
       generate:

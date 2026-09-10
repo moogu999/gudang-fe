@@ -940,6 +940,7 @@ export default {
       goods_receipt: 'Goods Receipt',
       ap_payment: 'AP Payment',
       ar_receipt: 'AR Receipt',
+      delivery_order: 'Delivery Order',
     },
     roles: {
       ar: 'Accounts Receivable',
@@ -960,6 +961,7 @@ export default {
       customer_category: 'Customer Category',
       product: 'Product',
       supplier: 'Supplier',
+      order_type: 'Order Type',
     },
     helpers: {
       generate:

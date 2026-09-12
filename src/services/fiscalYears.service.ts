@@ -5,6 +5,8 @@ import type {
   FiscalYearDetail,
   CreateFiscalYearDto,
   UpdateFiscalYearDto,
+  AddPeriodDto,
+  AccountingPeriod,
 } from '@/types/accountingPeriod.type'
 import { API_ENDPOINTS } from '@/constants/api'
 
@@ -30,5 +32,11 @@ export class FiscalYearsService {
 
   static async delete(id: number): Promise<void> {
     return ApiService.delete<void>(API_ENDPOINTS.FISCAL_YEAR_BY_ID(id))
+  }
+
+  /** Appends or prepends a single period, regardless of the status of the
+   *  fiscal year's other periods. See AddPeriodDto. */
+  static async addPeriod(fiscalYearId: number, data: AddPeriodDto): Promise<AccountingPeriod> {
+    return ApiService.post<AccountingPeriod>(API_ENDPOINTS.FISCAL_YEAR_PERIODS(fiscalYearId), data)
   }
 }

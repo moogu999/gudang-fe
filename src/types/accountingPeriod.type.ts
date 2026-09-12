@@ -10,6 +10,8 @@ export interface AccountingPeriod {
   startDate: string // YYYY-MM-DD
   endDate: string // YYYY-MM-DD
   status: PeriodStatus
+  /** Marks the period whose permanent close is the fiscal year's closing point. */
+  isYearEnd: boolean
   openedAt: string | null
   openedBy: number | null
   closedAt: string | null
@@ -50,6 +52,8 @@ export interface PeriodDraft {
   name: string
   startDate: Date | null
   endDate: Date | null
+  /** Exactly one row in a CUSTOM schedule must have this set. */
+  isYearEnd: boolean
 }
 
 export interface CreateFiscalYearDto {
@@ -58,11 +62,21 @@ export interface CreateFiscalYearDto {
   startDate: string
   endDate: string
   generationMode: GenerationMode
-  periods?: Array<{ name: string; startDate: string; endDate: string }>
+  periods?: Array<{ name: string; startDate: string; endDate: string; isYearEnd: boolean }>
 }
 
 /** No companyId — it is immutable server-side. */
 export type UpdateFiscalYearDto = Omit<CreateFiscalYearDto, 'companyId'>
+
+/** A single period appended or prepended to an already-created fiscal year —
+ *  see FiscalYearsService.addPeriod. Works regardless of the status of the
+ *  fiscal year's other periods, unlike UpdateFiscalYearDto. */
+export interface AddPeriodDto {
+  name: string
+  startDate: string
+  endDate: string
+  isYearEnd?: boolean
+}
 
 export interface AccountingPeriodConfig {
   id: number

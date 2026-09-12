@@ -2,7 +2,14 @@ import dayjs from 'dayjs'
 import type { PeriodDraft } from '@/types/accountingPeriod.type'
 
 export interface ScheduleIssue {
-  kind: 'gap' | 'overlap' | 'uncovered-start' | 'uncovered-end' | 'invalid-range'
+  kind:
+    | 'gap'
+    | 'overlap'
+    | 'uncovered-start'
+    | 'uncovered-end'
+    | 'invalid-range'
+    | 'year-end-required'
+    | 'year-end-multiple'
   index: number // -1 for whole-schedule issues
   messageKey: string // i18n key, not a rendered string
   params?: Record<string, string>
@@ -32,9 +39,14 @@ export function generateMonthlyDrafts(start: Date, end: Date): PeriodDraft[] {
       name: cur.format('MMMM YYYY'),
       startDate: cur.toDate(),
       endDate: periodEnd.toDate(),
+      isYearEnd: false,
     })
 
     cur = periodEnd.add(1, 'day')
+  }
+
+  if (drafts.length > 0) {
+    drafts[drafts.length - 1]!.isYearEnd = true
   }
 
   return drafts
@@ -126,6 +138,21 @@ export function validateDrafts(drafts: PeriodDraft[], start: Date, end: Date): S
         params: { after: curEnd, before: nextStart },
       })
     }
+  }
+
+  const yearEndCount = drafts.filter((d) => d.isYearEnd).length
+  if (yearEndCount === 0) {
+    issues.push({
+      kind: 'year-end-required',
+      index: -1,
+      messageKey: 'accountingPeriods.validation.yearEndRequired',
+    })
+  } else if (yearEndCount > 1) {
+    issues.push({
+      kind: 'year-end-multiple',
+      index: -1,
+      messageKey: 'accountingPeriods.validation.yearEndMultiple',
+    })
   }
 
   return issues

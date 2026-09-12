@@ -98,6 +98,7 @@ export default {
     chartOfAccounts: 'Bagan Akun',
     accountingPeriods: 'Periode Akuntansi',
     accountingPeriodConfigs: 'Konfigurasi Periode Akuntansi',
+    journalConfig: 'Konfigurasi Jurnal',
     paymentTerms: 'Termin Pembayaran',
     correctionCategories: 'Kategori Koreksi',
     suppliers: 'Pemasok',
@@ -799,6 +800,7 @@ export default {
     editFiscalYear: 'Edit Tahun Buku',
     viewFiscalYear: 'Lihat Tahun Buku',
     deleteFiscalYear: 'Hapus Tahun Buku',
+    addPeriod: 'Tambah Periode',
     fields: {
       name: 'Nama',
       startDate: 'Tanggal Mulai',
@@ -810,6 +812,7 @@ export default {
       actions: 'Aksi',
       reason: 'Alasan',
       reopenFlow: 'Alur Persetujuan Buka Kembali',
+      yearEnd: 'Akhir Tahun',
     },
     modes: {
       monthly: 'Bulanan',
@@ -850,13 +853,17 @@ export default {
         'Jadwal ini tidak dapat diubah lagi — setidaknya satu periode sudah pernah dibuka atau ditutup.',
       whyDisabled: 'Tidak ada aksi yang tersedia untuk periode ini saat ini.',
       reopenFlowHint:
-        'Alur persetujuan yang digunakan saat periode tertutup diajukan untuk dibuka kembali. Kosongkan untuk menonaktifkan buka kembali sepenuhnya.',
+        'Alur persetujuan yang digunakan saat periode tertutup diajukan untuk dibuka kembali. Kosongkan agar periode tertutup langsung dibuka kembali tanpa persetujuan.',
+      addPeriodHint:
+        'Periode baru harus langsung menyambung ke jadwal yang ada — tepat sebelum periode pertama atau tepat sesudah periode terakhir. Tetap berfungsi meskipun periode lain sudah dibuka atau ditutup.',
+      yearEndCheckbox:
+        'Pindahkan penanda akhir tahun ke periode baru ini. Saat ini penanda berada di periode terakhir tahun buku.',
     },
     warnings: {
       noOpenPeriod:
         'Tidak ada periode terbuka untuk perusahaan ini. Buka satu periode, atau buat tahun buku berikutnya.',
       noReopenFlow:
-        'Belum ada alur persetujuan buka kembali — periode tertutup tidak dapat dibuka kembali.',
+        'Belum ada alur persetujuan buka kembali — periode tertutup akan langsung dibuka kembali tanpa persetujuan.',
       openConsequence:
         'Membuka {period} akan menutup {n} periode sebelumnya. Aksi ini tidak dapat dibatalkan.',
       closeConsequence:
@@ -865,6 +872,8 @@ export default {
         '{period} adalah periode terakhir yang ditentukan. Menutupnya membuat perusahaan ini tanpa periode terbuka.',
       reopenConsequence:
         'Ini mengirimkan permintaan buka kembali untuk {period} untuk disetujui. {period} tetap tertutup sampai disetujui; {open} akan kembali menjadi Akan Datang saat disetujui.',
+      reopenConsequenceImmediate:
+        'Belum ada alur persetujuan buka kembali, jadi {period} akan langsung dibuka kembali; {open} akan kembali menjadi Akan Datang.',
       permanentCloseConsequence:
         '{period} tidak dapat dibuka kembali. Semua koreksi harus dilakukan sebagai pembalik di periode terbuka.',
       revertConsequence: '{period} akan kembali menjadi Ditutup dan dapat dibuka kembali lagi.',
@@ -881,17 +890,113 @@ export default {
       uncoveredStart: 'Harus mulai pada {date} agar menutupi seluruh tahun buku.',
       uncoveredEnd: 'Harus berakhir pada {date} agar menutupi seluruh tahun buku.',
       invalidRange: 'Tanggal selesai harus sama atau setelah tanggal mulai.',
+      yearEndRequired: 'Harus ada tepat satu periode yang ditandai sebagai akhir tahun.',
+      yearEndMultiple: 'Hanya satu periode yang boleh ditandai sebagai akhir tahun.',
     },
     messages: {
       created: 'Tahun buku berhasil dibuat.',
       updated: 'Tahun buku berhasil diperbarui.',
       deleted: 'Tahun buku berhasil dihapus.',
+      periodAdded: 'Periode berhasil ditambahkan.',
       opened: 'Periode berhasil dibuka.',
       closed: 'Periode berhasil ditutup.',
       reopenRequested: 'Permintaan buka kembali berhasil dikirim.',
+      reopened: 'Periode berhasil dibuka kembali.',
       permanentlyClosed: 'Periode berhasil ditutup permanen.',
       reverted: 'Penutupan permanen berhasil dibatalkan.',
       configSaved: 'Alur persetujuan buka kembali berhasil disimpan.',
+    },
+  },
+  journalConfig: {
+    title: 'Konfigurasi Jurnal',
+    fields: {
+      company: 'Perusahaan',
+      document: 'Dokumen',
+      category: 'Kategori Jurnal',
+      includePosting: 'Sertakan Posting',
+      account: 'Akun',
+      subAccount: 'Sub Akun',
+      status: 'Status',
+    },
+    labels: {
+      selectCompany: 'Pilih Perusahaan',
+      selectDocument: 'Pilih Dokumen',
+      basisPosting: 'Basis Posting',
+      basisSlot: 'Basis {n}',
+      selectDimension: 'Pilih dimensi',
+      none: 'Tidak ada',
+      generate: 'Isi Dengan Data',
+      notSet: '(belum diisi)',
+      onlyUnmapped: 'Hanya yang belum dipetakan',
+      saveAsDraft: 'Simpan sebagai Draft',
+      saveAndActivate: 'Simpan & Aktifkan',
+      cancel: 'Batal',
+      statusDraft: 'Draft',
+      statusActive: 'Aktif',
+      statusInactive: 'Tidak Aktif',
+      stale: 'Sudah tidak ada di master data',
+      mapped: 'Terpetakan',
+      unmapped: 'Akun belum diisi',
+    },
+    documentTypes: {
+      invoice: 'Invoice',
+      goods_receipt: 'Goods Receipt',
+      ap_payment: 'AP Payment',
+      ar_receipt: 'AR Receipt',
+      delivery_order: 'Delivery Order',
+    },
+    roles: {
+      ar: 'Piutang Outlet',
+      sales_return: 'Retur Penjualan',
+      sales_discount: 'Diskon Penjualan',
+      revenue: 'Penjualan',
+      cogs: 'HPP',
+      inventory: 'Persediaan',
+      output_vat: 'PPN Keluaran',
+      accounts_payable: 'Utang Usaha',
+      accrued_ap: 'Utang Akrual',
+    },
+    dimensions: {
+      company: 'Perusahaan',
+      branch: 'Cabang',
+      warehouse: 'Gudang',
+      customer: 'Pelanggan',
+      customer_category: 'Kategori Pelanggan',
+      product: 'Produk',
+      supplier: 'Supplier',
+      order_type: 'Tipe Order',
+    },
+    helpers: {
+      generate:
+        'Kombinasi berasal dari master data aktif — jalankan ulang Isi Dengan Data setiap kali ada master data baru.',
+      notSetMeaning:
+        '"(belum diisi)" berarti entitas ini tidak punya nilai untuk dimensi ini. Ini bukan wildcard.',
+    },
+    warnings: {
+      unmappedRows: '{count} kombinasi belum memiliki akun.',
+      unmappedBanner: '{unmapped} dari {total} kombinasi belum memiliki akun {role}.',
+      basisChangeConfirm:
+        'Mengubah basis akan menghapus baris yang sudah dipetakan untuk peran ini dan mengembalikan konfigurasi ini ke draft. Lanjutkan?',
+      tooManyCombinations:
+        'Pilihan ini akan menghasilkan kombinasi terlalu banyak (lebih dari 20.000). Persempit basis lalu coba lagi.',
+      unsavedChanges:
+        'Anda memiliki perubahan yang belum disimpan di tab ini. Perubahan akan hilang jika melanjutkan.',
+    },
+    validation: {
+      tooManyBases: 'Satu peran maksimal memiliki 5 dimensi basis.',
+      duplicateDimension: 'Dimensi ini sudah digunakan di slot lain.',
+    },
+    messages: {
+      created: 'Konfigurasi jurnal berhasil dibuat.',
+      saved: 'Konfigurasi jurnal berhasil disimpan.',
+      basesSaved: 'Basis posting berhasil diperbarui.',
+      generated:
+        '{added} kombinasi baru ditambahkan, {kept} dipertahankan, {staleMarked} sudah tidak ada di master data.',
+      mappingsSaved: 'Baris pemetaan berhasil disimpan.',
+      activated: 'Konfigurasi jurnal berhasil diaktifkan.',
+      deactivated: 'Konfigurasi jurnal berhasil dinonaktifkan.',
+      incomplete:
+        'Konfigurasi ini belum lengkap — beberapa peran masih memiliki kombinasi yang belum dipetakan.',
     },
   },
   accountingPeriodConfigs: {

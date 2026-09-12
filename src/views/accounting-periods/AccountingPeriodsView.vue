@@ -70,6 +70,18 @@
         class="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
         @click="confirmDeleteYear(selectedFiscalYear)"
       />
+      <Button
+        v-if="canWrite && selectedFiscalYear"
+        icon="pi pi-calendar-plus"
+        severity="contrast"
+        text
+        rounded
+        outlined
+        :aria-label="t('accountingPeriods.addPeriod')"
+        v-tooltip.top="t('accountingPeriods.addPeriod')"
+        class="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
+        @click="openAddPeriodDialog"
+      />
     </div>
 
     <Message v-if="!hasOpenPeriod" severity="warn" :closable="false" class="mb-4 text-sm">
@@ -91,7 +103,14 @@
             <Column field="name" :header="t('accountingPeriods.fields.period')">
               <template #body="{ data }">
                 <div>
-                  <div class="font-medium">{{ data.name }}</div>
+                  <div class="flex items-center gap-1">
+                    <span class="font-medium">{{ data.name }}</span>
+                    <Tag
+                      v-if="data.isYearEnd"
+                      severity="secondary"
+                      :value="t('accountingPeriods.fields.yearEnd')"
+                    />
+                  </div>
                   <div class="text-surface-500 font-mono text-xs">
                     {{ formatRange(data.startDate, data.endDate) }}
                   </div>
@@ -227,6 +246,22 @@
     </Dialog>
 
     <Dialog
+      :header="t('accountingPeriods.addPeriod')"
+      @hide="closeAddPeriodDialog"
+      v-model:visible="isAddPeriodDialogShown"
+      modal
+      :breakpoints="{ '960px': '90vw', '640px': '95vw' }"
+      :style="{ width: '40vw' }"
+      :pt="{ header: 'text-base sm:text-lg md:text-xl' }"
+    >
+      <AddPeriodDialog
+        v-if="selectedFiscalYearId"
+        :fiscal-year-id="selectedFiscalYearId"
+        @close="closeAddPeriodDialog"
+      />
+    </Dialog>
+
+    <Dialog
       :header="periodActionDialogHeader"
       @hide="closePeriodActionDialog"
       v-model:visible="isPeriodActionDialogShown"
@@ -240,6 +275,7 @@
         :action="selectedAction"
         :period="selectedPeriod"
         :timeline="companyTimeline"
+        :has-reopen-flow="!!config?.reopenFlowId"
         @close="closePeriodActionDialog"
       />
     </Dialog>
@@ -267,6 +303,7 @@ import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import FiscalYearDialog from './FiscalYearDialog.vue'
+import AddPeriodDialog from './AddPeriodDialog.vue'
 import PeriodActionDialog from './PeriodActionDialog.vue'
 import { formatRange } from './periodSchedule'
 import { actionsFor, type PeriodAction } from './periodActions'
@@ -429,6 +466,16 @@ function confirmDeleteYear(fy: FiscalYear | undefined) {
     acceptProps: { label: t('common.confirmation.yes') },
   })
 }
+
+const {
+  isVisible: isAddPeriodDialogShown,
+  open: openAddPeriodDialog,
+  close: closeAddPeriodDialog,
+} = useDialog({
+  onClose: async () => {
+    await loadCompanyData()
+  },
+})
 
 // ---------------------------------------------------------------------------
 // Periods / timeline

@@ -290,6 +290,11 @@ const mainMenu = [
         labelKey: 'navigation.accountingPeriods',
         route: '/accounting-periods',
       },
+      {
+        label: 'Journal Config',
+        labelKey: 'navigation.journalConfig',
+        route: '/journal-config',
+      },
     ],
   },
   {

@@ -310,6 +310,11 @@ const mainMenu = [
         labelKey: 'navigation.bankSettlements',
         route: '/bank-settlements',
       },
+      {
+        label: 'AR Clearing',
+        labelKey: 'navigation.arClearings',
+        route: '/ar-clearings',
+      },
     ],
   },
   {

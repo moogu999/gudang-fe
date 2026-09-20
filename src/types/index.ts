@@ -354,6 +354,21 @@ export type {
   UpdateBankSettlementRequest,
   BankSettlementResponse,
 } from './bankSettlement.type'
+export type {
+  ArClearingStatus,
+  ArCashSourceType,
+  ArUnappliedCashItem,
+  ArOpenItem,
+  ArClearingListRow,
+  ArClearingSourceRequest,
+  ArClearingAllocationRequest,
+  CreateArClearingRequest,
+  UpdateArClearingRequest,
+  VoidArClearingRequest,
+  ArClearingSourceResponse,
+  ArClearingAllocationResponse,
+  ArClearingResponse,
+} from './arClearing.type'
 
 // Payment Method types
 export type {

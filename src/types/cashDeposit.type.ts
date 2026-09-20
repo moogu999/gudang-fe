@@ -63,7 +63,6 @@ export interface CashDepositLineRequest {
   lineType: CashDepositLineType
   invoiceId?: number | null
   customerId?: number | null
-  outletName?: string | null
   categoryId?: number | null
   note?: string | null
   /** Decimal string. */
@@ -95,7 +94,6 @@ export interface CashDepositLineResponse {
   invoiceNo: string | null
   customerId: number | null
   customerName: string | null
-  outletName: string | null
   categoryId: number | null
   categoryName: string | null
   note: string | null

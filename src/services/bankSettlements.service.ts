@@ -10,7 +10,7 @@ import { API_ENDPOINTS } from '@/constants/api'
 
 /**
  * Service for Bank Settlement — a period of credit (inflow) mutations on a company
- * bank account, each line optionally tagged to the outlet that paid. Attribution-only:
+ * bank account, each line optionally tagged to the customer that paid. Attribution-only:
  * nothing is settled against AR and nothing is posted.
  */
 export class BankSettlementsService {

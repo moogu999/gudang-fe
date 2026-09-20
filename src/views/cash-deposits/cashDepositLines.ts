@@ -34,12 +34,12 @@ export function clamp(value: number | null | undefined, max: number): number {
 
 /** Ad-hoc lines need a customer, a category and a positive amount. */
 export function adhocRowErrors(row: AdhocRow): {
-  outlet: boolean
+  customer: boolean
   category: boolean
   amount: boolean
 } {
   return {
-    outlet: row.customerId == null,
+    customer: row.customerId == null,
     category: row.categoryId == null,
     amount: !(row.amount > 0),
   }
@@ -47,7 +47,7 @@ export function adhocRowErrors(row: AdhocRow): {
 
 export function isAdhocRowValid(row: AdhocRow): boolean {
   const e = adhocRowErrors(row)
-  return !e.outlet && !e.category && !e.amount
+  return !e.customer && !e.category && !e.amount
 }
 
 export function newAdhocRow(): AdhocRow {

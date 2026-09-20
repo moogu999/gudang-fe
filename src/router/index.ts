@@ -1129,6 +1129,46 @@ const router = createRouter({
           },
         },
         {
+          path: 'ar-clearings',
+          name: 'ArClearings',
+          component: () => import('@/views/ar-clearings/ArClearingsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_READ,
+            titleKey: 'navigation.arClearings',
+          },
+        },
+        {
+          path: 'ar-clearings/create',
+          name: 'ArClearingCreate',
+          component: () => import('@/views/ar-clearings/ArClearingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_WRITE,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `ar-clearings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'ar-clearings/:id/edit',
+          name: 'ArClearingEdit',
+          component: () => import('@/views/ar-clearings/ArClearingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_WRITE,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'ar-clearings/:id',
+          name: 'ArClearingDetail',
+          component: () => import('@/views/ar-clearings/ArClearingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_READ,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'branch-bank-accounts',
           name: 'BranchBankAccounts',
           component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),

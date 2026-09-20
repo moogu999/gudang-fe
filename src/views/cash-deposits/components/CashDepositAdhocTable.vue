@@ -15,7 +15,7 @@
     </div>
 
     <DataTable :value="modelValue" data-key="_key" responsive-layout="scroll" class="text-sm">
-      <Column :header="t('cashDeposits.adhoc.outlet')" style="min-width: 14rem">
+      <Column :header="t('cashDeposits.adhoc.customer')" style="min-width: 14rem">
         <template #body="{ data, index }">
           <template v-if="readonly">
             {{ data.customer?.name }}
@@ -37,8 +37,8 @@
                 (opt: object) => patch(index, { customer: opt as AdhocRow['customer'] })
               "
             />
-            <small v-if="showErrors && errorsOf(data).outlet" class="text-red-600">{{
-              t('cashDeposits.adhoc.outletRequired')
+            <small v-if="showErrors && errorsOf(data).customer" class="text-red-600">{{
+              t('cashDeposits.adhoc.customerRequired')
             }}</small>
           </div>
         </template>

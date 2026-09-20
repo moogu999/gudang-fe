@@ -14,7 +14,7 @@ vi.mock('@/services', () => ({
 
 const period: Period = [new Date(2026, 8, 1), new Date(2026, 8, 15)]
 
-// Minimal native stand-ins that still emit the events the real controls do. The outlet
+// Minimal native stand-ins that still emit the events the real controls do. The customer
 // stand-in emits update:model-value then select-option back to back, like InfiniteSelect.
 const stubs = {
   DatePicker: { template: '<input class="date" />' },
@@ -23,7 +23,7 @@ const stubs = {
     name: 'InfiniteSelect',
     props: ['modelValue'],
     emits: ['update:modelValue', 'select-option'],
-    template: `<div class="outlet">
+    template: `<div class="customer">
       <button class="pick" @click="$emit('update:modelValue', 7); $emit('select-option', { id: 7, name: 'Toko Sumber' })" />
       <button class="clear" @click="$emit('update:modelValue', null)" />
     </div>`,
@@ -96,7 +96,7 @@ describe('BankSettlementMutationTable', () => {
     expect(lastEmit(wrapper).map((r) => r.description)).toEqual(['a', 'c'])
   })
 
-  it('picking an outlet tags the row, keeping both back-to-back emits', async () => {
+  it('picking a customer tags the row, keeping both back-to-back emits', async () => {
     const wrapper = mountTable([validRow()])
     expect(wrapper.find('[data-testid="status-untagged"]').exists()).toBe(true)
     await wrapper.find('.pick').trigger('click')
@@ -107,7 +107,7 @@ describe('BankSettlementMutationTable', () => {
     expect(wrapper.find('[data-testid="status-tagged"]').exists()).toBe(true)
   })
 
-  it('clearing the outlet flips the row back to untagged', async () => {
+  it('clearing the customer flips the row back to untagged', async () => {
     const wrapper = mountTable([validRow({ customerId: 7, customer: { id: 7, name: 'Toko' } })])
     expect(wrapper.find('[data-testid="status-tagged"]').exists()).toBe(true)
     await wrapper.find('.clear').trigger('click')
@@ -132,7 +132,7 @@ describe('BankSettlementMutationTable', () => {
       },
     )
     expect(wrapper.find('[data-testid="add-row"]').exists()).toBe(false)
-    expect(wrapper.find('.outlet').exists()).toBe(false)
+    expect(wrapper.find('.customer').exists()).toBe(false)
     expect(wrapper.find('.amount').exists()).toBe(false)
     expect(wrapper.text()).toContain('GIRO MASUK')
     expect(wrapper.text()).toContain('Toko Baru')

@@ -6,7 +6,7 @@ export interface MutationRow {
   description: string
   amount: number | null
   customerId?: number
-  /** Display copy of the chosen outlet, so the select can label it without a fetch. */
+  /** Display copy of the chosen customer, so the select can label it without a fetch. */
   customer?: { id: number; name: string; code?: string }
   note: string | null
 }

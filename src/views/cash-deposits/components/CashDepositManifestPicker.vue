@@ -53,7 +53,7 @@
             <div class="text-xs text-stone-500">{{ data.deliveryOrderNo }}</div>
           </template>
         </Column>
-        <Column :header="t('cashDeposits.picker.outlet')">
+        <Column :header="t('cashDeposits.picker.customer')">
           <template #body="{ data }">{{ data.customerName }}</template>
         </Column>
         <Column :header="t('cashDeposits.picker.age')">

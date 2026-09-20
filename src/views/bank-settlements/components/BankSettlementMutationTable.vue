@@ -82,7 +82,7 @@
         </template>
       </Column>
 
-      <Column :header="t('bankSettlements.table.outlet')" style="min-width: 14rem">
+      <Column :header="t('bankSettlements.table.customer')" style="min-width: 14rem">
         <template #body="{ data, index }">
           <template v-if="readonly">{{ data.customer?.name }}</template>
           <InfiniteSelect
@@ -92,12 +92,12 @@
             option-value="id"
             :fetch-fn="(q) => CustomersService.list(q)"
             :initial-option="data.customer"
-            :placeholder="t('bankSettlements.table.selectOutlet')"
+            :placeholder="t('bankSettlements.table.selectCustomer')"
             show-clear
             sort-by="name"
             sort-operator="asc"
             class="w-full"
-            @update:model-value="(v: unknown) => onOutletChange(index, v)"
+            @update:model-value="(v: unknown) => onCustomerChange(index, v)"
             @select-option="
               (opt: object) => patch(index, { customer: opt as MutationRow['customer'] })
             "
@@ -216,7 +216,7 @@ function patch(index: number, changes: Partial<MutationRow>) {
   commit(latest.value.map((row, i) => (i === index ? { ...row, ...changes } : row)))
 }
 
-function onOutletChange(index: number, value: unknown) {
+function onCustomerChange(index: number, value: unknown) {
   if (typeof value === 'number') {
     patch(index, { customerId: value })
   } else {

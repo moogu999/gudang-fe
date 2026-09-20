@@ -217,6 +217,12 @@ export const API_ENDPOINTS = {
   BANK_SETTLEMENTS: '/v1/bank-settlements',
   BANK_SETTLEMENT_BY_ID: (id: number) => `/v1/bank-settlements/${id}`,
   GEN_BANK_SETTLEMENTS: '/gen/v1/bank-settlements',
+  AR_OUTSTANDING: '/v1/ar-outstanding',
+  AR_UNAPPLIED_CASH: '/v1/ar-unapplied-cash',
+  AR_CLEARINGS: '/v1/ar-clearings',
+  AR_CLEARING_BY_ID: (id: number) => `/v1/ar-clearings/${id}`,
+  AR_CLEARING_VOID: (id: number) => `/v1/ar-clearings/${id}/void`,
+  GEN_AR_CLEARINGS: '/gen/v1/ar-clearings',
   PAYMENT_METHODS: '/gen/v1/payment-methods',
   BRANCH_BANK_ACCOUNTS: '/gen/v1/branch-bank-accounts',
 

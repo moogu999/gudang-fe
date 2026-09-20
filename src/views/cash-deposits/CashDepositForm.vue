@@ -236,7 +236,7 @@
         <Column :header="t('cashDeposits.picker.invoiceNo')">
           <template #body="{ data }">{{ data.invoiceNo }}</template>
         </Column>
-        <Column :header="t('cashDeposits.picker.outlet')">
+        <Column :header="t('cashDeposits.picker.customer')">
           <template #body="{ data }">{{ data.customerName }}</template>
         </Column>
         <Column :header="t('cashDeposits.picker.receivable')" class="text-right">

@@ -207,7 +207,6 @@ describe('CashDepositManifestPicker', () => {
           invoiceNo: 'INV-1',
           customerId: null,
           customerName: 'Toko Makmur',
-          outletName: null,
           categoryId: null,
           categoryName: null,
           note: null,

@@ -146,7 +146,7 @@
                         form.rules[index].values[getCriteriaValueIndex(index, crit.criteriaTypeId)]
                           ?.valueId
                       "
-                      sort-by="name"
+                      :sort-by="getCriteriaSortBy(crit.criteriaTypeId)"
                       sort-operator="asc"
                       class="flex-1"
                       @update:model-value="
@@ -292,6 +292,8 @@ import { PromotionsService } from '@/services/promotions.service'
 import { BranchesService } from '@/services/branches.service'
 import { CompaniesService } from '@/services/companies.service'
 import { SalesOrganizationsService } from '@/services/salesOrganizations.service'
+import { ProductLabelOptionsService } from '@/services/productLabelOptions.service'
+import { CustomerLabelOptionsService } from '@/services/customerLabelOptions.service'
 import { ProductLabelDefinitionsService } from '@/services/productLabelDefinitions.service'
 import { CustomerLabelDefinitionsService } from '@/services/customerLabelDefinitions.service'
 import ApiService from '@/services/api'
@@ -306,11 +308,13 @@ import { commonErrorToast } from '@/services/toast'
 
 type FormMode = 'create' | 'edit' | 'view'
 
-interface InitialValue {
+interface SelectOption {
   id: number
   name: string
   code?: string
 }
+
+type InitialValue = SelectOption
 
 interface RuleValueForm {
   criteriaTypeId: number
@@ -408,42 +412,96 @@ function getCriteriaType(criteriaTypeId: number): CriteriaType | undefined {
   return criteriaTypes.value.find((c) => c.id === criteriaTypeId)
 }
 
+// Label criteria are matched against label *option* ids by the pricing resolver
+// (product_label_values.product_label_option_id / customer_label_values.customer_label_option_id),
+// so the dropdown must offer options — not definitions.
+//
+// An option's value is only unique within its definition, so "Gold" can exist under both
+// "Customer Tier" and "Loyalty Program". The dropdown lists every definition's options together,
+// so the definition name is prefixed to tell them apart — matching the label the backend renders
+// for a saved rule. Definition names are fetched once and cached per criteria code.
+const definitionNames = new Map<string, Promise<Map<number, string>>>()
+
+function loadDefinitionNames(
+  code: 'product_label' | 'customer_label',
+): Promise<Map<number, string>> {
+  let cached = definitionNames.get(code)
+  if (!cached) {
+    const query = 'limit=500&sortBy=name&sortOperator=asc'
+    const list =
+      code === 'product_label'
+        ? ProductLabelDefinitionsService.list(query)
+        : CustomerLabelDefinitionsService.list(query)
+    cached = list
+      .then((res) => new Map(res.data.map((d) => [d.id, d.name])))
+      // Fall back to the bare option value rather than failing the whole dropdown.
+      .catch(() => new Map<number, string>())
+    definitionNames.set(code, cached)
+  }
+  return cached
+}
+
+function qualifiedLabel(definitionName: string | undefined, value: string): string {
+  return definitionName ? `${definitionName} - ${value}` : value
+}
+
+async function fetchProductLabelOptions(query: string): Promise<Base<SelectOption>> {
+  const [res, names] = await Promise.all([
+    ProductLabelOptionsService.list(query),
+    loadDefinitionNames('product_label'),
+  ])
+  return {
+    ...res,
+    data: res.data.map((o) => ({
+      id: o.id,
+      name: qualifiedLabel(names.get(o.productLabelDefinitionId), o.value),
+    })),
+  }
+}
+
+async function fetchCustomerLabelOptions(query: string): Promise<Base<SelectOption>> {
+  const [res, names] = await Promise.all([
+    CustomerLabelOptionsService.list(query),
+    loadDefinitionNames('customer_label'),
+  ])
+  return {
+    ...res,
+    data: res.data.map((o) => ({
+      id: o.id,
+      name: qualifiedLabel(names.get(o.customerLabelDefinitionId), o.value),
+    })),
+  }
+}
+
 function getCriteriaFetchFn(
   criteriaTypeId: number,
-): (query: string) => Promise<Base<{ id: number; name: string; code?: string }>> {
+): (query: string) => Promise<Base<SelectOption>> {
   const ct = getCriteriaType(criteriaTypeId)
-  if (!ct)
-    return (q) =>
-      BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+  if (!ct) return (q) => BranchesService.list(q) as Promise<Base<SelectOption>>
 
   switch (ct.code) {
     case 'company':
-      return (q) =>
-        CompaniesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+      return (q) => CompaniesService.list(q) as Promise<Base<SelectOption>>
     case 'branch':
-      return (q) =>
-        BranchesService.list(q) as Promise<Base<{ id: number; name: string; code?: string }>>
+      return (q) => BranchesService.list(q) as Promise<Base<SelectOption>>
     case 'sales_organization':
-      return (q) =>
-        SalesOrganizationsService.list(q) as Promise<
-          Base<{ id: number; name: string; code?: string }>
-        >
+      return (q) => SalesOrganizationsService.list(q) as Promise<Base<SelectOption>>
     case 'product_label':
-      return (q) =>
-        ProductLabelDefinitionsService.list(q) as Promise<
-          Base<{ id: number; name: string; code?: string }>
-        >
+      return fetchProductLabelOptions
     case 'customer_label':
-      return (q) =>
-        CustomerLabelDefinitionsService.list(q) as Promise<
-          Base<{ id: number; name: string; code?: string }>
-        >
+      return fetchCustomerLabelOptions
     default:
       return (q) => {
         const url = q ? `/gen/v1/${ct.sourceTable}?${q}` : `/gen/v1/${ct.sourceTable}`
-        return ApiService.get<Base<{ id: number; name: string; code?: string }>>(url)
+        return ApiService.get<Base<SelectOption>>(url)
       }
   }
+}
+
+// The dropdown sorts server-side, so it has to name a real column on the source table.
+function getCriteriaSortBy(criteriaTypeId: number): string {
+  const code = getCriteriaType(criteriaTypeId)?.code
+  return code === 'product_label' || code === 'customer_label' ? 'value' : 'name'
 }
 
 function getCriteriaValueIndex(ruleIndex: number, criteriaTypeId: number): number {

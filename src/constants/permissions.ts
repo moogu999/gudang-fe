@@ -130,70 +130,12 @@ export const PERMISSIONS = {
 export type PermissionId = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 /**
- * Map routes to their required READ permissions
- */
-export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
-  '/users': PERMISSIONS.USER_READ,
-  '/roles': PERMISSIONS.ROLE_READ,
-  '/permissions': PERMISSIONS.PERMISSION_READ,
-  '/branches': PERMISSIONS.BRANCH_READ,
-  '/companies': PERMISSIONS.COMPANY_READ,
-  '/departments': PERMISSIONS.DEPARTMENT_READ,
-  '/divisions': PERMISSIONS.DIVISION_READ,
-  '/sales-organizations': PERMISSIONS.SALES_ORGANIZATION_READ,
-  '/customers': PERMISSIONS.CUSTOMER_READ,
-  '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_READ,
-  '/products': PERMISSIONS.PRODUCT_READ,
-  '/uom-groups': PERMISSIONS.UOM_GROUP_READ,
-  '/product-label-definitions': PERMISSIONS.PRODUCT_LABEL_DEFINITION_READ,
-  '/number-series': PERMISSIONS.NUMBER_SERIES_READ,
-  '/price-lists': PERMISSIONS.PRICE_LIST_READ,
-  '/price-matrices': PERMISSIONS.PRICE_MATRIX_READ,
-  '/price-matrix-priorities': PERMISSIONS.PRICE_MATRIX_PRIORITY_READ,
-  '/promotions': PERMISSIONS.PROMOTION_READ,
-  '/customer-label-definitions': PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ,
-  '/audit-trails': PERMISSIONS.AUDIT_TRAIL_READ,
-  '/employees': PERMISSIONS.EMPLOYEE_READ,
-  '/warehouses': PERMISSIONS.WAREHOUSE_READ,
-  '/goods-receipts': PERMISSIONS.GOODS_RECEIPT_READ,
-  '/inventory-status': PERMISSIONS.INVENTORY_READ,
-  '/sales-orders': PERMISSIONS.SALES_ORDER_READ,
-  '/booking-orders': PERMISSIONS.BOOKING_ORDER_READ,
-  '/sales-order-configs': PERMISSIONS.SALES_ORDER_CONFIG_READ,
-  '/booking-order-configs': PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
-  '/delivery-orders': PERMISSIONS.DELIVERY_ORDER_READ,
-  '/return-delivery-orders': PERMISSIONS.DELIVERY_ORDER_READ,
-  '/vehicles': PERMISSIONS.VEHICLE_READ,
-  '/delivery-notes': PERMISSIONS.DELIVERY_NOTE_READ,
-  '/picking-lists': PERMISSIONS.PICKING_LIST_READ,
-  '/invoices': PERMISSIONS.INVOICE_READ,
-  '/goods-issue-notes': PERMISSIONS.GOODS_ISSUE_NOTE_READ,
-  '/delivery-confirmations': PERMISSIONS.DELIVERY_CONFIRMATION_READ,
-  '/stock-movements': PERMISSIONS.STOCK_MOVEMENT_READ,
-  '/goods-return-notes': PERMISSIONS.GOODS_RETURN_NOTE_READ,
-  '/approval-flows': PERMISSIONS.APPROVAL_FLOW_READ,
-  '/my-approvals': PERMISSIONS.APPROVAL_REQUEST_READ,
-  '/suppliers': PERMISSIONS.SUPPLIER_READ,
-  '/payment-terms': PERMISSIONS.PAYMENT_TERM_READ,
-  '/purchase-orders': PERMISSIONS.PURCHASE_ORDER_READ,
-  '/purchase-order-configs': PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
-  '/goods-receipt-configs': PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
-  '/ap-invoices': PERMISSIONS.AP_INVOICE_READ,
-  '/ap-invoice-configs': PERMISSIONS.AP_INVOICE_CONFIG_READ,
-  '/correction-categories': PERMISSIONS.CORRECTION_CATEGORY_READ,
-  '/credit-debit-notes': PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
-  '/credit-debit-note-configs': PERMISSIONS.CREDIT_DEBIT_NOTE_CONFIG_READ,
-  '/ap-payments': PERMISSIONS.AP_PAYMENT_READ,
-  '/ap-payment-configs': PERMISSIONS.AP_PAYMENT_CONFIG_READ,
-  '/payment-methods': PERMISSIONS.PAYMENT_METHOD_READ,
-  '/branch-bank-accounts': PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
-  '/chart-of-accounts': PERMISSIONS.CHART_OF_ACCOUNT_READ,
-  '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_READ,
-  '/journal-config': PERMISSIONS.JOURNAL_CONFIG_READ,
-}
-
-/**
- * Map routes to their required WRITE permissions
+ * Map routes to their required WRITE permissions.
+ *
+ * Read permissions deliberately have no map here: they are declared once on the route
+ * itself as `meta.requiredPermission` and read from there by both the navigation guard
+ * and the sidebar, so the two cannot disagree. A route carries no notion of writing,
+ * so write permissions stay declared here.
  */
 export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/users': PERMISSIONS.USER_WRITE,

@@ -52,19 +52,33 @@ import CreditDebitNoteConfigsView from '@/views/credit-debit-note-configs/Credit
 import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsView.vue'
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import { usePermissions } from '@/composables'
+import { PERMISSIONS } from '@/constants'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const { canRead: canReadSO, canWrite: canWriteSO } = usePermissions('/sales-order-configs')
-const { canRead: canReadBO, canWrite: canWriteBO } = usePermissions('/booking-order-configs')
-const { canRead: canReadPO, canWrite: canWritePO } = usePermissions('/purchase-order-configs')
-const { canRead: canReadGR, canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
-const { canRead: canReadAP, canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
-const { canRead: canReadCDN, canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
-const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
+const { hasPermission } = usePermissions()
+
+const { canWrite: canWriteSO } = usePermissions('/sales-order-configs')
+const { canWrite: canWriteBO } = usePermissions('/booking-order-configs')
+const { canWrite: canWritePO } = usePermissions('/purchase-order-configs')
+const { canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
+const { canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
+const { canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
+const { canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
 const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
+
+// `canRead` reads the permission off the route a path resolves to, but the `*-configs`
+// paths are only redirects into this screen's tabs — no route carries their read
+// permission — so these are named directly. Accounting periods has a real route.
+const canReadSO = computed(() => hasPermission(PERMISSIONS.SALES_ORDER_CONFIG_READ))
+const canReadBO = computed(() => hasPermission(PERMISSIONS.BOOKING_ORDER_CONFIG_READ))
+const canReadPO = computed(() => hasPermission(PERMISSIONS.PURCHASE_ORDER_CONFIG_READ))
+const canReadGR = computed(() => hasPermission(PERMISSIONS.GOODS_RECEIPT_CONFIG_READ))
+const canReadAP = computed(() => hasPermission(PERMISSIONS.AP_INVOICE_CONFIG_READ))
+const canReadCDN = computed(() => hasPermission(PERMISSIONS.CREDIT_DEBIT_NOTE_CONFIG_READ))
+const canReadBKK = computed(() => hasPermission(PERMISSIONS.AP_PAYMENT_CONFIG_READ))
 
 const configOptions = computed(() => {
   const options: { label: string; value: string }[] = []

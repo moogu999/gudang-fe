@@ -1036,6 +1036,59 @@ const router = createRouter({
           },
         },
         {
+          path: 'cash-deposits',
+          name: 'CashDeposits',
+          component: () => import('@/views/cash-deposits/CashDepositsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            titleKey: 'navigation.cashDeposits',
+          },
+        },
+        {
+          path: 'cash-deposits/create',
+          name: 'CashDepositCreate',
+          component: () => import('@/views/cash-deposits/CashDepositCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_WRITE,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `cash-deposits/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'cash-deposits/:id/edit',
+          name: 'CashDepositEdit',
+          component: () => import('@/views/cash-deposits/CashDepositEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_WRITE,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'cash-deposits/:id',
+          name: 'CashDepositDetail',
+          component: () => import('@/views/cash-deposits/CashDepositDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'cash-deposit-configs',
+          redirect: { path: '/configs', query: { tab: 'cd' } },
+        },
+        {
+          path: 'cash-deposit-categories',
+          name: 'CashDepositCategories',
+          component: () => import('@/views/cash-deposit-categories/CashDepositCategoriesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
+            titleKey: 'navigation.cashDepositCategories',
+          },
+        },
+        {
           path: 'branch-bank-accounts',
           name: 'BranchBankAccounts',
           component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),

@@ -295,6 +295,16 @@ const mainMenu = [
         labelKey: 'navigation.journalConfig',
         route: '/journal-config',
       },
+      {
+        label: 'Cash Deposits',
+        labelKey: 'navigation.cashDeposits',
+        route: '/cash-deposits',
+      },
+      {
+        label: 'Cash Deposit Categories',
+        labelKey: 'navigation.cashDepositCategories',
+        route: '/cash-deposit-categories',
+      },
     ],
   },
   {

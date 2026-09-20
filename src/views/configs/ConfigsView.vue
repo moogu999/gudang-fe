@@ -33,6 +33,7 @@
     <CreditDebitNoteConfigsView v-if="activeConfig === 'cdn'" ref="cdnRef" :embedded="true" />
     <ApPaymentConfigsView v-if="activeConfig === 'bkk'" ref="bkkRef" :embedded="true" />
     <AccountingPeriodConfigsView v-if="activeConfig === 'apc'" ref="apcRef" :embedded="true" />
+    <CashDepositConfigsView v-if="activeConfig === 'cd'" ref="cdRef" :embedded="true" />
   </div>
 </template>
 
@@ -51,6 +52,7 @@ import ApInvoiceConfigsView from '@/views/ap-invoice-configs/ApInvoiceConfigsVie
 import CreditDebitNoteConfigsView from '@/views/credit-debit-note-configs/CreditDebitNoteConfigsView.vue'
 import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsView.vue'
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
+import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
 import { usePermissions } from '@/composables'
 
 const { t } = useI18n()
@@ -65,6 +67,7 @@ const { canRead: canReadAP, canWrite: canWriteAP } = usePermissions('/ap-invoice
 const { canRead: canReadCDN, canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
 const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
 const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
+const { canRead: canReadCD, canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
 
 const configOptions = computed(() => {
   const options: { label: string; value: string }[] = []
@@ -78,6 +81,7 @@ const configOptions = computed(() => {
   if (canReadBKK.value) options.push({ label: t('navigation.apPaymentConfigs'), value: 'bkk' })
   if (canReadAPC.value)
     options.push({ label: t('navigation.accountingPeriodConfigs'), value: 'apc' })
+  if (canReadCD.value) options.push({ label: t('navigation.cashDepositConfigs'), value: 'cd' })
   return options
 })
 
@@ -102,6 +106,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'cdn') return canWriteCDN.value
   if (activeConfig.value === 'bkk') return canWriteBKK.value
   if (activeConfig.value === 'apc') return canWriteAPC.value
+  if (activeConfig.value === 'cd') return canWriteCD.value
   return false
 })
 
@@ -115,6 +120,7 @@ const apRef = ref<InstanceType<typeof ApInvoiceConfigsView> | null>(null)
 const cdnRef = ref<InstanceType<typeof CreditDebitNoteConfigsView> | null>(null)
 const bkkRef = ref<InstanceType<typeof ApPaymentConfigsView> | null>(null)
 const apcRef = ref<InstanceType<typeof AccountingPeriodConfigsView> | null>(null)
+const cdRef = ref<InstanceType<typeof CashDepositConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -125,5 +131,6 @@ function onAddClick() {
   else if (activeConfig.value === 'cdn') cdnRef.value?.openAddDialog()
   else if (activeConfig.value === 'bkk') bkkRef.value?.openAddDialog()
   else if (activeConfig.value === 'apc') apcRef.value?.openAddDialog()
+  else if (activeConfig.value === 'cd') cdRef.value?.openAddDialog()
 }
 </script>

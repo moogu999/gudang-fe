@@ -278,6 +278,11 @@ const entityTypeOptions = computed(() => [
     value: 'ap_payments',
     disabled: takenEntityTypes.value.has('ap_payments'),
   },
+  {
+    label: t('numberSeries.entityTypes.cashDeposits'),
+    value: 'cash_deposits',
+    disabled: takenEntityTypes.value.has('cash_deposits'),
+  },
 ])
 
 // Live preview (client-side only)

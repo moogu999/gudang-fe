@@ -99,6 +99,9 @@ export default {
     accountingPeriods: 'Periode Akuntansi',
     accountingPeriodConfigs: 'Konfigurasi Periode Akuntansi',
     journalConfig: 'Konfigurasi Jurnal',
+    cashDeposits: 'Setoran Kas',
+    cashDepositConfigs: 'Konfigurasi Setoran Kas',
+    cashDepositCategories: 'Kategori Setoran Kas',
     paymentTerms: 'Termin Pembayaran',
     correctionCategories: 'Kategori Koreksi',
     suppliers: 'Pemasok',
@@ -1362,6 +1365,7 @@ export default {
       apInvoices: 'Faktur Pembelian',
       creditDebitNotes: 'Nota Kredit/Debit',
       apPayments: 'Pembayaran Hutang',
+      cashDeposits: 'Setoran Kas',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
@@ -2515,6 +2519,170 @@ export default {
     messages: {
       created: 'Metode pembayaran berhasil dibuat.',
       updated: 'Metode pembayaran berhasil diperbarui.',
+    },
+  },
+  cashDeposits: {
+    title: 'Setoran Kas',
+    addCashDeposit: 'Tambah Setoran Kas',
+    viewCashDeposit: 'Detail Setoran Kas',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Diberikan saat disimpan',
+    },
+    fields: {
+      no: 'No. Setoran',
+      depositDate: 'Tanggal Setor',
+      employee: 'Karyawan',
+      receivedBy: 'Diterima Oleh',
+      company: 'Badan Hukum',
+      branch: 'Cabang',
+      actualAmount: 'Kas Aktual',
+      varianceAmount: 'Selisih',
+      varianceReason: 'Alasan Selisih',
+      remark: 'Catatan',
+    },
+    sections: {
+      header: 'Informasi Setoran',
+      receipt: 'Penerimaan',
+      manifest: 'Manifest Invoice',
+      adhoc: 'Kas Lainnya (Ad-hoc)',
+    },
+    labels: {
+      sourceManual: 'Manual',
+      sourceNforce: 'N-Force',
+      manifestAvailable: 'Manifest tersedia',
+      adhocOnly: 'Hanya ad-hoc',
+      companyUnresolved:
+        'Cabang ini belum dipetakan ke perusahaan. Petakan di Perusahaan → Cabang sebelum menyimpan.',
+      varianceReasonHint:
+        'Jelaskan selisih antara kas yang dihitung dan total tercatat. Approver akan membacanya.',
+    },
+    picker: {
+      selectEmployeeFirst: 'Pilih karyawan untuk melihat invoice yang dapat disetor.',
+      mode: {
+        driver: 'Driver — invoice tunai',
+        collector: 'Kolektor — piutang',
+        adhoc: 'Hanya ad-hoc',
+      },
+      search: 'Cari nomor invoice atau outlet',
+      invoiceNo: 'No. Invoice',
+      outlet: 'Pelanggan',
+      age: 'Umur',
+      ageDays: '{days} hari',
+      receivable: 'Piutang',
+      alreadyDeposited: 'Sudah disetor {amount}',
+      received: 'Diterima',
+      lineStatus: {
+        paid: 'Lunas',
+        partial: 'Sebagian',
+      },
+      empty: 'Tidak ada invoice yang dapat disetor.',
+      selectedSummary: '{count} invoice dipilih',
+      selectedTotal: 'Total',
+    },
+    adhoc: {
+      addRow: 'Tambah Baris',
+      outlet: 'Pelanggan',
+      selectCustomer: 'Pilih pelanggan',
+      outletRequired: 'Pelanggan wajib diisi.',
+      category: 'Kategori',
+      categoryRequired: 'Kategori wajib diisi.',
+      note: 'Catatan',
+      amount: 'Nominal',
+      amountRequired: 'Nominal harus lebih dari nol.',
+      subtotal: 'Subtotal ad-hoc',
+      empty: 'Belum ada kas ad-hoc.',
+    },
+    summary: {
+      title: 'Ringkasan',
+      recorded: 'Total Tercatat',
+      actual: 'Kas Aktual Dihitung',
+      variance: 'Selisih',
+    },
+    status: {
+      draft: 'Draf',
+      need_approval: 'Perlu Persetujuan',
+      approved: 'Selesai',
+    },
+    actions: {
+      saveAsDraft: 'Simpan sebagai Draf',
+      submitForApproval: 'Ajukan Persetujuan',
+      complete: 'Selesaikan Setoran',
+      editCashDeposit: 'Ubah Setoran Kas',
+    },
+    confirm: {
+      header: 'Konfirmasi',
+      messageSubmit:
+        'Selisih melebihi batas cabang, sehingga setoran ini akan diajukan untuk persetujuan. Lanjutkan?',
+      messageComplete: 'Setoran kas akan diselesaikan. Lanjutkan?',
+    },
+    validation: {
+      noRequired: 'Nomor setoran wajib diisi.',
+      employeeRequired: 'Karyawan wajib diisi.',
+      depositDateRequired: 'Tanggal setor wajib diisi.',
+      depositDateFuture: 'Tanggal setor tidak boleh melebihi hari ini.',
+      branchRequired: 'Cabang wajib diisi.',
+      actualRequired: 'Isi kas aktual yang dihitung.',
+      noLines: 'Tambahkan minimal satu baris invoice atau ad-hoc.',
+      invoiceAmountRequired: 'Setiap invoice yang dicentang harus bernominal lebih dari nol.',
+      adhocInvalid: 'Perbaiki baris ad-hoc yang ditandai.',
+    },
+    messages: {
+      created: 'Setoran kas berhasil disimpan.',
+      updated: 'Setoran kas berhasil diperbarui.',
+      deleted: 'Setoran kas berhasil dihapus.',
+      notFound: 'Setoran kas tidak ditemukan.',
+      approvalInfo:
+        'Dengan angka saat ini, selisih melebihi batas cabang sehingga penyelesaian setoran ini memerlukan persetujuan.',
+    },
+  },
+  cashDepositConfigs: {
+    title: 'Konfigurasi Setoran Kas',
+    addConfig: 'Tambah Konfigurasi',
+    editConfig: 'Ubah Konfigurasi',
+    viewConfig: 'Lihat Konfigurasi',
+    fields: {
+      branch: 'Cabang',
+      approvalFlow: 'Alur Persetujuan',
+      varianceThreshold: 'Batas Selisih',
+    },
+    labels: {
+      selectBranch: 'Pilih Cabang',
+      noApprovalRequired: 'Tanpa persetujuan',
+      approvalConfigured: 'Persetujuan dikonfigurasi',
+      approvalFlowHint:
+        'Kosongkan agar setoran dari cabang ini tidak pernah memerlukan persetujuan, berapa pun selisihnya.',
+      varianceThresholdHint:
+        'Selisih di atas nominal ini (lebih maupun kurang) memerlukan persetujuan. Kosongkan untuk meminta persetujuan pada selisih apa pun. Hanya berlaku jika alur persetujuan diatur.',
+      anyVariance: 'Selisih apa pun selain nol',
+    },
+    validation: {
+      branchRequired: 'Cabang wajib diisi.',
+    },
+    messages: {
+      created: 'Konfigurasi berhasil dibuat.',
+      updated: 'Konfigurasi berhasil diperbarui.',
+    },
+  },
+  cashDepositCategories: {
+    title: 'Kategori Setoran Kas',
+    addCategory: 'Tambah Kategori',
+    editCategory: 'Ubah Kategori',
+    viewCategory: 'Lihat Kategori',
+    fields: {
+      code: 'Kode',
+    },
+    labels: {
+      codeHint: 'Kode singkat dan tetap untuk kategori.',
+    },
+    validation: {
+      codeRequired: 'Kode wajib diisi.',
+      nameRequired: 'Nama wajib diisi.',
+    },
+    messages: {
+      created: 'Kategori berhasil dibuat.',
+      updated: 'Kategori berhasil diperbarui.',
     },
   },
   branchBankAccounts: {

@@ -98,6 +98,9 @@ export default {
     accountingPeriods: 'Accounting Periods',
     accountingPeriodConfigs: 'Accounting Period Config',
     journalConfig: 'Journal Config',
+    cashDeposits: 'Cash Deposits',
+    cashDepositConfigs: 'Cash Deposit Config',
+    cashDepositCategories: 'Cash Deposit Categories',
     paymentTerms: 'Term of Payment',
     correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
@@ -1357,6 +1360,7 @@ export default {
       apInvoices: 'AP Invoices',
       creditDebitNotes: 'Credit/Debit Notes',
       apPayments: 'AP Payments',
+      cashDeposits: 'Cash Deposits',
     },
     validation: {
       nameRequired: 'Name is required.',
@@ -2511,6 +2515,170 @@ export default {
     messages: {
       created: 'Payment method is created.',
       updated: 'Payment method is updated.',
+    },
+  },
+  cashDeposits: {
+    title: 'Cash Deposits',
+    addCashDeposit: 'Add Cash Deposit',
+    viewCashDeposit: 'Cash Deposit Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'Deposit No.',
+      depositDate: 'Deposit Date',
+      employee: 'Employee',
+      receivedBy: 'Received By',
+      company: 'Legal Entity',
+      branch: 'Branch',
+      actualAmount: 'Actual Cash',
+      varianceAmount: 'Variance',
+      varianceReason: 'Variance Reason',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Deposit Information',
+      receipt: 'Receipt',
+      manifest: 'Invoice Manifest',
+      adhoc: 'Other Cash (Ad-hoc)',
+    },
+    labels: {
+      sourceManual: 'Manual',
+      sourceNforce: 'N-Force',
+      manifestAvailable: 'Manifest available',
+      adhocOnly: 'Ad-hoc only',
+      companyUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+      varianceReasonHint:
+        'Explain the difference between the counted cash and the recorded total. An approver will read this.',
+    },
+    picker: {
+      selectEmployeeFirst: 'Choose an employee to see their depositable invoices.',
+      mode: {
+        driver: 'Driver — cash invoices',
+        collector: 'Collector — receivables',
+        adhoc: 'Ad-hoc only',
+      },
+      search: 'Search invoice number or outlet',
+      invoiceNo: 'Invoice No.',
+      outlet: 'Customer',
+      age: 'Age',
+      ageDays: '{days} days',
+      receivable: 'Receivable',
+      alreadyDeposited: 'Already deposited {amount}',
+      received: 'Received',
+      lineStatus: {
+        paid: 'Paid in full',
+        partial: 'Partial',
+      },
+      empty: 'No depositable invoices.',
+      selectedSummary: '{count} invoices selected',
+      selectedTotal: 'Total',
+    },
+    adhoc: {
+      addRow: 'Add Row',
+      outlet: 'Customer',
+      selectCustomer: 'Select a customer',
+      outletRequired: 'Customer is required.',
+      category: 'Category',
+      categoryRequired: 'Category is required.',
+      note: 'Note',
+      amount: 'Amount',
+      amountRequired: 'Amount must be greater than zero.',
+      subtotal: 'Ad-hoc subtotal',
+      empty: 'No ad-hoc cash recorded.',
+    },
+    summary: {
+      title: 'Summary',
+      recorded: 'Total Recorded',
+      actual: 'Actual Cash Counted',
+      variance: 'Variance',
+    },
+    status: {
+      draft: 'Draft',
+      need_approval: 'Needs Approval',
+      approved: 'Completed',
+    },
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submitForApproval: 'Submit for Approval',
+      complete: 'Complete Deposit',
+      editCashDeposit: 'Edit Cash Deposit',
+    },
+    confirm: {
+      header: 'Confirm',
+      messageSubmit:
+        'The variance exceeds the branch threshold, so this deposit will be sent for approval. Continue?',
+      messageComplete: 'This will complete the cash deposit. Continue?',
+    },
+    validation: {
+      noRequired: 'Deposit number is required.',
+      employeeRequired: 'Employee is required.',
+      depositDateRequired: 'Deposit date is required.',
+      depositDateFuture: 'Deposit date cannot be later than today.',
+      branchRequired: 'Branch is required.',
+      actualRequired: 'Enter the actual cash counted.',
+      noLines: 'Add at least one invoice or ad-hoc line.',
+      invoiceAmountRequired: 'Every ticked invoice needs an amount greater than zero.',
+      adhocInvalid: 'Fix the highlighted ad-hoc rows.',
+    },
+    messages: {
+      created: 'Cash deposit saved successfully.',
+      updated: 'Cash deposit updated successfully.',
+      deleted: 'Cash deposit deleted successfully.',
+      notFound: 'Cash deposit not found.',
+      approvalInfo:
+        'With the current figures the variance exceeds the branch threshold, so completing this deposit will require approval.',
+    },
+  },
+  cashDepositConfigs: {
+    title: 'Cash Deposit Configs',
+    addConfig: 'Add Config',
+    editConfig: 'Edit Config',
+    viewConfig: 'View Config',
+    fields: {
+      branch: 'Branch',
+      approvalFlow: 'Approval Flow',
+      varianceThreshold: 'Variance Threshold',
+    },
+    labels: {
+      selectBranch: 'Select Branch',
+      noApprovalRequired: 'No approval required',
+      approvalConfigured: 'Approval configured',
+      approvalFlowHint:
+        'Leave empty and deposits from this branch never need approval, whatever the variance.',
+      varianceThresholdHint:
+        'Variance above this amount (either direction) requires approval. Leave blank to require approval for any non-zero variance. Only applies when a flow is set.',
+      anyVariance: 'Any non-zero variance',
+    },
+    validation: {
+      branchRequired: 'Branch is required.',
+    },
+    messages: {
+      created: 'Config is created.',
+      updated: 'Config is updated.',
+    },
+  },
+  cashDepositCategories: {
+    title: 'Cash Deposit Categories',
+    addCategory: 'Add Category',
+    editCategory: 'Edit Category',
+    viewCategory: 'View Category',
+    fields: {
+      code: 'Code',
+    },
+    labels: {
+      codeHint: 'A short, stable code for the category.',
+    },
+    validation: {
+      codeRequired: 'Code is required.',
+      nameRequired: 'Name is required.',
+    },
+    messages: {
+      created: 'Category is created.',
+      updated: 'Category is updated.',
     },
   },
   branchBankAccounts: {

@@ -322,6 +322,27 @@ export type {
 // AP Payment Config types
 export type { ApPaymentConfig, UpsertApPaymentConfigDto } from './apPaymentConfig.type'
 
+// Cash Deposit types
+export type {
+  CashDepositStatus,
+  CashDepositSource,
+  CashDepositLineType,
+  ManifestMode,
+  CashDepositListRow,
+  ManifestCandidate,
+  ManifestCandidateResponse,
+  CashDepositLineRequest,
+  CreateCashDepositRequest,
+  UpdateCashDepositRequest,
+  CashDepositLineResponse,
+  CashDepositResponse,
+  CashDepositCategory,
+  CreateCashDepositCategoryDto,
+  UpdateCashDepositCategoryDto,
+  CashDepositConfig,
+  UpsertCashDepositConfigDto,
+} from './cashDeposit.type'
+
 // Payment Method types
 export type {
   PaymentMethod,

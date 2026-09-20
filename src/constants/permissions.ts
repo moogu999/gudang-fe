@@ -128,6 +128,8 @@ export const PERMISSIONS = {
   CASH_DEPOSIT_CONFIG_WRITE: 121,
   CASH_DEPOSIT_CATEGORY_READ: 122,
   CASH_DEPOSIT_CATEGORY_WRITE: 123,
+  BANK_SETTLEMENT_READ: 124,
+  BANK_SETTLEMENT_WRITE: 125,
 } as const
 
 /**
@@ -199,6 +201,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/cash-deposits': PERMISSIONS.CASH_DEPOSIT_READ,
   '/cash-deposit-configs': PERMISSIONS.CASH_DEPOSIT_CONFIG_READ,
   '/cash-deposit-categories': PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
+  '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_READ,
 }
 
 /**
@@ -257,4 +260,5 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/cash-deposits': PERMISSIONS.CASH_DEPOSIT_WRITE,
   '/cash-deposit-configs': PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE,
   '/cash-deposit-categories': PERMISSIONS.CASH_DEPOSIT_CATEGORY_WRITE,
+  '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_WRITE,
 }

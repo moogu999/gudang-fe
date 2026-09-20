@@ -1,0 +1,253 @@
+<template>
+  <div>
+    <div class="mb-3 flex items-center justify-between gap-2">
+      <h3 class="text-sm font-semibold text-stone-700 sm:text-base">
+        {{ t('bankSettlements.sections.mutations') }}
+      </h3>
+      <Button
+        v-if="!readonly"
+        type="button"
+        icon="pi pi-plus"
+        size="small"
+        data-testid="add-row"
+        :label="t('bankSettlements.table.addRow')"
+        @click="addRow"
+      />
+    </div>
+
+    <DataTable :value="modelValue" data-key="_key" responsive-layout="scroll" class="text-sm">
+      <Column :header="t('bankSettlements.table.mutationDate')" style="min-width: 10rem">
+        <template #body="{ data, index }">
+          <template v-if="readonly">{{ formatDate(data.mutationDate) }}</template>
+          <div v-else class="flex flex-col gap-1">
+            <DatePicker
+              :model-value="data.mutationDate"
+              date-format="dd/mm/yy"
+              :min-date="period?.[0]"
+              :max-date="period?.[1]"
+              :default-date="period?.[0]"
+              class="w-full"
+              @update:model-value="
+                (v: unknown) => patch(index, { mutationDate: v instanceof Date ? v : null })
+              "
+            />
+            <small v-if="dateError(data)" class="text-red-600">{{ dateError(data) }}</small>
+          </div>
+        </template>
+      </Column>
+
+      <Column :header="t('bankSettlements.table.description')" style="min-width: 14rem">
+        <template #body="{ data, index }">
+          <template v-if="readonly">
+            <span class="whitespace-pre-line">{{ data.description }}</span>
+          </template>
+          <div v-else class="flex flex-col gap-1">
+            <InputText
+              :model-value="data.description"
+              autocomplete="off"
+              class="w-full"
+              @update:model-value="
+                (v: string | undefined) => patch(index, { description: v ?? '' })
+              "
+            />
+            <small v-if="showErrors && errorsOf(data).description" class="text-red-600">{{
+              t('bankSettlements.validation.lineDescriptionRequired')
+            }}</small>
+          </div>
+        </template>
+      </Column>
+
+      <Column
+        :header="t('bankSettlements.table.amount')"
+        class="text-right"
+        style="min-width: 10rem"
+      >
+        <template #body="{ data, index }">
+          <template v-if="readonly">{{ formatNumber(data.amount ?? 0) }}</template>
+          <div v-else class="flex flex-col gap-1">
+            <InputNumber
+              :model-value="data.amount"
+              :locale="locale"
+              :min="0"
+              :min-fraction-digits="0"
+              :max-fraction-digits="2"
+              input-class="w-full min-w-0 text-right"
+              class="w-full min-w-0"
+              @update:model-value="(v: number | null) => patch(index, { amount: v })"
+            />
+            <small v-if="showErrors && errorsOf(data).amount" class="text-red-600">{{
+              t('bankSettlements.validation.lineAmountRequired')
+            }}</small>
+          </div>
+        </template>
+      </Column>
+
+      <Column :header="t('bankSettlements.table.outlet')" style="min-width: 14rem">
+        <template #body="{ data, index }">
+          <template v-if="readonly">{{ data.customer?.name }}</template>
+          <InfiniteSelect
+            v-else
+            :model-value="data.customerId"
+            option-label="name"
+            option-value="id"
+            :fetch-fn="(q) => CustomersService.list(q)"
+            :initial-option="data.customer"
+            :placeholder="t('bankSettlements.table.selectOutlet')"
+            show-clear
+            sort-by="name"
+            sort-operator="asc"
+            class="w-full"
+            @update:model-value="(v: unknown) => onOutletChange(index, v)"
+            @select-option="
+              (opt: object) => patch(index, { customer: opt as MutationRow['customer'] })
+            "
+          />
+        </template>
+      </Column>
+
+      <Column :header="t('bankSettlements.table.status')" style="min-width: 8rem">
+        <template #body="{ data }">
+          <Tag
+            v-if="isTagged(data)"
+            severity="success"
+            data-testid="status-tagged"
+            :value="t('bankSettlements.table.tagged')"
+          />
+          <Tag
+            v-else
+            severity="warn"
+            data-testid="status-untagged"
+            :value="t('bankSettlements.table.untagged')"
+          />
+        </template>
+      </Column>
+
+      <Column v-if="!readonly" style="width: 4rem">
+        <template #body="{ index }">
+          <Button
+            type="button"
+            icon="pi pi-trash"
+            size="small"
+            severity="danger"
+            text
+            data-testid="remove-row"
+            :aria-label="t('bankSettlements.table.removeRow')"
+            @click="removeRow(index)"
+          />
+        </template>
+      </Column>
+
+      <template #empty>
+        <div class="py-4 text-center text-stone-400">{{ t('bankSettlements.table.empty') }}</div>
+      </template>
+    </DataTable>
+
+    <small v-if="!readonly" class="text-surface-500 mt-2 block">{{
+      t('bankSettlements.table.nameMismatchHint')
+    }}</small>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import dayjs from 'dayjs'
+import { useI18n } from 'vue-i18n'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import DatePicker from 'primevue/datepicker'
+import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import { CustomersService } from '@/services'
+import {
+  isRowValid,
+  isTagged,
+  newMutationRow,
+  rowErrors,
+  type MutationRow,
+  type Period,
+} from '../bankSettlementLines'
+
+interface Props {
+  modelValue: MutationRow[]
+  readonly?: boolean
+  /** The header period; null until both ends are picked. Drives D9 on every row. */
+  period?: Period | null
+}
+
+const props = withDefaults(defineProps<Props>(), { readonly: false, period: null })
+
+const emit = defineEmits<{ 'update:modelValue': [rows: MutationRow[]] }>()
+
+const { t, locale } = useI18n()
+
+// "Required" errors stay hidden until the first submit attempt so a fresh row isn't born
+// red. An out-of-period date is always shown — narrowing the period must flag rows at once.
+const showErrors = ref(false)
+
+function errorsOf(row: MutationRow) {
+  return rowErrors(row, props.period)
+}
+
+function dateError(row: MutationRow): string | null {
+  const error = errorsOf(row).date
+  if (error === 'outOfPeriod') return t('bankSettlements.validation.lineDateOutOfPeriod')
+  if (error === 'required' && showErrors.value)
+    return t('bankSettlements.validation.lineDateRequired')
+  return null
+}
+
+// InfiniteSelect emits update:model-value and select-option back to back, before the
+// parent's new array reaches props — so every change builds on the last one emitted.
+const latest = ref<MutationRow[]>(props.modelValue)
+watch(
+  () => props.modelValue,
+  (rows) => (latest.value = rows),
+)
+
+function commit(rows: MutationRow[]) {
+  latest.value = rows
+  emit('update:modelValue', rows)
+}
+
+function patch(index: number, changes: Partial<MutationRow>) {
+  commit(latest.value.map((row, i) => (i === index ? { ...row, ...changes } : row)))
+}
+
+function onOutletChange(index: number, value: unknown) {
+  if (typeof value === 'number') {
+    patch(index, { customerId: value })
+  } else {
+    patch(index, { customerId: undefined, customer: undefined })
+  }
+}
+
+function addRow() {
+  commit([...latest.value, newMutationRow()])
+}
+
+function removeRow(index: number) {
+  commit(latest.value.filter((_, i) => i !== index))
+}
+
+/** Reveals per-row errors and reports whether every row is submittable. */
+function validate(): boolean {
+  showErrors.value = true
+  return props.modelValue.every((row) => isRowValid(row, props.period))
+}
+
+function formatDate(value: Date | null): string {
+  return value ? dayjs(value).format('DD/MM/YYYY') : ''
+}
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+defineExpose({ validate })
+</script>

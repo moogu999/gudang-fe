@@ -343,6 +343,18 @@ export type {
   UpsertCashDepositConfigDto,
 } from './cashDeposit.type'
 
+// Bank Settlement types
+export type {
+  BankSettlementStatus,
+  BankSettlementSource,
+  BankSettlementListRow,
+  BankSettlementLineRequest,
+  BankSettlementLineResponse,
+  CreateBankSettlementRequest,
+  UpdateBankSettlementRequest,
+  BankSettlementResponse,
+} from './bankSettlement.type'
+
 // Payment Method types
 export type {
   PaymentMethod,

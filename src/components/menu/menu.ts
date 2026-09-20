@@ -305,6 +305,11 @@ const mainMenu = [
         labelKey: 'navigation.cashDepositCategories',
         route: '/cash-deposit-categories',
       },
+      {
+        label: 'Bank Settlements',
+        labelKey: 'navigation.bankSettlements',
+        route: '/bank-settlements',
+      },
     ],
   },
   {

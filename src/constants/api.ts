@@ -214,6 +214,9 @@ export const API_ENDPOINTS = {
   CASH_DEPOSIT_CONFIGS: '/v1/cash-deposit-configs',
   CASH_DEPOSIT_CONFIG_MY_BRANCH: '/v1/cash-deposit-configs/my-branch',
   CASH_DEPOSIT_CONFIG_BY_BRANCH: (branchId: number) => `/v1/cash-deposit-configs/${branchId}`,
+  BANK_SETTLEMENTS: '/v1/bank-settlements',
+  BANK_SETTLEMENT_BY_ID: (id: number) => `/v1/bank-settlements/${id}`,
+  GEN_BANK_SETTLEMENTS: '/gen/v1/bank-settlements',
   PAYMENT_METHODS: '/gen/v1/payment-methods',
   BRANCH_BANK_ACCOUNTS: '/gen/v1/branch-bank-accounts',
 

@@ -101,6 +101,7 @@ export default {
     cashDeposits: 'Cash Deposits',
     cashDepositConfigs: 'Cash Deposit Config',
     cashDepositCategories: 'Cash Deposit Categories',
+    bankSettlements: 'Bank Settlements',
     paymentTerms: 'Term of Payment',
     correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
@@ -1361,6 +1362,7 @@ export default {
       creditDebitNotes: 'Credit/Debit Notes',
       apPayments: 'AP Payments',
       cashDeposits: 'Cash Deposits',
+      bankSettlements: 'Bank Settlements',
     },
     validation: {
       nameRequired: 'Name is required.',
@@ -2631,6 +2633,101 @@ export default {
       notFound: 'Cash deposit not found.',
       approvalInfo:
         'With the current figures the variance exceeds the branch threshold, so completing this deposit will require approval.',
+    },
+  },
+  bankSettlements: {
+    title: 'Bank Settlements',
+    addBankSettlement: 'Add Bank Settlement',
+    viewBankSettlement: 'Bank Settlement Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'Settlement No.',
+      branch: 'Branch',
+      company: 'Legal Entity',
+      bankAccount: 'Bank Account',
+      period: 'Statement Period',
+      periodStart: 'Period Start',
+      periodEnd: 'Period End',
+      totalCredit: 'Total Credit',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Settlement Information',
+      mutations: 'Credit Mutations',
+      summary: 'Summary',
+    },
+    table: {
+      mutationDate: 'Date',
+      description: 'Bank Description',
+      amount: 'Amount',
+      outlet: 'Outlet',
+      status: 'Status',
+      tagged: 'Tagged',
+      untagged: 'Untagged',
+      addRow: 'Add Row',
+      removeRow: 'Remove row',
+      selectOutlet: 'Select an outlet',
+      empty: 'No credit mutations yet.',
+      nameMismatchHint:
+        'The sender name on the statement often differs from the registered outlet or owner name. Tag each line by the outlet you recognise, not by the name alone.',
+    },
+    summary: {
+      total: 'Total Credit Mutations',
+      tagged: 'Tagged',
+      untagged: 'Untagged',
+    },
+    labels: {
+      sourceManual: 'Manual',
+      sourceImport: 'Import',
+      companyUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+      splitHint:
+        'Untagged lines can be left for later. When you submit, they move to a new draft and this settlement keeps only the tagged lines.',
+      splitFrom: 'Split from {no}',
+      submitDisabledHint: 'Tag at least one line to submit.',
+    },
+    status: {
+      draft: 'Draft',
+      completed: 'Completed',
+    },
+    actions: {
+      saveAsDraft: 'Save as Draft',
+      submit: 'Submit',
+      editBankSettlement: 'Edit Bank Settlement',
+      openRemainder: 'Open New Draft',
+      backToList: 'Back to List',
+    },
+    confirm: {
+      header: 'Confirm',
+      messageComplete: 'This will complete the bank settlement. Continue?',
+      messageSplit:
+        '{count} line(s) are not tagged yet and will be moved to a new draft. Continue?',
+    },
+    validation: {
+      noRequired: 'Settlement number is required.',
+      bankAccountRequired: 'Bank account is required.',
+      periodRequired: 'Select the statement period (start and end date).',
+      branchRequired: 'Branch is required.',
+      noLines: 'Add at least one credit mutation.',
+      noTaggedLines: 'Tag at least one line to submit.',
+      linesInvalid: 'Fix the highlighted mutation rows.',
+      lineDateRequired: 'Date is required.',
+      lineDateOutOfPeriod: 'Date is outside the statement period.',
+      lineDescriptionRequired: 'Description is required.',
+      lineAmountRequired: 'Amount must be greater than zero.',
+    },
+    messages: {
+      created: 'Bank settlement saved successfully.',
+      updated: 'Bank settlement updated successfully.',
+      deleted: 'Bank settlement deleted successfully.',
+      notFound: 'Bank settlement not found.',
+      notEditable: 'A completed bank settlement can no longer be edited.',
+      splitCreated:
+        'Bank settlement completed. Its untagged lines were moved to the new draft {no}.',
     },
   },
   cashDepositConfigs: {

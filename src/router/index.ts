@@ -1089,6 +1089,46 @@ const router = createRouter({
           },
         },
         {
+          path: 'bank-settlements',
+          name: 'BankSettlements',
+          component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
+            titleKey: 'navigation.bankSettlements',
+          },
+        },
+        {
+          path: 'bank-settlements/create',
+          name: 'BankSettlementCreate',
+          component: () => import('@/views/bank-settlements/BankSettlementCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_WRITE,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `bank-settlements/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'bank-settlements/:id/edit',
+          name: 'BankSettlementEdit',
+          component: () => import('@/views/bank-settlements/BankSettlementEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_WRITE,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'bank-settlements/:id',
+          name: 'BankSettlementDetail',
+          component: () => import('@/views/bank-settlements/BankSettlementDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'branch-bank-accounts',
           name: 'BranchBankAccounts',
           component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),

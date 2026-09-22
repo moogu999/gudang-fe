@@ -1080,15 +1080,6 @@ const router = createRouter({
           redirect: { path: '/configs', query: { tab: 'cd' } },
         },
         {
-          path: 'cash-deposit-categories',
-          name: 'CashDepositCategories',
-          component: () => import('@/views/cash-deposit-categories/CashDepositCategoriesView.vue'),
-          meta: {
-            requiredPermission: PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
-            titleKey: 'navigation.cashDepositCategories',
-          },
-        },
-        {
           path: 'bank-settlements',
           name: 'BankSettlements',
           component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),

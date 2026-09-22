@@ -1036,6 +1036,139 @@ const router = createRouter({
           },
         },
         {
+          path: 'cash-deposits',
+          name: 'CashDeposits',
+          component: () => import('@/views/cash-deposits/CashDepositsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            titleKey: 'navigation.cashDeposits',
+          },
+        },
+        {
+          path: 'cash-deposits/create',
+          name: 'CashDepositCreate',
+          component: () => import('@/views/cash-deposits/CashDepositCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_WRITE,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `cash-deposits/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'cash-deposits/:id/edit',
+          name: 'CashDepositEdit',
+          component: () => import('@/views/cash-deposits/CashDepositEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_WRITE,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'cash-deposits/:id',
+          name: 'CashDepositDetail',
+          component: () => import('@/views/cash-deposits/CashDepositDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            titleKey: 'navigation.cashDeposits',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'cash-deposit-configs',
+          redirect: { path: '/configs', query: { tab: 'cd' } },
+        },
+        {
+          path: 'cash-deposit-categories',
+          name: 'CashDepositCategories',
+          component: () => import('@/views/cash-deposit-categories/CashDepositCategoriesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
+            titleKey: 'navigation.cashDepositCategories',
+          },
+        },
+        {
+          path: 'bank-settlements',
+          name: 'BankSettlements',
+          component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
+            titleKey: 'navigation.bankSettlements',
+          },
+        },
+        {
+          path: 'bank-settlements/create',
+          name: 'BankSettlementCreate',
+          component: () => import('@/views/bank-settlements/BankSettlementCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_WRITE,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `bank-settlements/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'bank-settlements/:id/edit',
+          name: 'BankSettlementEdit',
+          component: () => import('@/views/bank-settlements/BankSettlementEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_WRITE,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'bank-settlements/:id',
+          name: 'BankSettlementDetail',
+          component: () => import('@/views/bank-settlements/BankSettlementDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
+            titleKey: 'navigation.bankSettlements',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'ar-clearings',
+          name: 'ArClearings',
+          component: () => import('@/views/ar-clearings/ArClearingsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_READ,
+            titleKey: 'navigation.arClearings',
+          },
+        },
+        {
+          path: 'ar-clearings/create',
+          name: 'ArClearingCreate',
+          component: () => import('@/views/ar-clearings/ArClearingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_WRITE,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `ar-clearings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'ar-clearings/:id/edit',
+          name: 'ArClearingEdit',
+          component: () => import('@/views/ar-clearings/ArClearingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_WRITE,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'ar-clearings/:id',
+          name: 'ArClearingDetail',
+          component: () => import('@/views/ar-clearings/ArClearingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.AR_CLEARING_READ,
+            titleKey: 'navigation.arClearings',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'branch-bank-accounts',
           name: 'BranchBankAccounts',
           component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),

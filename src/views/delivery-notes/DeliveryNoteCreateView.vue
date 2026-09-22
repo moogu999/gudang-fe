@@ -236,7 +236,9 @@
           </p>
           <div class="flex flex-wrap items-center gap-3 text-sm text-stone-600">
             <span>{{ t('deliveryNotes.addedDos.summaryDo', { count: addedDOs.length }) }}</span>
-            <span>{{ t('deliveryNotes.addedDos.summaryOutlets', { count: uniqueOutlets }) }}</span>
+            <span>{{
+              t('deliveryNotes.addedDos.summaryCustomers', { count: uniqueCustomers })
+            }}</span>
             <span class="font-semibold text-green-700">
               {{
                 t('deliveryNotes.addedDos.summaryTotal', {
@@ -440,7 +442,7 @@ const doDetailData = ref<DeliveryOrderDetail | null>(null)
 const submitting = ref(false)
 
 // Computed summary
-const uniqueOutlets = computed(() => new Set(addedDOs.value.map((d) => d.customerName)).size)
+const uniqueCustomers = computed(() => new Set(addedDOs.value.map((d) => d.customerName)).size)
 const addedTotal = computed(() =>
   addedDOs.value.reduce((sum, d) => sum + parseFloat(d.totalAmount), 0),
 )

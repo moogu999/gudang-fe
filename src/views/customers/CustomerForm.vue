@@ -83,7 +83,7 @@
                   <InputText v-model="formData.ownerName" :disabled="disabled" class="w-full" />
                 </div>
 
-                <!-- Outlet Type -->
+                <!-- Customer Type (outlet type entity) -->
                 <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
                   <label class="w-full text-sm font-semibold sm:text-base md:w-40">
                     {{ t('customers.fields.outletType') }}

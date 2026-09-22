@@ -295,6 +295,26 @@ const mainMenu = [
         labelKey: 'navigation.journalConfig',
         route: '/journal-config',
       },
+      {
+        label: 'Cash Deposits',
+        labelKey: 'navigation.cashDeposits',
+        route: '/cash-deposits',
+      },
+      {
+        label: 'Cash Deposit Categories',
+        labelKey: 'navigation.cashDepositCategories',
+        route: '/cash-deposit-categories',
+      },
+      {
+        label: 'Bank Settlements',
+        labelKey: 'navigation.bankSettlements',
+        route: '/bank-settlements',
+      },
+      {
+        label: 'AR Clearing',
+        labelKey: 'navigation.arClearings',
+        route: '/ar-clearings',
+      },
     ],
   },
   {

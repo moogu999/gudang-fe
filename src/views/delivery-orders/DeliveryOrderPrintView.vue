@@ -39,7 +39,7 @@
       <hr class="sep2" />
 
       <!-- ══ META + CUSTOMER ══════════════════════════════════ -->
-      <div class="outlet-grid" style="margin: 5px 0 6px">
+      <div class="customer-grid" style="margin: 5px 0 6px">
         <div>
           <div class="dm dm-sm faint">KEPADA YTH:</div>
           <div class="dm bold" style="font-size: 14px">{{ detail.customerName }}</div>
@@ -456,7 +456,7 @@ hr.sep3 {
   align-items: start;
 }
 
-.outlet-grid {
+.customer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 32px;

@@ -322,6 +322,54 @@ export type {
 // AP Payment Config types
 export type { ApPaymentConfig, UpsertApPaymentConfigDto } from './apPaymentConfig.type'
 
+// Cash Deposit types
+export type {
+  CashDepositStatus,
+  CashDepositSource,
+  CashDepositLineType,
+  ManifestMode,
+  CashDepositListRow,
+  ManifestCandidate,
+  ManifestCandidateResponse,
+  CashDepositLineRequest,
+  CreateCashDepositRequest,
+  UpdateCashDepositRequest,
+  CashDepositLineResponse,
+  CashDepositResponse,
+  CashDepositCategory,
+  CreateCashDepositCategoryDto,
+  UpdateCashDepositCategoryDto,
+  CashDepositConfig,
+  UpsertCashDepositConfigDto,
+} from './cashDeposit.type'
+
+// Bank Settlement types
+export type {
+  BankSettlementStatus,
+  BankSettlementSource,
+  BankSettlementListRow,
+  BankSettlementLineRequest,
+  BankSettlementLineResponse,
+  CreateBankSettlementRequest,
+  UpdateBankSettlementRequest,
+  BankSettlementResponse,
+} from './bankSettlement.type'
+export type {
+  ArClearingStatus,
+  ArCashSourceType,
+  ArUnappliedCashItem,
+  ArOpenItem,
+  ArClearingListRow,
+  ArClearingSourceRequest,
+  ArClearingAllocationRequest,
+  CreateArClearingRequest,
+  UpdateArClearingRequest,
+  VoidArClearingRequest,
+  ArClearingSourceResponse,
+  ArClearingAllocationResponse,
+  ArClearingResponse,
+} from './arClearing.type'
+
 // Payment Method types
 export type {
   PaymentMethod,

@@ -4,6 +4,10 @@
 
 **Status:** not started. This document is the plan only.
 
+**Last refreshed:** 2026-09-22, after pulling `main` into `dev-rian` (cash deposit, bank
+settlement and AR clearing had landed on `main` since this plan was drafted, adding a
+9th Config tab and 14 new routes). All counts below reflect the merged state.
+
 ## Why this exists
 
 `sales1@yahoo.com` (role "Sales Cabang A", holding only `SALES_ORDER_READ` and
@@ -34,7 +38,7 @@ lookup ([`src/composables/usePermissions.ts`](../src/composables/usePermissions.
 `canAccessMenuItem`). The Config entry uses it because `/configs` is one screen holding
 several independently-permissioned tabs.
 
-[`src/components/menu/menu.ts:358-364`](../src/components/menu/menu.ts) lists five
+[`src/components/menu/menu.ts:378-384`](../src/components/menu/menu.ts) lists five
 permissions:
 
 ```
@@ -42,11 +46,12 @@ SALES_ORDER_CONFIG_READ, BOOKING_ORDER_CONFIG_READ, PURCHASE_ORDER_CONFIG_READ,
 GOODS_RECEIPT_CONFIG_READ, AP_INVOICE_CONFIG_READ
 ```
 
-[`src/views/configs/ConfigsView.vue:70-81`](../src/views/configs/ConfigsView.vue) gates
-eight tabs. Three permissions are missing from the menu list:
-`CREDIT_DEBIT_NOTE_CONFIG_READ`, `AP_PAYMENT_CONFIG_READ`, `ACCOUNTING_PERIOD_READ`.
+[`src/views/configs/ConfigsView.vue:86-100`](../src/views/configs/ConfigsView.vue) gates
+nine tabs (was eight — `CashDepositConfigsView` was added by the 2026-09-20 main merge).
+Four permissions are now missing from the menu list: `CREDIT_DEBIT_NOTE_CONFIG_READ`,
+`AP_PAYMENT_CONFIG_READ`, `ACCOUNTING_PERIOD_READ`, and `CASH_DEPOSIT_CONFIG_READ`.
 
-**Impact.** A user holding only one of those three does not see the Config menu at all,
+**Impact.** A user holding only one of those four does not see the Config menu at all,
 although the screen would show them a working tab. This is the inverse of the original
 bug — too strict rather than too loose — so it fails quietly as a missing feature, not
 as a leak.
@@ -68,9 +73,12 @@ asserts every menu route *matches a registered route*. It does not assert the ma
 route *declares* `meta.requiredPermission`. A route registered without that meta is
 open to every authenticated user, and the suite stays green.
 
-Current state is good. Of 116 distinct route paths, 102 declare a permission and 8 are
-pure redirects; the five real routes that declare none are deliberate: `/sign-in`,
-`/` (Home), `superset`, `configs`, and the catch-all.
+Current state is good. Of 128 distinct route paths, 115 declare a permission and 8 are
+pure redirects (was 116 / 102 / 8 pre-merge — the 14 new cash-deposit/bank-settlement/
+AR-clearing routes are all correctly declared, and `/cash-deposit-configs` joined the
+redirect list); the five real routes that declare none are deliberate: `/sign-in`,
+`/` (Home), `superset`, `configs`, and the catch-all. Counted directly off
+`router.getRoutes()`, not by hand.
 
 **Impact.** Latent. The next route added without the meta reintroduces the original
 class of bug, silently.
@@ -138,10 +146,11 @@ who may *open* a screen — so `canWrite` still reads `ROUTE_WRITE_PERMISSIONS`
 ([`src/constants/permissions.ts`](../src/constants/permissions.ts)) and returns `true`
 for a path the map does not contain.
 
-**Impact.** None today: all 41 paths passed to `usePermissions()` are present in the
-map (verified). But nothing keeps it that way, and the failure mode is the original bug
-exactly — a new view whose path is missing shows its Add/Edit/Delete buttons to
-everyone.
+**Impact.** None today: all 46 paths passed to `usePermissions()` are present in the
+map (verified — was 41, the new cash-deposit/bank-settlement/AR-clearing/cash-deposit-
+category views added 5 more, all present). But nothing keeps it that way, and the
+failure mode is the original bug exactly — a new view whose path is missing shows its
+Add/Edit/Delete buttons to everyone.
 
 **Fix.** Two viable shapes, in order of preference:
 

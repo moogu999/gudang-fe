@@ -17,6 +17,7 @@ const period: Period = [new Date(2026, 8, 1), new Date(2026, 8, 15)]
 // Minimal native stand-ins that still emit the events the real controls do. The customer
 // stand-in emits update:model-value then select-option back to back, like InfiniteSelect.
 const stubs = {
+  RouterLink: { template: '<a class="giro-link"><slot /></a>' },
   DatePicker: { template: '<input class="date" />' },
   InputNumber: { template: '<input class="amount" />' },
   InfiniteSelect: {
@@ -136,5 +137,109 @@ describe('BankSettlementMutationTable', () => {
     expect(wrapper.find('.amount').exists()).toBe(false)
     expect(wrapper.text()).toContain('GIRO MASUK')
     expect(wrapper.text()).toContain('Toko Baru')
+  })
+
+  describe('giro clearing tag (D13)', () => {
+    const candidates = [
+      {
+        id: 3,
+        no: 'KG-1',
+        status: 'completed' as const,
+        depositDate: '2026-09-05',
+        clearedAmount: '1000.00',
+        bankMatchedAmount: '0.00',
+        unmatchedAmount: '1000.00',
+        clearedGiros: [
+          {
+            giroId: 11,
+            giroNo: 'BG-11',
+            customerId: 7,
+            customerName: 'Toko Sumber',
+            amount: '1000.00',
+            clearedDate: '2026-09-08',
+          },
+        ],
+      },
+    ]
+
+    // Each Select stand-in emits the option value its button names, so a test can drive the
+    // mode select and the batch select the same way.
+    const selectStubs = {
+      ...stubs,
+      Select: {
+        name: 'Select',
+        props: ['modelValue', 'options'],
+        emits: ['update:modelValue'],
+        template: `<span class="select">
+          <button v-for="o in options" :key="o.value" :class="'opt-' + o.value" @click="$emit('update:modelValue', o.value)" />
+        </span>`,
+      },
+    }
+
+    function mountWithCandidates(rows: MutationRow[]) {
+      return mount(BankSettlementMutationTable, {
+        props: { modelValue: rows, period, candidates },
+        global: { plugins: [PrimeVue], stubs: selectStubs },
+      })
+    }
+
+    it('switching to giro mode clears the customer', async () => {
+      const wrapper = mountWithCandidates([
+        validRow({ customerId: 7, customer: { id: 7, name: 'Toko' } }),
+      ])
+      await wrapper.find('.opt-giro').trigger('click')
+      const row = lastEmit(wrapper)[0]
+      expect(row.customerId).toBeUndefined()
+      expect(row.customer).toBeUndefined()
+    })
+
+    it('picking a batch sets it and leaves no customer', async () => {
+      const wrapper = mountWithCandidates([validRow({ giroClearingId: undefined })])
+      await wrapper.find('.opt-giro').trigger('click')
+      await wrapper.setProps({ modelValue: lastEmit(wrapper) })
+      await wrapper.find('.opt-3').trigger('click')
+      const row = lastEmit(wrapper)[0]
+      expect(row.giroClearingId).toBe(3)
+      expect(row.giroClearingNo).toBe('KG-1')
+      expect(row.customerId).toBeUndefined()
+    })
+
+    it('switching back to customer mode clears the batch', async () => {
+      const wrapper = mountWithCandidates([validRow({ giroClearingId: 3, giroClearingNo: 'KG-1' })])
+      await wrapper.find('.opt-customer').trigger('click')
+      const row = lastEmit(wrapper)[0]
+      expect(row.giroClearingId).toBeUndefined()
+      expect(row.giroClearingNo).toBeUndefined()
+    })
+
+    it("warns when a customer-tagged credit looks like that customer's cleared giro", () => {
+      const wrapper = mountWithCandidates([
+        validRow({ customerId: 7, customer: { id: 7, name: 'Toko Sumber' }, amount: 1000 }),
+      ])
+      expect(wrapper.find('[data-testid="lookalike-warning"]').exists()).toBe(true)
+    })
+
+    it('does not warn for a different amount', () => {
+      const wrapper = mountWithCandidates([
+        validRow({ customerId: 7, customer: { id: 7, name: 'Toko Sumber' }, amount: 999 }),
+      ])
+      expect(wrapper.find('[data-testid="lookalike-warning"]').exists()).toBe(false)
+    })
+
+    it('a batch-linked row reads as tagged and links to the batch when read-only', () => {
+      const wrapper = mount(BankSettlementMutationTable, {
+        props: {
+          modelValue: [validRow({ giroClearingId: 3, giroClearingNo: 'KG-1' })],
+          period,
+          readonly: true,
+        },
+        global: {
+          plugins: [PrimeVue],
+          stubs,
+        },
+      })
+      expect(wrapper.find('[data-testid="status-tagged"]').exists()).toBe(true)
+      expect(wrapper.find('.giro-link').exists()).toBe(true)
+    })
   })
 })

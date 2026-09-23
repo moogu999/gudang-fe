@@ -43,6 +43,14 @@ function invoice(id: number, date: string, outstanding: string): AllocationRow {
 
 const alloc = (rows: AllocationRow[]) => rows.map((r) => r.allocated)
 
+describe('autoAllocate with a cleared giro (D10)', () => {
+  it('joins the FIFO pool like a bank line: no hint invoice, oldest invoice first', () => {
+    const giro = source({ sourceLineId: 1, unappliedAmount: '700', sourceType: 'giro' })
+    const rows = [invoice(2, '2026-08-05', '500'), invoice(1, '2026-08-01', '500')]
+    expect(alloc(autoAllocate([giro], rows))).toEqual([200, 500])
+  })
+})
+
 describe('keyOf', () => {
   it('keys on the type/line pair so equal line ids from two source types do not collide', () => {
     expect(keyOf('cash_deposit', 5)).not.toBe(keyOf('bank_settlement', 5))

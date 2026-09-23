@@ -11,22 +11,24 @@ import { h, defineComponent, type VNode } from 'vue'
  */
 export const DataTableStub = defineComponent({
   name: 'DataTable',
-  props: ['value', 'selection', 'selectionMode', 'selectAll'],
+  props: ['value', 'selection', 'selectionMode', 'selectAll', 'dataKey'],
   emits: ['row-select', 'row-unselect', 'select-all-change'],
   setup(props, { slots, emit }) {
     return () => {
       const columnVNodes = (slots.default?.() ?? []) as VNode[]
-      const items = (props.value ?? []) as Array<{ _key?: string }>
-      const selection = (props.selection ?? []) as Array<{ _key?: string }>
+      // Rows are matched on `data-key`, as the real DataTable does; `_key` when none is given.
+      const key = (props.dataKey as string | undefined) ?? '_key'
+      const items = (props.value ?? []) as Array<Record<string, unknown>>
+      const selection = (props.selection ?? []) as Array<Record<string, unknown>>
       const rows = items.map((item, index) => {
-        const selected = selection.some((s) => s._key === item._key)
+        const selected = selection.some((s) => s[key] === item[key])
         const bodies = columnVNodes.map((col) => {
           const bodySlot = (col.children as Record<string, unknown> | null)?.body as
             | ((scope: { data: unknown; index: number }) => VNode[])
             | undefined
           return bodySlot ? bodySlot({ data: item, index }) : null
         })
-        return h('div', { class: 'row', key: item._key ?? index }, [
+        return h('div', { class: 'row', key: (item[key] as string | number) ?? index }, [
           props.selectionMode
             ? h('input', {
                 type: 'checkbox',

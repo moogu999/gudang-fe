@@ -28,8 +28,8 @@
         <Column :header="t('arClearings.sources.source')">
           <template #body="{ data }">
             <Tag
-              :severity="data.sourceType === 'cash_deposit' ? 'info' : 'secondary'"
-              :icon="data.sourceType === 'cash_deposit' ? 'pi pi-wallet' : 'pi pi-building-columns'"
+              :severity="SOURCE_TAG[data.sourceType as ArCashSourceType].severity"
+              :icon="SOURCE_TAG[data.sourceType as ArCashSourceType].icon"
               :value="data.sourceDocumentNo"
               :title="t(`arClearings.sources.type.${data.sourceType}`)"
             />
@@ -82,6 +82,16 @@ import Tag from 'primevue/tag'
 import Message from 'primevue/message'
 import DateFormat from '@/constants/dateFormat'
 import { round2, type SourceRow } from '../arClearingLines'
+import type { ArCashSourceType } from '@/types/arClearing.type'
+
+const SOURCE_TAG: Record<
+  ArCashSourceType,
+  { severity: 'info' | 'secondary' | 'success'; icon: string }
+> = {
+  cash_deposit: { severity: 'info', icon: 'pi pi-wallet' },
+  bank_settlement: { severity: 'secondary', icon: 'pi pi-building-columns' },
+  giro: { severity: 'success', icon: 'pi pi-file-check' },
+}
 
 interface Props {
   customerId?: number

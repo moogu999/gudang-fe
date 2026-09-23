@@ -10,7 +10,7 @@
  */
 
 export type ArClearingStatus = 'draft' | 'completed' | 'voided'
-export type ArCashSourceType = 'cash_deposit' | 'bank_settlement'
+export type ArCashSourceType = 'cash_deposit' | 'bank_settlement' | 'giro'
 
 /** One poolable cash line. `sourceLineId` is unique only within a `sourceType` — key on the pair. */
 export interface ArUnappliedCashItem {

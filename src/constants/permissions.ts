@@ -132,6 +132,10 @@ export const PERMISSIONS = {
   BANK_SETTLEMENT_WRITE: 125,
   AR_CLEARING_READ: 126,
   AR_CLEARING_WRITE: 127,
+  GIRO_RECEIPT_READ: 128,
+  GIRO_RECEIPT_WRITE: 129,
+  GIRO_CLEARING_READ: 130,
+  GIRO_CLEARING_WRITE: 131,
 } as const
 
 /**
@@ -205,6 +209,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/cash-deposit-categories': PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
   '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_READ,
   '/ar-clearings': PERMISSIONS.AR_CLEARING_READ,
+  '/giro-receipts': PERMISSIONS.GIRO_RECEIPT_READ,
+  '/giro-clearings': PERMISSIONS.GIRO_CLEARING_READ,
 }
 
 /**
@@ -265,4 +271,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/cash-deposit-categories': PERMISSIONS.CASH_DEPOSIT_CATEGORY_WRITE,
   '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_WRITE,
   '/ar-clearings': PERMISSIONS.AR_CLEARING_WRITE,
+  '/giro-receipts': PERMISSIONS.GIRO_RECEIPT_WRITE,
+  '/giro-clearings': PERMISSIONS.GIRO_CLEARING_WRITE,
 }

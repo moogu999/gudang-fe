@@ -91,4 +91,12 @@ describe('ArClearingSourceTable', () => {
     expect(wrapper.text()).toContain('arClearings.sources.selectCustomerFirst')
     expect(wrapper.find('.row').exists()).toBe(false)
   })
+
+  it('renders a cleared giro source with its own tag', () => {
+    const giro = row({ sourceLineId: 3, sourceType: 'giro', sourceDocumentNo: 'PG-1' })
+    const wrapper = mountTable({ items: [giro] })
+    const tag = wrapper.find('.tag')
+    expect(tag.text()).toBe('PG-1')
+    expect(tag.attributes('data-severity')).toBe('success')
+  })
 })

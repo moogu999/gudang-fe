@@ -293,6 +293,16 @@ const entityTypeOptions = computed(() => [
     value: 'ar_clearings',
     disabled: takenEntityTypes.value.has('ar_clearings'),
   },
+  {
+    label: t('numberSeries.entityTypes.giroReceipts'),
+    value: 'giro_receipts',
+    disabled: takenEntityTypes.value.has('giro_receipts'),
+  },
+  {
+    label: t('numberSeries.entityTypes.giroClearings'),
+    value: 'giro_clearings',
+    disabled: takenEntityTypes.value.has('giro_clearings'),
+  },
 ])
 
 // Live preview (client-side only)

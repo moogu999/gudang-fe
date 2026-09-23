@@ -40,8 +40,10 @@ export interface BankSettlementLineRequest {
   mutationDate: string
   description: string
   amount: string
-  /** Null means untagged. */
+  /** Null means untagged. Mutually exclusive with giroClearingId (D13). */
   customerId: number | null
+  /** The giro clearing batch this credit settles. Mutually exclusive with customerId (D13). */
+  giroClearingId?: number | null
   note: string | null
 }
 
@@ -50,6 +52,30 @@ export interface BankSettlementLineResponse extends BankSettlementLineRequest {
   lineNo: number
   customerName: string | null
   customerCode: string | null
+  giroClearingNo?: string | null
+}
+
+/** A cleared giro inside a candidate batch — also feeds the same-amount warning (D13). */
+export interface ClearedGiro {
+  giroId: number
+  giroNo: string
+  customerId: number
+  customerName: string
+  amount: string
+  clearedDate: string
+}
+
+/** A giro clearing batch a line on this account can be tagged to (D13). */
+export interface GiroClearingCandidate {
+  id: number
+  no: string
+  status: 'deposited' | 'completed'
+  depositDate: string
+  clearedAmount: string
+  bankMatchedAmount: string
+  /** clearedAmount - bankMatchedAmount: what bank lines can still be linked for. */
+  unmatchedAmount: string
+  clearedGiros: ClearedGiro[]
 }
 
 export interface CreateBankSettlementRequest {

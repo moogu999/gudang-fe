@@ -306,6 +306,12 @@ const mainMenu = [
         route: '/bank-settlements',
       },
       {
+        label: 'Giro',
+        labelKey: 'navigation.giro',
+        route: '/giro',
+        permissionsAny: [PERMISSIONS.GIRO_RECEIPT_READ, PERMISSIONS.GIRO_CLEARING_READ],
+      },
+      {
         label: 'AR Clearing',
         labelKey: 'navigation.arClearings',
         route: '/ar-clearings',

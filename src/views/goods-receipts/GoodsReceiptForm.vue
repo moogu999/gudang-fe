@@ -408,6 +408,7 @@ import type { Branch, Warehouse } from '@/types'
 import type { Base } from '@/types/api.type'
 import type {
   GoodsReceiptStatus,
+  GoodsReceiptHeader,
   GoodsReceiptDetailRow,
   GoodsReceiptDetailResponse,
   CreateGoodsReceiptRequest,
@@ -444,7 +445,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: GoodsReceiptHeader]
 }>()
 
 // Status / approval
@@ -743,14 +744,17 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: GoodsReceiptHeader
     if (props.mode === DialogMode.EDIT && props.goodsReceiptId) {
-      await GoodsReceiptsService.update(props.goodsReceiptId, pendingRequest.value)
+      saved = await GoodsReceiptsService.update(props.goodsReceiptId, pendingRequest.value)
       toast.add(commonSuccessToast(t('goodsReceipts.messages.updated'), toastGroup))
     } else {
-      await GoodsReceiptsService.create(pendingRequest.value)
+      saved = await GoodsReceiptsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('goodsReceipts.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadGoodsReceipt()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

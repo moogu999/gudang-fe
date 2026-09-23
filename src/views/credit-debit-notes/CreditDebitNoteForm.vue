@@ -441,6 +441,7 @@ import type { ApInvoiceHeader } from '@/types/apInvoice.type'
 import type { CorrectionCategory } from '@/types/correctionCategory.type'
 import type {
   CreditDebitNoteStatus,
+  CreditDebitNoteResponse,
   CreditDebitNoteType,
   CreateCreditDebitNoteRequest,
 } from '@/types/creditDebitNote.type'
@@ -472,7 +473,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: CreditDebitNoteResponse]
 }>()
 
 const creditDebitNoteFormRef = ref()
@@ -731,10 +732,11 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: CreditDebitNoteResponse
     if (props.mode === DialogMode.EDIT && props.noteId) {
       // `no` and `branchId` are stamped at creation and are not recomputed on update.
       const req = pendingRequest.value
-      await CreditDebitNotesService.update(props.noteId, {
+      saved = await CreditDebitNotesService.update(props.noteId, {
         status: req.status,
         noteType: req.noteType,
         supplierId: req.supplierId,
@@ -750,10 +752,12 @@ async function doSubmit() {
       })
       toast.add(commonSuccessToast(t('creditDebitNotes.messages.updated'), toastGroup))
     } else {
-      await CreditDebitNotesService.create(pendingRequest.value)
+      saved = await CreditDebitNotesService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('creditDebitNotes.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadNote()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
     // The config can change between page load and submit — re-check so the guard

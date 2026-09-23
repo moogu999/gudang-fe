@@ -32,12 +32,14 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { usePostSaveNavigation } from '@/composables'
 import { PriceMatricesService } from '@/services/price-matrices.service'
 import type { CreatePriceMatrixDto } from '@/types/price-matrix.type'
 import PriceMatrixForm from './PriceMatrixForm.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/price-matrices')
 const toast = useToast()
 
 const toastGroup = 'priceMatrixCreate'
@@ -46,9 +48,9 @@ const isLoading = ref(false)
 async function onSubmit(dto: CreatePriceMatrixDto) {
   isLoading.value = true
   try {
-    await PriceMatricesService.create(dto)
+    const priceMatrix = await PriceMatricesService.create(dto)
     toast.add(commonSuccessToast(t('priceMatrix.messages.created'), toastGroup))
-    setTimeout(() => router.push('/price-matrices'), 1000)
+    afterCreate(priceMatrix)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

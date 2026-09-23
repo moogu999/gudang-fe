@@ -558,6 +558,8 @@ export default {
       nikOwnerRequired: 'NIK pemilik wajib diisi untuk pelanggan PKP.',
       npwpNameRequired: 'Nama NPWP wajib diisi untuk pelanggan PKP.',
       npwpAddressRequired: 'Alamat NPWP wajib diisi untuk pelanggan PKP.',
+      summary: 'Ada kolom wajib yang belum diisi',
+      checkSections: 'Periksa tab berikut: {sections}.',
     },
     messages: {
       customerCreated: 'Pelanggan berhasil dibuat.',

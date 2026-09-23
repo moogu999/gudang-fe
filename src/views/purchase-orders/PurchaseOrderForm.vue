@@ -364,6 +364,7 @@ import type { Branch } from '@/types'
 import type { Base } from '@/types/api.type'
 import type {
   PurchaseOrderStatus,
+  PurchaseOrderHeader,
   PurchaseOrderDetailRow,
   CreatePurchaseOrderRequest,
 } from '@/types/purchaseOrder.type'
@@ -396,7 +397,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: PurchaseOrderHeader]
 }>()
 
 // Status tracking
@@ -596,14 +597,17 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: PurchaseOrderHeader
     if (props.mode === DialogMode.EDIT) {
-      await PurchaseOrdersService.update(props.purchaseOrderId!, pendingRequest.value)
+      saved = await PurchaseOrdersService.update(props.purchaseOrderId!, pendingRequest.value)
       toast.add(commonSuccessToast(t('purchaseOrders.messages.updated'), toastGroup))
     } else {
-      await PurchaseOrdersService.create(pendingRequest.value)
+      saved = await PurchaseOrdersService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('purchaseOrders.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadPurchaseOrder()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

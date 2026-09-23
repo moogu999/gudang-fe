@@ -15,7 +15,7 @@
           v-if="apPaymentId !== undefined"
           :mode="DialogMode.EDIT"
           :ap-payment-id="apPaymentId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('apPayments.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ApPaymentForm from './ApPaymentForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/ap-payments')
 const route = useRoute()
 
 const toastGroup = 'apPaymentEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   apPaymentId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ap-payments'), 1000)
-}
 </script>

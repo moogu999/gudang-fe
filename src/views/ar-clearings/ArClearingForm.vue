@@ -652,6 +652,8 @@ async function doSubmit() {
       saved = await ArClearingsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('arClearings.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadClearing()
     emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))

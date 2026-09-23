@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <GiroReceiptForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <GiroReceiptForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,14 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GiroReceiptForm from './GiroReceiptForm.vue'
 import DialogMode from '@/constants/dialogMode'
-import type { GiroReceiptResponse } from '@/types/giroReceipt.type'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/giro-receipts')
 
 const toastGroup = 'giroReceiptCreate'
-
-function onSubmitted(receipt: GiroReceiptResponse) {
-  setTimeout(() => router.push(`/giro-receipts/${receipt.id}`), 1000)
-}
 </script>

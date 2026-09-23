@@ -33,12 +33,14 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { usePostSaveNavigation } from '@/composables'
 import { PriceListsService } from '@/services/price-lists.service'
 import type { CreatePriceListDto } from '@/types/price-list'
 import PriceListForm from './PriceListForm.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/price-lists')
 const toast = useToast()
 const authStore = useAuthStore()
 
@@ -49,9 +51,9 @@ async function onSubmit(dto: CreatePriceListDto) {
   isLoading.value = true
   try {
     dto.createdBy = authStore.userId ?? undefined
-    await PriceListsService.create(dto)
+    const priceList = await PriceListsService.create(dto)
     toast.add(commonSuccessToast(t('priceLists.messages.created'), toastGroup))
-    setTimeout(() => router.push('/price-lists'), 1000)
+    afterCreate(priceList)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

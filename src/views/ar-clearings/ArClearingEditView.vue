@@ -16,7 +16,7 @@
           :key="arClearingId"
           :mode="DialogMode.EDIT"
           :ar-clearing-id="arClearingId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('arClearings.messages.notFound') }}</Message>
@@ -35,9 +35,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ArClearingForm from './ArClearingForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/ar-clearings')
 const route = useRoute()
 
 const toastGroup = 'arClearingEdit'
@@ -57,8 +59,4 @@ watch(
   },
   { immediate: true },
 )
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ar-clearings'), 1000)
-}
 </script>

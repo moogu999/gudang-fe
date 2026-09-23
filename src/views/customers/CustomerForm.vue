@@ -651,6 +651,8 @@ import {
   CustomerCategoriesService,
 } from '@/services'
 import { useNumberSeries } from '@/composables'
+import { useToast } from 'primevue/usetoast'
+import ToastLife from '@/constants/toastLife'
 import type {
   Customer,
   CustomerAddress,
@@ -660,6 +662,7 @@ import type {
 } from '@/types/customer.type'
 
 const { t } = useI18n()
+const toast = useToast()
 
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 
@@ -679,6 +682,11 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false,
+  },
+  // The parent view owns the <Toast>; validation failures are reported into its group.
+  toastGroup: {
+    type: String,
+    default: undefined,
   },
 })
 
@@ -996,9 +1004,50 @@ async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
 
 // ─── Save handlers ────────────────────────────────────────────────────────────
 
+// Which tab each validated field lives on. Keys missing here default to identity.
+const errorSection: Record<string, string> = {
+  code: 'identity',
+  name: 'identity',
+  outletTypeId: 'identity',
+  channelId: 'identity',
+  categoryId: 'identity',
+  addresses: 'ship-to',
+  nikOwner: 'tax',
+  npwp: 'tax',
+  npwpName: 'tax',
+  npwpAddress: 'tax',
+}
+
+const sectionLabelKey: Record<string, string> = {
+  identity: 'customers.sections.identity',
+  'ship-to': 'customers.sections.shipTo',
+  tax: 'customers.sections.tax',
+}
+
+// Errors can sit on tabs the user isn't looking at, so jump to the first one and
+// name every tab that needs attention.
+function reportValidationErrors() {
+  const sections = [...new Set(Object.keys(errors).map((k) => errorSection[k] ?? 'identity'))]
+  if (sections.length === 0) return
+  activeTab.value = sections[0]!
+  if (!props.toastGroup) return
+  toast.add({
+    severity: 'warn',
+    summary: t('customers.validation.summary'),
+    detail: t('customers.validation.checkSections', {
+      sections: sections.map((s) => t(sectionLabelKey[s] ?? sectionLabelKey.identity!)).join(', '),
+    }),
+    life: ToastLife.FIVE_SECONDS,
+    group: props.toastGroup,
+  })
+}
+
 async function onSaveDraft() {
   isDraftMode.value = true
-  if (!validateDraft()) return
+  if (!validateDraft()) {
+    reportValidationErrors()
+    return
+  }
   const dto = await buildDto(true)
   emit('saveDraft', dto)
 }
@@ -1006,22 +1055,7 @@ async function onSaveDraft() {
 async function onSubmit() {
   isDraftMode.value = false
   if (!validateFull()) {
-    // Scroll to first error section
-    const firstErrKey = Object.keys(errors)[0]
-    if (firstErrKey) {
-      const sectionMap: Record<string, string> = {
-        name: 'identity',
-        outletTypeId: 'identity',
-        channelId: 'identity',
-        categoryId: 'identity',
-        addresses: 'ship-to',
-        nikOwner: 'tax',
-        npwp: 'tax',
-        npwpName: 'tax',
-        npwpAddress: 'tax',
-      }
-      activeTab.value = sectionMap[firstErrKey] ?? 'identity'
-    }
+    reportValidationErrors()
     return
   }
   const dto = await buildDto(false)

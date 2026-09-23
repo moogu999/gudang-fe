@@ -620,6 +620,8 @@ async function doSubmit() {
       saved = await GiroClearingsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('giroClearings.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadClearing()
     emit('submitted', saved)
   } catch (e) {
     // ErrGiroNotHeld: another batch deposited one of the picks since this page loaded.

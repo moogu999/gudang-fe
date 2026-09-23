@@ -695,6 +695,8 @@ async function doSubmit() {
       saved = await CashDepositsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('cashDeposits.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadCashDeposit()
     emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))

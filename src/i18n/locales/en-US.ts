@@ -556,6 +556,8 @@ export default {
       nikOwnerRequired: 'Owner NIK is required for taxable customers.',
       npwpNameRequired: 'NPWP name is required for taxable customers.',
       npwpAddressRequired: 'NPWP address is required for taxable customers.',
+      summary: 'Some required fields are missing',
+      checkSections: 'Check these tabs: {sections}.',
     },
     messages: {
       customerCreated: 'Customer is created.',

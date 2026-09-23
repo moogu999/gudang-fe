@@ -428,6 +428,7 @@ import type { Supplier } from '@/types/supplier.type'
 import type { Branch, PaymentMethod, BranchBankAccount } from '@/types'
 import type {
   ApPaymentStatus,
+  ApPaymentResponse,
   ApPaymentDocumentType,
   ApPaymentApplicationResponse,
   CreateApPaymentRequest,
@@ -460,7 +461,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: ApPaymentResponse]
 }>()
 
 // Status / approval
@@ -775,9 +776,10 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: ApPaymentResponse
     if (props.mode === DialogMode.EDIT && props.apPaymentId) {
       const req = pendingRequest.value
-      await ApPaymentsService.update(props.apPaymentId, {
+      saved = await ApPaymentsService.update(props.apPaymentId, {
         status: req.status,
         supplierId: req.supplierId,
         paymentDate: req.paymentDate,
@@ -789,10 +791,12 @@ async function doSubmit() {
       })
       toast.add(commonSuccessToast(t('apPayments.messages.updated'), toastGroup))
     } else {
-      await ApPaymentsService.create(pendingRequest.value)
+      saved = await ApPaymentsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('apPayments.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadApPayment()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
     // The config can change between page load and submit — re-check so the

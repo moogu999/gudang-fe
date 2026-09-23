@@ -17,6 +17,7 @@
 
     <PromotionForm
       v-if="promotion"
+      :key="formKey"
       mode="edit"
       :promotion="promotion"
       :is-loading="isLoading"
@@ -62,6 +63,9 @@ const toast = useToast()
 const toastGroup = 'promotionEdit'
 const isLoading = ref(false)
 const isLoadingData = ref(false)
+// Bumped after a save so the form, which reads its record only on mount, re-initialises
+// from the server's copy rather than keeping what was typed.
+const formKey = ref(0)
 const promotion = ref<Promotion | undefined>(undefined)
 
 onMounted(async () => {
@@ -86,7 +90,8 @@ async function onSubmit(dto: CreatePromotionDto) {
   try {
     await PromotionsService.update(promotion.value.id, dto)
     toast.add(commonSuccessToast(t('promotions.messages.updated'), toastGroup))
-    setTimeout(() => router.push(`/promotions/${promotion.value!.id}`), 1000)
+    promotion.value = await PromotionsService.getById(promotion.value.id)
+    formKey.value++
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

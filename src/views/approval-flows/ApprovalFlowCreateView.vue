@@ -28,10 +28,12 @@ import Button from 'primevue/button'
 import ApprovalFlowForm from './ApprovalFlowForm.vue'
 import { ApprovalsService } from '@/services/approvals.service'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { usePostSaveNavigation } from '@/composables'
 import type { CreateApprovalFlowDto } from '@/types/approval.type'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/approval-flows')
 const toast = useToast()
 const toastGroup = 'approvalFlowCreate'
 
@@ -42,7 +44,7 @@ async function onSubmit(dto: CreateApprovalFlowDto) {
   try {
     const flow = await ApprovalsService.createFlow(dto)
     toast.add(commonSuccessToast(t('approvalFlows.messages.created'), toastGroup))
-    router.push(`/approval-flows/${flow.id}`)
+    afterCreate(flow)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

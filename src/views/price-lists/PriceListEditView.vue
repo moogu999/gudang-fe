@@ -17,6 +17,7 @@
 
     <PriceListForm
       v-if="priceList"
+      :key="formKey"
       mode="edit"
       :price-list="priceList"
       :is-loading="isLoading"
@@ -64,6 +65,9 @@ const authStore = useAuthStore()
 const toastGroup = 'priceListEdit'
 const isLoading = ref(false)
 const isLoadingData = ref(false)
+// Bumped after a save so the form, which reads its record only on mount, re-initialises
+// from the server's copy rather than keeping what was typed.
+const formKey = ref(0)
 const priceList = ref<PriceList | undefined>(undefined)
 
 onMounted(async () => {
@@ -89,7 +93,8 @@ async function onSubmit(dto: UpdatePriceListDto) {
     dto.updatedBy = authStore.userId ?? undefined
     await PriceListsService.update(priceList.value.id, dto)
     toast.add(commonSuccessToast(t('priceLists.messages.updated'), toastGroup))
-    setTimeout(() => router.push(`/price-lists/${priceList.value!.id}`), 1000)
+    priceList.value = await PriceListsService.getById(priceList.value.id)
+    formKey.value++
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

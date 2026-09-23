@@ -621,6 +621,8 @@ async function doSubmit() {
       saved = await GiroReceiptsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('giroReceipts.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadReceipt()
     emit('submitted', saved)
   } catch (e) {
     // ErrCustomerNotGiroEnabled / ErrDuplicateGiro name no row, so the server's message is

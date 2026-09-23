@@ -16,7 +16,7 @@
           :key="giroClearingId"
           :mode="DialogMode.EDIT"
           :giro-clearing-id="giroClearingId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('giroClearings.messages.notFound') }}</Message>
@@ -35,10 +35,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GiroClearingForm from './GiroClearingForm.vue'
 import DialogMode from '@/constants/dialogMode'
-import type { GiroClearingResponse } from '@/types/giroClearing.type'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/giro-clearings')
 const route = useRoute()
 
 const toastGroup = 'giroClearingEdit'
@@ -56,8 +57,4 @@ watch(
   },
   { immediate: true },
 )
-
-function onSubmitted(clearing: GiroClearingResponse) {
-  setTimeout(() => router.push(`/giro-clearings/${clearing.id}`), 1000)
-}
 </script>

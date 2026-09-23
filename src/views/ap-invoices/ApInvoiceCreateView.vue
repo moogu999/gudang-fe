@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <ApInvoiceForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <ApInvoiceForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,13 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ApInvoiceForm from './ApInvoiceForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/ap-invoices')
 
 const toastGroup = 'apInvoiceCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ap-invoices'), 1000)
-}
 </script>

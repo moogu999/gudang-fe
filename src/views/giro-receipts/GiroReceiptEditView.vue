@@ -16,7 +16,7 @@
           :key="giroReceiptId"
           :mode="DialogMode.EDIT"
           :giro-receipt-id="giroReceiptId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('giroReceipts.messages.notFound') }}</Message>
@@ -35,10 +35,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GiroReceiptForm from './GiroReceiptForm.vue'
 import DialogMode from '@/constants/dialogMode'
-import type { GiroReceiptResponse } from '@/types/giroReceipt.type'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/giro-receipts')
 const route = useRoute()
 
 const toastGroup = 'giroReceiptEdit'
@@ -56,8 +57,4 @@ watch(
   },
   { immediate: true },
 )
-
-function onSubmitted(receipt: GiroReceiptResponse) {
-  setTimeout(() => router.push(`/giro-receipts/${receipt.id}`), 1000)
-}
 </script>

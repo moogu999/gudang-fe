@@ -13,7 +13,7 @@
       <template #content>
         <PurchaseOrderForm
           :mode="DialogMode.ADD"
-          @submitted="onSubmitted"
+          @submitted="afterCreate"
           @cancel="router.back()"
         />
       </template>
@@ -29,13 +29,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import PurchaseOrderForm from './PurchaseOrderForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/purchase-orders')
 
 const toastGroup = 'purchaseOrderCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/purchase-orders'), 1000)
-}
 </script>

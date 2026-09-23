@@ -13,7 +13,7 @@
       <template #content>
         <CreditDebitNoteForm
           :mode="DialogMode.ADD"
-          @submitted="onSubmitted"
+          @submitted="afterCreate"
           @cancel="router.back()"
         />
       </template>
@@ -29,13 +29,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CreditDebitNoteForm from './CreditDebitNoteForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/credit-debit-notes')
 
 const toastGroup = 'creditDebitNoteCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/credit-debit-notes'), 1000)
-}
 </script>

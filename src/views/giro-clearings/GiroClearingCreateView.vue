@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <GiroClearingForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <GiroClearingForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,14 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GiroClearingForm from './GiroClearingForm.vue'
 import DialogMode from '@/constants/dialogMode'
-import type { GiroClearingResponse } from '@/types/giroClearing.type'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/giro-clearings')
 
 const toastGroup = 'giroClearingCreate'
-
-function onSubmitted(clearing: GiroClearingResponse) {
-  setTimeout(() => router.push(`/giro-clearings/${clearing.id}`), 1000)
-}
 </script>

@@ -15,7 +15,7 @@
           v-if="apInvoiceId !== undefined"
           :mode="DialogMode.EDIT"
           :ap-invoice-id="apInvoiceId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('apInvoices.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ApInvoiceForm from './ApInvoiceForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/ap-invoices')
 const route = useRoute()
 
 const toastGroup = 'apInvoiceEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   apInvoiceId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ap-invoices'), 1000)
-}
 </script>

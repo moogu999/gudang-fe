@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <ArClearingForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <ArClearingForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,13 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ArClearingForm from './ArClearingForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/ar-clearings')
 
 const toastGroup = 'arClearingCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ar-clearings'), 1000)
-}
 </script>

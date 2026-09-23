@@ -508,6 +508,7 @@ import {
 import type { SalesOrderConfig, SalesOrderStatus, SalesOrderType, InvoiceListItem } from '@/types'
 import type {
   SalesOrderDetailRow,
+  SalesOrderHeader,
   CreateSalesOrderRequest,
   CustomerLite,
   ResolveSalesOrderRequest,
@@ -550,7 +551,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: SalesOrderHeader]
   createReturnDo: [salesOrderId: number]
 }>()
 
@@ -1195,14 +1196,17 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: SalesOrderHeader
     if (props.mode === DialogMode.EDIT) {
-      await SalesOrdersService.update(props.salesOrderId!, pendingRequest.value)
+      saved = await SalesOrdersService.update(props.salesOrderId!, pendingRequest.value)
       toast.add(commonSuccessToast(t('salesOrders.messages.updated'), toastGroup))
     } else {
-      await SalesOrdersService.create(pendingRequest.value)
+      saved = await SalesOrdersService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('salesOrders.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadSalesOrder()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

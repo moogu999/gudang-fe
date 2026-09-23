@@ -2784,7 +2784,8 @@ export default {
     sources: {
       selectCustomerFirst: 'Pilih pelanggan untuk melihat kas yang belum teralokasi.',
       date: 'Tanggal',
-      source: 'Sumber',
+      method: 'Diterima Via',
+      source: 'Dokumen',
       description: 'Keterangan',
       amount: 'Nominal Awal',
       remaining: 'Sisa',
@@ -2793,8 +2794,8 @@ export default {
       partiallyAllocatedHint:
         'Sebagian baris sudah dialokasikan sebagian pada pelunasan sebelumnya.',
       type: {
-        cash_deposit: 'Setoran kas',
-        bank_settlement: 'Penyelesaian bank',
+        cash_deposit: 'Tunai',
+        bank_settlement: 'Transfer Bank',
         giro: 'Giro',
       },
     },

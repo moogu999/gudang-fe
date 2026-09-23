@@ -25,15 +25,17 @@
         <Column :header="t('arClearings.sources.date')">
           <template #body="{ data }">{{ dayjs(data.sourceDate).format(DateFormat.DATE) }}</template>
         </Column>
-        <Column :header="t('arClearings.sources.source')">
+        <Column :header="t('arClearings.sources.method')">
           <template #body="{ data }">
             <Tag
               :severity="SOURCE_TAG[data.sourceType as ArCashSourceType].severity"
               :icon="SOURCE_TAG[data.sourceType as ArCashSourceType].icon"
-              :value="data.sourceDocumentNo"
-              :title="t(`arClearings.sources.type.${data.sourceType}`)"
+              :value="t(`arClearings.sources.type.${data.sourceType}`)"
             />
           </template>
+        </Column>
+        <Column :header="t('arClearings.sources.source')">
+          <template #body="{ data }">{{ data.sourceDocumentNo }}</template>
         </Column>
         <Column :header="t('arClearings.sources.description')">
           <template #body="{ data }">{{ data.description || '—' }}</template>

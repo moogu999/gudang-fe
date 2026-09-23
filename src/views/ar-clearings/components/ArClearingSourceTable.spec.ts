@@ -92,11 +92,19 @@ describe('ArClearingSourceTable', () => {
     expect(wrapper.find('.row').exists()).toBe(false)
   })
 
-  it('renders a cleared giro source with its own tag', () => {
+  it('labels each row with how the cash was received, beside its document number', () => {
+    const bank = row({ sourceLineId: 2, sourceType: 'bank_settlement', sourceDocumentNo: 'BS-1' })
     const giro = row({ sourceLineId: 3, sourceType: 'giro', sourceDocumentNo: 'PG-1' })
-    const wrapper = mountTable({ items: [giro] })
-    const tag = wrapper.find('.tag')
-    expect(tag.text()).toBe('PG-1')
-    expect(tag.attributes('data-severity')).toBe('success')
+    const wrapper = mountTable({ items: [items[0], bank, giro] })
+    const tags = wrapper.findAll('.tag')
+    expect(tags.map((t) => t.text())).toEqual([
+      'arClearings.sources.type.cash_deposit',
+      'arClearings.sources.type.bank_settlement',
+      'arClearings.sources.type.giro',
+    ])
+    expect(tags[2].attributes('data-severity')).toBe('success')
+    expect(wrapper.text()).toContain('CD-1')
+    expect(wrapper.text()).toContain('BS-1')
+    expect(wrapper.text()).toContain('PG-1')
   })
 })

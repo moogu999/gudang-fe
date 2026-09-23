@@ -2779,7 +2779,8 @@ export default {
     sources: {
       selectCustomerFirst: 'Select a customer to see its unapplied cash.',
       date: 'Date',
-      source: 'Source',
+      method: 'Received Via',
+      source: 'Document',
       description: 'Description',
       amount: 'Original Amount',
       remaining: 'Remaining',
@@ -2787,8 +2788,8 @@ export default {
       empty: 'This customer has no unapplied cash.',
       partiallyAllocatedHint: 'Some lines were partially allocated in an earlier clearing.',
       type: {
-        cash_deposit: 'Cash deposit',
-        bank_settlement: 'Bank settlement',
+        cash_deposit: 'Cash',
+        bank_settlement: 'Bank Transfer',
         giro: 'Giro',
       },
     },

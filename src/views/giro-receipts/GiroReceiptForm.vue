@@ -39,7 +39,7 @@
       <div class="text-sm">{{ t('giroReceipts.void.reason') }}: {{ voidInfo?.reason }}</div>
     </Message>
 
-    <!-- Source banner (D5): rendered from `source`, so the N-Force variant works once it exists -->
+    <!-- Source banner: rendered from `source`, so the N-Force variant works once it exists -->
     <Message severity="secondary" variant="simple" class="mb-4" data-testid="source-banner">
       <i class="pi mr-1" :class="source === 'nforce' ? 'pi-mobile' : 'pi-pencil'" />
       {{
@@ -159,7 +159,7 @@
           {{ t('giroReceipts.sections.receipt') }}
         </h3>
 
-        <!-- Received by is the logged-in user (read-only), never a dropdown (D5) -->
+        <!-- Received by is the logged-in user (read-only), never a dropdown -->
         <div class="flex flex-col gap-1">
           <label for="receivedBy" class="text-sm font-semibold">{{
             t('giroReceipts.fields.receivedBy')
@@ -270,7 +270,7 @@
         icon="pi pi-pencil"
         @click="router.push(`/giro-receipts/${giroReceiptId}/edit`)"
       />
-      <!-- D7: void only while every giro is still held; explain why when one has moved on. -->
+      <!-- Void only while every giro is still held; explain why when one has moved on. -->
       <span
         v-if="mode === DialogMode.VIEW && canWrite && currentStatus === 'completed'"
         v-tooltip.top="allHeld ? null : t('giroReceipts.labels.voidBlockedHint')"
@@ -434,7 +434,7 @@ const isSaving = ref(false)
 const linesRef = ref<InstanceType<typeof GiroLinesTable> | null>(null)
 
 // ---------------------------------------------------------------------------
-// Employee — any active employee; the type is shown read-only after the pick (D5).
+// Employee — any active employee; the type is shown read-only after the pick.
 // ---------------------------------------------------------------------------
 
 const initialEmployee = ref<Employee | undefined>()
@@ -463,7 +463,7 @@ function endOfToday(): Date {
 }
 
 // Custody is recorded after the giros change hands, so it can't be dated ahead of today.
-// Backdating is allowed (master assumption 7).
+// Backdating is allowed.
 const maxReceiptDate = computed(() => endOfToday())
 
 const savedReceivedBy = ref('')
@@ -533,7 +533,7 @@ async function onBranchIdUpdate(value: unknown) {
 }
 
 // ---------------------------------------------------------------------------
-// Lines + custody check (D4)
+// Lines + custody check
 // ---------------------------------------------------------------------------
 
 const rows = ref<GiroRow[]>([])
@@ -553,7 +553,7 @@ interface Totals {
 const savedTotals = ref<{ recorded: Totals; actual: Totals; variance: Totals } | undefined>()
 const savedVarianceReason = ref('')
 
-// D4: the reason is UI-required on Submit only; a half-counted draft must still save.
+// The reason is UI-required on Submit only; a half-counted draft must still save.
 const showVarianceReason = computed(() =>
   props.mode === DialogMode.VIEW ? !!savedVarianceReason.value : hasVariance.value,
 )

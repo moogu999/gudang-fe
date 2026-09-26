@@ -40,7 +40,7 @@ export interface GiroReceiptListRow {
 export interface GiroLineRequest {
   giroNo: string
   issuingBank: string
-  /** Must be a customer with paysWithGiro = true (D12). */
+  /** Must be a customer with paysWithGiro = true. */
   customerId: number
   /** 'YYYY-MM-DD' */
   giroDate: string
@@ -61,7 +61,7 @@ export interface CreateGiroReceiptRequest {
   actualCount: number
   /** Decimal string. */
   actualAmount: string
-  /** UI-required when either variance is non-zero; the server doesn't enforce it (D4). */
+  /** UI-required when either variance is non-zero; the server doesn't enforce it. */
   varianceReason?: string | null
   remark?: string | null
   status: 'draft' | 'completed'

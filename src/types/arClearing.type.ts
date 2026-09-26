@@ -23,7 +23,7 @@ export interface ArUnappliedCashItem {
   amount: string
   appliedAmount: string
   unappliedAmount: string
-  /** The invoice a collector reported this cash against — cash-deposit invoice lines only (D12). */
+  /** The invoice a collector reported this cash against — cash-deposit invoice lines only. */
   hintInvoiceId?: number | null
   /** `invoice | adhoc` for a cash deposit line, `bank` for a bank settlement line. */
   sourceDetail: string
@@ -70,7 +70,7 @@ export interface ArClearingListRow {
   updatedAt: string | null
 }
 
-/** The server derives what each source gives (D7), so no amount is sent. */
+/** The server derives what each source gives, so no amount is sent. */
 export interface ArClearingSourceRequest {
   sourceType: ArCashSourceType
   sourceLineId: number

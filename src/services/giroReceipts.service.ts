@@ -41,7 +41,7 @@ export class GiroReceiptsService {
     return ApiService.delete<void>(API_ENDPOINTS.GIRO_RECEIPT_BY_ID(id))
   }
 
-  /** Void a completed receipt while every one of its giros is still held (D7). */
+  /** Void a completed receipt while every one of its giros is still held. */
   static async void(id: number, reason: string): Promise<GiroReceiptResponse> {
     return ApiService.post<GiroReceiptResponse>(API_ENDPOINTS.GIRO_RECEIPT_VOID(id), { reason })
   }

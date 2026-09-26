@@ -51,7 +51,7 @@ export class BankSettlementsService {
 
   /**
    * Giro clearing batches on this account with cleared money not yet matched to a bank line,
-   * oldest first, each with its cleared giros (D13). `from`/`to` bound the giros' cleared date.
+   * oldest first, each with its cleared giros. `from`/`to` bound the giros' cleared date.
    */
   static async giroClearingCandidates(params: {
     branchBankAccountId: number

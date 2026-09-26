@@ -97,7 +97,7 @@
             <span v-else>{{ data.customer?.name }}</span>
           </template>
           <div v-else class="flex flex-col gap-1">
-            <!-- D13: a line is tagged to a customer OR to a giro clearing batch, never both.
+            <!-- A line is tagged to a customer OR to a giro clearing batch, never both.
                  A Select, not SelectButton: programmatic writes don't repaint a SelectButton. -->
             <Select
               :model-value="modeOf(data)"
@@ -230,9 +230,9 @@ import {
 interface Props {
   modelValue: MutationRow[]
   readonly?: boolean
-  /** The header period; null until both ends are picked. Drives D9 on every row. */
+  /** The header period; null until both ends are picked. Drives each row's date check. */
   period?: Period | null
-  /** D13: giro clearing batches on this account a line can be tagged to. */
+  /** Giro clearing batches on this account a line can be tagged to. */
   candidates?: GiroClearingCandidate[]
 }
 
@@ -288,7 +288,7 @@ function onCustomerChange(index: number, value: unknown) {
 }
 
 // ---------------------------------------------------------------------------
-// D13: customer tag vs giro clearing batch tag
+// Customer tag vs giro clearing batch tag
 // ---------------------------------------------------------------------------
 
 const modeOptions = computed(() => [

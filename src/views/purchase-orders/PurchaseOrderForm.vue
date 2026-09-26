@@ -429,7 +429,7 @@ const currentSupplier = ref<Supplier | undefined>()
 const initialSupplier = ref<Supplier | undefined>()
 
 // Term of Payment — kept outside the Form/zod schema (not name-bound) because it must be
-// updated programmatically when the supplier changes, per the master plan's Assumptions.
+// updated programmatically when the supplier changes (it defaults to the supplier's term).
 const currentPaymentTermId = ref<number | undefined>()
 const initialPaymentTerm = ref<PaymentTermRef | undefined>()
 const paymentTermTouched = ref(false)
@@ -438,8 +438,8 @@ const showPaymentTermError = computed(
   () => paymentTermSubmitAttempted.value && !currentPaymentTermId.value,
 )
 
-// Branch — only rendered when the user has more than one assigned branch (master plan,
-// Branch resolution). Single-branch users never see this field; the backend resolves silently.
+// Branch — only rendered when the user has more than one assigned branch. Single-branch users never
+// see this field; the backend resolves silently.
 const showBranchPicker = computed(() => authStore.branchIds.length > 1)
 const initialBranch = ref<Branch | undefined>()
 
@@ -526,8 +526,8 @@ const resolver = computed(() =>
   ),
 )
 
-// Computed totals for summary section — bottom-up, always tax-exclusive and taxable
-// (master plan decision 3), so this is simpler than Sales Order's inclusive/exclusive split.
+// Computed totals for summary section — bottom-up, always tax-exclusive and taxable,
+// so this is simpler than Sales Order's inclusive/exclusive split.
 const calculatedTotals = computed(() => {
   if (props.mode === DialogMode.VIEW) {
     return {

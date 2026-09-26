@@ -43,7 +43,7 @@ export function emptyGiroRow(): GiroRow {
   }
 }
 
-/** D6: every field is required, the due date can't precede the giro date, and amount > 0. */
+/** Every field is required, the due date can't precede the giro date, and amount > 0. */
 export function giroRowErrors(row: GiroRow): GiroRowErrors {
   const errors: GiroRowErrors = {}
   if (!row.giroNo.trim()) errors.giroNo = true

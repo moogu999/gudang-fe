@@ -237,7 +237,7 @@ const emit = defineEmits<{ 'update:modelValue': [rows: GiroRow[]] }>()
 
 const { t, locale } = useI18n()
 
-// D12: only customers flagged "Pays with Giro" can hand one over. `/gen/v1/customers` has no
+// Only customers flagged "Pays with Giro" can hand one over. `/gen/v1/customers` has no
 // FilterMap, so the column name passes through to the generic handler as-is.
 const customerFilters = [
   { filterBy: 'paysWithGiro', filterOperator: FilterOperator.EQUAL, filterValue: 'true' },

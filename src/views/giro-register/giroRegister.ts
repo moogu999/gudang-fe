@@ -9,7 +9,7 @@ export interface DueLabel {
   severity: DueSeverity
 }
 
-/** Master assumption 5: "due soon" is 0 to 7 days to due. */
+/** "Due soon" is 0 to 7 days to due. */
 export const DUE_SOON_DAYS = 7
 
 /** The register's status column: lifecycle first, then — for a held giro — how close it is to due. */
@@ -46,7 +46,7 @@ export interface DepositSelection {
   ids: number[]
   /** The one branch every picked giro belongs to; null when none is picked or they differ. */
   branchId: number | null
-  /** Master assumption 4: a clearing batch is single-branch, so a mixed pick can't be deposited. */
+  /** A clearing batch is single-branch, so a mixed pick can't be deposited. */
   mixedBranches: boolean
   amount: number
 }

@@ -148,7 +148,7 @@ function formatNumber(value: number): string {
 }
 
 /**
- * Stored amounts are always positive (master decision 2) — the sign here is
+ * Stored amounts are always positive — the sign here is
  * presentation only, applied to the Total row exactly as the mockup shows
  * ("− Rp 194.250" for a credit note).
  */

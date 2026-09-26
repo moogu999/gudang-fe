@@ -54,7 +54,7 @@
               />
             </div>
             <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
-              <!-- D7: completed is terminal — no Edit, no Delete. -->
+              <!-- Completed is terminal — no Edit, no Delete. -->
               <Button
                 v-if="data.status === 'draft' && canWrite"
                 icon="pi pi-pencil"

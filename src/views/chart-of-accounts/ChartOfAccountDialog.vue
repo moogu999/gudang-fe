@@ -335,7 +335,7 @@ const initialControlAccountType = ref<ControlAccountTypeRef | undefined>(undefin
 
 const newAccountLevel = computed(() => (selectedParent.value ? selectedParent.value.depth + 1 : 1))
 
-// Frozen fields per mockup rule 5: code / account type / normal balance are
+// Frozen fields: code / account type / normal balance are
 // locked once the account has appeared in a posted journal entry. `inUse` is
 // always false until the GL module exists, so this never triggers today.
 const fieldsFrozen = computed(() => props.mode === DialogMode.EDIT && props.account?.inUse === true)

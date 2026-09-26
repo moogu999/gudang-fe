@@ -50,21 +50,21 @@ export function selectionTotal(picks: GiroPick[]): { count: number; amount: numb
 }
 
 /**
- * D8: the picker's default window — giros due on or before the day after the deposit date
+ * The picker's default window — giros due on or before the day after the deposit date
  * ("usually H-1 up to the due date").
  */
 export function defaultDueOnOrBefore(depositDate: Date): string {
   return dayjs(depositDate).add(1, 'day').format('YYYY-MM-DD')
 }
 
-/** D8: depositing a giro more than a day before it's due is warned about, never blocked. */
+/** Depositing a giro more than a day before it's due is warned about, never blocked. */
 export function isNotYetDue(dueDate: string, depositDate: Date | null): boolean {
   if (!depositDate) return false
   return dayjs(dueDate.slice(0, 10)).isAfter(dayjs(depositDate).add(1, 'day'), 'day')
 }
 
 // ---------------------------------------------------------------------------
-// Clearing results (D9)
+// Clearing results
 // ---------------------------------------------------------------------------
 
 /** One batch line in the results table. `result` is what the user picked this session. */

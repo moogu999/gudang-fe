@@ -863,7 +863,7 @@ const calculatedTotals = computed(() => {
     })
 
     // Header manual discounts aren't previewed by resolve — replicate the backend's
-    // proportional-split formula locally (decision #4 of the master plan).
+    // proportional-split formula locally.
     headerManualDiscounts.value.forEach((d) => {
       const { taxBase, tax } = computeHeaderDiscountTax(
         parseFloat(d.amount) || 0,
@@ -888,7 +888,7 @@ const calculatedTotals = computed(() => {
       : Math.round((taxBase + taxAmount) * 100) / 100
 
   // Subtotal = sum of every line's raw undiscounted gross (quantity*price), matching the
-  // backend's persisted SubtotalAmount (decision #3 of the master plan). This is shown as
+  // backend's persisted SubtotalAmount. This is shown as
   // informational context only — it does NOT chain arithmetically into Total via Discount/Tax
   // except in the all-tax-exclusive special case (see taxBase/total above for the real formula).
   // In VIEW mode, read the persisted value directly to avoid any client-side rounding drift.
@@ -907,8 +907,8 @@ const calculatedTotals = computed(() => {
 })
 
 // Live-preview DPP/tax for each header manual discount row (blank from ManualDiscountEditor
-// until save, since resolve doesn't preview manual discounts — see decision #4 of the master
-// plan for the formula). VIEW mode already has the real persisted values, so pass through as-is.
+// until save, since resolve doesn't preview manual discounts — see computeHeaderDiscountTax
+// for the formula). VIEW mode already has the real persisted values, so pass through as-is.
 const headerManualDiscountsPreview = computed(() => {
   if (props.mode === DialogMode.VIEW) return headerManualDiscounts.value
   const { grossInclusive, grossExclusive } = calculatedTotals.value

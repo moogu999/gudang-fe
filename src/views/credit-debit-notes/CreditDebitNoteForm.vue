@@ -619,7 +619,7 @@ const referenceApInvoiceFilters = computed(() => [
 ])
 
 // ---------------------------------------------------------------------------
-// Approval pre-flight — decision 4 makes a configured flow mandatory to post.
+// Approval pre-flight — a configured flow is mandatory to post.
 // ---------------------------------------------------------------------------
 
 const branchApprovalFlowId = ref<number | null>(null)
@@ -642,7 +642,7 @@ const canSubmitForApproval = computed(
 )
 
 // ---------------------------------------------------------------------------
-// Tax return note submit-time validation (decision 7) — status-dependent, so zod alone
+// Tax return note submit-time validation — status-dependent, so zod alone
 // cannot express it from a static schema.
 // ---------------------------------------------------------------------------
 
@@ -707,7 +707,7 @@ function clearReferenceInvoice() {
 async function onSupplierSelect(supplier: Supplier) {
   const changed = selectedSupplierId.value !== supplier.id
   selectedSupplierId.value = supplier.id
-  // The reference invoice is supplier-scoped (assumption in the master plan).
+  // The reference invoice is supplier-scoped.
   if (changed) clearReferenceInvoice()
 }
 

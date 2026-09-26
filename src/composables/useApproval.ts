@@ -5,7 +5,7 @@ import type { ApprovalRequestDetail } from '@/types/approval.type'
 /**
  * Shared fetch/act/refresh logic behind ApprovalTimeline and ApprovalActionBar.
  * `canAct` on the fetched request comes straight from the backend and is never
- * re-derived here — see master plan decision on eligibility being server-side only.
+ * re-derived here: approval eligibility is decided server-side only.
  */
 export function useApproval(moduleKey: string, referenceId: number) {
   const request = ref<ApprovalRequestDetail | null>(null)

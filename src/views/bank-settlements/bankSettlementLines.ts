@@ -9,7 +9,7 @@ export interface MutationRow {
   customerId?: number
   /** Display copy of the chosen customer, so the select can label it without a fetch. */
   customer?: { id: number; name: string; code?: string }
-  /** D13: the giro clearing batch this credit settles — an alternative to a customer, never both. */
+  /** The giro clearing batch this credit settles — an alternative to a customer, never both. */
   giroClearingId?: number
   /** Display copy of the batch number, so a saved link labels itself without a candidate. */
   giroClearingNo?: string
@@ -42,7 +42,7 @@ export function newMutationRow(): MutationRow {
   }
 }
 
-/** D3: credit lines only, so amount > 0. D9: the date must sit inside the header period (inclusive). */
+/** Credit lines only, so amount > 0. The date must sit inside the header period (inclusive). */
 export function rowErrors(row: MutationRow, period: Period | null): MutationRowErrors {
   const errors: MutationRowErrors = {}
   if (!row.mutationDate) {
@@ -64,8 +64,8 @@ export function isRowValid(row: MutationRow, period: Period | null): boolean {
 }
 
 /**
- * "Untagged" is the absence of a customer (master §4 assumption 6) — or, since D13, of a giro
- * clearing batch. A batch-linked line stays on the completed settlement but is never poolable.
+ * "Untagged" is the absence of a customer — or of a giro clearing batch. A batch-linked line stays
+ * on the completed settlement but is never poolable.
  */
 export function isTagged(row: MutationRow): boolean {
   return row.customerId != null || row.giroClearingId != null
@@ -78,11 +78,11 @@ export function tagMode(row: MutationRow): TagMode | 'none' {
   return 'none'
 }
 
-/** D13's same-amount warning looks this far either side of the mutation date. */
+/** The giro look-alike warning looks this far either side of the mutation date. */
 export const LOOKALIKE_WINDOW_DAYS = 7
 
 /**
- * D13: a credit tagged to a *customer* that looks like one of that customer's cleared giros on
+ * A credit tagged to a *customer* that looks like one of that customer's cleared giros on
  * this account (same amount, cleared within ±7 days). Tagging it to the customer would count
  * the money twice — once through the giro, once through the bank line. Warned, never blocked.
  */
@@ -111,7 +111,7 @@ export interface OverMatch {
   unmatched: number
 }
 
-/** D13: batches whose linked lines add up to more than their unmatched cleared amount. */
+/** Batches whose linked lines add up to more than their unmatched cleared amount. */
 export function batchOverMatch(
   rows: MutationRow[],
   candidates: GiroClearingCandidate[],

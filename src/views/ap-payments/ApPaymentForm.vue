@@ -658,7 +658,7 @@ function typeLabel(type: ApPaymentDocumentType) {
 }
 
 // ---------------------------------------------------------------------------
-// Threshold pre-flight — reactive on the running net, master decision 1.
+// Threshold pre-flight — reactive on the running net.
 // ---------------------------------------------------------------------------
 
 const approvalFlowId = ref<number | null>(null)

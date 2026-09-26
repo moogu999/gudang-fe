@@ -302,7 +302,7 @@ const FIXED_DIMENSION_SOURCES = new Set([
 ])
 
 /** Fixed dimensions are translated; label-derived ones (product_label,
- *  customer_label) come from the database and render as-is (master plan). */
+ *  customer_label) come from the database and render as-is. */
 function basisLabel(basis: JournalConfigBasis): string {
   if (FIXED_DIMENSION_SOURCES.has(basis.source)) {
     return t(`journalConfig.dimensions.${basis.source}`)

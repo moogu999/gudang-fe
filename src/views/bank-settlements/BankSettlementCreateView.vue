@@ -43,7 +43,7 @@ const { afterCreate } = usePostSaveNavigation('/bank-settlements')
 const toastGroup = 'bankSettlementCreate'
 const splitResult = ref<BankSettlementResponse | null>(null)
 
-// A submit that split (D4) stays on screen so the new draft's number and link don't vanish
+// A submit that split stays on screen so the new draft's number and link don't vanish
 // in a redirect; anything else follows the usual post-save navigation.
 function onSubmitted(settlement: BankSettlementResponse) {
   if (settlement.remainderSettlementId) {

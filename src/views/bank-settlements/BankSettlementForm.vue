@@ -135,7 +135,7 @@
           {{ t('bankSettlements.fields.bankAccount') }}
         </h3>
 
-        <!-- Bank account: active accounts of the settlement's branch only (D8) -->
+        <!-- Bank account: active accounts of the settlement's branch only -->
         <div class="flex flex-col gap-1">
           <label for="branchBankAccountId" class="text-sm font-semibold">{{
             t('bankSettlements.fields.bankAccount')
@@ -253,7 +253,7 @@
           :loading="isSaving"
           @click="chosenStatus = 'draft'"
         />
-        <!-- D5: nothing tagged is a 400 from the API, so don't let the user get there. -->
+        <!-- Nothing tagged is a 400 from the API, so don't let the user get there. -->
         <span
           v-tooltip.top="taggedCount === 0 ? t('bankSettlements.labels.submitDisabledHint') : null"
         >
@@ -435,7 +435,7 @@ async function resolveCompanyForBranch(branchId: number | undefined) {
 async function onBranchIdUpdate(value: unknown) {
   const next = typeof value === 'number' ? value : undefined
   if (next !== selectedBranchId.value && props.mode === DialogMode.ADD) {
-    // D8: the account must belong to the settlement's branch — a stale pick can't survive.
+    // The account must belong to the settlement's branch — a stale pick can't survive.
     if (formRef.value?.states?.branchBankAccountId) {
       formRef.value.states.branchBankAccountId.value = undefined
     }
@@ -461,7 +461,7 @@ const bankAccountFilters = computed(() => [
 ])
 
 // The header period as a picked range. Null until both ends are chosen; every row's
-// date is checked against it (D9), so narrowing it re-validates the table at once.
+// date is checked against it, so narrowing it re-validates the table at once.
 const periodRange = ref<Date[]>([])
 const period = computed<Period | null>(() =>
   periodRange.value[0] && periodRange.value[1]
@@ -480,7 +480,7 @@ function onPeriodUpdate(value: unknown) {
 }
 
 // ---------------------------------------------------------------------------
-// D13: giro clearing batches a line can be tagged to
+// Giro clearing batches a line can be tagged to
 // ---------------------------------------------------------------------------
 
 const selectedBankAccountId = ref<number | undefined>()
@@ -619,7 +619,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
   if (chosenStatus.value === 'completed' && tagged.length === 0) {
     return failValidation('bankSettlements.validation.noTaggedLines')
   }
-  // D13: the server refuses it too, but only on completion; a draft may still be over.
+  // The server refuses it too, but only on completion; a draft may still be over.
   if (chosenStatus.value === 'completed' && overMatched.value.length > 0) {
     return failValidation('bankSettlements.validation.giroOverMatched')
   }
@@ -682,7 +682,7 @@ async function loadBankSettlement() {
   try {
     const settlement = await BankSettlementsService.get(props.bankSettlementId)
 
-    // D7: completed is terminal. The list never offers Edit, but a typed URL can get here.
+    // Completed is terminal. The list never offers Edit, but a typed URL can get here.
     if (props.mode === DialogMode.EDIT && settlement.status === 'completed') {
       notEditable.value = true
       return

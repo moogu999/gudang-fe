@@ -310,7 +310,7 @@ async function loadTree() {
 }
 
 // Every account is a legal parent, not just Header ones — a Detail parent is
-// allowed (mockup rule 3), only warned about client-side in the dialog.
+// allowed, only warned about client-side in the dialog.
 const parentCandidates = computed(() => flattenTree(rawTree.value))
 
 // ---------------------------------------------------------------------------

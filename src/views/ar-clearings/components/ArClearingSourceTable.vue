@@ -97,7 +97,7 @@ const SOURCE_TAG: Record<
 
 interface Props {
   customerId?: number
-  /** Every poolable cash line of the customer, in the order the server draws on them (D7). */
+  /** Every poolable cash line of the customer, in the order the server draws on them. */
   items: SourceRow[]
   /** The ticked lines — owned by the parent so a customer switch can clear them in one place. */
   picked: SourceRow[]

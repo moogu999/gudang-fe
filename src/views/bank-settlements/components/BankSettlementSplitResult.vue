@@ -25,7 +25,7 @@ import Message from 'primevue/message'
 import type { BankSettlementResponse } from '@/types/bankSettlement.type'
 
 /**
- * Shown in place of the form after a submit that split (D4). Replacing the form, rather
+ * Shown in place of the form after a submit that split. Replacing the form, rather
  * than raising a toast over it, stops a second click re-submitting a completed document
  * and gives the new draft's number and link somewhere to stay.
  */

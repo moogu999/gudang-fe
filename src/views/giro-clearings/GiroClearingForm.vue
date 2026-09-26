@@ -540,7 +540,7 @@ function onSubmitResults() {
   const payload = buildResultsPayload(resultRows.value, resultDate.value)
   if (payload.lines.length === 0) return
 
-  // D9: results are final, so repeat what's about to be recorded before sending it.
+  // Results are final, so repeat what's about to be recorded before sending it.
   const totals = resultTotals(resultRows.value)
   const id = props.giroClearingId
   confirm.require({

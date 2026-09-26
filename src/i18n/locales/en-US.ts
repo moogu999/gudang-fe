@@ -2108,6 +2108,14 @@ export default {
   },
   configs: {
     title: 'Config',
+    clearCache: {
+      action: 'Clear cache',
+      confirmHeader: 'Clear cache?',
+      confirmMessage:
+        "This clears the server's cached master data and your browser cache. Everyone's next master-data loads will be slower while the cache refills.",
+      success: 'Cache cleared',
+      failed: 'The cache could not be cleared: the cache server is unavailable.',
+    },
   },
   salesOrderConfigs: {
     title: 'Sales Order Configs',

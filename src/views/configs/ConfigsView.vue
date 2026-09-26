@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Toast position="top-center" :group="overlayGroup" />
+    <ConfirmDialog :group="overlayGroup" />
     <h1 class="mb-3 text-base font-semibold sm:mb-5 sm:text-lg md:text-2xl">
       {{ t('configs.title') }}
     </h1>
@@ -17,11 +19,22 @@
         />
       </template>
       <template #end>
-        <ResponsiveButton
-          v-if="canWriteActive"
-          :label="t('common.actions.add')"
-          @click="onAddClick"
-        />
+        <div class="flex gap-2">
+          <ResponsiveButton
+            v-if="canClearCache"
+            :label="t('configs.clearCache.action')"
+            icon="pi pi-refresh"
+            severity="secondary"
+            outlined
+            :disabled="clearingCache"
+            @click="onClearCacheClick"
+          />
+          <ResponsiveButton
+            v-if="canWriteActive"
+            :label="t('common.actions.add')"
+            @click="onAddClick"
+          />
+        </div>
       </template>
     </Toolbar>
 
@@ -43,6 +56,10 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import Toolbar from 'primevue/toolbar'
 import Select from 'primevue/select'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import SalesOrderConfigsView from '@/views/sales-order-configs/SalesOrderConfigsView.vue'
 import BookingOrderConfigsView from '@/views/booking-order-configs/BookingOrderConfigsView.vue'
@@ -54,6 +71,8 @@ import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsVie
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
 import { usePermissions } from '@/composables'
+import { PERMISSIONS } from '@/constants/permissions'
+import { CacheService, commonErrorToast, commonSuccessToast } from '@/services'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -110,7 +129,41 @@ const canWriteActive = computed(() => {
   return false
 })
 
-const showToolbar = computed(() => configOptions.value.length > 1 || canWriteActive.value)
+const { hasPermission } = usePermissions()
+const canClearCache = computed(() => hasPermission(PERMISSIONS.CACHE_CLEAR))
+
+const showToolbar = computed(
+  () => configOptions.value.length > 1 || canWriteActive.value || canClearCache.value,
+)
+
+const overlayGroup = 'configsView'
+const confirm = useConfirm()
+const toast = useToast()
+const clearingCache = ref(false)
+
+function onClearCacheClick() {
+  confirm.require({
+    group: overlayGroup,
+    header: t('configs.clearCache.confirmHeader'),
+    message: t('configs.clearCache.confirmMessage'),
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: { label: t('common.actions.cancel'), severity: 'secondary', outlined: true },
+    acceptProps: { label: t('configs.clearCache.action') },
+    accept: clearCache,
+  })
+}
+
+async function clearCache() {
+  clearingCache.value = true
+  try {
+    await CacheService.clear()
+    toast.add(commonSuccessToast(t('configs.clearCache.success'), overlayGroup))
+  } catch {
+    toast.add(commonErrorToast(new Error(t('configs.clearCache.failed')), overlayGroup))
+  } finally {
+    clearingCache.value = false
+  }
+}
 
 const soRef = ref<InstanceType<typeof SalesOrderConfigsView> | null>(null)
 const boRef = ref<InstanceType<typeof BookingOrderConfigsView> | null>(null)

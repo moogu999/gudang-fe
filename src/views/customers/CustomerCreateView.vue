@@ -16,6 +16,7 @@
     </div>
 
     <CustomerForm
+      :toast-group="toastGroup"
       mode="add"
       :is-loading="isLoading"
       @save-draft="onSaveDraft"
@@ -34,11 +35,13 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { CustomersService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { usePostSaveNavigation } from '@/composables'
 import CustomerForm from './CustomerForm.vue'
 import type { CreateCustomerV1Dto } from '@/types/customer.type'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/customers')
 
 const toastGroup = 'customerCreate'
 const toast = useToast()
@@ -47,12 +50,12 @@ const isLoading = ref(false)
 async function save(dto: CreateCustomerV1Dto) {
   isLoading.value = true
   try {
-    await CustomersService.v1Create(dto)
+    const customer = await CustomersService.v1Create(dto)
     const msg = dto.isDraft
       ? t('customers.messages.draftSaved')
       : t('customers.messages.customerSaved')
     toast.add(commonSuccessToast(msg, toastGroup))
-    if (!dto.isDraft) setTimeout(() => router.push('/customers'), 800)
+    afterCreate(customer)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

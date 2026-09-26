@@ -82,26 +82,79 @@
         </template>
       </Column>
 
-      <Column :header="t('bankSettlements.table.customer')" style="min-width: 14rem">
+      <Column :header="t('bankSettlements.table.customer')" style="min-width: 16rem">
         <template #body="{ data, index }">
-          <template v-if="readonly">{{ data.customer?.name }}</template>
-          <InfiniteSelect
-            v-else
-            :model-value="data.customerId"
-            option-label="name"
-            option-value="id"
-            :fetch-fn="(q) => CustomersService.list(q)"
-            :initial-option="data.customer"
-            :placeholder="t('bankSettlements.table.selectCustomer')"
-            show-clear
-            sort-by="name"
-            sort-operator="asc"
-            class="w-full"
-            @update:model-value="(v: unknown) => onCustomerChange(index, v)"
-            @select-option="
-              (opt: object) => patch(index, { customer: opt as MutationRow['customer'] })
-            "
-          />
+          <template v-if="readonly">
+            <RouterLink
+              v-if="data.giroClearingId != null"
+              :to="`/giro-clearings/${data.giroClearingId}`"
+              class="text-primary underline"
+              data-testid="giro-link"
+              >{{
+                t('bankSettlements.tagMode.giroLabel', { no: data.giroClearingNo ?? '' })
+              }}</RouterLink
+            >
+            <span v-else>{{ data.customer?.name }}</span>
+          </template>
+          <div v-else class="flex flex-col gap-1">
+            <!-- A line is tagged to a customer OR to a giro clearing batch, never both.
+                 A Select, not SelectButton: programmatic writes don't repaint a SelectButton. -->
+            <Select
+              :model-value="modeOf(data)"
+              :options="modeOptions"
+              option-label="label"
+              option-value="value"
+              size="small"
+              class="w-full"
+              data-testid="tag-mode"
+              @update:model-value="(v: TagMode) => onModeChange(index, v)"
+            />
+            <Select
+              v-if="modeOf(data) === 'giro'"
+              :model-value="data.giroClearingId ?? null"
+              :options="giroOptions(data)"
+              option-label="label"
+              option-value="value"
+              :placeholder="t('bankSettlements.tagMode.giroClearingPlaceholder')"
+              :empty-message="t('bankSettlements.tagMode.noCandidates')"
+              show-clear
+              class="w-full"
+              data-testid="giro-select"
+              @update:model-value="(v: number | null) => onGiroChange(index, v)"
+            />
+            <InfiniteSelect
+              v-else
+              :model-value="data.customerId"
+              option-label="name"
+              option-value="id"
+              :fetch-fn="(q) => CustomersService.list(q)"
+              :initial-option="data.customer"
+              :placeholder="t('bankSettlements.table.selectCustomer')"
+              show-clear
+              sort-by="name"
+              sort-operator="asc"
+              class="w-full"
+              @update:model-value="(v: unknown) => onCustomerChange(index, v)"
+              @select-option="
+                (opt: object) => patch(index, { customer: opt as MutationRow['customer'] })
+              "
+            />
+            <small
+              v-if="lookalikeOf(data)"
+              class="flex items-start gap-1 text-amber-600"
+              data-testid="lookalike-warning"
+            >
+              <i class="pi pi-exclamation-triangle mt-0.5" />
+              <span>{{
+                t('bankSettlements.tagMode.giroLookalikeWarning', {
+                  customer: data.customer?.name ?? lookalikeOf(data)!.customerName,
+                  giroNo: lookalikeOf(data)!.giroNo,
+                  date: dayjs(lookalikeOf(data)!.clearedDate).format('DD/MM/YYYY'),
+                  no: lookalikeOf(data)!.clearingNo,
+                })
+              }}</span>
+            </small>
+          </div>
         </template>
       </Column>
 
@@ -149,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
@@ -159,25 +212,35 @@ import Tag from 'primevue/tag'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import DatePicker from 'primevue/datepicker'
+import Select from 'primevue/select'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { CustomersService } from '@/services'
+import type { GiroClearingCandidate } from '@/types/bankSettlement.type'
 import {
+  giroLookalike,
   isRowValid,
   isTagged,
   newMutationRow,
   rowErrors,
   type MutationRow,
   type Period,
+  type TagMode,
 } from '../bankSettlementLines'
 
 interface Props {
   modelValue: MutationRow[]
   readonly?: boolean
-  /** The header period; null until both ends are picked. Drives D9 on every row. */
+  /** The header period; null until both ends are picked. Drives each row's date check. */
   period?: Period | null
+  /** Giro clearing batches on this account a line can be tagged to. */
+  candidates?: GiroClearingCandidate[]
 }
 
-const props = withDefaults(defineProps<Props>(), { readonly: false, period: null })
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false,
+  period: null,
+  candidates: () => [],
+})
 
 const emit = defineEmits<{ 'update:modelValue': [rows: MutationRow[]] }>()
 
@@ -218,10 +281,67 @@ function patch(index: number, changes: Partial<MutationRow>) {
 
 function onCustomerChange(index: number, value: unknown) {
   if (typeof value === 'number') {
-    patch(index, { customerId: value })
+    patch(index, { customerId: value, giroClearingId: undefined, giroClearingNo: undefined })
   } else {
     patch(index, { customerId: undefined, customer: undefined })
   }
+}
+
+// ---------------------------------------------------------------------------
+// Customer tag vs giro clearing batch tag
+// ---------------------------------------------------------------------------
+
+const modeOptions = computed(() => [
+  { label: t('bankSettlements.tagMode.customer'), value: 'customer' },
+  { label: t('bankSettlements.tagMode.giro'), value: 'giro' },
+])
+
+// The chosen mode of an untagged row isn't in the row itself, so remember it per row key.
+const chosenMode = ref(new Map<string, TagMode>())
+
+function modeOf(row: MutationRow): TagMode {
+  if (row.giroClearingId != null) return 'giro'
+  if (row.customerId != null) return 'customer'
+  return chosenMode.value.get(row._key) ?? 'customer'
+}
+
+function onModeChange(index: number, mode: TagMode) {
+  const row = latest.value[index]
+  if (!row) return
+  chosenMode.value.set(row._key, mode)
+  // Switching clears the other tag — a line is never tagged twice.
+  if (mode === 'giro') patch(index, { customerId: undefined, customer: undefined })
+  else patch(index, { giroClearingId: undefined, giroClearingNo: undefined })
+}
+
+function giroOptions(row: MutationRow) {
+  const options = props.candidates.map((c) => ({
+    value: c.id,
+    label: t('bankSettlements.tagMode.giroCandidateLabel', {
+      no: c.no,
+      date: dayjs(c.depositDate).format('DD/MM/YYYY'),
+      amount: formatNumber(parseFloat(c.unmatchedAmount) || 0),
+    }),
+  }))
+  // A saved link whose batch is no longer offered (fully matched since) still labels itself.
+  if (row.giroClearingId != null && !options.some((o) => o.value === row.giroClearingId)) {
+    options.unshift({ value: row.giroClearingId, label: row.giroClearingNo ?? '' })
+  }
+  return options
+}
+
+function onGiroChange(index: number, value: number | null) {
+  const batch = props.candidates.find((c) => c.id === value)
+  patch(index, {
+    giroClearingId: value ?? undefined,
+    giroClearingNo: batch?.no,
+    customerId: undefined,
+    customer: undefined,
+  })
+}
+
+function lookalikeOf(row: MutationRow) {
+  return giroLookalike(row, props.candidates)
 }
 
 function addRow() {

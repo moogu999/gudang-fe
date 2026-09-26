@@ -360,7 +360,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -605,8 +605,9 @@ async function onSubmit() {
       ),
     )
 
+    // A new note is a draft, so land on its edit page to keep working on it.
     setTimeout(() => {
-      router.push({ name: 'DeliveryNoteDetail', params: { id: res.deliveryNoteId } })
+      router.replace({ name: 'DeliveryNoteEdit', params: { id: res.deliveryNoteId } })
     }, 1200)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
@@ -639,9 +640,9 @@ async function onUpdate() {
 
     toast.add(commonSuccessToast(t('deliveryNotes.messages.updateSuccess'), toastGroup))
 
-    setTimeout(() => {
-      router.replace({ name: 'DeliveryNotes' })
-    }, 1200)
+    // Stay on the edit page; refresh from the server so the page matches what was saved.
+    await loadForEdit(editId.value)
+    fetchPickerData(0)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {
@@ -655,6 +656,14 @@ onMounted(async () => {
   } else {
     loadPreview()
   }
+  fetchPickerData(0)
+})
+
+// Create → edit replaces the route but reuses this instance (both routes share this
+// component), so onMounted doesn't run again — load the new note when the id appears.
+watch(editId, async (id, prev) => {
+  if (id === null || id === prev) return
+  await loadForEdit(id)
   fetchPickerData(0)
 })
 </script>

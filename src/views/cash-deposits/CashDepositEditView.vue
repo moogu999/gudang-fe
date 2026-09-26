@@ -15,7 +15,7 @@
           v-if="cashDepositId !== undefined"
           :mode="DialogMode.EDIT"
           :cash-deposit-id="cashDepositId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('cashDeposits.messages.notFound') }}</Message>
@@ -34,10 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CashDepositForm from './CashDepositForm.vue'
 import DialogMode from '@/constants/dialogMode'
-import type { CashDepositResponse } from '@/types/cashDeposit.type'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/cash-deposits')
 const route = useRoute()
 
 const toastGroup = 'cashDepositEdit'
@@ -51,12 +52,4 @@ onMounted(() => {
   }
   cashDepositId.value = id
 })
-
-// A deposit that tripped the variance threshold stays on screen at its detail page, so the
-// approval timeline shows what happened; anything else goes back to the list.
-function onSubmitted(deposit: CashDepositResponse) {
-  const target =
-    deposit.status === 'need_approval' ? `/cash-deposits/${deposit.id}` : '/cash-deposits'
-  setTimeout(() => router.push(target), 1000)
-}
 </script>

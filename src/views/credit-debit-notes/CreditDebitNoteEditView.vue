@@ -15,7 +15,7 @@
           v-if="noteId !== undefined"
           :mode="DialogMode.EDIT"
           :note-id="noteId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('creditDebitNotes.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CreditDebitNoteForm from './CreditDebitNoteForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/credit-debit-notes')
 const route = useRoute()
 
 const toastGroup = 'creditDebitNoteEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   noteId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/credit-debit-notes'), 1000)
-}
 </script>

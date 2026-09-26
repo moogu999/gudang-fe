@@ -1080,15 +1080,6 @@ const router = createRouter({
           redirect: { path: '/configs', query: { tab: 'cd' } },
         },
         {
-          path: 'cash-deposit-categories',
-          name: 'CashDepositCategories',
-          component: () => import('@/views/cash-deposit-categories/CashDepositCategoriesView.vue'),
-          meta: {
-            requiredPermission: PERMISSIONS.CASH_DEPOSIT_CATEGORY_READ,
-            titleKey: 'navigation.cashDepositCategories',
-          },
-        },
-        {
           path: 'bank-settlements',
           name: 'BankSettlements',
           component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),
@@ -1125,6 +1116,87 @@ const router = createRouter({
           meta: {
             requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
             titleKey: 'navigation.bankSettlements',
+            titleAction: 'view',
+          },
+        },
+        // Giro hub: Register / Receipts / Clearings as tabs (?tab=). Reachable with either giro
+        // READ permission; the page shows only the tabs the user can read.
+        {
+          path: 'giro',
+          name: 'Giro',
+          component: () => import('@/views/giro/GiroView.vue'),
+          meta: { titleKey: 'navigation.giro' },
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            const ok =
+              authStore.hasPermission(PERMISSIONS.GIRO_RECEIPT_READ) ||
+              authStore.hasPermission(PERMISSIONS.GIRO_CLEARING_READ)
+            return ok || { name: 'Home' }
+          },
+        },
+        // The old list URLs now land on their tab.
+        { path: 'giro-receipts', redirect: { path: '/giro', query: { tab: 'receipts' } } },
+        {
+          path: 'giro-receipts/create',
+          name: 'GiroReceiptCreate',
+          component: () => import('@/views/giro-receipts/GiroReceiptCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_RECEIPT_WRITE,
+            titleKey: 'navigation.giroReceipts',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `giro-receipts/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'giro-receipts/:id/edit',
+          name: 'GiroReceiptEdit',
+          component: () => import('@/views/giro-receipts/GiroReceiptEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_RECEIPT_WRITE,
+            titleKey: 'navigation.giroReceipts',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'giro-receipts/:id',
+          name: 'GiroReceiptDetail',
+          component: () => import('@/views/giro-receipts/GiroReceiptDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_RECEIPT_READ,
+            titleKey: 'navigation.giroReceipts',
+            titleAction: 'view',
+          },
+        },
+        { path: 'giro-register', redirect: { path: '/giro', query: { tab: 'register' } } },
+        { path: 'giro-clearings', redirect: { path: '/giro', query: { tab: 'clearings' } } },
+        {
+          path: 'giro-clearings/create',
+          name: 'GiroClearingCreate',
+          component: () => import('@/views/giro-clearings/GiroClearingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_CLEARING_WRITE,
+            titleKey: 'navigation.giroClearings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `giro-clearings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'giro-clearings/:id/edit',
+          name: 'GiroClearingEdit',
+          component: () => import('@/views/giro-clearings/GiroClearingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_CLEARING_WRITE,
+            titleKey: 'navigation.giroClearings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'giro-clearings/:id',
+          name: 'GiroClearingDetail',
+          component: () => import('@/views/giro-clearings/GiroClearingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_CLEARING_READ,
+            titleKey: 'navigation.giroClearings',
             titleAction: 'view',
           },
         },

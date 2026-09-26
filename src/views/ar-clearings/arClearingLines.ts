@@ -42,7 +42,7 @@ export function totals(
 }
 
 /**
- * D12 — source hints first, then FIFO.
+ * Source hints first, then FIFO.
  *
  * Pass 1: every picked cash-deposit source whose `hintInvoiceId` is present in `rows` pays that
  * invoice first, up to the smaller of the source remainder and the invoice's outstanding. This
@@ -51,7 +51,7 @@ export function totals(
  * `documentId`, filling each to its outstanding.
  *
  * Returns a fresh array and never mutates its inputs. Advisory only — the server re-snapshots
- * and re-clamps everything on submit (D9). Works in integer cents to keep the sums exact.
+ * and re-clamps everything on submit. Works in integer cents to keep the sums exact.
  */
 export function autoAllocate(picked: SourceRow[], rows: AllocationRow[]): AllocationRow[] {
   const room = new Map<number, number>()
@@ -87,7 +87,7 @@ export function autoAllocate(picked: SourceRow[], rows: AllocationRow[]): Alloca
   return rows.map((r) => ({ ...r, allocated: (given.get(r.documentId) ?? 0) / 100 }))
 }
 
-/** Master §4 assumption 2: ok ≤ 14 days, warn 15–59, danger ≥ 60. */
+/** Ok ≤ 14 days, warn 15–59, danger ≥ 60. */
 export function agingSeverity(ageDays: number): 'ok' | 'warn' | 'danger' {
   if (ageDays >= 60) return 'danger'
   if (ageDays >= 15) return 'warn'

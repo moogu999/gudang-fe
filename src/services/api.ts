@@ -6,6 +6,7 @@ import axios, {
 } from 'axios'
 import { API_ENDPOINTS } from '@/constants/api'
 import { ApiError, type ErrorResponse } from '@/types/api.type'
+import { CacheKeyStore, type CachePolicies } from './cacheKeys'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -17,6 +18,9 @@ class ApiService {
     reject: (reason?: unknown) => void
   }> = []
   private authFailureCallback?: () => void
+  private cacheKeys = new CacheKeyStore()
+  // Resolved until loadCachePolicies() runs, so GETs never wait on it in tests.
+  private cachePoliciesReady: Promise<void> = Promise.resolve()
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -32,9 +36,34 @@ class ApiService {
   }
 
   private setupInterceptors() {
-    // Response interceptor for handling 401 errors
+    // Master-data GETs carry a `_v` cache key (see ./cacheKeys.ts)
+    this.axiosInstance.interceptors.request.use(async (config) => {
+      const url = config.url ?? ''
+      if (config.method !== 'get' || url === API_ENDPOINTS.CACHE_POLICIES) {
+        return config
+      }
+
+      await this.cachePoliciesReady
+      const version = this.cacheKeys.versionFor(url)
+      if (version !== undefined) {
+        if (config.params instanceof URLSearchParams) {
+          config.params.set('_v', String(version))
+        } else {
+          config.params = { ...config.params, _v: version }
+        }
+      }
+      return config
+    })
+
+    // Response interceptor for invalidating cache keys and handling 401 errors
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        const method = response.config.method
+        if (method && method !== 'get') {
+          this.cacheKeys.recordWrite(method, response.config.url ?? '')
+        }
+        return response
+      },
       async (error: AxiosError<ErrorResponse>) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
 
@@ -97,6 +126,19 @@ class ApiService {
         }
       },
     )
+  }
+
+  /**
+   * Load the backend's cache policy table. Call once at app start, before the
+   * first request; GETs wait for it so master data always carries a `_v`.
+   * On failure, requests go out without `_v`, exactly as before caching.
+   */
+  public loadCachePolicies(): Promise<void> {
+    this.cachePoliciesReady = this.axiosInstance
+      .get<{ data: CachePolicies }>(API_ENDPOINTS.CACHE_POLICIES, { timeout: 3000 })
+      .then((res) => this.cacheKeys.setPolicies(res.data.data))
+      .catch(() => {})
+    return this.cachePoliciesReady
   }
 
   private isAuthEndpoint(url: string): boolean {

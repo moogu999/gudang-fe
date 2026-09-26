@@ -15,7 +15,7 @@
           v-if="goodsReceiptId !== undefined"
           :mode="DialogMode.EDIT"
           :goods-receipt-id="goodsReceiptId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('goodsReceipts.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GoodsReceiptForm from './GoodsReceiptForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/goods-receipts')
 const route = useRoute()
 
 const toastGroup = 'goodsReceiptEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   goodsReceiptId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/goods-receipts'), 1000)
-}
 </script>

@@ -291,8 +291,8 @@ const modeOptions = computed(() => [
   { label: t('accountingPeriods.modes.custom'), value: 'CUSTOM' },
 ])
 
-// The schedule freezes once any period in it has left UPCOMING (backend
-// decision 10) — edit is unavailable client-side rather than letting the
+// The schedule freezes once any period in it has left UPCOMING (enforced by the
+// backend) — edit is unavailable client-side rather than letting the
 // user fill in the form and meet a 409 on submit.
 const isFrozen = computed(
   () =>

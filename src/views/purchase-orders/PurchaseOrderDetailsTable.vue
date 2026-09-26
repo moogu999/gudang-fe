@@ -161,7 +161,7 @@
         </template>
       </Column>
 
-      <!-- Tax Base / Tax (row's own, computed on full undiscounted gross — decision #3:
+      <!-- Tax Base / Tax (row's own, computed on full undiscounted gross — PO lines are
            always tax-exclusive and taxable, so taxBase == gross for every row) -->
       <Column :header="t('purchaseOrders.details.taxBase')">
         <template #body="{ data }">
@@ -393,7 +393,7 @@ function computeSubAmount(data: PurchaseOrderDetailRow): number {
   return computeGross(data) - computeManualDiscountTotal(data)
 }
 
-// Row's own Tax Base == gross (decision #3: always tax-exclusive and taxable, so the manual
+// Row's own Tax Base == gross (PO lines are always tax-exclusive and taxable, so the manual
 // discount reduces the tax base only at the header level, via its own negated tax entry).
 function computeTax(data: PurchaseOrderDetailRow): number {
   return Math.round(((computeGross(data) * props.taxRate) / 100) * 100) / 100

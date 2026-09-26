@@ -104,6 +104,9 @@ export default {
     cashDepositCategories: 'Kategori Setoran Kas',
     bankSettlements: 'Penyelesaian Bank',
     arClearings: 'Pelunasan Piutang',
+    giroReceipts: 'Penerimaan Giro',
+    giro: 'Giro',
+    giroClearings: 'Setor Kliring',
     paymentTerms: 'Termin Pembayaran',
     correctionCategories: 'Kategori Koreksi',
     suppliers: 'Pemasok',
@@ -555,6 +558,8 @@ export default {
       nikOwnerRequired: 'NIK pemilik wajib diisi untuk pelanggan PKP.',
       npwpNameRequired: 'Nama NPWP wajib diisi untuk pelanggan PKP.',
       npwpAddressRequired: 'Alamat NPWP wajib diisi untuk pelanggan PKP.',
+      summary: 'Ada kolom wajib yang belum diisi',
+      checkSections: 'Periksa tab berikut: {sections}.',
     },
     messages: {
       customerCreated: 'Pelanggan berhasil dibuat.',
@@ -1370,6 +1375,8 @@ export default {
       cashDeposits: 'Setoran Kas',
       bankSettlements: 'Penyelesaian Bank',
       arClearings: 'Pelunasan Piutang',
+      giroReceipts: 'Penerimaan Giro',
+      giroClearings: 'Setor Kliring',
     },
     validation: {
       nameRequired: 'Nama wajib diisi.',
@@ -2681,6 +2688,19 @@ export default {
       nameMismatchHint:
         'Nama pengirim di rekening sering berbeda dari nama pelanggan atau pemilik yang terdaftar. Tag setiap baris berdasarkan pelanggan yang Anda kenali, bukan dari nama saja.',
     },
+    tagMode: {
+      customer: 'Pelanggan',
+      giro: 'Setor kliring',
+      giroLabel: 'Setor kliring {no}',
+      giroClearingPlaceholder: 'Pilih setor kliring',
+      giroCandidateLabel: '{no} · {date} · belum dicocokkan {amount}',
+      noCandidates:
+        'Tidak ada setor kliring di rekening ini yang masih punya nominal cair belum dicocokkan.',
+      giroLookalikeWarning:
+        '{customer} punya giro cair {giroNo} dengan nominal ini pada {date}. Jika kredit ini adalah giro tersebut, tag ke setor kliring {no}.',
+      overMatched:
+        'Setor kliring {no} ditautkan sebesar {linked}, melebihi nominal cair belum dicocokkan sebesar {unmatched}.',
+    },
     summary: {
       total: 'Total Mutasi Kredit',
       tagged: 'Sudah ter-tag',
@@ -2724,6 +2744,7 @@ export default {
       lineDateOutOfPeriod: 'Tanggal berada di luar periode rekening koran.',
       lineDescriptionRequired: 'Keterangan wajib diisi.',
       lineAmountRequired: 'Nominal harus lebih dari nol.',
+      giroOverMatched: 'Setor kliring ditautkan melebihi nominal cair yang belum dicocokkan.',
     },
     messages: {
       created: 'Penyelesaian bank berhasil disimpan.',
@@ -2763,7 +2784,8 @@ export default {
     sources: {
       selectCustomerFirst: 'Pilih pelanggan untuk melihat kas yang belum teralokasi.',
       date: 'Tanggal',
-      source: 'Sumber',
+      method: 'Diterima Via',
+      source: 'Dokumen',
       description: 'Keterangan',
       amount: 'Nominal Awal',
       remaining: 'Sisa',
@@ -2772,8 +2794,9 @@ export default {
       partiallyAllocatedHint:
         'Sebagian baris sudah dialokasikan sebagian pada pelunasan sebelumnya.',
       type: {
-        cash_deposit: 'Setoran kas',
-        bank_settlement: 'Penyelesaian bank',
+        cash_deposit: 'Tunai',
+        bank_settlement: 'Transfer Bank',
+        giro: 'Giro',
       },
     },
     invoices: {
@@ -2848,6 +2871,281 @@ export default {
       notEditable: 'Hanya pelunasan piutang berstatus draf yang bisa diubah.',
       staleDropped:
         '{count} baris tersimpan sudah tidak tersedia dan dihapus. Periksa kembali alokasi sebelum submit.',
+    },
+  },
+  giro: {
+    title: 'Giro',
+    tabs: {
+      register: 'Register',
+      receipts: 'Penerimaan',
+      clearings: 'Setor Kliring',
+    },
+    actions: {
+      receiveGiros: 'Terima Giro',
+    },
+  },
+  giroReceipts: {
+    addGiroReceipt: 'Tambah Penerimaan Giro',
+    viewGiroReceipt: 'Detail Penerimaan Giro',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Diberikan saat disimpan',
+    },
+    fields: {
+      no: 'No. Penerimaan',
+      branch: 'Cabang',
+      company: 'Badan Hukum',
+      receiptDate: 'Tanggal Penerimaan',
+      employee: 'Diserahkan Oleh',
+      receivedBy: 'Diterima Oleh',
+      giroNo: 'No. Giro',
+      issuingBank: 'Bank Penerbit',
+      issuingBankPlaceholder: 'mis. BCA Cab. Melawai',
+      customer: 'Pelanggan',
+      selectCustomer: 'Pilih pelanggan',
+      giroDate: 'Tanggal Giro',
+      dueDate: 'Jatuh Tempo',
+      amount: 'Nominal',
+      recordedAmount: 'Tercatat',
+      actualCount: 'Jumlah giro dihitung',
+      actualAmount: 'Nominal diverifikasi',
+      varianceAmount: 'Selisih',
+      varianceReason: 'Alasan Selisih',
+      remark: 'Catatan',
+    },
+    sections: {
+      header: 'Informasi Penerimaan',
+      receipt: 'Diterima Oleh',
+      giros: 'Daftar Giro',
+    },
+    sourceBanner: {
+      manual: 'Tanpa upload: input manual oleh {user}.',
+      nforce: 'Diunggah dari N-Force.',
+    },
+    summary: {
+      title: 'Pengecekan Fisik',
+      declared: 'Tercatat (dari baris)',
+      verified: 'Diverifikasi fisik',
+      variance: 'Selisih',
+      giroCount: '{n} giro',
+    },
+    labels: {
+      subtotal: 'Subtotal ({n} giro)',
+      noGiros: 'Belum ada giro. Tambahkan satu baris per lembar giro.',
+      customerPickerHint: 'Hanya pelanggan dengan Bayar dengan Giro aktif yang ditampilkan.',
+      statusNote: 'Belum memengaruhi piutang: giro masuk ke penyimpanan dan menunggu jatuh tempo.',
+      varianceReasonHint: 'Wajib diisi untuk submit selama jumlah atau nominal berbeda.',
+      companyUnresolved:
+        'Cabang ini belum dipetakan ke perusahaan. Petakan di Perusahaan → Cabang sebelum menyimpan.',
+      voidBlockedHint:
+        'Penerimaan hanya bisa dibatalkan selama semua giro masih disimpan. Minimal satu giro sudah disetor kliring.',
+    },
+    warnings: {
+      alreadyOverdue: 'Giro ini sudah lewat jatuh tempo.',
+    },
+    status: {
+      draft: 'Draf',
+      completed: 'Selesai',
+      voided: 'Dibatalkan',
+    },
+    giroStatus: {
+      draft: 'Draf',
+      held: 'Disimpan',
+      clearing: 'Dalam kliring',
+      cleared: 'Cair',
+      rejected: 'Ditolak',
+      voided: 'Dibatalkan',
+    },
+    actions: {
+      addGiro: 'Tambah Giro',
+      removeGiro: 'Hapus giro',
+      saveDraft: 'Simpan sebagai Draf',
+      submit: 'Submit Penerimaan',
+      void: 'Batalkan',
+      editGiroReceipt: 'Ubah Penerimaan Giro',
+    },
+    confirm: {
+      header: 'Konfirmasi',
+      submit:
+        'Simpan {n} giro senilai {amount} ke penyimpanan? Penerimaan yang selesai hanya bisa dibatalkan, dan hanya selama semua giro masih disimpan.',
+    },
+    void: {
+      title: 'Batalkan Penerimaan Giro',
+      message:
+        'Pembatalan mengeluarkan semua giro di penerimaan ini dari penyimpanan. Tindakan ini tidak bisa dibatalkan.',
+      reason: 'Alasan',
+      reasonRequired: 'Alasan wajib diisi untuk membatalkan.',
+      voidedBanner: 'Penerimaan ini telah dibatalkan.',
+    },
+    validation: {
+      noRequired: 'Nomor penerimaan wajib diisi.',
+      employeeRequired: 'Karyawan wajib diisi.',
+      receiptDateRequired: 'Tanggal penerimaan wajib diisi.',
+      receiptDateFuture: 'Tanggal penerimaan tidak boleh di masa depan.',
+      branchRequired: 'Cabang wajib diisi.',
+      noGiros: 'Tambahkan minimal satu giro.',
+      girosInvalid: 'Perbaiki baris giro yang ditandai.',
+      giroNoRequired: 'Nomor giro wajib diisi.',
+      issuingBankRequired: 'Bank penerbit wajib diisi.',
+      customerRequired: 'Pelanggan wajib diisi.',
+      giroDateRequired: 'Tanggal giro wajib diisi.',
+      dueDateRequired: 'Jatuh tempo wajib diisi.',
+      dueBeforeGiroDate: 'Jatuh tempo tidak boleh sebelum tanggal giro.',
+      amountRequired: 'Nominal harus lebih dari nol.',
+      duplicateInDocument: 'Nomor giro dan bank ini muncul dua kali di penerimaan ini.',
+      actualRequired: 'Isi jumlah giro yang dihitung dan nominal yang diverifikasi.',
+      varianceReasonRequired: 'Jelaskan selisihnya sebelum submit.',
+    },
+    messages: {
+      created: 'Penerimaan giro berhasil disimpan.',
+      updated: 'Penerimaan giro berhasil diperbarui.',
+      voided: 'Penerimaan giro berhasil dibatalkan.',
+      notFound: 'Penerimaan giro tidak ditemukan.',
+      notEditable: 'Hanya penerimaan giro berstatus draf yang bisa diubah.',
+    },
+  },
+  giroRegister: {
+    tabs: {
+      custody: 'Semua di penyimpanan',
+      held: 'Disimpan',
+      due_soon: 'Jatuh tempo < 7 hari',
+      overdue: 'Lewat jatuh tempo',
+      clearing: 'Dalam kliring',
+      history: 'Riwayat',
+    },
+    filters: {
+      allBranches: 'Semua cabang',
+      allCustomers: 'Semua pelanggan',
+      search: 'Cari no. giro, bank, pelanggan, penerimaan',
+    },
+    columns: {
+      giroNo: 'No. Giro',
+      bank: 'Bank',
+      customer: 'Pelanggan',
+      received: 'Diterima',
+      dueDate: 'Jatuh Tempo',
+      amount: 'Nominal',
+    },
+    due: {
+      overdueDays: 'Lewat {n} hari',
+      dueInDays: 'Jatuh tempo {n} hari lagi',
+      dueToday: 'Jatuh tempo hari ini',
+      held: 'Disimpan',
+      inClearing: 'Dalam kliring',
+      cleared: 'Cair',
+      rejected: 'Ditolak',
+    },
+    empty: 'Tidak ada giro di tab ini.',
+    overdueHint: '{n} giro sudah lewat jatuh tempo dan sebaiknya segera disetor kliring.',
+    selection: {
+      summary: '{n} giro dipilih · {amount}',
+      clear: 'Hapus pilihan',
+      hint: 'Centang giro yang disimpan untuk menyetornya bersama dalam satu batch kliring.',
+      mixedBranches:
+        'Giro yang dipilih berasal dari cabang berbeda. Satu batch kliring hanya untuk satu cabang.',
+    },
+    actions: {
+      depositForClearing: 'Setor Giro',
+      depositSelected: 'Setor {n} Giro Terpilih',
+    },
+  },
+  giroClearings: {
+    addGiroClearing: 'Tambah Setor Kliring',
+    viewGiroClearing: 'Detail Setor Kliring',
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+      assignedOnSave: 'Diberikan saat disimpan',
+    },
+    fields: {
+      no: 'No. Kliring',
+      branch: 'Cabang',
+      depositDate: 'Tanggal Setor',
+      bankAccount: 'Setor ke Rekening Bank',
+      remark: 'Catatan',
+      total: 'Total',
+      outcome: 'Cair / Ditolak',
+      resultDate: 'Tanggal Hasil',
+      result: 'Hasil',
+      note: 'Catatan',
+      bankMatched: 'Sudah dicocokkan ke bank: {matched} dari {cleared}',
+    },
+    sections: {
+      header: 'Informasi Kliring',
+      bank: 'Bank',
+      picker: 'Giro yang Disimpan',
+      lines: 'Giro dalam Batch Ini',
+      results: 'Hasil Kliring',
+    },
+    picker: {
+      showAllHeld: 'Tampilkan semua giro yang disimpan',
+      notYetDue: 'Belum jatuh tempo',
+      empty: 'Tidak ada giro yang jatuh tempo sampai sehari setelah tanggal setor.',
+      selectBranchFirst: 'Pilih cabang untuk melihat giro yang disimpan.',
+      totalToDeposit: 'Total disetor',
+    },
+    results: {
+      pending: 'Menunggu',
+      cleared: 'Cair',
+      rejected: 'Ditolak',
+      clearedTotal: 'Cair: {amount}',
+      rejectedTotal: 'Ditolak: {amount}',
+    },
+    labels: {
+      pendingCount: '{n} menunggu',
+    },
+    status: {
+      draft: 'Draf',
+      deposited: 'Disetor',
+      completed: 'Selesai',
+    },
+    actions: {
+      saveDraft: 'Simpan sebagai Draf',
+      deposit: 'Setor {n} Giro ke Bank',
+      submitResults: 'Submit Hasil',
+      editGiroClearing: 'Ubah Setor Kliring',
+    },
+    hints: {
+      afterDeposit:
+        'Setelah disetor, giro berpindah ke Dalam kliring. Hasil (Cair/Ditolak) diisi setelah bank mengonfirmasi, biasanya H+1 sampai H+3.',
+      earlyDeposit: '{n} giro disetor lebih dari sehari sebelum jatuh tempo. Bank bisa menolaknya.',
+      rejectedCallout:
+        '{giroNo} ({customer}, {amount}) ditolak. Piutang pelanggan ini tidak berubah; tindak lanjuti giro fisiknya secara terpisah.',
+      clearedCallout:
+        '{n} giro cair ({amount}) menjadi kas belum teralokasi milik pelanggannya, siap dialokasikan di Pelunasan Piutang.',
+      openArClearing: 'Buka Pelunasan Piutang',
+      confirmResults:
+        'Catat {clearedCount} cair ({clearedAmount}) dan {rejectedCount} ditolak ({rejectedAmount})? Hasil bersifat final dan tidak bisa dibatalkan.',
+    },
+    confirm: {
+      header: 'Konfirmasi',
+      deposit:
+        'Setor {n} giro senilai {amount}? Giro berpindah ke Dalam kliring dan batch tidak bisa diubah lagi.',
+    },
+    validation: {
+      noRequired: 'Nomor kliring wajib diisi.',
+      branchRequired: 'Cabang wajib diisi.',
+      depositDateRequired: 'Tanggal setor wajib diisi.',
+      bankAccountRequired: 'Rekening bank wajib diisi.',
+      noneSelected: 'Pilih minimal satu giro untuk disetor.',
+      resultDateRequired: 'Tanggal hasil wajib diisi.',
+      resultDateBeforeDeposit: 'Tanggal hasil tidak boleh sebelum tanggal setor.',
+      rejectionNoteRequired: 'Giro yang ditolak wajib diberi catatan (alasan dari bank).',
+    },
+    errors: {
+      giroNotHeld:
+        '{n} giro terpilih sudah disetor di batch lain dan telah dihapus dari pilihan. Periksa pilihan lalu coba lagi.',
+    },
+    messages: {
+      created: 'Setor kliring berhasil disimpan.',
+      updated: 'Setor kliring berhasil diperbarui.',
+      resultsRecorded: 'Hasil kliring berhasil dicatat.',
+      notFound: 'Setor kliring tidak ditemukan.',
+      notEditable: 'Hanya setor kliring berstatus draf yang bisa diubah.',
+      preselectDroppedTitle: 'Pilihan berubah',
+      preselectDropped:
+        '{n} giro yang Anda pilih sudah tidak disimpan (disetor di batch lain) dan tidak diikutkan.',
     },
   },
   cashDepositConfigs: {

@@ -4,6 +4,7 @@ import type {
   BankSettlementListRow,
   BankSettlementResponse,
   CreateBankSettlementRequest,
+  GiroClearingCandidate,
   UpdateBankSettlementRequest,
 } from '@/types/bankSettlement.type'
 import { API_ENDPOINTS } from '@/constants/api'
@@ -46,5 +47,22 @@ export class BankSettlementsService {
 
   static async remove(id: number): Promise<void> {
     return ApiService.delete<void>(API_ENDPOINTS.BANK_SETTLEMENT_BY_ID(id))
+  }
+
+  /**
+   * Giro clearing batches on this account with cleared money not yet matched to a bank line,
+   * oldest first, each with its cleared giros. `from`/`to` bound the giros' cleared date.
+   */
+  static async giroClearingCandidates(params: {
+    branchBankAccountId: number
+    from?: string
+    to?: string
+  }): Promise<GiroClearingCandidate[]> {
+    const qs = new URLSearchParams({ branchBankAccountId: String(params.branchBankAccountId) })
+    if (params.from) qs.set('from', params.from)
+    if (params.to) qs.set('to', params.to)
+    return ApiService.get<GiroClearingCandidate[]>(
+      `${API_ENDPOINTS.BANK_SETTLEMENT_GIRO_CANDIDATES}?${qs.toString()}`,
+    )
   }
 }

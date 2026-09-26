@@ -132,6 +132,10 @@ export const PERMISSIONS = {
   BANK_SETTLEMENT_WRITE: 125,
   AR_CLEARING_READ: 126,
   AR_CLEARING_WRITE: 127,
+  GIRO_RECEIPT_READ: 128,
+  GIRO_RECEIPT_WRITE: 129,
+  GIRO_CLEARING_READ: 130,
+  GIRO_CLEARING_WRITE: 131,
 } as const
 
 /**
@@ -146,6 +150,13 @@ export type PermissionId = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
  * itself as `meta.requiredPermission` and read from there by both the navigation guard
  * and the sidebar, so the two cannot disagree. A route carries no notion of writing,
  * so write permissions stay declared here.
+ *
+ * `main` independently kept a `ROUTE_PERMISSIONS` read map alongside this one and grew
+ * it for every new feature (most recently giro). That map is the exact class of bug
+ * this file's read side was rewritten to remove — a second source of truth that
+ * defaults to "allowed" for any path it does not list — so it was not revived here.
+ * `usePermissions.ts` remains the only place read permissions are resolved, via the
+ * router. See gudang-fe/.claude/permission-gating-hardening-fe.md, items C and E.
  */
 export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/users': PERMISSIONS.USER_WRITE,
@@ -202,4 +213,6 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/cash-deposit-categories': PERMISSIONS.CASH_DEPOSIT_CATEGORY_WRITE,
   '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_WRITE,
   '/ar-clearings': PERMISSIONS.AR_CLEARING_WRITE,
+  '/giro-receipts': PERMISSIONS.GIRO_RECEIPT_WRITE,
+  '/giro-clearings': PERMISSIONS.GIRO_CLEARING_WRITE,
 }

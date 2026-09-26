@@ -25,15 +25,17 @@
         <Column :header="t('arClearings.sources.date')">
           <template #body="{ data }">{{ dayjs(data.sourceDate).format(DateFormat.DATE) }}</template>
         </Column>
-        <Column :header="t('arClearings.sources.source')">
+        <Column :header="t('arClearings.sources.method')">
           <template #body="{ data }">
             <Tag
-              :severity="data.sourceType === 'cash_deposit' ? 'info' : 'secondary'"
-              :icon="data.sourceType === 'cash_deposit' ? 'pi pi-wallet' : 'pi pi-building-columns'"
-              :value="data.sourceDocumentNo"
-              :title="t(`arClearings.sources.type.${data.sourceType}`)"
+              :severity="SOURCE_TAG[data.sourceType as ArCashSourceType].severity"
+              :icon="SOURCE_TAG[data.sourceType as ArCashSourceType].icon"
+              :value="t(`arClearings.sources.type.${data.sourceType}`)"
             />
           </template>
+        </Column>
+        <Column :header="t('arClearings.sources.source')">
+          <template #body="{ data }">{{ data.sourceDocumentNo }}</template>
         </Column>
         <Column :header="t('arClearings.sources.description')">
           <template #body="{ data }">{{ data.description || '—' }}</template>
@@ -82,10 +84,20 @@ import Tag from 'primevue/tag'
 import Message from 'primevue/message'
 import DateFormat from '@/constants/dateFormat'
 import { round2, type SourceRow } from '../arClearingLines'
+import type { ArCashSourceType } from '@/types/arClearing.type'
+
+const SOURCE_TAG: Record<
+  ArCashSourceType,
+  { severity: 'info' | 'secondary' | 'success'; icon: string }
+> = {
+  cash_deposit: { severity: 'info', icon: 'pi pi-wallet' },
+  bank_settlement: { severity: 'secondary', icon: 'pi pi-building-columns' },
+  giro: { severity: 'success', icon: 'pi pi-file-check' },
+}
 
 interface Props {
   customerId?: number
-  /** Every poolable cash line of the customer, in the order the server draws on them (D7). */
+  /** Every poolable cash line of the customer, in the order the server draws on them. */
   items: SourceRow[]
   /** The ticked lines — owned by the parent so a customer switch can clear them in one place. */
   picked: SourceRow[]

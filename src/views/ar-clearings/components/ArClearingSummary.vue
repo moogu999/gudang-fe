@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <!-- D8: leaving cash unapplied is fine — reassure rather than warn. -->
+    <!-- Leaving cash unapplied is fine — reassure rather than warn. -->
     <Message
       v-if="unallocatedValue > 0"
       severity="info"

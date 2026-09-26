@@ -494,7 +494,7 @@ function clearPool() {
 /**
  * Load the customer's whole pool. `saved` (EDIT of a draft) re-ticks the sources and refills the
  * allocations that are still valid; anything that has since left the pool is dropped and counted,
- * since the server re-snapshots on submit anyway (D9).
+ * since the server re-snapshots on submit anyway.
  */
 async function loadPool(saved?: ArClearingResponse) {
   const customerId = selectedCustomerId.value
@@ -537,7 +537,7 @@ async function loadPool(saved?: ArClearingResponse) {
   }
 }
 
-/** Everything below the header is scoped to one customer (D5), so a switch invalidates it all. */
+/** Everything below the header is scoped to one customer, so a switch invalidates it all. */
 async function switchCustomer(next: number | undefined) {
   if (next === selectedCustomerId.value) return
   selectedCustomerId.value = next
@@ -572,7 +572,7 @@ function onAutoAllocate() {
   const run = () => {
     invoiceRows.value = autoAllocate(picked.value, invoiceRows.value)
   }
-  // Advisory (D12), but it overwrites hand-typed values, so ask first.
+  // Advisory, but it overwrites hand-typed values, so ask first.
   if (invoiceRows.value.some((r) => r.allocated > 0)) {
     confirm.require({
       group: 'arClearingConfirm',
@@ -652,6 +652,8 @@ async function doSubmit() {
       saved = await ArClearingsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('arClearings.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadClearing()
     emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
@@ -686,7 +688,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
     clearingDate: dayjs(clearingDate.value).format('YYYY-MM-DD'),
     remark: (event.states.remark?.value as string | undefined)?.trim() || null,
     status: chosenStatus.value,
-    // No amounts on the sources — the server derives what each one gives (D7).
+    // No amounts on the sources — the server derives what each one gives.
     sources: picked.value.map((s) => ({ sourceType: s.sourceType, sourceLineId: s.sourceLineId })),
     allocations: allocations.map((r) => ({
       invoiceId: r.documentId,

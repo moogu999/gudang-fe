@@ -484,6 +484,7 @@ import type { Branch } from '@/types'
 import type { Base } from '@/types/api.type'
 import type {
   ApInvoiceStatus,
+  ApInvoiceResponse,
   CreateApInvoiceRequest,
   InvoiceableGoodsReceipt,
 } from '@/types/apInvoice.type'
@@ -515,7 +516,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   cancel: []
-  submitted: []
+  submitted: [saved: ApInvoiceResponse]
 }>()
 
 // Status / approval
@@ -845,10 +846,11 @@ async function doSubmit() {
   if (!pendingRequest.value) return
   isSaving.value = true
   try {
+    let saved: ApInvoiceResponse
     if (props.mode === DialogMode.EDIT && props.apInvoiceId) {
       // `no` and `branchId` are stamped at creation and are not recomputed on update.
       const req = pendingRequest.value
-      await ApInvoicesService.update(props.apInvoiceId, {
+      saved = await ApInvoicesService.update(props.apInvoiceId, {
         status: req.status,
         supplierId: req.supplierId,
         supplierInvoiceNo: req.supplierInvoiceNo,
@@ -860,10 +862,12 @@ async function doSubmit() {
       })
       toast.add(commonSuccessToast(t('apInvoices.messages.updated'), toastGroup))
     } else {
-      await ApInvoicesService.create(pendingRequest.value)
+      saved = await ApInvoicesService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('apInvoices.messages.created'), toastGroup))
     }
-    emit('submitted')
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadApInvoice()
+    emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

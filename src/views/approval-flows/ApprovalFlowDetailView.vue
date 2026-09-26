@@ -80,7 +80,7 @@ async function onSubmit(dto: UpdateApprovalFlowDto) {
   try {
     await ApprovalsService.updateFlow(props.id, dto)
     toast.add(commonSuccessToast(t('approvalFlows.messages.updated'), toastGroup))
-    router.push(`/approval-flows/${props.id}`)
+    await loadFlow()
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

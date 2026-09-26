@@ -15,7 +15,7 @@
           v-if="purchaseOrderId !== undefined"
           :mode="DialogMode.EDIT"
           :purchase-order-id="purchaseOrderId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('purchaseOrders.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import PurchaseOrderForm from './PurchaseOrderForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/purchase-orders')
 const route = useRoute()
 
 const toastGroup = 'purchaseOrderEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   purchaseOrderId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/purchase-orders'), 1000)
-}
 </script>

@@ -32,12 +32,14 @@ import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
+import { usePostSaveNavigation } from '@/composables'
 import { PromotionsService } from '@/services/promotions.service'
 import type { CreatePromotionDto } from '@/types/promotion.type'
 import PromotionForm from './PromotionForm.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/promotions')
 const toast = useToast()
 
 const toastGroup = 'promotionCreate'
@@ -46,9 +48,9 @@ const isLoading = ref(false)
 async function onSubmit(dto: CreatePromotionDto) {
   isLoading.value = true
   try {
-    await PromotionsService.create(dto)
+    const promotion = await PromotionsService.create(dto)
     toast.add(commonSuccessToast(t('promotions.messages.created'), toastGroup))
-    setTimeout(() => router.push('/promotions'), 1000)
+    afterCreate(promotion)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

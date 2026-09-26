@@ -15,7 +15,7 @@
           v-if="salesOrderId !== undefined"
           :mode="DialogMode.EDIT"
           :sales-order-id="salesOrderId"
-          @submitted="onSubmitted"
+          @submitted="afterUpdate"
           @cancel="router.back()"
         />
         <Message v-else severity="error">{{ t('salesOrders.messages.notFound') }}</Message>
@@ -34,9 +34,11 @@ import Message from 'primevue/message'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import SalesOrderForm from './SalesOrderForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/sales-orders')
 const route = useRoute()
 
 const toastGroup = 'salesOrderEdit'
@@ -50,8 +52,4 @@ onMounted(() => {
   }
   salesOrderId.value = id
 })
-
-function onSubmitted() {
-  setTimeout(() => router.push('/sales-orders'), 1000)
-}
 </script>

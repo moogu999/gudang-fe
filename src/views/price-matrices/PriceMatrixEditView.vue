@@ -17,6 +17,7 @@
 
     <PriceMatrixForm
       v-if="priceMatrix"
+      :key="formKey"
       mode="edit"
       :price-matrix="priceMatrix"
       :is-loading="isLoading"
@@ -62,6 +63,9 @@ const toast = useToast()
 const toastGroup = 'priceMatrixEdit'
 const isLoading = ref(false)
 const isLoadingData = ref(false)
+// Bumped after a save so the form, which reads its record only on mount, re-initialises
+// from the server's copy rather than keeping what was typed.
+const formKey = ref(0)
 const priceMatrix = ref<PriceMatrix | undefined>(undefined)
 
 onMounted(async () => {
@@ -86,7 +90,8 @@ async function onSubmit(dto: UpdatePriceMatrixDto) {
   try {
     await PriceMatricesService.update(priceMatrix.value.id, dto)
     toast.add(commonSuccessToast(t('priceMatrix.messages.updated'), toastGroup))
-    setTimeout(() => router.push(`/price-matrices/${priceMatrix.value!.id}`), 1000)
+    priceMatrix.value = await PriceMatricesService.getById(priceMatrix.value.id)
+    formKey.value++
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

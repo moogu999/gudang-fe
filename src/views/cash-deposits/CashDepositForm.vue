@@ -427,7 +427,7 @@ const source = ref<CashDepositSource>('manual')
 const approvalTimelineRef = ref<InstanceType<typeof ApprovalTimeline> | null>(null)
 const isApprovalCollapsed = ref(false)
 
-// D9: `approved` reads as Completed / Selesai in the UI.
+// `approved` reads as Completed / Selesai in the UI.
 function statusSeverity(status: CashDepositStatus) {
   if (status === 'approved') return 'success'
   if (status === 'need_approval') return 'warn'
@@ -609,7 +609,7 @@ function formatNumber(value: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// Variance-threshold pre-flight (D4/D5) — mirrors CashDepositConfigData.RequiresApproval.
+// Variance-threshold pre-flight — mirrors CashDepositConfigData.RequiresApproval.
 // An unconfigured flow never requires approval.
 // ---------------------------------------------------------------------------
 
@@ -695,6 +695,8 @@ async function doSubmit() {
       saved = await CashDepositsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('cashDeposits.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadCashDeposit()
     emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))

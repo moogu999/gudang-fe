@@ -353,6 +353,8 @@ export type {
   CreateBankSettlementRequest,
   UpdateBankSettlementRequest,
   BankSettlementResponse,
+  ClearedGiro,
+  GiroClearingCandidate,
 } from './bankSettlement.type'
 export type {
   ArClearingStatus,
@@ -369,6 +371,35 @@ export type {
   ArClearingAllocationResponse,
   ArClearingResponse,
 } from './arClearing.type'
+
+// Giro Receipt / Register / Clearing types
+export type {
+  GiroReceiptStatus,
+  GiroStatus,
+  GiroReceiptSource,
+  GiroReceiptListRow,
+  GiroLineRequest,
+  GiroResponse,
+  CreateGiroReceiptRequest,
+  UpdateGiroReceiptRequest,
+  GiroReceiptResponse,
+  GiroBucket,
+  GiroRegisterRow,
+  GiroBucketCounts,
+  GiroRegisterResponse,
+  GiroRegisterParams,
+} from './giroReceipt.type'
+export type {
+  GiroClearingStatus,
+  GiroClearingResult,
+  GiroClearingListRow,
+  CreateGiroClearingRequest,
+  UpdateGiroClearingRequest,
+  GiroClearingResultLine,
+  GiroClearingResultsRequest,
+  GiroClearingLineResponse,
+  GiroClearingResponse,
+} from './giroClearing.type'
 
 // Payment Method types
 export type {

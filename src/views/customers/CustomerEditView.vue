@@ -22,6 +22,7 @@
 
     <template v-else-if="customer">
       <CustomerForm
+        :toast-group="toastGroup"
         mode="edit"
         :customer="customer"
         :is-loading="isLoading"
@@ -151,14 +152,13 @@ async function save(dto: CreateCustomerV1Dto | UpdateCustomerV1Dto) {
   if (!customer.value) return
   isLoading.value = true
   try {
-    const prev = customer.value
-    const updated = await CustomersService.v1Update(prev.id, dto as UpdateCustomerV1Dto)
-    customer.value = { ...updated, labels: updated.labels ?? prev.labels }
+    await CustomersService.v1Update(customer.value.id, dto as UpdateCustomerV1Dto)
+    // Re-read rather than trusting the update response, so the form shows exactly what was stored.
+    customer.value = await CustomersService.v1Get(customer.value.id)
     const msg = dto.isDraft
       ? t('customers.messages.draftSaved')
       : t('customers.messages.customerSaved')
     toast.add(commonSuccessToast(msg, toastGroup))
-    if (!dto.isDraft) setTimeout(() => router.push('/customers'), 800)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
   } finally {

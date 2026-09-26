@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <GoodsReceiptForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <GoodsReceiptForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,13 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import GoodsReceiptForm from './GoodsReceiptForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/goods-receipts')
 
 const toastGroup = 'goodsReceiptCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/goods-receipts'), 1000)
-}
 </script>

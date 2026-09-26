@@ -611,7 +611,7 @@ const summaryTotals = computed(() => {
     discountTotal += parseFloat(line.discount)
   }
   discountTotal += parseFloat(detail.value.discountAmount)
-  // Read the persisted sum-of-gross value directly (decision #3 of the master plan) rather
+  // Read the persisted sum-of-gross value directly rather
   // than reverse-deriving it from total/discount/tax — under the bottom-up model that identity
   // only holds when every row is tax-inclusive, since exclusive rows add tax on top instead of
   // embedding it.

@@ -135,7 +135,7 @@
           {{ t('bankSettlements.fields.bankAccount') }}
         </h3>
 
-        <!-- Bank account: active accounts of the settlement's branch only (D8) -->
+        <!-- Bank account: active accounts of the settlement's branch only -->
         <div class="flex flex-col gap-1">
           <label for="branchBankAccountId" class="text-sm font-semibold">{{
             t('bankSettlements.fields.bankAccount')
@@ -152,6 +152,7 @@
             sort-by="bank_name"
             sort-operator="asc"
             class="w-full"
+            @update:model-value="onBankAccountUpdate"
           />
           <Message
             v-if="$form.branchBankAccountId?.invalid"
@@ -206,7 +207,24 @@
         v-model="rows"
         :readonly="mode === DialogMode.VIEW"
         :period="period"
+        :candidates="giroCandidates"
       />
+      <Message
+        v-for="o in overMatched"
+        :key="o.id"
+        severity="error"
+        variant="simple"
+        class="mt-2"
+        data-testid="over-matched"
+      >
+        {{
+          t('bankSettlements.tagMode.overMatched', {
+            no: o.no,
+            linked: formatNumber(o.linked),
+            unmatched: formatNumber(o.unmatched),
+          })
+        }}
+      </Message>
     </div>
 
     <BankSettlementSummary
@@ -235,7 +253,7 @@
           :loading="isSaving"
           @click="chosenStatus = 'draft'"
         />
-        <!-- D5: nothing tagged is a 400 from the API, so don't let the user get there. -->
+        <!-- Nothing tagged is a 400 from the API, so don't let the user get there. -->
         <span
           v-tooltip.top="taggedCount === 0 ? t('bankSettlements.labels.submitDisabledHint') : null"
         >
@@ -244,7 +262,7 @@
             data-testid="submit"
             :label="t('bankSettlements.actions.submit')"
             :loading="isSaving"
-            :disabled="taggedCount === 0"
+            :disabled="taggedCount === 0 || overMatched.length > 0"
             @click="chosenStatus = 'completed'"
           />
         </span>
@@ -254,7 +272,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onBeforeMount } from 'vue'
+import { ref, reactive, computed, watch, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
@@ -277,7 +295,13 @@ import type { FormSubmitEvent } from '@primevue/forms'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import BankSettlementMutationTable from './components/BankSettlementMutationTable.vue'
 import BankSettlementSummary from './components/BankSettlementSummary.vue'
-import { partition, totals, type MutationRow, type Period } from './bankSettlementLines'
+import {
+  batchOverMatch,
+  partition,
+  totals,
+  type MutationRow,
+  type Period,
+} from './bankSettlementLines'
 import DialogMode from '@/constants/dialogMode'
 import FilterOperator from '@/constants/filterOperator'
 import {
@@ -297,6 +321,7 @@ import type {
   BankSettlementLineRequest,
   BankSettlementResponse,
   CreateBankSettlementRequest,
+  GiroClearingCandidate,
 } from '@/types/bankSettlement.type'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries, usePermissions } from '@/composables'
@@ -410,10 +435,11 @@ async function resolveCompanyForBranch(branchId: number | undefined) {
 async function onBranchIdUpdate(value: unknown) {
   const next = typeof value === 'number' ? value : undefined
   if (next !== selectedBranchId.value && props.mode === DialogMode.ADD) {
-    // D8: the account must belong to the settlement's branch — a stale pick can't survive.
+    // The account must belong to the settlement's branch — a stale pick can't survive.
     if (formRef.value?.states?.branchBankAccountId) {
       formRef.value.states.branchBankAccountId.value = undefined
     }
+    selectedBankAccountId.value = undefined
   }
   selectedBranchId.value = next
   await resolveCompanyForBranch(next)
@@ -435,7 +461,7 @@ const bankAccountFilters = computed(() => [
 ])
 
 // The header period as a picked range. Null until both ends are chosen; every row's
-// date is checked against it (D9), so narrowing it re-validates the table at once.
+// date is checked against it, so narrowing it re-validates the table at once.
 const periodRange = ref<Date[]>([])
 const period = computed<Period | null>(() =>
   periodRange.value[0] && periodRange.value[1]
@@ -451,6 +477,52 @@ const periodError = ref(false)
 function onPeriodUpdate(value: unknown) {
   periodRange.value = Array.isArray(value) ? (value.filter(Boolean) as Date[]) : []
   if (period.value) periodError.value = false
+}
+
+// ---------------------------------------------------------------------------
+// Giro clearing batches a line can be tagged to
+// ---------------------------------------------------------------------------
+
+const selectedBankAccountId = ref<number | undefined>()
+const giroCandidates = ref<GiroClearingCandidate[]>([])
+
+function onBankAccountUpdate(value: unknown) {
+  selectedBankAccountId.value = typeof value === 'number' ? value : undefined
+}
+
+/** The period ±7 days, so a giro that cleared just outside the statement still shows. */
+async function loadGiroCandidates() {
+  // The endpoint needs BANK_SETTLEMENT_WRITE and a read-only view has nothing to tag.
+  if (props.mode === DialogMode.VIEW || !selectedBankAccountId.value) {
+    giroCandidates.value = []
+    return
+  }
+  try {
+    giroCandidates.value = await BankSettlementsService.giroClearingCandidates({
+      branchBankAccountId: selectedBankAccountId.value,
+      from: period.value
+        ? dayjs(period.value[0]).subtract(7, 'day').format('YYYY-MM-DD')
+        : undefined,
+      to: period.value ? dayjs(period.value[1]).add(7, 'day').format('YYYY-MM-DD') : undefined,
+    })
+  } catch (e) {
+    giroCandidates.value = []
+    toast.add(commonErrorToast(e, toastGroup))
+  }
+}
+
+watch(
+  () => [selectedBankAccountId.value, period.value?.[0]?.getTime(), period.value?.[1]?.getTime()],
+  loadGiroCandidates,
+)
+
+const overMatched = computed(() => batchOverMatch(rows.value, giroCandidates.value))
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
 }
 
 // ---------------------------------------------------------------------------
@@ -522,6 +594,8 @@ async function doSubmit() {
       saved = await BankSettlementsService.create(pendingRequest.value)
       toast.add(commonSuccessToast(t('bankSettlements.messages.created'), toastGroup))
     }
+    // A draft save keeps the user on the edit page — refresh the server-computed state.
+    if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadBankSettlement()
     emit('submitted', saved)
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))
@@ -545,6 +619,10 @@ async function onFormSubmit(event: FormSubmitEvent) {
   if (chosenStatus.value === 'completed' && tagged.length === 0) {
     return failValidation('bankSettlements.validation.noTaggedLines')
   }
+  // The server refuses it too, but only on completion; a draft may still be over.
+  if (chosenStatus.value === 'completed' && overMatched.value.length > 0) {
+    return failValidation('bankSettlements.validation.giroOverMatched')
+  }
 
   // Auto mode sends no number — the backend assigns one from the series on save.
   let no: string | null = null
@@ -561,6 +639,7 @@ async function onFormSubmit(event: FormSubmitEvent) {
     description: r.description.trim(),
     amount: (r.amount as number).toFixed(2),
     customerId: r.customerId ?? null,
+    giroClearingId: r.giroClearingId ?? null,
     note: r.note?.trim() || null,
   }))
 
@@ -603,7 +682,7 @@ async function loadBankSettlement() {
   try {
     const settlement = await BankSettlementsService.get(props.bankSettlementId)
 
-    // D7: completed is terminal. The list never offers Edit, but a typed URL can get here.
+    // Completed is terminal. The list never offers Edit, but a typed URL can get here.
     if (props.mode === DialogMode.EDIT && settlement.status === 'completed') {
       notEditable.value = true
       return
@@ -626,6 +705,7 @@ async function loadBankSettlement() {
       settlement.splitFromId && settlement.splitFromNo
         ? { id: settlement.splitFromId, no: settlement.splitFromNo }
         : null
+    selectedBankAccountId.value = settlement.branchBankAccountId
     initialBankAccount.value = {
       id: settlement.branchBankAccountId,
       bankName: settlement.branchBankAccountLabel ?? '',
@@ -647,6 +727,8 @@ async function loadBankSettlement() {
       customer: l.customerId
         ? { id: l.customerId, name: l.customerName ?? '', code: l.customerCode ?? undefined }
         : undefined,
+      giroClearingId: l.giroClearingId ?? undefined,
+      giroClearingNo: l.giroClearingNo ?? undefined,
       note: l.note ?? null,
     }))
 

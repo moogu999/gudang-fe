@@ -301,14 +301,15 @@ const mainMenu = [
         route: '/cash-deposits',
       },
       {
-        label: 'Cash Deposit Categories',
-        labelKey: 'navigation.cashDepositCategories',
-        route: '/cash-deposit-categories',
-      },
-      {
         label: 'Bank Settlements',
         labelKey: 'navigation.bankSettlements',
         route: '/bank-settlements',
+      },
+      {
+        label: 'Giro',
+        labelKey: 'navigation.giro',
+        route: '/giro',
+        permissionsAny: [PERMISSIONS.GIRO_RECEIPT_READ, PERMISSIONS.GIRO_CLEARING_READ],
       },
       {
         label: 'AR Clearing',

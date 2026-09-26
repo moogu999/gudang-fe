@@ -11,7 +11,7 @@
 
     <ResponsiveCard>
       <template #content>
-        <ApPaymentForm :mode="DialogMode.ADD" @submitted="onSubmitted" @cancel="router.back()" />
+        <ApPaymentForm :mode="DialogMode.ADD" @submitted="afterCreate" @cancel="router.back()" />
       </template>
     </ResponsiveCard>
   </div>
@@ -25,13 +25,11 @@ import Button from 'primevue/button'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ApPaymentForm from './ApPaymentForm.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterCreate } = usePostSaveNavigation('/ap-payments')
 
 const toastGroup = 'apPaymentCreate'
-
-function onSubmitted() {
-  setTimeout(() => router.push('/ap-payments'), 1000)
-}
 </script>

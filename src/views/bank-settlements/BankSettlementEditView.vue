@@ -37,10 +37,12 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import BankSettlementForm from './BankSettlementForm.vue'
 import BankSettlementSplitResult from './components/BankSettlementSplitResult.vue'
 import DialogMode from '@/constants/dialogMode'
+import { usePostSaveNavigation } from '@/composables'
 import type { BankSettlementResponse } from '@/types/bankSettlement.type'
 
 const { t } = useI18n()
 const router = useRouter()
+const { afterUpdate } = usePostSaveNavigation('/bank-settlements')
 const route = useRoute()
 
 const toastGroup = 'bankSettlementEdit'
@@ -63,13 +65,13 @@ watch(
   { immediate: true },
 )
 
-// A submit that split (D4) stays on screen so the new draft's number and link don't vanish
-// in a redirect; anything else goes back to the list.
+// A submit that split stays on screen so the new draft's number and link don't vanish
+// in a redirect; anything else follows the usual post-save navigation.
 function onSubmitted(settlement: BankSettlementResponse) {
   if (settlement.remainderSettlementId) {
     splitResult.value = settlement
     return
   }
-  setTimeout(() => router.push('/bank-settlements'), 1000)
+  afterUpdate(settlement)
 }
 </script>

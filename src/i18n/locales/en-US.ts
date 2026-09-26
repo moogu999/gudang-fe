@@ -103,6 +103,9 @@ export default {
     cashDepositCategories: 'Cash Deposit Categories',
     bankSettlements: 'Bank Settlements',
     arClearings: 'AR Clearing',
+    giroReceipts: 'Giro Receipts',
+    giro: 'Giro',
+    giroClearings: 'Giro Clearings',
     paymentTerms: 'Term of Payment',
     correctionCategories: 'Correction Categories',
     suppliers: 'Suppliers',
@@ -553,6 +556,8 @@ export default {
       nikOwnerRequired: 'Owner NIK is required for taxable customers.',
       npwpNameRequired: 'NPWP name is required for taxable customers.',
       npwpAddressRequired: 'NPWP address is required for taxable customers.',
+      summary: 'Some required fields are missing',
+      checkSections: 'Check these tabs: {sections}.',
     },
     messages: {
       customerCreated: 'Customer is created.',
@@ -1365,6 +1370,8 @@ export default {
       cashDeposits: 'Cash Deposits',
       bankSettlements: 'Bank Settlements',
       arClearings: 'AR Clearing',
+      giroReceipts: 'Giro Receipts',
+      giroClearings: 'Giro Clearings',
     },
     validation: {
       nameRequired: 'Name is required.',
@@ -2677,6 +2684,18 @@ export default {
       nameMismatchHint:
         'The sender name on the statement often differs from the registered customer or owner name. Tag each line by the customer you recognise, not by the name alone.',
     },
+    tagMode: {
+      customer: 'Customer',
+      giro: 'Giro clearing',
+      giroLabel: 'Giro clearing {no}',
+      giroClearingPlaceholder: 'Select a giro clearing',
+      giroCandidateLabel: '{no} · {date} · unmatched {amount}',
+      noCandidates: 'No giro clearing on this account has unmatched cleared money.',
+      giroLookalikeWarning:
+        '{customer} has a cleared giro {giroNo} for this amount on {date}. If this credit is that giro, tag it to clearing {no} instead.',
+      overMatched:
+        'Giro clearing {no} is linked for {linked}, more than its unmatched cleared amount of {unmatched}.',
+    },
     summary: {
       total: 'Total Credit Mutations',
       tagged: 'Tagged',
@@ -2721,6 +2740,7 @@ export default {
       lineDateOutOfPeriod: 'Date is outside the statement period.',
       lineDescriptionRequired: 'Description is required.',
       lineAmountRequired: 'Amount must be greater than zero.',
+      giroOverMatched: 'A giro clearing is linked for more than its unmatched cleared amount.',
     },
     messages: {
       created: 'Bank settlement saved successfully.',
@@ -2759,7 +2779,8 @@ export default {
     sources: {
       selectCustomerFirst: 'Select a customer to see its unapplied cash.',
       date: 'Date',
-      source: 'Source',
+      method: 'Received Via',
+      source: 'Document',
       description: 'Description',
       amount: 'Original Amount',
       remaining: 'Remaining',
@@ -2767,8 +2788,9 @@ export default {
       empty: 'This customer has no unapplied cash.',
       partiallyAllocatedHint: 'Some lines were partially allocated in an earlier clearing.',
       type: {
-        cash_deposit: 'Cash deposit',
-        bank_settlement: 'Bank settlement',
+        cash_deposit: 'Cash',
+        bank_settlement: 'Bank Transfer',
+        giro: 'Giro',
       },
     },
     invoices: {
@@ -2842,6 +2864,281 @@ export default {
       notEditable: 'Only a draft AR clearing can be edited.',
       staleDropped:
         '{count} saved line(s) are no longer available and were removed. Review the allocations before submitting.',
+    },
+  },
+  giro: {
+    title: 'Giro',
+    tabs: {
+      register: 'Register',
+      receipts: 'Receipts',
+      clearings: 'Clearings',
+    },
+    actions: {
+      receiveGiros: 'Receive Giros',
+    },
+  },
+  giroReceipts: {
+    addGiroReceipt: 'Add Giro Receipt',
+    viewGiroReceipt: 'Giro Receipt Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'Receipt No.',
+      branch: 'Branch',
+      company: 'Legal Entity',
+      receiptDate: 'Receipt Date',
+      employee: 'Handed Over By',
+      receivedBy: 'Received By',
+      giroNo: 'Giro No.',
+      issuingBank: 'Issuing Bank',
+      issuingBankPlaceholder: 'e.g. BCA Cab. Melawai',
+      customer: 'Customer',
+      selectCustomer: 'Select a customer',
+      giroDate: 'Giro Date',
+      dueDate: 'Due Date',
+      amount: 'Amount',
+      recordedAmount: 'Declared',
+      actualCount: 'Giros counted',
+      actualAmount: 'Amount verified',
+      varianceAmount: 'Variance',
+      varianceReason: 'Variance Reason',
+      remark: 'Remark',
+    },
+    sections: {
+      header: 'Receipt Information',
+      receipt: 'Received By',
+      giros: 'Giros',
+    },
+    sourceBanner: {
+      manual: 'No upload: manual entry by {user}.',
+      nforce: 'Uploaded from N-Force.',
+    },
+    summary: {
+      title: 'Custody Check',
+      declared: 'Declared (from lines)',
+      verified: 'Physically verified',
+      variance: 'Variance',
+      giroCount: '{n} giro(s)',
+    },
+    labels: {
+      subtotal: 'Subtotal ({n} giros)',
+      noGiros: 'No giros yet. Add one per physical giro.',
+      customerPickerHint: 'Only customers with Pays with Giro enabled are listed.',
+      statusNote: 'Not yet applied to AR: giros enter custody and wait for their due date.',
+      varianceReasonHint: 'Required to submit while the count or the amount differs.',
+      companyUnresolved:
+        'This branch is not mapped to a company yet. Map it under Companies → Branches before saving.',
+      voidBlockedHint:
+        'A receipt can only be voided while all its giros are held. At least one has been deposited for clearing.',
+    },
+    warnings: {
+      alreadyOverdue: 'This giro is already overdue.',
+    },
+    status: {
+      draft: 'Draft',
+      completed: 'Completed',
+      voided: 'Voided',
+    },
+    giroStatus: {
+      draft: 'Draft',
+      held: 'Held',
+      clearing: 'In clearing',
+      cleared: 'Cleared',
+      rejected: 'Rejected',
+      voided: 'Voided',
+    },
+    actions: {
+      addGiro: 'Add Giro',
+      removeGiro: 'Remove giro',
+      saveDraft: 'Save as Draft',
+      submit: 'Submit Receipt',
+      void: 'Void',
+      editGiroReceipt: 'Edit Giro Receipt',
+    },
+    confirm: {
+      header: 'Confirm',
+      submit:
+        'Put {n} giro(s) totalling {amount} into custody? A completed receipt can only be voided, and only while every giro is still held.',
+    },
+    void: {
+      title: 'Void Giro Receipt',
+      message: 'Voiding takes every giro on this receipt out of custody. This cannot be undone.',
+      reason: 'Reason',
+      reasonRequired: 'A reason is required to void.',
+      voidedBanner: 'This receipt has been voided.',
+    },
+    validation: {
+      noRequired: 'Receipt number is required.',
+      employeeRequired: 'Employee is required.',
+      receiptDateRequired: 'Receipt date is required.',
+      receiptDateFuture: 'Receipt date cannot be in the future.',
+      branchRequired: 'Branch is required.',
+      noGiros: 'Add at least one giro.',
+      girosInvalid: 'Fix the highlighted giro rows.',
+      giroNoRequired: 'Giro number is required.',
+      issuingBankRequired: 'Issuing bank is required.',
+      customerRequired: 'Customer is required.',
+      giroDateRequired: 'Giro date is required.',
+      dueDateRequired: 'Due date is required.',
+      dueBeforeGiroDate: 'Due date cannot be before the giro date.',
+      amountRequired: 'Amount must be greater than zero.',
+      duplicateInDocument: 'This giro number and bank appear twice in this receipt.',
+      actualRequired: 'Enter the counted giros and the verified amount.',
+      varianceReasonRequired: 'Explain the variance before submitting.',
+    },
+    messages: {
+      created: 'Giro receipt saved successfully.',
+      updated: 'Giro receipt updated successfully.',
+      voided: 'Giro receipt voided successfully.',
+      notFound: 'Giro receipt not found.',
+      notEditable: 'Only a draft giro receipt can be edited.',
+    },
+  },
+  giroRegister: {
+    tabs: {
+      custody: 'All in custody',
+      held: 'Held',
+      due_soon: 'Due < 7 days',
+      overdue: 'Overdue',
+      clearing: 'In clearing',
+      history: 'History',
+    },
+    filters: {
+      allBranches: 'All branches',
+      allCustomers: 'All customers',
+      search: 'Search giro no., bank, customer, receipt',
+    },
+    columns: {
+      giroNo: 'Giro No.',
+      bank: 'Bank',
+      customer: 'Customer',
+      received: 'Received',
+      dueDate: 'Due Date',
+      amount: 'Amount',
+    },
+    due: {
+      overdueDays: 'Overdue {n} days',
+      dueInDays: 'Due in {n} days',
+      dueToday: 'Due today',
+      held: 'Held',
+      inClearing: 'In clearing',
+      cleared: 'Cleared',
+      rejected: 'Rejected',
+    },
+    empty: 'No giros in this tab.',
+    overdueHint: '{n} giro(s) are overdue and should be deposited for clearing soon.',
+    selection: {
+      summary: '{n} giro(s) selected · {amount}',
+      clear: 'Clear',
+      hint: 'Tick held giros to deposit them together in one clearing batch.',
+      mixedBranches:
+        'The selected giros belong to different branches. A clearing batch is for one branch.',
+    },
+    actions: {
+      depositForClearing: 'Deposit for Clearing',
+      depositSelected: 'Deposit {n} Selected',
+    },
+  },
+  giroClearings: {
+    addGiroClearing: 'Add Giro Clearing',
+    viewGiroClearing: 'Giro Clearing Detail',
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+      assignedOnSave: 'Assigned on save',
+    },
+    fields: {
+      no: 'Clearing No.',
+      branch: 'Branch',
+      depositDate: 'Deposit Date',
+      bankAccount: 'Deposit to Bank Account',
+      remark: 'Remark',
+      total: 'Total',
+      outcome: 'Cleared / Rejected',
+      resultDate: 'Result Date',
+      result: 'Result',
+      note: 'Note',
+      bankMatched: 'Matched to bank: {matched} of {cleared}',
+    },
+    sections: {
+      header: 'Clearing Information',
+      bank: 'Bank',
+      picker: 'Held Giros',
+      lines: 'Giros in This Batch',
+      results: 'Clearing Results',
+    },
+    picker: {
+      showAllHeld: 'Show all held giros',
+      notYetDue: 'Not yet due',
+      empty: 'No held giros due by the day after the deposit date.',
+      selectBranchFirst: 'Select a branch to see its held giros.',
+      totalToDeposit: 'Total to deposit',
+    },
+    results: {
+      pending: 'Pending',
+      cleared: 'Cleared',
+      rejected: 'Rejected',
+      clearedTotal: 'Cleared: {amount}',
+      rejectedTotal: 'Rejected: {amount}',
+    },
+    labels: {
+      pendingCount: '{n} pending',
+    },
+    status: {
+      draft: 'Draft',
+      deposited: 'Deposited',
+      completed: 'Completed',
+    },
+    actions: {
+      saveDraft: 'Save as Draft',
+      deposit: 'Deposit {n} Giros to Bank',
+      submitResults: 'Submit Results',
+      editGiroClearing: 'Edit Giro Clearing',
+    },
+    hints: {
+      afterDeposit:
+        'After depositing, the giros move to In clearing. Results (Cleared/Rejected) are entered once the bank confirms, usually H+1 to H+3.',
+      earlyDeposit:
+        '{n} giro(s) are deposited more than a day before their due date. The bank may reject them.',
+      rejectedCallout:
+        "{giroNo} ({customer}, {amount}) was rejected. This customer's receivables are unchanged; follow up on the physical giro separately.",
+      clearedCallout:
+        '{n} cleared giro(s) ({amount}) become unapplied cash for their customers, ready to allocate in AR Clearing.',
+      openArClearing: 'Open AR Clearing',
+      confirmResults:
+        'Record {clearedCount} cleared ({clearedAmount}) and {rejectedCount} rejected ({rejectedAmount})? Results are final and cannot be undone.',
+    },
+    confirm: {
+      header: 'Confirm',
+      deposit:
+        'Deposit {n} giro(s) totalling {amount}? They move to In clearing and the batch can no longer be edited.',
+    },
+    validation: {
+      noRequired: 'Clearing number is required.',
+      branchRequired: 'Branch is required.',
+      depositDateRequired: 'Deposit date is required.',
+      bankAccountRequired: 'Bank account is required.',
+      noneSelected: 'Select at least one giro to deposit.',
+      resultDateRequired: 'Result date is required.',
+      resultDateBeforeDeposit: 'Result date cannot be before the deposit date.',
+      rejectionNoteRequired: "A rejected giro needs a note (the bank's reason).",
+    },
+    errors: {
+      giroNotHeld:
+        '{n} selected giro(s) were deposited in another batch and have been removed. Review the selection and try again.',
+    },
+    messages: {
+      created: 'Giro clearing saved successfully.',
+      updated: 'Giro clearing updated successfully.',
+      resultsRecorded: 'Clearing results recorded.',
+      notFound: 'Giro clearing not found.',
+      notEditable: 'Only a draft giro clearing can be edited.',
+      preselectDroppedTitle: 'Selection changed',
+      preselectDropped:
+        '{n} of the giros you picked are no longer held (deposited elsewhere) and were left out.',
     },
   },
   cashDepositConfigs: {

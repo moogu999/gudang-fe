@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { AuthService } from '@/services'
+import ApiService from '@/services/api'
 import type { SignInRequest } from '@/types'
 
 /**
@@ -47,6 +48,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Fetch user info from /me endpoint
     const userInfo = await AuthService.me()
+    // Needs auth, so only now; master-data GETs wait for it.
+    void ApiService.loadCachePolicies()
     isAuthenticated.value = true
     userId.value = userInfo.id
     email.value = userInfo.email
@@ -111,6 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
     initPromise = (async () => {
       try {
         const userInfo = await AuthService.me()
+        void ApiService.loadCachePolicies()
         isAuthenticated.value = true
         userId.value = userInfo.id
         email.value = userInfo.email

@@ -129,9 +129,10 @@ class ApiService {
   }
 
   /**
-   * Load the backend's cache policy table. Call once at app start, before the
-   * first request; GETs wait for it so master data always carries a `_v`.
-   * On failure, requests go out without `_v`, exactly as before caching.
+   * Load the backend's cache policy table. It needs auth, so the auth store
+   * calls this after each successful /me; GETs sent after that wait for it so
+   * master data always carries a `_v`. On failure, requests go out without
+   * `_v`, exactly as before caching.
    */
   public loadCachePolicies(): Promise<void> {
     this.cachePoliciesReady = this.axiosInstance

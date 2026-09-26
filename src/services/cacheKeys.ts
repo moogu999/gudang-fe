@@ -10,13 +10,22 @@
  *   never sees their own edit missing from a list.
  *
  * Which paths are master data, and which writes invalidate what, comes from
- * GET /v1/cache-policies. There's no copy of that table here.
+ * GET /v1/cache-policies. There's no copy of that table here. The endpoint
+ * needs auth, so load it after sign-in; until then no GET carries a `_v`.
  */
 
 export interface CacheGroup {
   key: string
   tier: string
   paths: string[]
+  /** Groups and sources whose data these responses embed, directly or not. */
+  dependsOn?: string[]
+}
+
+/** Data no group serves but groups embed (e.g. users), and the writes that change it. */
+export interface CacheSource {
+  key: string
+  writes: { method: string; path: string }[]
 }
 
 export interface CacheInvalidation {
@@ -28,6 +37,7 @@ export interface CacheInvalidation {
 export interface CachePolicies {
   tiers: Record<string, { maxAge: number }>
   groups: CacheGroup[]
+  sources?: CacheSource[]
   invalidations: CacheInvalidation[]
 }
 
@@ -95,6 +105,17 @@ export class CacheKeyStore {
       if (inv.method === method.toUpperCase() && matchesPattern(inv.path, path)) {
         inv.groups.forEach((k) => keys.add(k))
       }
+    }
+    for (const src of this.policies.sources ?? []) {
+      if (
+        src.writes.some((w) => w.method === method.toUpperCase() && matchesPattern(w.path, path))
+      ) {
+        keys.add(src.key)
+      }
+    }
+    // Groups whose responses embed a changed group or source change too.
+    for (const g of this.policies.groups) {
+      if (g.dependsOn?.some((k) => keys.has(k))) keys.add(g.key)
     }
 
     // A bump must always produce a new value, even within the same millisecond.

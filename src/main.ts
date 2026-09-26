@@ -46,9 +46,6 @@ ApiService.setAuthFailureHandler(() => {
   }
 })
 
-// Load the HTTP cache policies before the first request (GETs wait for it)
-ApiService.loadCachePolicies()
-
 // Initialize auth state (router guard will wait for this to complete)
 authStore.initialize()
 

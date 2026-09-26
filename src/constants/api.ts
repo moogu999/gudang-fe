@@ -10,6 +10,9 @@ export const API_ENDPOINTS = {
   AUTH_REFRESH: '/v1/auth/refresh',
   AUTH_ME: '/v1/auth/me',
 
+  // HTTP cache policy table (master-data groups for the _v cache key)
+  CACHE_POLICIES: '/v1/cache-policies',
+
   // User endpoints
   GEN_USERS: '/gen/v1/users',
   USERS_V1: '/v1/users',

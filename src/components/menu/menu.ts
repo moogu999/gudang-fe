@@ -1,4 +1,5 @@
 import { PERMISSIONS } from '@/constants'
+import { CONFIG_TABS } from '@/views/configs/configTabs'
 
 /**
  * Main navigation menu configuration
@@ -376,13 +377,7 @@ const mainMenu = [
         label: 'Config',
         labelKey: 'navigation.configs',
         route: '/configs',
-        permissionsAny: [
-          PERMISSIONS.SALES_ORDER_CONFIG_READ,
-          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
-          PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
-          PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
-          PERMISSIONS.AP_INVOICE_CONFIG_READ,
-        ],
+        permissionsAny: CONFIG_TABS.map((tab) => tab.readPermission),
       },
     ],
   },

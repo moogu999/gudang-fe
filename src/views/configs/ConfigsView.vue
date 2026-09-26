@@ -54,7 +54,7 @@ import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsVie
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
 import { usePermissions } from '@/composables'
-import { PERMISSIONS } from '@/constants'
+import { CONFIG_TABS } from './configTabs'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -69,35 +69,19 @@ const { canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
 const { canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
 const { canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
 const { canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
-const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
-const { canRead: canReadCD, canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
+const { canWrite: canWriteAPC } = usePermissions('/accounting-periods')
+const { canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
 
-// `canRead` reads the permission off the route a path resolves to, but the `*-configs`
-// paths are only redirects into this screen's tabs — no route carries their read
-// permission — so these are named directly. Accounting periods has a real route.
-const canReadSO = computed(() => hasPermission(PERMISSIONS.SALES_ORDER_CONFIG_READ))
-const canReadBO = computed(() => hasPermission(PERMISSIONS.BOOKING_ORDER_CONFIG_READ))
-const canReadPO = computed(() => hasPermission(PERMISSIONS.PURCHASE_ORDER_CONFIG_READ))
-const canReadGR = computed(() => hasPermission(PERMISSIONS.GOODS_RECEIPT_CONFIG_READ))
-const canReadAP = computed(() => hasPermission(PERMISSIONS.AP_INVOICE_CONFIG_READ))
-const canReadCDN = computed(() => hasPermission(PERMISSIONS.CREDIT_DEBIT_NOTE_CONFIG_READ))
-const canReadBKK = computed(() => hasPermission(PERMISSIONS.AP_PAYMENT_CONFIG_READ))
-
-const configOptions = computed(() => {
-  const options: { label: string; value: string }[] = []
-  if (canReadSO.value) options.push({ label: t('navigation.salesOrderConfigs'), value: 'so' })
-  if (canReadBO.value) options.push({ label: t('navigation.bookingOrderConfigs'), value: 'bo' })
-  if (canReadPO.value) options.push({ label: t('navigation.purchaseOrderConfigs'), value: 'po' })
-  if (canReadGR.value) options.push({ label: t('navigation.goodsReceiptConfigs'), value: 'gr' })
-  if (canReadAP.value) options.push({ label: t('navigation.apInvoiceConfigs'), value: 'ap' })
-  if (canReadCDN.value)
-    options.push({ label: t('navigation.creditDebitNoteConfigs'), value: 'cdn' })
-  if (canReadBKK.value) options.push({ label: t('navigation.apPaymentConfigs'), value: 'bkk' })
-  if (canReadAPC.value)
-    options.push({ label: t('navigation.accountingPeriodConfigs'), value: 'apc' })
-  if (canReadCD.value) options.push({ label: t('navigation.cashDepositConfigs'), value: 'cd' })
-  return options
-})
+// Tabs and their read permissions come from one shared list (`CONFIG_TABS`), the same
+// one `menu.ts` reads to build the Config entry's `permissionsAny` — see item B of
+// permission-gating-hardening-fe.md. Adding a tab means editing that list once, not
+// this computed and the menu separately.
+const configOptions = computed(() =>
+  CONFIG_TABS.filter((tab) => hasPermission(tab.readPermission)).map((tab) => ({
+    label: t(tab.labelKey),
+    value: tab.value,
+  })),
+)
 
 function resolveInitialTab(): string | null {
   const tab = route.query.tab as string | undefined

@@ -1,21 +1,27 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores'
 import router from '@/router'
-import { ROUTE_WRITE_PERMISSIONS, type PermissionId } from '@/constants'
+import type { PermissionId } from '@/constants'
 
 /** Name of the router's catch-all record, which any unmatched path falls through to. */
 const NOT_FOUND_ROUTE = 'NotFound'
 
 /**
- * Read permission a route path requires, taken from the router's own
- * `meta.requiredPermission` — the same source the navigation guard reads. Menu
- * visibility and navigation therefore cannot drift apart: a screen the guard
- * refuses can no longer appear in the sidebar.
+ * Read or write permission a route path requires, taken from the router's own
+ * `meta.requiredPermission` / `meta.requiredWritePermission` — the same source the
+ * navigation guard reads for the read side. Menu visibility, navigation and the
+ * create/edit/delete buttons therefore cannot drift apart from what the route
+ * declares: there is one place to look, not a route meta plus a separate map keyed by
+ * path string (see item E of permission-gating-hardening-fe.md).
  *
  * Returns `undefined` for a route that deliberately declares no permission (Home,
- * Superset), and `null` for a path matching no route at all.
+ * Superset, or a screen with no write action), and `null` for a path matching no route
+ * at all.
  */
-function requiredPermissionFor(path: string): PermissionId | undefined | null {
+function permissionFor(
+  path: string,
+  metaKey: 'requiredPermission' | 'requiredWritePermission',
+): PermissionId | undefined | null {
   const resolved = router.resolve(path)
   // The catch-all 404 record matches any path, so an unknown one never leaves
   // `matched` empty — landing on that record is what "no such route" looks like.
@@ -23,8 +29,8 @@ function requiredPermissionFor(path: string): PermissionId | undefined | null {
     return null
   }
   // Mirrors the navigation guard, which reads the first matched record declaring one.
-  const record = resolved.matched.find((r) => r.meta.requiredPermission)
-  return record?.meta.requiredPermission as PermissionId | undefined
+  const record = resolved.matched.find((r) => r.meta[metaKey])
+  return record?.meta[metaKey] as PermissionId | undefined
 }
 
 /**
@@ -70,7 +76,7 @@ export function usePermissions(routePath?: string) {
    * that visible instead of quietly exposing the entry to everyone.
    */
   const canAccessRoute = (path: string): boolean => {
-    const requiredPermission = requiredPermissionFor(path)
+    const requiredPermission = permissionFor(path, 'requiredPermission')
     if (requiredPermission === null) return false
     if (requiredPermission === undefined) return true
     return hasPermission(requiredPermission)
@@ -85,15 +91,17 @@ export function usePermissions(routePath?: string) {
   })
 
   /**
-   * Check if user can write (create/edit/delete) on the current route.
-   *
-   * Write permissions have no equivalent on the route itself — the router only
-   * describes who may open a screen — so they stay in ROUTE_WRITE_PERMISSIONS.
+   * Check if user can write (create/edit/delete) on the current route, reading
+   * `meta.requiredWritePermission` off the route the same way `canRead` reads
+   * `meta.requiredPermission`. A route declaring neither a match nor the meta is
+   * denied or allowed the same way `canAccessRoute` handles the read side — see
+   * `permissionFor`.
    */
   const canWrite = computed(() => {
     if (!routePath) return true
-    const requiredPermission = ROUTE_WRITE_PERMISSIONS[routePath]
-    if (!requiredPermission) return true
+    const requiredPermission = permissionFor(routePath, 'requiredWritePermission')
+    if (requiredPermission === null) return false
+    if (requiredPermission === undefined) return true
     return hasPermission(requiredPermission)
   })
 

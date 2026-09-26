@@ -12,6 +12,7 @@ const { usePermissions } = await import('./usePermissions')
 const { default: router } = await import('@/router')
 const { mainMenu } = await import('@/components/menu/menu')
 const { PERMISSIONS } = await import('@/constants')
+const { CONFIG_TABS } = await import('@/views/configs/configTabs')
 
 /**
  * Menu visibility resolves each item's route and reads the permission the router
@@ -83,6 +84,54 @@ describe('canAccessRoute', () => {
   })
 })
 
+describe('canWrite', () => {
+  // canWrite used to read a separate ROUTE_WRITE_PERMISSIONS map, keyed by path
+  // string, that defaulted to "allowed" for any path it didn't contain — the same
+  // failure mode item C guards on the read side. It now reads meta.requiredWritePermission
+  // off the route instead, so there had never been a test for this before item E.
+  function withPermissions(...ids: number[]) {
+    granted.clear()
+    ids.forEach((id) => granted.add(id))
+    return usePermissions
+  }
+
+  it('denies write on a route whose write permission the user lacks', () => {
+    const { canWrite } = withPermissions()('/warehouses')
+    expect(canWrite.value).toBe(false)
+  })
+
+  it('allows write on a route whose write permission the user holds', () => {
+    const { canWrite } = withPermissions(PERMISSIONS.WAREHOUSE_WRITE)('/warehouses')
+    expect(canWrite.value).toBe(true)
+  })
+
+  it('allows write on a route that declares no write permission', () => {
+    const { canWrite } = withPermissions()('/superset')
+    expect(canWrite.value).toBe(true)
+  })
+
+  it('denies write on a path matching no route', () => {
+    const { canWrite } = withPermissions()('/not-a-real-route')
+    expect(canWrite.value).toBe(false)
+  })
+
+  it('allows write with no routePath argument', () => {
+    const { canWrite } = withPermissions()()
+    expect(canWrite.value).toBe(true)
+  })
+
+  // The write permission for the *-configs paths lives on a redirect-only route record
+  // (there is no "real" route to declare it on) — confirms router.resolve() surfaces
+  // that record's own meta rather than the target it redirects to.
+  it('reads the write permission off a redirect-only *-configs route', () => {
+    const deny = withPermissions()('/cash-deposit-configs')
+    expect(deny.canWrite.value).toBe(false)
+
+    const allow = withPermissions(PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE)('/cash-deposit-configs')
+    expect(allow.canWrite.value).toBe(true)
+  })
+})
+
 describe('menu filtering for a sales-only user', () => {
   function sectionItems(label: string) {
     const section = mainMenu.find((s) => s.label === label)
@@ -108,6 +157,22 @@ describe('menu filtering for a sales-only user', () => {
 
   it('leaves Sales showing only what sales order permissions cover', () => {
     expect(visibleLabels('Sales')).toEqual(['Sales Orders'])
+  })
+})
+
+describe('Config menu entry', () => {
+  // The Config screen shows a tab per permission in CONFIG_TABS. If the menu's
+  // permissionsAny falls out of sync with that list again — the bug item B recorded —
+  // this is the test that catches it.
+  it('permissionsAny matches CONFIG_TABS exactly', () => {
+    const configItem = mainMenu
+      .flatMap((section) => ('items' in section && section.items ? section.items : []))
+      .find((item) => item.route === '/configs')
+
+    expect(configItem?.permissionsAny).toBeDefined()
+    expect(new Set(configItem!.permissionsAny)).toEqual(
+      new Set(CONFIG_TABS.map((tab) => tab.readPermission)),
+    )
   })
 })
 

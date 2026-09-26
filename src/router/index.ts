@@ -8,6 +8,9 @@ declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean
     requiredPermission?: number
+    /** Permission required to create/edit/delete on this screen. No route-level notion
+     * of "write" existed before this; see item E of permission-gating-hardening-fe.md. */
+    requiredWritePermission?: number
     /** i18n key resolved as the page/entity name (usually a `navigation.*` or `pageTitle.*` key). */
     titleKey?: string
     /** Optional verb composed with the entity name via `pageTitle.*` (e.g. action 'create' on entity 'Customers' → "Create Customers"). */
@@ -61,13 +64,21 @@ const router = createRouter({
           path: 'users',
           name: 'Users',
           component: () => import('@/views/users/UsersView.vue'),
-          meta: { requiredPermission: PERMISSIONS.USER_READ, titleKey: 'navigation.users' },
+          meta: {
+            requiredPermission: PERMISSIONS.USER_READ,
+            requiredWritePermission: PERMISSIONS.USER_WRITE,
+            titleKey: 'navigation.users',
+          },
         },
         {
           path: 'roles',
           name: 'Roles',
           component: () => import('@/views/roles/RolesView.vue'),
-          meta: { requiredPermission: PERMISSIONS.ROLE_READ, titleKey: 'navigation.roles' },
+          meta: {
+            requiredPermission: PERMISSIONS.ROLE_READ,
+            requiredWritePermission: PERMISSIONS.ROLE_WRITE,
+            titleKey: 'navigation.roles',
+          },
         },
         {
           path: 'permissions',
@@ -82,7 +93,11 @@ const router = createRouter({
           path: 'branches',
           name: 'Branches',
           component: () => import('@/views/branches/BranchesView.vue'),
-          meta: { requiredPermission: PERMISSIONS.BRANCH_READ, titleKey: 'navigation.branches' },
+          meta: {
+            requiredPermission: PERMISSIONS.BRANCH_READ,
+            requiredWritePermission: PERMISSIONS.BRANCH_WRITE,
+            titleKey: 'navigation.branches',
+          },
         },
         {
           path: 'companies',
@@ -90,6 +105,7 @@ const router = createRouter({
           component: () => import('@/views/companies/CompaniesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.COMPANY_READ,
+            requiredWritePermission: PERMISSIONS.COMPANY_WRITE,
             titleKey: 'navigation.companies',
           },
         },
@@ -99,6 +115,7 @@ const router = createRouter({
           component: () => import('@/views/departments/DepartmentsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.DEPARTMENT_READ,
+            requiredWritePermission: PERMISSIONS.DEPARTMENT_WRITE,
             titleKey: 'navigation.departments',
           },
         },
@@ -108,6 +125,7 @@ const router = createRouter({
           component: () => import('@/views/divisions/DivisionsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.DIVISION_READ,
+            requiredWritePermission: PERMISSIONS.DIVISION_WRITE,
             titleKey: 'navigation.divisions',
           },
         },
@@ -117,6 +135,7 @@ const router = createRouter({
           component: () => import('@/views/salesOrganizations/SalesOrganizationsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.SALES_ORGANIZATION_READ,
+            requiredWritePermission: PERMISSIONS.SALES_ORGANIZATION_WRITE,
             titleKey: 'navigation.salesOrganizations',
           },
         },
@@ -124,7 +143,11 @@ const router = createRouter({
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),
-          meta: { requiredPermission: PERMISSIONS.CUSTOMER_READ, titleKey: 'navigation.customers' },
+          meta: {
+            requiredPermission: PERMISSIONS.CUSTOMER_READ,
+            requiredWritePermission: PERMISSIONS.CUSTOMER_WRITE,
+            titleKey: 'navigation.customers',
+          },
         },
         {
           path: 'customers/create',
@@ -163,6 +186,7 @@ const router = createRouter({
             import('@/views/customer-label-definitions/CustomerLabelDefinitionView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CUSTOMER_LABEL_DEFINITION_READ,
+            requiredWritePermission: PERMISSIONS.CUSTOMER_LABEL_DEFINITION_WRITE,
             titleKey: 'navigation.customerLabelDefinitions',
           },
         },
@@ -170,7 +194,11 @@ const router = createRouter({
           path: 'products',
           name: 'Products',
           component: () => import('@/views/products/ProductsView.vue'),
-          meta: { requiredPermission: PERMISSIONS.PRODUCT_READ, titleKey: 'navigation.products' },
+          meta: {
+            requiredPermission: PERMISSIONS.PRODUCT_READ,
+            requiredWritePermission: PERMISSIONS.PRODUCT_WRITE,
+            titleKey: 'navigation.products',
+          },
         },
         {
           path: 'product-label-definitions',
@@ -179,6 +207,7 @@ const router = createRouter({
             import('@/views/product-label-definitions/ProductLabelDefinitionsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PRODUCT_LABEL_DEFINITION_READ,
+            requiredWritePermission: PERMISSIONS.PRODUCT_LABEL_DEFINITION_WRITE,
             titleKey: 'navigation.productLabelDefinitions',
           },
         },
@@ -188,6 +217,7 @@ const router = createRouter({
           component: () => import('@/views/unit-of-measurements/UnitOfMeasurementsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.UNIT_OF_MEASUREMENT_READ,
+            requiredWritePermission: PERMISSIONS.UNIT_OF_MEASUREMENT_WRITE,
             titleKey: 'navigation.unitOfMeasurements',
           },
         },
@@ -197,6 +227,7 @@ const router = createRouter({
           component: () => import('@/views/uom-groups/UomGroupsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.UOM_GROUP_READ,
+            requiredWritePermission: PERMISSIONS.UOM_GROUP_WRITE,
             titleKey: 'navigation.uomGroups',
           },
         },
@@ -284,6 +315,7 @@ const router = createRouter({
           component: () => import('@/views/number-series/NumberSeriesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.NUMBER_SERIES_READ,
+            requiredWritePermission: PERMISSIONS.NUMBER_SERIES_WRITE,
             titleKey: 'navigation.numberSeries',
           },
         },
@@ -293,6 +325,7 @@ const router = createRouter({
           component: () => import('@/views/price-lists/PriceListsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PRICE_LIST_READ,
+            requiredWritePermission: PERMISSIONS.PRICE_LIST_WRITE,
             titleKey: 'navigation.priceLists',
           },
         },
@@ -332,6 +365,7 @@ const router = createRouter({
           component: () => import('@/views/price-matrices/PriceMatricesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PRICE_MATRIX_READ,
+            requiredWritePermission: PERMISSIONS.PRICE_MATRIX_WRITE,
             titleKey: 'navigation.priceMatrices',
           },
         },
@@ -371,6 +405,7 @@ const router = createRouter({
           component: () => import('@/views/price-matrices/PriceMatrixPrioritiesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PRICE_MATRIX_PRIORITY_READ,
+            requiredWritePermission: PERMISSIONS.PRICE_MATRIX_PRIORITY_WRITE,
             titleKey: 'navigation.priceMatrixPriorities',
           },
         },
@@ -380,6 +415,7 @@ const router = createRouter({
           component: () => import('@/views/promotions/PromotionsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PROMOTION_READ,
+            requiredWritePermission: PERMISSIONS.PROMOTION_WRITE,
             titleKey: 'navigation.promotions',
           },
         },
@@ -469,6 +505,7 @@ const router = createRouter({
           component: () => import('@/views/warehouses/WarehousesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.WAREHOUSE_READ,
+            requiredWritePermission: PERMISSIONS.WAREHOUSE_WRITE,
             titleKey: 'navigation.warehouses',
           },
         },
@@ -476,7 +513,11 @@ const router = createRouter({
           path: 'vehicles',
           name: 'Vehicles',
           component: () => import('@/views/vehicles/VehiclesView.vue'),
-          meta: { requiredPermission: PERMISSIONS.VEHICLE_READ, titleKey: 'navigation.vehicles' },
+          meta: {
+            requiredPermission: PERMISSIONS.VEHICLE_READ,
+            requiredWritePermission: PERMISSIONS.VEHICLE_WRITE,
+            titleKey: 'navigation.vehicles',
+          },
         },
         {
           path: 'vehicles/new',
@@ -506,6 +547,7 @@ const router = createRouter({
           component: () => import('@/views/goods-receipts/GoodsReceiptsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ,
+            requiredWritePermission: PERMISSIONS.GOODS_RECEIPT_WRITE,
             titleKey: 'navigation.goodsReceipts',
           },
         },
@@ -552,15 +594,20 @@ const router = createRouter({
           path: 'configs',
           name: 'Configs',
           component: () => import('@/views/configs/ConfigsView.vue'),
+          // Deliberately no requiredPermission: every tab this screen renders is gated
+          // on its own (CONFIG_TABS), so a user with none of those permissions reaches
+          // an empty shell, not data. See item D of permission-gating-hardening-fe.md.
           meta: { titleKey: 'navigation.configs' },
         },
         {
           path: 'sales-order-configs',
           redirect: { path: '/configs', query: { tab: 'so' } },
+          meta: { requiredWritePermission: PERMISSIONS.SALES_ORDER_CONFIG_WRITE },
         },
         {
           path: 'booking-order-configs',
           redirect: { path: '/configs', query: { tab: 'bo' } },
+          meta: { requiredWritePermission: PERMISSIONS.BOOKING_ORDER_CONFIG_WRITE },
         },
         {
           path: 'delivery-notes',
@@ -740,6 +787,7 @@ const router = createRouter({
           component: () => import('@/views/approval-flows/ApprovalFlowsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.APPROVAL_FLOW_READ,
+            requiredWritePermission: PERMISSIONS.APPROVAL_FLOW_WRITE,
             titleKey: 'navigation.approvalFlows',
           },
         },
@@ -790,6 +838,7 @@ const router = createRouter({
           component: () => import('@/views/payment-terms/PaymentTermsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PAYMENT_TERM_READ,
+            requiredWritePermission: PERMISSIONS.PAYMENT_TERM_WRITE,
             titleKey: 'navigation.paymentTerms',
           },
         },
@@ -799,6 +848,7 @@ const router = createRouter({
           component: () => import('@/views/suppliers/SuppliersView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.SUPPLIER_READ,
+            requiredWritePermission: PERMISSIONS.SUPPLIER_WRITE,
             titleKey: 'navigation.suppliers',
           },
         },
@@ -808,6 +858,7 @@ const router = createRouter({
           component: () => import('@/views/chart-of-accounts/ChartOfAccountsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CHART_OF_ACCOUNT_READ,
+            requiredWritePermission: PERMISSIONS.CHART_OF_ACCOUNT_WRITE,
             titleKey: 'navigation.chartOfAccounts',
           },
         },
@@ -817,6 +868,7 @@ const router = createRouter({
           component: () => import('@/views/accounting-periods/AccountingPeriodsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.ACCOUNTING_PERIOD_READ,
+            requiredWritePermission: PERMISSIONS.ACCOUNTING_PERIOD_WRITE,
             titleKey: 'navigation.accountingPeriods',
           },
         },
@@ -826,6 +878,7 @@ const router = createRouter({
           component: () => import('@/views/journal-config/JournalConfigView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.JOURNAL_CONFIG_READ,
+            requiredWritePermission: PERMISSIONS.JOURNAL_CONFIG_WRITE,
             titleKey: 'navigation.journalConfig',
           },
         },
@@ -835,6 +888,7 @@ const router = createRouter({
           component: () => import('@/views/purchase-orders/PurchaseOrdersView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PURCHASE_ORDER_READ,
+            requiredWritePermission: PERMISSIONS.PURCHASE_ORDER_WRITE,
             titleKey: 'navigation.purchaseOrders',
           },
         },
@@ -871,10 +925,12 @@ const router = createRouter({
         {
           path: 'purchase-order-configs',
           redirect: { path: '/configs', query: { tab: 'po' } },
+          meta: { requiredWritePermission: PERMISSIONS.PURCHASE_ORDER_CONFIG_WRITE },
         },
         {
           path: 'goods-receipt-configs',
           redirect: { path: '/configs', query: { tab: 'gr' } },
+          meta: { requiredWritePermission: PERMISSIONS.GOODS_RECEIPT_CONFIG_WRITE },
         },
         {
           path: 'ap-invoices',
@@ -882,6 +938,7 @@ const router = createRouter({
           component: () => import('@/views/ap-invoices/ApInvoicesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            requiredWritePermission: PERMISSIONS.AP_INVOICE_WRITE,
             titleKey: 'navigation.apInvoices',
           },
         },
@@ -919,6 +976,7 @@ const router = createRouter({
         {
           path: 'ap-invoice-configs',
           redirect: { path: '/configs', query: { tab: 'ap' } },
+          meta: { requiredWritePermission: PERMISSIONS.AP_INVOICE_CONFIG_WRITE },
         },
         {
           path: 'correction-categories',
@@ -926,6 +984,7 @@ const router = createRouter({
           component: () => import('@/views/correction-categories/CorrectionCategoriesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CORRECTION_CATEGORY_READ,
+            requiredWritePermission: PERMISSIONS.CORRECTION_CATEGORY_WRITE,
             titleKey: 'navigation.correctionCategories',
           },
         },
@@ -935,6 +994,7 @@ const router = createRouter({
           component: () => import('@/views/credit-debit-notes/CreditDebitNotesView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
+            requiredWritePermission: PERMISSIONS.CREDIT_DEBIT_NOTE_WRITE,
             titleKey: 'navigation.creditDebitNotes',
           },
         },
@@ -972,6 +1032,7 @@ const router = createRouter({
         {
           path: 'credit-debit-note-configs',
           redirect: { path: '/configs', query: { tab: 'cdn' } },
+          meta: { requiredWritePermission: PERMISSIONS.CREDIT_DEBIT_NOTE_CONFIG_WRITE },
         },
         {
           path: 'ap-outstanding',
@@ -988,6 +1049,7 @@ const router = createRouter({
           component: () => import('@/views/ap-payments/ApPaymentsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_PAYMENT_READ,
+            requiredWritePermission: PERMISSIONS.AP_PAYMENT_WRITE,
             titleKey: 'navigation.apPayments',
           },
         },
@@ -1025,6 +1087,7 @@ const router = createRouter({
         {
           path: 'ap-payment-configs',
           redirect: { path: '/configs', query: { tab: 'bkk' } },
+          meta: { requiredWritePermission: PERMISSIONS.AP_PAYMENT_CONFIG_WRITE },
         },
         {
           path: 'payment-methods',
@@ -1032,6 +1095,7 @@ const router = createRouter({
           component: () => import('@/views/payment-methods/PaymentMethodsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PAYMENT_METHOD_READ,
+            requiredWritePermission: PERMISSIONS.PAYMENT_METHOD_WRITE,
             titleKey: 'navigation.paymentMethods',
           },
         },
@@ -1041,6 +1105,7 @@ const router = createRouter({
           component: () => import('@/views/cash-deposits/CashDepositsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            requiredWritePermission: PERMISSIONS.CASH_DEPOSIT_WRITE,
             titleKey: 'navigation.cashDeposits',
           },
         },
@@ -1078,6 +1143,7 @@ const router = createRouter({
         {
           path: 'cash-deposit-configs',
           redirect: { path: '/configs', query: { tab: 'cd' } },
+          meta: { requiredWritePermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE },
         },
         {
           path: 'bank-settlements',
@@ -1085,6 +1151,7 @@ const router = createRouter({
           component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.BANK_SETTLEMENT_READ,
+            requiredWritePermission: PERMISSIONS.BANK_SETTLEMENT_WRITE,
             titleKey: 'navigation.bankSettlements',
           },
         },
@@ -1134,8 +1201,17 @@ const router = createRouter({
             return ok || { name: 'Home' }
           },
         },
-        // The old list URLs now land on their tab.
-        { path: 'giro-receipts', redirect: { path: '/giro', query: { tab: 'receipts' } } },
+        // The old list URLs now land on their tab. Carries its own read/write meta
+        // (usePermissions('/giro-receipts') is called directly by GiroView and the
+        // giro-receipts views) — same shape as the *-configs redirects above.
+        {
+          path: 'giro-receipts',
+          redirect: { path: '/giro', query: { tab: 'receipts' } },
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_RECEIPT_READ,
+            requiredWritePermission: PERMISSIONS.GIRO_RECEIPT_WRITE,
+          },
+        },
         {
           path: 'giro-receipts/create',
           name: 'GiroReceiptCreate',
@@ -1168,7 +1244,14 @@ const router = createRouter({
           },
         },
         { path: 'giro-register', redirect: { path: '/giro', query: { tab: 'register' } } },
-        { path: 'giro-clearings', redirect: { path: '/giro', query: { tab: 'clearings' } } },
+        {
+          path: 'giro-clearings',
+          redirect: { path: '/giro', query: { tab: 'clearings' } },
+          meta: {
+            requiredPermission: PERMISSIONS.GIRO_CLEARING_READ,
+            requiredWritePermission: PERMISSIONS.GIRO_CLEARING_WRITE,
+          },
+        },
         {
           path: 'giro-clearings/create',
           name: 'GiroClearingCreate',
@@ -1206,6 +1289,7 @@ const router = createRouter({
           component: () => import('@/views/ar-clearings/ArClearingsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AR_CLEARING_READ,
+            requiredWritePermission: PERMISSIONS.AR_CLEARING_WRITE,
             titleKey: 'navigation.arClearings',
           },
         },
@@ -1246,6 +1330,7 @@ const router = createRouter({
           component: () => import('@/views/branch-bank-accounts/BranchBankAccountsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.BRANCH_BANK_ACCOUNT_READ,
+            requiredWritePermission: PERMISSIONS.BRANCH_BANK_ACCOUNT_WRITE,
             titleKey: 'navigation.branchBankAccounts',
           },
         },

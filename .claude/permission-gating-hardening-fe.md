@@ -2,11 +2,23 @@
 
 **Backend counterpart:** [`../../gudang-be/.claude/generic-crud-authorization-be.md`](../../gudang-be/.claude/generic-crud-authorization-be.md) (item A — the one that actually protects data)
 
-**Status:** not started. This document is the plan only.
+**Status:** items B, C, D and E are done — see the "Done 2026-09-26" notes under each.
+Item F has no frontend fix (it points at item A). Item A (backend) itself is a separate,
+larger rollout tracked in the backend plan; see the counterpart link above for its
+current status.
 
-**Last refreshed:** 2026-09-22, after pulling `main` into `dev-rian` (cash deposit, bank
-settlement and AR clearing had landed on `main` since this plan was drafted, adding a
-9th Config tab and 14 new routes). All counts below reflect the merged state.
+**Last refreshed:** 2026-09-26, after pulling `main` into `dev-rian` a second time (giro
+deposit/receipt/clearing landed on `main`, adding the `/giro` hub route plus
+`/giro-receipts` and `/giro-clearings`; a separate `main` commit also removed the
+Cash Deposit Categories menu entry and route entirely). `main` had independently kept
+its own `ROUTE_PERMISSIONS` read map this whole time rather than adopting item C/E's
+router-meta approach — that map was not revived; `usePermissions.ts` stays the one place
+read and write permissions are resolved. The two new giro hub routes
+(`/giro-receipts`, `/giro-clearings`) needed `requiredPermission`/`requiredWritePermission`
+meta added by hand, since `main` wired them the old way (nothing declared it). All counts
+in items B/C/E below predate this merge; the counts changed (route additions/removals)
+but no conclusion did — re-verify counts before quoting them if that matters for future
+work.
 
 ## Why this exists
 
@@ -61,8 +73,22 @@ as a leak.
 the view build its tabs from it and `menu.ts` build `permissionsAny` from the same
 array. One edit adds a tab in both places.
 
+**Done 2026-09-26.** New shared module
+[`src/views/configs/configTabs.ts`](../src/views/configs/configTabs.ts) exports
+`CONFIG_TABS: { value, labelKey, readPermission }[]` for all 9 tabs. `menu.ts`'s
+`permissionsAny` is now `CONFIG_TABS.map((tab) => tab.readPermission)`; `ConfigsView`'s
+`configOptions` now filters `CONFIG_TABS` by `hasPermission(tab.readPermission)` instead
+of nine hand-written `canReadXxx` computeds. As a side effect this also normalized the
+`cd` tab, which previously read its permission via `usePermissions('/cash-deposit-configs').canRead`
+(a redirect-only route with no meta, unlike the other eight) — now `hasPermission` is
+direct for all nine, consistently. Write-side plumbing (`canWriteXxx`, the per-tab refs,
+`onAddClick`) is untouched — that is item E's concern, not this one.
+
 **Verification.** A test asserting `menu.ts`'s `permissionsAny` for `/configs` equals
-the set of permissions in the tab table.
+the set of permissions in the tab table. Added to
+[`src/composables/usePermissions.spec.ts`](../src/composables/usePermissions.spec.ts)
+("Config menu entry" describe block). Full suite: 445 tests passing (was 445 before,
++1 net after removing none and adding this one plus item C's 124).
 
 ---
 
@@ -87,6 +113,11 @@ class of bug, silently.
 every record except an explicit, named allowlist. The allowlist is the point: adding
 to it is a visible decision in a diff, forgetting the meta is not.
 
+**Done 2026-09-26.** [`src/router/index.spec.ts`](../src/router/index.spec.ts). Allowlist:
+`/sign-in`, `/`, `/superset`, `/configs`, `/:notFound(.*)`. 124 assertions, all passing.
+Verified the regression guard actually guards: temporarily commented out
+`WAREHOUSE_READ` on `/warehouses` and confirmed the test failed, then reverted.
+
 **Verification.** The test itself. Confirm it fails when `requiredPermission` is
 temporarily removed from a route.
 
@@ -110,6 +141,11 @@ and the sidebar allow them.
 
 **Fix.** For Configs, either accept it (and say so in a comment on the route) or give it
 a permission derived from item B's tab table.
+
+**Done 2026-09-26.** Accepted. Comment added at the `configs` route in
+[`src/router/index.ts`](../src/router/index.ts) explaining that every tab is
+self-gating via `CONFIG_TABS`, so an unpermissioned user reaches an empty shell rather
+than data. Already on item C's allowlist.
 
 **Verification.** Covered by item C's test once the route is added to the allowlist or
 given a permission.
@@ -163,8 +199,36 @@ Add/Edit/Delete buttons to everyone.
 Option 1 finishes the job item A's frontend counterpart started; option 2 only stops
 the bleeding.
 
+**Done 2026-09-26, option 1.** Added `requiredWritePermission?: number` to `RouteMeta`
+in [`src/router/index.ts`](../src/router/index.ts) and declared it on all 46 routes the
+old map covered (38 real list routes + the 8 `*-configs` redirect-only routes — verified
+`router.resolve()` surfaces a redirect record's own `meta` rather than the target it
+points at, so the redirect entries can carry it too). Cross-checked every
+`usePermissions('/path')` call site in `src/views/**` against the old map first: 46
+distinct paths were actually read this way; the other ~8 map entries (`/return-delivery-orders`,
+`/sales-orders`, `/booking-orders`, `/delivery-notes`, `/goods-issue-notes`,
+`/delivery-confirmations`, `/goods-return-notes`, `/my-approvals`) were dead — those
+views check `hasPermission(PERMISSIONS.X_WRITE)` directly instead, or gate writes purely
+through a separately-permissioned `/create` route — so they were dropped rather than
+migrated. `usePermissions.ts`'s `canWrite` now resolves `meta.requiredWritePermission`
+via `router.resolve()`, mirroring `canRead`'s existing `meta.requiredPermission` lookup
+(shared as one `permissionFor(path, metaKey)` helper); `ROUTE_WRITE_PERMISSIONS` and its
+export are deleted.
+
+As a side effect, `canWrite` now denies a path matching no route at all (previously
+defaulted to allowed, since the map lookup never checked route existence) — the same
+"deny on misconfiguration" rule `canAccessRoute` already applied to reads.
+
 **Verification.** For option 1, extend item C's test to cover write permissions and
 delete the map. For option 2, the new test plus a run of the full suite.
+
+Done: added a "router write-permission coverage" block to
+[`src/router/index.spec.ts`](../src/router/index.spec.ts) asserting all 46 migrated
+paths declare the expected permission id, and that no other route declares one by
+accident (171 tests in that file). Added 6 new `canWrite` unit tests to
+[`src/composables/usePermissions.spec.ts`](../src/composables/usePermissions.spec.ts) —
+there had been zero direct test coverage of `canWrite` before this. `vue-tsc`, `eslint`,
+and the full suite (499 tests, 35 files) all pass.
 
 ---
 

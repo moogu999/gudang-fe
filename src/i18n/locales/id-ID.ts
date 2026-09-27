@@ -2108,6 +2108,14 @@ export default {
   },
   configs: {
     title: 'Konfigurasi',
+    clearCache: {
+      action: 'Hapus cache',
+      confirmHeader: 'Hapus cache?',
+      confirmMessage:
+        'Tindakan ini menghapus data master yang di-cache di server dan cache browser Anda. Pemuatan data master berikutnya untuk semua pengguna akan lebih lambat selama cache terisi kembali.',
+      success: 'Cache berhasil dihapus',
+      failed: 'Cache tidak dapat dihapus: server cache tidak tersedia.',
+    },
   },
   salesOrderConfigs: {
     title: 'Konfigurasi Pesanan Penjualan',

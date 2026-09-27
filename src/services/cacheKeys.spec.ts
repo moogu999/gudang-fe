@@ -4,13 +4,21 @@ import { CacheKeyStore, matchesPattern, overlaps, type CachePolicies } from './c
 const policies: CachePolicies = {
   tiers: { master_ref: { maxAge: 86400 }, master_edit: { maxAge: 60 } },
   groups: [
-    { key: 'countries', tier: 'master_ref', paths: ['/gen/v1/countries', '/gen/v1/countries/{id}'] },
+    {
+      key: 'countries',
+      tier: 'master_ref',
+      paths: ['/gen/v1/countries', '/gen/v1/countries/{id}'],
+    },
     {
       key: 'products',
       tier: 'master_edit',
       paths: ['/gen/v1/products', '/gen/v1/products/{id}', '/v1/products'],
     },
-    { key: 'price-lists', tier: 'master_edit', paths: ['/gen/v1/price-lists', '/v1/price-lists/{id}'] },
+    {
+      key: 'price-lists',
+      tier: 'master_edit',
+      paths: ['/gen/v1/price-lists', '/v1/price-lists/{id}'],
+    },
     { key: 'customers', tier: 'master_edit', paths: ['/v1/customers', '/v1/customers/{id}'] },
     {
       key: 'sales-order-configs',
@@ -128,4 +136,47 @@ describe('CacheKeyStore', () => {
     s.recordWrite('POST', '/v1/sales-orders')
     expect(s.versionFor('/gen/v1/products')).toBe(1000)
   })
+
+  it('bumps groups that embed the written group, directly or not', () => {
+    const { s } = store(1000)
+    s.setPolicies(embedPolicies)
+    s.recordWrite('PATCH', '/gen/v1/uom-groups/3')
+    expect(s.versionFor('/gen/v1/uom-groups')).toBeGreaterThan(1000)
+    expect(s.versionFor('/gen/v1/products')).toBeGreaterThan(1000)
+    expect(s.versionFor('/v1/price-lists/1')).toBeGreaterThan(1000)
+    expect(s.versionFor('/v1/customers')).toBe(1000)
+  })
+
+  it('bumps groups that embed a written source', () => {
+    const { s } = store(1000)
+    s.setPolicies(embedPolicies)
+    s.recordWrite('patch', '/v1/users/5')
+    expect(s.versionFor('/v1/customers')).toBeGreaterThan(1000)
+    expect(s.versionFor('/gen/v1/products')).toBe(1000)
+  })
+
+  it('ignores a source write with another method', () => {
+    const { s } = store(1000)
+    s.setPolicies(embedPolicies)
+    s.recordWrite('POST', '/v1/users/5')
+    expect(s.versionFor('/v1/customers')).toBe(1000)
+  })
 })
+
+// price-lists embeds products, which embeds uom-groups; customers embed the
+// users source.
+const embedPolicies: CachePolicies = {
+  ...policies,
+  groups: [
+    {
+      key: 'uom-groups',
+      tier: 'master_edit',
+      paths: ['/gen/v1/uom-groups', '/gen/v1/uom-groups/{id}'],
+      dependsOn: [],
+    },
+    { ...policies.groups[1]!, dependsOn: ['uom-groups'] },
+    { ...policies.groups[2]!, dependsOn: ['products', 'uom-groups'] },
+    { ...policies.groups[3]!, dependsOn: ['users'] },
+  ],
+  sources: [{ key: 'users', writes: [{ method: 'PATCH', path: '/v1/users/{id}' }] }],
+}

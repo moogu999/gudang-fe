@@ -161,17 +161,17 @@ describe('menu filtering for a sales-only user', () => {
 })
 
 describe('Config menu entry', () => {
-  // The Config screen shows a tab per permission in CONFIG_TABS. If the menu's
-  // permissionsAny falls out of sync with that list again — the bug item B recorded —
-  // this is the test that catches it.
-  it('permissionsAny matches CONFIG_TABS exactly', () => {
+  // The Config screen shows a tab per permission in CONFIG_TABS, plus the clear-cache
+  // button gated on CACHE_CLEAR. If the menu's permissionsAny falls out of sync with
+  // those again — the bug item B recorded — this is the test that catches it.
+  it('permissionsAny matches CONFIG_TABS plus CACHE_CLEAR exactly', () => {
     const configItem = mainMenu
       .flatMap((section) => ('items' in section && section.items ? section.items : []))
       .find((item) => item.route === '/configs')
 
     expect(configItem?.permissionsAny).toBeDefined()
     expect(new Set(configItem!.permissionsAny)).toEqual(
-      new Set(CONFIG_TABS.map((tab) => tab.readPermission)),
+      new Set([...CONFIG_TABS.map((tab) => tab.readPermission), PERMISSIONS.CACHE_CLEAR]),
     )
   })
 })

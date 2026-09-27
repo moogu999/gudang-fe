@@ -377,7 +377,12 @@ const mainMenu = [
         label: 'Config',
         labelKey: 'navigation.configs',
         route: '/configs',
-        permissionsAny: CONFIG_TABS.map((tab) => tab.readPermission),
+        // Every config tab's read permission, plus CACHE_CLEAR: the clear-cache button
+        // lives on this page but is not a tab, so it cannot come from CONFIG_TABS.
+        permissionsAny: [
+          ...CONFIG_TABS.map((tab) => tab.readPermission),
+          PERMISSIONS.CACHE_CLEAR,
+        ],
       },
     ],
   },

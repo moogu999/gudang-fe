@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
 
   // HTTP cache policy table (master-data groups for the _v cache key)
   CACHE_POLICIES: '/v1/cache-policies',
+  CACHE_CLEAR: '/v1/cache/clear',
 
   // User endpoints
   GEN_USERS: '/gen/v1/users',

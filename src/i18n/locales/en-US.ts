@@ -3783,6 +3783,7 @@ export default {
       pending: 'Pending',
       approved: 'Approved',
       rejected: 'Rejected',
+      skipped: 'Not reached',
     },
     actions: {
       submit: 'Submit for Approval',
@@ -3798,6 +3799,8 @@ export default {
     },
     timeline: {
       none: 'No approval request for this document.',
+      forbidden: "You don't have access to this document's approval history.",
+      loadFailed: 'Could not load the approval history.',
       approverPool: 'Approver(s): {names}',
       actedAt: 'Acted at {date}',
     },

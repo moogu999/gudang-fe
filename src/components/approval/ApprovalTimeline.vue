@@ -4,7 +4,7 @@
   </div>
 
   <div v-else-if="!request" class="text-surface-500 text-sm">
-    {{ t('approvals.timeline.none') }}
+    {{ t(emptyMessageKey) }}
   </div>
 
   <div v-else>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
 import Timeline from 'primevue/timeline'
@@ -59,6 +59,7 @@ import Tag from 'primevue/tag'
 import ProgressSpinner from 'primevue/progressspinner'
 import { useApproval } from '@/composables/useApproval'
 import type { ApprovalStatus, ApprovalTierStatus, ApprovalRequestTier } from '@/types/approval.type'
+import { ApiError } from '@/types/api.type'
 import DateFormat from '@/constants/dateFormat'
 
 const props = withDefaults(
@@ -73,24 +74,38 @@ const props = withDefaults(
 
 const { t } = useI18n()
 
-const { request, isLoading, refresh } = useApproval(props.moduleKey, props.referenceId)
+const { request, isLoading, error, refresh } = useApproval(props.moduleKey, props.referenceId)
+
+// Only a 404 means "no approval request". A 403 or any other failure must not read as
+// "none": that told a document's creator their rejected document had never been
+// submitted.
+const emptyMessageKey = computed(() => {
+  if (!error.value) return 'approvals.timeline.none'
+  if (error.value instanceof ApiError && error.value.status === 404) return 'approvals.timeline.none'
+  if (error.value instanceof ApiError && error.value.status === 403) {
+    return 'approvals.timeline.forbidden'
+  }
+  return 'approvals.timeline.loadFailed'
+})
 
 function statusSeverity(status: ApprovalStatus | ApprovalTierStatus) {
   if (status === 'approved') return 'success'
   if (status === 'rejected') return 'danger'
-  if (status === 'cancelled') return 'secondary'
+  if (status === 'cancelled' || status === 'skipped') return 'secondary'
   return 'warn'
 }
 
 function tierMarkerClass(status: ApprovalTierStatus) {
   if (status === 'approved') return 'bg-green-500'
   if (status === 'rejected') return 'bg-red-500'
+  if (status === 'skipped') return 'bg-surface-300'
   return 'bg-surface-400'
 }
 
 function tierMarkerIcon(status: ApprovalTierStatus) {
   if (status === 'approved') return 'pi pi-check'
   if (status === 'rejected') return 'pi pi-times'
+  if (status === 'skipped') return 'pi pi-minus'
   return 'pi pi-clock'
 }
 

@@ -76,15 +76,13 @@ const { t } = useI18n()
 
 const { request, isLoading, error, refresh } = useApproval(props.moduleKey, props.referenceId)
 
-// Only a 404 means "no approval request". A 403 or any other failure must not read as
-// "none": that told a document's creator their rejected document had never been
-// submitted.
+// Only a 404 means "no approval request" (the backend also answers 404 when the caller may
+// not view the request, so the response does not reveal which documents have one). Any other
+// failure must not read as "none": that told a document's creator their rejected document
+// had never been submitted.
 const emptyMessageKey = computed(() => {
   if (!error.value) return 'approvals.timeline.none'
   if (error.value instanceof ApiError && error.value.status === 404) return 'approvals.timeline.none'
-  if (error.value instanceof ApiError && error.value.status === 403) {
-    return 'approvals.timeline.forbidden'
-  }
   return 'approvals.timeline.loadFailed'
 })
 

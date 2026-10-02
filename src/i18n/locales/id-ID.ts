@@ -3810,7 +3810,6 @@ export default {
     },
     timeline: {
       none: 'Tidak ada pengajuan persetujuan untuk dokumen ini.',
-      forbidden: 'Anda tidak memiliki akses ke riwayat persetujuan dokumen ini.',
       loadFailed: 'Riwayat persetujuan gagal dimuat.',
       approverPool: 'Penyetuju: {names}',
       actedAt: 'Ditindaklanjuti pada {date}',

@@ -59,18 +59,13 @@ describe('ApprovalTimeline empty state', () => {
     expect(mountTimeline().text()).toContain('approvals.timeline.none')
   })
 
-  // SIT: a document's creator without APPROVAL_REQUEST_READ was told their rejected
-  // document had "no approval request". A 403 must say access is missing instead.
-  it('says access is missing on 403, not that there is no request', () => {
-    stubApproval(null, new ApiError('forbidden', 403))
+  // SIT: a document's creator was told their rejected document had "no approval request".
+  // Only a 404 may say that; any other error, a 403 included, is a load failure.
+  it.each([403, 500])('reports a load failure on %i, not that there is no request', (status) => {
+    stubApproval(null, new ApiError('boom', status))
     const text = mountTimeline().text()
-    expect(text).toContain('approvals.timeline.forbidden')
+    expect(text).toContain('approvals.timeline.loadFailed')
     expect(text).not.toContain('approvals.timeline.none')
-  })
-
-  it('reports a load failure on any other error', () => {
-    stubApproval(null, new ApiError('boom', 500))
-    expect(mountTimeline().text()).toContain('approvals.timeline.loadFailed')
   })
 })
 

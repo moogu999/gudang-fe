@@ -3794,6 +3794,7 @@ export default {
       pending: 'Menunggu',
       approved: 'Disetujui',
       rejected: 'Ditolak',
+      skipped: 'Tidak dicapai',
     },
     actions: {
       submit: 'Ajukan Persetujuan',
@@ -3809,6 +3810,7 @@ export default {
     },
     timeline: {
       none: 'Tidak ada pengajuan persetujuan untuk dokumen ini.',
+      loadFailed: 'Riwayat persetujuan gagal dimuat.',
       approverPool: 'Penyetuju: {names}',
       actedAt: 'Ditindaklanjuti pada {date}',
     },

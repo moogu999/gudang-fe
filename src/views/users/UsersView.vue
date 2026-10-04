@@ -141,7 +141,7 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'departmentId',
     header: t('users.fields.department'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
   },
   {
@@ -149,7 +149,7 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'employeeId',
     header: t('users.fields.employee'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
     hideOnMobile: true,
   },

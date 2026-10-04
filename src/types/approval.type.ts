@@ -1,5 +1,5 @@
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'cancelled'
-export type ApprovalTierStatus = 'pending' | 'approved' | 'rejected'
+export type ApprovalTierStatus = 'pending' | 'approved' | 'rejected' | 'skipped'
 
 export type ApprovalFlowTierApprover = {
   id: number

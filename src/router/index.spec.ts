@@ -112,6 +112,7 @@ const EXPECTED_WRITE_PERMISSIONS: Record<string, number> = {
   '/ar-clearings': PERMISSIONS.AR_CLEARING_WRITE,
   '/giro-receipts': PERMISSIONS.GIRO_RECEIPT_WRITE,
   '/giro-clearings': PERMISSIONS.GIRO_CLEARING_WRITE,
+  '/sales-teams': PERMISSIONS.SALES_TEAM_WRITE,
 }
 
 describe('router write-permission coverage (item E)', () => {

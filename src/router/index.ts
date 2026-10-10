@@ -145,6 +145,7 @@ const router = createRouter({
           component: () => import('@/views/sales-teams/SalesTeamsView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.SALES_TEAM_READ,
+            requiredWritePermission: PERMISSIONS.SALES_TEAM_WRITE,
             titleKey: 'navigation.salesTeams',
           },
         },

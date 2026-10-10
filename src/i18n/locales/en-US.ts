@@ -166,6 +166,7 @@ export default {
     rowsPerPage: 'Rows per page',
     showing: 'Showing {first} to {last} of {total}',
     clearFilters: 'Clear Filters',
+    refresh: 'Refresh',
     apply: 'Apply',
     selectValue: 'Select a value',
     no: 'No.',

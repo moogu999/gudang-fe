@@ -167,6 +167,7 @@ export default {
     rowsPerPage: 'Baris per halaman',
     showing: 'Menampilkan {first} hingga {last} dari {total}',
     clearFilters: 'Hapus Filter',
+    refresh: 'Muat Ulang',
     apply: 'Terapkan',
     selectValue: 'Pilih nilai',
     no: 'No.',

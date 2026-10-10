@@ -14,6 +14,8 @@ export type Meta = {
 
 export type ErrorResponse = {
   message: string
+  /** A stable machine-readable reason, on the endpoints that send one. */
+  code?: string
 }
 
 /**
@@ -25,6 +27,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status?: number,
+    public readonly code?: string,
   ) {
     super(message)
     this.name = 'ApiError'

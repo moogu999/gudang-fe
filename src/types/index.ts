@@ -582,3 +582,4 @@ export type {
   ActApprovalRequestDto,
 } from './approval.type'
 export * from './salesTeam.type'
+export * from './deviceBinding.type'

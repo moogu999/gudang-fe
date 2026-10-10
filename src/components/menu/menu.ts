@@ -59,6 +59,11 @@ const mainMenu = [
         labelKey: 'navigation.salesTeams',
         route: '/sales-teams',
       },
+      {
+        label: 'Device Binding',
+        labelKey: 'navigation.deviceBinding',
+        route: '/device-binding',
+      },
     ],
   },
   {
@@ -387,6 +392,7 @@ const mainMenu = [
           PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
           PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
           PERMISSIONS.AP_INVOICE_CONFIG_READ,
+          PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
           PERMISSIONS.CACHE_CLEAR,
         ],
       },

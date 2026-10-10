@@ -21,6 +21,16 @@
         </p>
       </div>
       <Button
+        v-if="showDeviceBindingLink"
+        icon="pi pi-mobile"
+        :label="t('employees.openDeviceBinding')"
+        severity="secondary"
+        outlined
+        size="small"
+        data-testid="employee-open-device-binding"
+        @click="router.push({ path: '/device-binding', query: { employee: String(props.id) } })"
+      />
+      <Button
         v-if="mode === 'view' && hasPermission(PERMISSIONS.AUDIT_TRAIL_READ)"
         icon="pi pi-history"
         :label="t('employees.actions.viewAuditTrail')"
@@ -171,8 +181,13 @@
                   id="phoneNumber"
                   name="phoneNumber"
                   class="w-full"
+                  :invalid="!!phoneConflict"
                   :placeholder="t('employees.placeholders.phoneNumber')"
+                  @input="phoneConflict = ''"
                 />
+                <small v-if="phoneConflict" class="text-red-500" data-testid="phone-conflict">
+                  {{ phoneConflict }}
+                </small>
               </FormField>
 
               <!-- Email -->
@@ -429,6 +444,20 @@
                   </label>
                   <ToggleSwitch id="accessNforce" name="accessNforce" />
                 </div>
+                <small
+                  v-if="usesDeviceBinding"
+                  class="-mt-2 text-stone-500"
+                  data-testid="nforce-hint"
+                >
+                  {{ t('employees.nforceHint') }}
+                </small>
+                <small
+                  v-else-if="$form.accessNforce?.value"
+                  class="-mt-2 text-stone-400"
+                  data-testid="nforce-not-applicable"
+                >
+                  {{ t('employees.nforceNotApplicable') }}
+                </small>
               </div>
             </div>
           </template>
@@ -527,6 +556,33 @@ const selectedTypeId = ref<number | undefined>(undefined)
 const selectedTypeName = computed(
   () => employeeTypes.value.find((et) => et.id === selectedTypeId.value)?.name ?? '',
 )
+
+/** Salesman and Canvass employees with N-Force access are bound to one phone. */
+const usesDeviceBinding = computed(() =>
+  [EMPLOYEE_TYPE_NAMES.SALESMAN, EMPLOYEE_TYPE_NAMES.CANVASS].includes(
+    selectedTypeName.value as typeof EMPLOYEE_TYPE_NAMES.SALESMAN,
+  ),
+)
+
+const showDeviceBindingLink = computed(
+  () =>
+    props.mode === 'view' &&
+    !!employee.value?.accessNforce &&
+    !employee.value.isDraft &&
+    usesDeviceBinding.value &&
+    hasPermission(PERMISSIONS.DEVICE_BINDING_READ),
+)
+
+/** Another N-Force employee of the company signs in with the typed phone number. */
+const phoneConflict = ref('')
+
+/** The conflict message ends with the other employee's name in parentheses. */
+function phoneConflictMessage(e: ApiError): string {
+  const name = e.message.match(/\(([^)]+)\)$/)?.[1]
+  return name
+    ? t('employees.validation.phoneTakenNforceBy', { name })
+    : t('employees.validation.phoneTakenNforce')
+}
 
 const requiresSalesOrg = computed(() => ['Salesman', 'Collector'].includes(selectedTypeName.value))
 
@@ -850,6 +906,9 @@ async function onFormSubmit(event: FormSubmitEvent) {
       setTimeout(() => router.replace('/employees'), 800)
     }
   } catch (e) {
+    if (e instanceof ApiError && e.code === 'phone_taken_nforce') {
+      phoneConflict.value = phoneConflictMessage(e)
+    }
     // A conflict explains what to do first (e.g. end a sales team membership), so give it time to be read.
     const isConflict = e instanceof ApiError && e.status === HttpStatus.CONFLICT
     toast.add(

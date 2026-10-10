@@ -7,14 +7,21 @@
       :loading="isActing"
       @click="onSubmitClick"
     />
-    <Button
-      v-if="showApprove"
-      :label="t('approvals.actions.approve')"
-      icon="pi pi-check"
-      severity="success"
-      :loading="isActing"
-      @click="onApproveClick"
-    />
+    <!-- A disabled button gets no hover, so the wrapper carries the tooltip. -->
+    <span v-if="showApprove" v-tooltip.top="approveDisabledReason" class="inline-flex">
+      <Button
+        :label="t('approvals.actions.approve')"
+        icon="pi pi-check"
+        severity="success"
+        :loading="isActing"
+        :disabled="!!approveDisabledReason"
+        data-testid="approval-approve"
+        @click="onApproveClick"
+      />
+    </span>
+    <small v-if="showApprove && approveDisabledReason" class="w-full text-red-500">
+      {{ approveDisabledReason }}
+    </small>
     <Button
       v-if="showReject"
       :label="t('approvals.actions.reject')"
@@ -85,6 +92,13 @@ const props = defineProps<{
   referenceId: number
   /** Flow to submit under, when this document has no request yet. Omit to hide the Submit action. */
   submitFlowId?: number | null
+  /**
+   * When set, Approve is disabled and this explains why. For modules whose own
+   * rules can already tell an approval would be refused; the backend still checks.
+   */
+  approveDisabledReason?: string
+  /** Toast group of a host page that renders its own Toast. */
+  toastGroup?: string
 }>()
 
 const emit = defineEmits<{ changed: [] }>()
@@ -92,7 +106,7 @@ const emit = defineEmits<{ changed: [] }>()
 const { t } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
-const toastGroup = 'approvalActionBar'
+const toastGroup = props.toastGroup ?? 'approvalActionBar'
 
 const { request, isLoading, refresh, approve, reject, cancel, submit } = useApproval(
   props.moduleKey,

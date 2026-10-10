@@ -19,16 +19,27 @@
     <div class="flex flex-col gap-1">
       <label class="text-sm font-semibold">{{ t('auditTrails.filters.reference') }}</label>
       <InfiniteSelect
-        v-if="selectedType && currentTypeEntry"
+        v-if="selectedType && currentTypeEntry?.picker"
         :key="selectedType"
         v-model="selectedReferenceId"
-        :option-label="currentTypeEntry.codeField"
+        :option-label="currentTypeEntry.picker.codeField"
         option-value="id"
-        :fetch-fn="currentTypeEntry.fetchFn"
+        :fetch-fn="currentTypeEntry.picker.fetchFn"
         :initial-option="initialReferenceOption"
         sort-by="code"
         sort-operator="asc"
         class="w-52"
+        @update:model-value="onReferenceChange"
+      />
+      <!-- No list to pick from: the reference id is typed in. -->
+      <InputNumber
+        v-else-if="selectedType && currentTypeEntry"
+        v-model="selectedReferenceId"
+        :use-grouping="false"
+        :min="1"
+        :placeholder="t('auditTrails.filters.referenceId')"
+        input-class="w-52"
+        data-testid="audit-reference-id"
         @update:model-value="onReferenceChange"
       />
       <Select
@@ -37,6 +48,23 @@
         :placeholder="t('auditTrails.filters.reference')"
         :options="[]"
         class="w-52"
+      />
+    </div>
+
+    <!-- Action -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold">{{ t('auditTrails.filters.action') }}</label>
+      <Select
+        v-model="selectedAction"
+        :options="actionOptions"
+        option-label="label"
+        option-value="value"
+        :placeholder="t('common.labels.selectOption')"
+        show-clear
+        filter
+        class="w-52"
+        data-testid="audit-action"
+        @change="emitChange"
       />
     </div>
 
@@ -66,9 +94,10 @@ import { useI18n } from 'vue-i18n'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
+import InputNumber from 'primevue/inputnumber'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
 import { AUDIT_REFERENCE_TYPES } from '@/constants/auditReferenceTypes'
-import type { AuditReferenceType } from '@/types/auditTrail.type'
+import { AUDIT_ACTIONS, type AuditReferenceType } from '@/types/auditTrail.type'
 
 const { t } = useI18n()
 
@@ -77,6 +106,7 @@ const props = withDefaults(
     initialFilters?: {
       referenceType?: AuditReferenceType
       referenceId?: number
+      action?: string
     }
   }>(),
   { initialFilters: undefined },
@@ -87,6 +117,7 @@ const emit = defineEmits<{
     filters: {
       referenceType?: AuditReferenceType
       referenceId?: number
+      action?: string
       dateRange?: [string, string]
     },
   ]
@@ -95,6 +126,11 @@ const emit = defineEmits<{
 const selectedType = ref<AuditReferenceType | undefined>(undefined)
 const selectedReferenceId = ref<number | undefined>(undefined)
 const selectedDateRange = ref<Date[] | null>(null)
+const selectedAction = ref<string | undefined>(undefined)
+
+const actionOptions = computed(() =>
+  AUDIT_ACTIONS.map((value) => ({ value, label: t(`auditTrails.actions.${value}`) })),
+)
 
 // When a referenceId is pre-seeded from a query param, we only have the ID.
 // Pass a minimal initial-option so InfiniteSelect shows "#ID" until the user interacts.
@@ -105,7 +141,7 @@ const initialReferenceOption = computed(() => {
   ) {
     return undefined
   }
-  const codeField = currentTypeEntry.value?.codeField ?? 'name'
+  const codeField = currentTypeEntry.value?.picker?.codeField ?? 'name'
   return {
     id: props.initialFilters.referenceId,
     [codeField]: `#${props.initialFilters.referenceId}`,
@@ -128,6 +164,7 @@ onMounted(() => {
     selectedType.value = props.initialFilters.referenceType
     selectedReferenceId.value = props.initialFilters.referenceId
   }
+  if (props.initialFilters?.action) selectedAction.value = props.initialFilters.action
 })
 
 function onTypeChange() {
@@ -147,6 +184,7 @@ function clearAll() {
   selectedType.value = undefined
   selectedReferenceId.value = undefined
   selectedDateRange.value = null
+  selectedAction.value = undefined
   emitChange()
 }
 
@@ -154,6 +192,7 @@ function emitChange() {
   const filters: {
     referenceType?: AuditReferenceType
     referenceId?: number
+    action?: string
     dateRange?: [string, string]
   } = {}
 
@@ -163,6 +202,10 @@ function emitChange() {
 
   if (selectedReferenceId.value != null) {
     filters.referenceId = selectedReferenceId.value
+  }
+
+  if (selectedAction.value) {
+    filters.action = selectedAction.value
   }
 
   if (

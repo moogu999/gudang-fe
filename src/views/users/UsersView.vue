@@ -21,6 +21,16 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
+            <span v-if="col.field === 'email'" class="inline-flex items-center gap-2">
+              {{ data['email'] || '—' }}
+              <Tag
+                v-if="!data['email'] && data['employeeId'] != null"
+                v-tooltip.top="t('users.nforceAccountHint')"
+                :value="t('users.nforceAccount')"
+                severity="info"
+              />
+            </span>
+
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
@@ -62,6 +72,7 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
+import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
 import { UsersService } from '@/services/users.service'
 import Toast from 'primevue/toast'

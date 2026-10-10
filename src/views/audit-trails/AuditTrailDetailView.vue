@@ -25,7 +25,12 @@
           <div class="flex flex-wrap gap-4 text-sm">
             <div>
               <span class="font-semibold">{{ t('auditTrails.columns.referenceType') }}:</span>
-              {{ t(`auditTrails.references.${auditTrail.referenceType}`) }}
+              {{
+                labelOr(
+                  `auditTrails.references.${auditTrail.referenceType}`,
+                  auditTrail.referenceType,
+                )
+              }}
             </div>
             <div>
               <span class="font-semibold">{{ t('auditTrails.columns.referenceId') }}:</span>
@@ -33,11 +38,23 @@
             </div>
             <div>
               <span class="font-semibold">{{ t('auditTrails.detail.changedBy') }}:</span>
-              {{ auditTrail.createdByUser?.email ?? '—' }}
+              {{
+                auditTrail.createdBy == null
+                  ? t('auditTrails.system')
+                  : auditTrail.createdByUser?.email || '—'
+              }}
             </div>
             <div>
               <span class="font-semibold">{{ t('auditTrails.detail.createdAt') }}:</span>
               {{ dayjs(auditTrail.createdAt).format(DateFormat.DATE_TIME) }}
+            </div>
+            <div v-if="auditTrail.action" data-testid="audit-detail-action">
+              <span class="font-semibold">{{ t('auditTrails.columns.action') }}:</span>
+              {{ labelOr(`auditTrails.actions.${auditTrail.action}`, auditTrail.action) }}
+            </div>
+            <div v-if="auditTrail.reason" class="w-full" data-testid="audit-detail-reason">
+              <span class="font-semibold">{{ t('auditTrails.columns.reason') }}:</span>
+              “{{ auditTrail.reason }}”
             </div>
             <div class="w-full">
               <span class="font-semibold">{{ t('auditTrails.columns.description') }}:</span>
@@ -78,7 +95,12 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import DateFormat from '@/constants/dateFormat'
 import AuditTrailDiffViewer from './components/AuditTrailDiffViewer.vue'
 
-const { t } = useI18n()
+const { t, te } = useI18n()
+
+/** Falls back to the raw value, so a type or action added on the backend first still reads. */
+function labelOr(key: string, raw: string): string {
+  return te(key) ? t(key) : raw
+}
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()

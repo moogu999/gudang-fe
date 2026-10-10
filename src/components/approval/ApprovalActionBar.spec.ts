@@ -59,12 +59,13 @@ function baseRequest(overrides: Partial<ApprovalRequestDetail> = {}): ApprovalRe
 
 const globalStubs = {
   global: {
+    directives: { tooltip: {} },
     stubs: {
       Button: {
         name: 'Button',
-        props: ['label', 'severity', 'loading', 'icon', 'outlined'],
+        props: ['label', 'severity', 'loading', 'icon', 'outlined', 'disabled'],
         emits: ['click'],
-        template: '<button @click="$emit(\'click\')">{{ label }}</button>',
+        template: '<button :disabled="disabled" @click="$emit(\'click\')">{{ label }}</button>',
       },
       Dialog: {
         name: 'Dialog',
@@ -177,5 +178,36 @@ describe('ApprovalActionBar', () => {
     await rejectButtons(wrapper)[1]!.trigger('click')
 
     expect(reject).toHaveBeenCalledWith('not good')
+  })
+
+  it('disables Approve and shows the reason when approveDisabledReason is set', async () => {
+    stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
+    const wrapper = mount(ApprovalActionBar, {
+      props: {
+        moduleKey: 'device_binding',
+        referenceId: 10,
+        approveDisabledReason: 'bound elsewhere',
+      },
+      ...globalStubs,
+    })
+    const { approve } = mockUseApproval.mock.results[0]!.value
+
+    const button = wrapper.find('[data-testid="approval-approve"]')
+    expect(button.attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).toContain('bound elsewhere')
+    await button.trigger('click')
+    expect(approve).not.toHaveBeenCalled()
+    // Reject stays available: refusing a request needs no check.
+    expect(rejectButtons(wrapper)).toHaveLength(1)
+  })
+
+  it('leaves Approve enabled without approveDisabledReason', () => {
+    stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
+    const wrapper = mount(ApprovalActionBar, {
+      props: { moduleKey: 'sales_order', referenceId: 10 },
+      ...globalStubs,
+    })
+
+    expect(wrapper.find('[data-testid="approval-approve"]').attributes('disabled')).toBeUndefined()
   })
 })

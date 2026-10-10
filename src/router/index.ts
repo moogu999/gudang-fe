@@ -151,6 +151,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'device-binding',
+          name: 'DeviceBinding',
+          component: () => import('@/views/device-binding/DeviceBindingView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DEVICE_BINDING_READ,
+            titleKey: 'navigation.deviceBinding',
+          },
+        },
+        {
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),

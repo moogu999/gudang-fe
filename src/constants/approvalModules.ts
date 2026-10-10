@@ -1,3 +1,5 @@
+import { APPROVAL_QUERY } from '@/router/routeAccess'
+
 /**
  * How My Approvals shows a request of a given module: a readable name and,
  * where one exists, the page the approver can review it on. Modules not listed
@@ -5,8 +7,17 @@
  */
 export interface ApprovalModuleEntry {
   labelKey: string
-  /** The page that reviews the request with this reference id. */
-  link?: (referenceId: number) => string
+  /** The page that reviews the request: its document (referenceId) and the request itself. */
+  link?: (referenceId: number, requestId: number) => string
+}
+
+/**
+ * A document's detail page, carrying the request it is opened for. The request id is
+ * what lets an approver onto a page marked `meta.approverReadable` without the module's
+ * read permission (see canEnterRoute); on other pages it is ignored.
+ */
+function documentLink(basePath: string): ApprovalModuleEntry['link'] {
+  return (referenceId, requestId) => `${basePath}/${referenceId}?${APPROVAL_QUERY}=${requestId}`
 }
 
 // Keys are the backend's approval module keys (each module's ModuleDefinition.Key,
@@ -15,31 +26,31 @@ export interface ApprovalModuleEntry {
 export const APPROVAL_MODULES: Record<string, ApprovalModuleEntry> = {
   sales_order: {
     labelKey: 'approvals.modules.sales_order',
-    link: (referenceId) => `/sales-orders/${referenceId}`,
+    link: documentLink('/sales-orders'),
   },
   purchase_order: {
     labelKey: 'approvals.modules.purchase_order',
-    link: (referenceId) => `/purchase-orders/${referenceId}`,
+    link: documentLink('/purchase-orders'),
   },
   goods_receipt: {
     labelKey: 'approvals.modules.goods_receipt',
-    link: (referenceId) => `/goods-receipts/${referenceId}`,
+    link: documentLink('/goods-receipts'),
   },
   ap_invoice: {
     labelKey: 'approvals.modules.ap_invoice',
-    link: (referenceId) => `/ap-invoices/${referenceId}`,
+    link: documentLink('/ap-invoices'),
   },
   ap_payment: {
     labelKey: 'approvals.modules.ap_payment',
-    link: (referenceId) => `/ap-payments/${referenceId}`,
+    link: documentLink('/ap-payments'),
   },
   credit_debit_note: {
     labelKey: 'approvals.modules.credit_debit_note',
-    link: (referenceId) => `/credit-debit-notes/${referenceId}`,
+    link: documentLink('/credit-debit-notes'),
   },
   cash_deposit: {
     labelKey: 'approvals.modules.cash_deposit',
-    link: (referenceId) => `/cash-deposits/${referenceId}`,
+    link: documentLink('/cash-deposits'),
   },
   // The reference is an accounting period, which has no page of its own; the
   // periods list is where its state is reviewed.
@@ -47,6 +58,7 @@ export const APPROVAL_MODULES: Record<string, ApprovalModuleEntry> = {
     labelKey: 'approvals.modules.accounting_period_reopen',
     link: () => '/accounting-periods',
   },
+  // Its screen already takes the request it reviews, keyed by the reference.
   device_binding: {
     labelKey: 'approvals.modules.device_binding',
     link: (referenceId) => `/device-binding?request=${referenceId}`,

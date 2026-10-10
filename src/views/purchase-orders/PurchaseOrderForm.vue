@@ -39,6 +39,7 @@
       <ApprovalActionBar
         module-key="purchase_order"
         :reference-id="purchaseOrderId"
+        :toast-group="toastGroup"
         @changed="onApprovalChanged"
       />
     </Panel>

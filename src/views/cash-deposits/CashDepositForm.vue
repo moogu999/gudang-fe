@@ -47,6 +47,7 @@
       <ApprovalActionBar
         module-key="cash_deposit"
         :reference-id="cashDepositId"
+        :toast-group="toastGroup"
         @changed="onApprovalChanged"
       />
     </Panel>

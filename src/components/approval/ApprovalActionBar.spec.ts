@@ -92,7 +92,7 @@ describe('ApprovalActionBar', () => {
   it('shows only Submit when there is no request yet and a flow id is given', () => {
     stubApproval(null)
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10, submitFlowId: 5 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test', submitFlowId: 5 },
       ...globalStubs,
     })
 
@@ -104,7 +104,7 @@ describe('ApprovalActionBar', () => {
   it('shows nothing when there is no request and no submitFlowId', () => {
     stubApproval(null)
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
 
@@ -114,7 +114,7 @@ describe('ApprovalActionBar', () => {
   it('shows Approve and Reject when pending and canAct is true', () => {
     stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
 
@@ -126,7 +126,7 @@ describe('ApprovalActionBar', () => {
   it('shows Cancel when pending, not actionable, but the viewer is the requester', () => {
     stubApproval(baseRequest({ canAct: false, requestedByUserId: 1 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
 
@@ -137,7 +137,7 @@ describe('ApprovalActionBar', () => {
   it('shows no actions once the request is in a terminal state', () => {
     stubApproval(baseRequest({ status: 'approved', canAct: false, requestedByUserId: 1 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
 
@@ -153,7 +153,7 @@ describe('ApprovalActionBar', () => {
   it('refuses to reject with a blank comment and does not call the reject API', async () => {
     stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
     const { reject } = mockUseApproval.mock.results[0]!.value
@@ -168,7 +168,7 @@ describe('ApprovalActionBar', () => {
   it('submits the trimmed comment when rejecting with a filled reason', async () => {
     stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
     const { reject } = mockUseApproval.mock.results[0]!.value
@@ -187,6 +187,7 @@ describe('ApprovalActionBar', () => {
         moduleKey: 'device_binding',
         referenceId: 10,
         approveDisabledReason: 'bound elsewhere',
+        toastGroup: 'test',
       },
       ...globalStubs,
     })
@@ -204,7 +205,7 @@ describe('ApprovalActionBar', () => {
   it('leaves Approve enabled without approveDisabledReason', () => {
     stubApproval(baseRequest({ canAct: true, requestedByUserId: 999 }))
     const wrapper = mount(ApprovalActionBar, {
-      props: { moduleKey: 'sales_order', referenceId: 10 },
+      props: { moduleKey: 'sales_order', referenceId: 10, toastGroup: 'test' },
       ...globalStubs,
     })
 

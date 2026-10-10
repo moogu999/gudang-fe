@@ -39,6 +39,7 @@
       <ApprovalActionBar
         module-key="ap_payment"
         :reference-id="apPaymentId"
+        :toast-group="toastGroup"
         @changed="onApprovalChanged"
       />
     </Panel>

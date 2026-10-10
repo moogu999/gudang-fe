@@ -97,8 +97,8 @@ const props = defineProps<{
    * rules can already tell an approval would be refused; the backend still checks.
    */
   approveDisabledReason?: string
-  /** Toast group of a host page that renders its own Toast. */
-  toastGroup?: string
+  /** Toast group of the host page's Toast; this bar renders none of its own. */
+  toastGroup: string
 }>()
 
 const emit = defineEmits<{ changed: [] }>()
@@ -106,7 +106,6 @@ const emit = defineEmits<{ changed: [] }>()
 const { t } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
-const toastGroup = props.toastGroup ?? 'approvalActionBar'
 
 const { request, isLoading, refresh, approve, reject, cancel, submit } = useApproval(
   props.moduleKey,
@@ -137,10 +136,10 @@ async function onSubmitClick() {
   isActing.value = true
   try {
     await submit(props.submitFlowId)
-    toast.add(commonSuccessToast(t('approvals.messages.submitted'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.submitted'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -150,10 +149,10 @@ async function onApproveClick() {
   isActing.value = true
   try {
     await approve()
-    toast.add(commonSuccessToast(t('approvals.messages.approved'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.approved'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -175,10 +174,10 @@ async function onRejectConfirm() {
     await reject(rejectComment.value.trim())
     isRejectDialogVisible.value = false
     rejectComment.value = ''
-    toast.add(commonSuccessToast(t('approvals.messages.rejected'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.rejected'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -188,10 +187,10 @@ async function onCancelClick() {
   isActing.value = true
   try {
     await cancel()
-    toast.add(commonSuccessToast(t('approvals.messages.cancelled'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.cancelled'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }

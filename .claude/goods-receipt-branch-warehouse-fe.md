@@ -1,4 +1,14 @@
-# Goods Receipt — Connect Branch and Warehouse in the Form
+# Purchasing Forms — Dropdowns That Offer Invalid Choices
+
+Two SIT findings in the same family: a purchasing form's dropdown offers a choice that
+should not be valid there.
+
+1. **Goods Receipt:** the warehouse dropdown ignores the branch (this section and
+   the sections that follow).
+2. **Purchase Order:** the supplier dropdown offers inactive suppliers. See
+   [Item 2](#item-2--purchase-order-inactive-suppliers-in-the-supplier-dropdown) at the end.
+
+# Item 1 — Goods Receipt: Connect Branch and Warehouse
 
 Status: **planned, not started.** Found during SIT (Produk dan satuan → "Di transaksi, input 2 Karton").
 
@@ -102,3 +112,77 @@ Then save a receipt for each valid pair: no `ErrWarehouseBranchMismatch`.
 
 Per the scope rule, this goes in its own branch and PR (FE only), not inside the open
 `dev-rian → main` PR (gudang-fe#13).
+
+---
+
+# Item 2 — Purchase Order: Inactive Suppliers in the Supplier Dropdown
+
+Status: **planned, not started.** Found during SIT (SIT-02-A01): supplier **Gangnam
+(SUP-0003, `is_active = false`)** could be picked for a new PO.
+
+## Problem
+
+| Layer | Today |
+|---|---|
+| Frontend | `PurchaseOrderForm.vue:112`: the supplier `InfiniteSelect` calls `SuppliersService.listForSelect(query)` with no active filter, so inactive suppliers are listed. |
+| Backend | `GET /v1/suppliers` already accepts `isActive` (`gudang-be/api/suppliers.yaml`). `create_purchase_order.go` only checks `SupplierID > 0`, so a PO is accepted for an inactive supplier. |
+
+## Goal
+
+A **new** PO can only be raised for an active supplier. Existing documents for a supplier
+that was deactivated later still open and display normally.
+
+## Design
+
+### Frontend (this plan)
+
+1. **ADD mode:** pass `isActive=true` to the supplier list in `PurchaseOrderForm.vue`.
+   Either add an optional `{ isActive }` argument to `SuppliersService.listForSelect`, or
+   append it to the query before `toListQuery`. The endpoint already supports it, so no
+   backend change is needed for the filter.
+2. **EDIT / VIEW mode:** keep showing the PO's current supplier even if it is inactive now.
+   It arrives through `initialSupplier` (the select's initial option), which does not depend on
+   the list query. Filtering the options list only stops picking a *different* inactive
+   supplier.
+3. Optional: mark the current supplier as "(nonaktif)" in EDIT/VIEW when `isActive` is false,
+   so the user understands why it is missing from the options.
+
+### Which other supplier pickers to change
+
+The same unfiltered `listForSelect` is used in five forms. Only the ones that **start a new
+relationship with the supplier** should filter:
+
+| Form | Filter to active? | Why |
+|---|---|---|
+| Purchase Order | **Yes** | raises a new purchase |
+| Goods Receipt (manual, without PO) | Yes, proposed | new receipt from the supplier. A GR from a PO takes the PO's supplier, so it is unaffected. |
+| AP Invoice | **No** | must still record invoices for goods already received |
+| AP Payment | **No** | must still pay outstanding debt to a supplier that was deactivated |
+| Credit/Debit Note | **No** | corrections on past transactions |
+
+Confirm the GR row with the business before implementing it.
+
+### Backend (separate PR, `gudang-be`)
+
+The FE filter alone does not stop an API client. Proposed: `create_purchase_order.go` rejects
+an inactive supplier with a new `ErrSupplierInactive` (400), and `update_purchase_order.go`
+only rejects it when the supplier is **changed** to an inactive one. The supplier repository
+already exposes an active-status lookup (`internal/supplier/adapter/repository/supplier.go:121-134`)
+that the PO module can mirror.
+
+## Tests
+
+- FE: in ADD mode, the supplier fetch carries `isActive=true`. In EDIT mode, an inactive current
+  supplier still renders as the selected value.
+- BE (if done): create with an inactive supplier returns 400. Update that keeps the same
+  inactive supplier is still allowed.
+
+## Manual verification (SIT data)
+
+- New PO: the supplier dropdown lists **Supplier 1** and **Zurich**, but not **Gangnam**.
+- Open an existing PO whose supplier was deactivated afterwards: it still shows the supplier.
+
+## Delivery
+
+FE change in its own branch/PR. The backend check, if accepted, goes in a separate `gudang-be` PR.
+Neither goes inside the open `dev-rian → main` PRs.

@@ -7,14 +7,21 @@
       :loading="isActing"
       @click="onSubmitClick"
     />
-    <Button
-      v-if="showApprove"
-      :label="t('approvals.actions.approve')"
-      icon="pi pi-check"
-      severity="success"
-      :loading="isActing"
-      @click="onApproveClick"
-    />
+    <!-- A disabled button gets no hover, so the wrapper carries the tooltip. -->
+    <span v-if="showApprove" v-tooltip.top="approveDisabledReason" class="inline-flex">
+      <Button
+        :label="t('approvals.actions.approve')"
+        icon="pi pi-check"
+        severity="success"
+        :loading="isActing"
+        :disabled="!!approveDisabledReason"
+        data-testid="approval-approve"
+        @click="onApproveClick"
+      />
+    </span>
+    <small v-if="showApprove && approveDisabledReason" class="w-full text-red-500">
+      {{ approveDisabledReason }}
+    </small>
     <Button
       v-if="showReject"
       :label="t('approvals.actions.reject')"
@@ -85,6 +92,13 @@ const props = defineProps<{
   referenceId: number
   /** Flow to submit under, when this document has no request yet. Omit to hide the Submit action. */
   submitFlowId?: number | null
+  /**
+   * When set, Approve is disabled and this explains why. For modules whose own
+   * rules can already tell an approval would be refused; the backend still checks.
+   */
+  approveDisabledReason?: string
+  /** Toast group of the host page's Toast; this bar renders none of its own. */
+  toastGroup: string
 }>()
 
 const emit = defineEmits<{ changed: [] }>()
@@ -92,7 +106,6 @@ const emit = defineEmits<{ changed: [] }>()
 const { t } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
-const toastGroup = 'approvalActionBar'
 
 const { request, isLoading, refresh, approve, reject, cancel, submit } = useApproval(
   props.moduleKey,
@@ -123,10 +136,10 @@ async function onSubmitClick() {
   isActing.value = true
   try {
     await submit(props.submitFlowId)
-    toast.add(commonSuccessToast(t('approvals.messages.submitted'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.submitted'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -136,10 +149,10 @@ async function onApproveClick() {
   isActing.value = true
   try {
     await approve()
-    toast.add(commonSuccessToast(t('approvals.messages.approved'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.approved'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -161,10 +174,10 @@ async function onRejectConfirm() {
     await reject(rejectComment.value.trim())
     isRejectDialogVisible.value = false
     rejectComment.value = ''
-    toast.add(commonSuccessToast(t('approvals.messages.rejected'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.rejected'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }
@@ -174,10 +187,10 @@ async function onCancelClick() {
   isActing.value = true
   try {
     await cancel()
-    toast.add(commonSuccessToast(t('approvals.messages.cancelled'), toastGroup))
+    toast.add(commonSuccessToast(t('approvals.messages.cancelled'), props.toastGroup))
     emit('changed')
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(e, props.toastGroup))
   } finally {
     isActing.value = false
   }

@@ -40,6 +40,7 @@
       <ApprovalActionBar
         module-key="credit_debit_note"
         :reference-id="noteId"
+        :toast-group="toastGroup"
         @changed="onApprovalChanged"
       />
     </Panel>

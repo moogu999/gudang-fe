@@ -139,9 +139,13 @@ export const PERMISSIONS = {
   CACHE_CLEAR: 132,
   SALES_TEAM_READ: 133,
   SALES_TEAM_WRITE: 134,
+  DEVICE_BINDING_READ: 135,
+  DEVICE_BINDING_WRITE: 136,
+  DEVICE_BINDING_CONFIG_READ: 137,
+  DEVICE_BINDING_CONFIG_WRITE: 138,
   // Read and edit branch-owned data (sales orders first) of every branch, not only the
   // user's own. Enforced by the backend; no screen gates on it.
-  BRANCH_SCOPE_ALL: 135,
+  BRANCH_SCOPE_ALL: 139,
 } as const
 
 /**

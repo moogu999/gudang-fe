@@ -70,6 +70,7 @@ class ApiService {
         // Extract error message from API response
         const errorMessage = error.response?.data?.message || error.message
         const status = error.response?.status
+        const errorCode = error.response?.data?.code
 
         // Only handle 401 errors that haven't been retried yet
         const is401Error = error.response?.status === 401
@@ -77,7 +78,7 @@ class ApiService {
 
         if (!is401Error || !originalRequest || isRetryAttempt) {
           console.error('API error:', errorMessage)
-          return Promise.reject(new ApiError(errorMessage, status))
+          return Promise.reject(new ApiError(errorMessage, status, errorCode))
         }
 
         const requestUrl = originalRequest.url || ''
@@ -88,7 +89,7 @@ class ApiService {
           if (!isAuthMeEndpoint) {
             this.handleAuthFailure()
           }
-          return Promise.reject(new ApiError(errorMessage, status))
+          return Promise.reject(new ApiError(errorMessage, status, errorCode))
         }
 
         // If already refreshing, queue this request

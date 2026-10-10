@@ -52,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     void ApiService.loadCachePolicies()
     isAuthenticated.value = true
     userId.value = userInfo.id
-    email.value = userInfo.email
+    email.value = userInfo.email ?? null
     permissions.value = userInfo.permissions
     branchIds.value = userInfo.branchIds ?? []
     employeeId.value = userInfo.employeeId ?? null
@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
         void ApiService.loadCachePolicies()
         isAuthenticated.value = true
         userId.value = userInfo.id
-        email.value = userInfo.email
+        email.value = userInfo.email ?? null
         permissions.value = userInfo.permissions
         branchIds.value = userInfo.branchIds ?? []
         employeeId.value = userInfo.employeeId ?? null

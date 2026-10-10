@@ -62,7 +62,8 @@
       <div v-else class="space-y-3">
         <Card
           v-for="(item, index) in items"
-          :key="item[dataKey]"
+          :key="getNestedValue(item as T, dataKey)"
+          :class="rowClass?.(item as T)"
           :pt="{
             body: 'p-3',
             content: 'p-0',
@@ -149,6 +150,7 @@
       :first="first"
       :filters="filters"
       :data-key="dataKey"
+      :row-class="rowClass"
       :key="tableKey"
       @page="handlePageChange"
       @sort="handleSortChange"
@@ -365,6 +367,11 @@ const props = defineProps({
    */
   queryAdapter: {
     type: Function as PropType<(queryString: string) => string>,
+    default: undefined,
+  },
+  /** Extra classes for a row (and its mobile card), e.g. to highlight rows that need attention. */
+  rowClass: {
+    type: Function as PropType<(data: T) => string | undefined>,
     default: undefined,
   },
 })

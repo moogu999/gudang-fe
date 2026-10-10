@@ -13,8 +13,23 @@
     <ResponsiveCard>
       <template #content>
         <DataTable :value="requests" :loading="isLoading">
-          <Column field="moduleKey" :header="t('myApprovals.fields.module')" />
-          <Column field="referenceId" :header="t('myApprovals.fields.reference')" />
+          <Column field="moduleKey" :header="t('myApprovals.fields.module')">
+            <template #body="{ data }">
+              {{ moduleLabel(data.moduleKey) }}
+            </template>
+          </Column>
+          <Column field="referenceId" :header="t('myApprovals.fields.reference')">
+            <template #body="{ data }">
+              <RouterLink
+                v-if="APPROVAL_MODULES[data.moduleKey]?.link"
+                :to="APPROVAL_MODULES[data.moduleKey]!.link!(data.referenceId)"
+                class="text-primary-600 hover:underline"
+              >
+                {{ t('myApprovals.review', { id: data.referenceId }) }}
+              </RouterLink>
+              <span v-else>{{ data.referenceId }}</span>
+            </template>
+          </Column>
           <Column field="currentTierOrder" :header="t('myApprovals.fields.currentTier')" />
           <Column :header="t('myApprovals.fields.requestedAt')">
             <template #body="{ data }">
@@ -89,6 +104,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
 import DataTable from 'primevue/datatable'
@@ -102,10 +118,16 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import { ApprovalsService } from '@/services/approvals.service'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import DateFormat from '@/constants/dateFormat'
+import { APPROVAL_MODULES } from '@/constants/approvalModules'
 import type { ApprovalRequest } from '@/types/approval.type'
 
 const { t } = useI18n()
 const toast = useToast()
+
+function moduleLabel(moduleKey: string): string {
+  const entry = APPROVAL_MODULES[moduleKey]
+  return entry ? t(entry.labelKey) : moduleKey
+}
 
 const overlayGroup = 'myApprovalsView'
 const isLoading = ref(false)

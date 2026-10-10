@@ -23,6 +23,9 @@
           <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
             $form.email.error.message
           }}</Message>
+          <small v-if="isNforceAccount" class="text-stone-500" data-testid="user-nforce-account">
+            {{ t('users.nforceAccountHint') }}
+          </small>
         </div>
       </div>
 
@@ -249,6 +252,11 @@ const props = defineProps({
   },
 })
 
+/** A salesman account created by N-Force sign-in: no email, so no web login. */
+const isNforceAccount = computed(
+  () => props.mode !== DialogMode.ADD && !props.user?.email && props.user?.employeeId != null,
+)
+
 const emits = defineEmits(['close'])
 
 // Department selection
@@ -262,7 +270,7 @@ onBeforeMount(() => {
     return
   }
 
-  initialValues.email = props.user?.email
+  initialValues.email = props.user?.email ?? ''
 
   // Set department if exists
   if (props.user.departmentId && props.user.department) {
@@ -312,7 +320,11 @@ const resolver = computed(() =>
   zodResolver(
     z
       .object({
-        email: z.string().email({ message: t('users.validation.emailInvalid') }),
+        // An existing account's email can't change here, and N-Force accounts have none.
+        email:
+          props.mode === DialogMode.ADD
+            ? z.string().email({ message: t('users.validation.emailInvalid') })
+            : z.string().optional(),
         password:
           props.mode === DialogMode.EDIT || props.mode === DialogMode.VIEW
             ? z.string().optional().or(passwordSchema.value)

@@ -17,7 +17,17 @@
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
             <span v-if="col.field === 'referenceType'">
-              {{ t(`auditTrails.references.${data[col.field]}`) }}
+              {{ referenceTypeLabel(data[col.field]) }}
+            </span>
+            <span v-if="col.field === 'action'">
+              {{ data['action'] ? actionLabel(data['action']) : '—' }}
+            </span>
+            <span
+              v-if="col.field === 'reason'"
+              v-tooltip.top="data['reason']"
+              class="block max-w-xs truncate"
+            >
+              {{ data['reason'] ?? '—' }}
             </span>
             <span
               v-if="col.field === 'description'"
@@ -27,7 +37,11 @@
               {{ data[col.field] }}
             </span>
             <span v-if="col.field === 'createdBy'">
-              {{ getCreatedByEmail(data['createdByUser']) }}
+              {{
+                data['createdBy'] == null
+                  ? systemActor(data['action'])
+                  : getCreatedByEmail(data['createdByUser'])
+              }}
             </span>
             <span v-if="col.field === 'createdAt'">
               {{ dayjs(data[col.field]).format(DateFormat.DATE_TIME) }}
@@ -101,9 +115,9 @@ import FilterOperator from '@/constants/filterOperator'
 import DateFormat from '@/constants/dateFormat'
 import { useResponsiveSize } from '@/composables'
 import AuditTrailFilters from './components/AuditTrailFilters.vue'
-import type { AuditReferenceType } from '@/types/auditTrail.type'
+import { PHONE_ACTOR_ACTIONS, type AuditReferenceType } from '@/types/auditTrail.type'
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const { buttonSize } = useResponsiveSize()
@@ -114,6 +128,7 @@ const table = ref()
 type Filters = {
   referenceType?: AuditReferenceType
   referenceId?: number
+  action?: string
   dateRange?: [string, string]
 }
 
@@ -140,6 +155,9 @@ const url = computed(() => {
   if (activeFilters.value.referenceId != null) {
     qb.withFilter('referenceId', FilterOperator.EQUAL, activeFilters.value.referenceId)
   }
+  if (activeFilters.value.action) {
+    qb.withFilter('action', FilterOperator.EQUAL, activeFilters.value.action)
+  }
   if (activeFilters.value.dateRange) {
     qb.withFilter('createdAt', FilterOperator.BETWEEN, activeFilters.value.dateRange.join(','))
   }
@@ -165,11 +183,26 @@ const columns = computed<Column[]>(() => [
     hideOnMobile: true,
   },
   {
+    field: 'action',
+    header: t('auditTrails.columns.action'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+  },
+  {
     field: 'description',
     header: t('auditTrails.columns.description'),
     exportable: true,
     sortable: false,
     filterable: false,
+  },
+  {
+    field: 'reason',
+    header: t('auditTrails.columns.reason'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
   },
   {
     field: 'createdBy',
@@ -197,12 +230,31 @@ const columns = computed<Column[]>(() => [
   },
 ])
 
+/** Falls back to the raw value, so a type or action added on the backend first still reads. */
+function referenceTypeLabel(type: string): string {
+  const key = `auditTrails.references.${type}`
+  return te(key) ? t(key) : type
+}
+
+/** No user behind the entry: the system, or the salesman's own phone. */
+function systemActor(action: string | undefined): string {
+  return action && PHONE_ACTOR_ACTIONS.has(action)
+    ? t('deviceBinding.history.byPhone')
+    : t('auditTrails.system')
+}
+
+function actionLabel(action: string): string {
+  const key = `auditTrails.actions.${action}`
+  return te(key) ? t(key) : action
+}
+
 function getCreatedByEmail(user: unknown): string {
   if (
     user &&
     typeof user === 'object' &&
     'email' in user &&
-    typeof (user as { email: unknown }).email === 'string'
+    typeof (user as { email: unknown }).email === 'string' &&
+    (user as { email: string }).email !== ''
   ) {
     return (user as { email: string }).email
   }

@@ -60,4 +60,9 @@ export const CONFIG_TABS: ConfigTabDef[] = [
     labelKey: 'navigation.cashDepositConfigs',
     readPermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_READ,
   },
+  {
+    value: 'device-binding',
+    labelKey: 'navigation.deviceBindingConfigs',
+    readPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
+  },
 ]

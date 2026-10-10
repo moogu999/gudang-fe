@@ -8,7 +8,8 @@ export type EmployeeLite = {
 
 export type User = {
   id: number
-  email: string
+  /** Absent on N-Force salesman accounts, which sign in by phone and PIN. */
+  email?: string
   departmentId: number | null
   department: DepartmentLite | null
   employeeId: number | null

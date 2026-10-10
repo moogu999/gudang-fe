@@ -58,7 +58,8 @@ export interface RefreshTokenPayload {
  */
 export interface MeResponse {
   id: number
-  email: string
+  /** Absent on N-Force salesman accounts. */
+  email?: string
   permissions: number[]
   branchIds: number[]
   employeeId: number | null

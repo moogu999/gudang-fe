@@ -39,6 +39,7 @@
       <ApprovalActionBar
         module-key="goods_receipt"
         :reference-id="goodsReceiptId"
+        :toast-group="toastGroup"
         @changed="onApprovalChanged"
       />
     </Panel>

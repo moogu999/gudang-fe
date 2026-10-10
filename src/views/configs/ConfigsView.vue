@@ -47,6 +47,10 @@
     <ApPaymentConfigsView v-if="activeConfig === 'bkk'" ref="bkkRef" :embedded="true" />
     <AccountingPeriodConfigsView v-if="activeConfig === 'apc'" ref="apcRef" :embedded="true" />
     <CashDepositConfigsView v-if="activeConfig === 'cd'" ref="cdRef" :embedded="true" />
+    <DeviceBindingConfigsView
+      v-if="activeConfig === 'device-binding'"
+      :toast-group="overlayGroup"
+    />
   </div>
 </template>
 
@@ -70,6 +74,7 @@ import CreditDebitNoteConfigsView from '@/views/credit-debit-note-configs/Credit
 import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsView.vue'
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
+import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindingConfigsView.vue'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
 import { CacheService, commonErrorToast, commonSuccessToast } from '@/services'
@@ -124,6 +129,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'bkk') return canWriteBKK.value
   if (activeConfig.value === 'apc') return canWriteAPC.value
   if (activeConfig.value === 'cd') return canWriteCD.value
+  // Device binding is one settings form per company, saved in place: nothing to add.
   return false
 })
 

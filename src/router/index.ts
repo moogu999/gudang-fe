@@ -171,6 +171,16 @@ const router = createRouter({
           },
         },
         {
+          path: 'device-binding',
+          name: 'DeviceBinding',
+          component: () => import('@/views/device-binding/DeviceBindingView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DEVICE_BINDING_READ,
+            requiredWritePermission: PERMISSIONS.DEVICE_BINDING_WRITE,
+            titleKey: 'navigation.deviceBinding',
+          },
+        },
+        {
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),
@@ -1175,6 +1185,16 @@ const router = createRouter({
           path: 'cash-deposit-configs',
           redirect: { path: '/configs', query: { tab: 'cd' } },
           meta: { requiredWritePermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE },
+        },
+        {
+          // Carries its read permission too: DeviceBindingView and DeviceChangeReviewDialog
+          // call usePermissions('/device-binding-configs').canRead directly.
+          path: 'device-binding-configs',
+          redirect: { path: '/configs', query: { tab: 'device-binding' } },
+          meta: {
+            requiredPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
+            requiredWritePermission: PERMISSIONS.DEVICE_BINDING_CONFIG_WRITE,
+          },
         },
         {
           path: 'bank-settlements',

@@ -60,6 +60,11 @@ const mainMenu = [
         labelKey: 'navigation.salesTeams',
         route: '/sales-teams',
       },
+      {
+        label: 'Device Binding',
+        labelKey: 'navigation.deviceBinding',
+        route: '/device-binding',
+      },
     ],
   },
   {

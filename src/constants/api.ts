@@ -158,6 +158,25 @@ export const API_ENDPOINTS = {
   // Sales team endpoints
   SALES_TEAMS: '/v1/sales-teams',
 
+  // Device binding endpoints (N-Force phones)
+  DEVICE_BINDING: '/v1/device-binding',
+  DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',
+  DEVICE_BINDING_ACTIVATION_CODE: (employeeId: number) =>
+    `/v1/device-binding/employees/${employeeId}/activation-code`,
+  DEVICE_BINDING_ACTIVATION_CODE_SEND: (employeeId: number) =>
+    `/v1/device-binding/employees/${employeeId}/activation-code/send`,
+  DEVICE_BINDING_RESET_PIN: (employeeId: number) =>
+    `/v1/device-binding/employees/${employeeId}/reset-pin`,
+  DEVICE_BINDING_RESET_BINDING: (employeeId: number) =>
+    `/v1/device-binding/employees/${employeeId}/reset-binding`,
+  DEVICE_BINDING_BLOCK: (employeeId: number) => `/v1/device-binding/employees/${employeeId}/block`,
+  DEVICE_BINDING_UNBLOCK: (blockId: number) => `/v1/device-binding/blocks/${blockId}/unblock`,
+  DEVICE_BINDING_HISTORY: (employeeId: number) =>
+    `/v1/device-binding/employees/${employeeId}/history`,
+  DEVICE_BINDING_REQUEST: (deviceId: number) => `/v1/device-binding/requests/${deviceId}`,
+  DEVICE_BINDING_CONFIGS_MY_COMPANY: '/v1/device-binding-configs/my-company',
+  DEVICE_BINDING_CONFIGS: (companyId: number) => `/v1/device-binding-configs/${companyId}`,
+
   // File endpoints
   FILES: '/v1/files',
 

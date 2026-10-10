@@ -581,3 +581,4 @@ export type {
   SubmitApprovalRequestDto,
   ActApprovalRequestDto,
 } from './approval.type'
+export * from './salesTeam.type'

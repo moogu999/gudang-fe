@@ -17,6 +17,15 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns">
           <template #content="{ col, data }">
+            <div v-if="col.field === 'name'" class="flex items-center gap-2">
+              <span>{{ data['name'] }}</span>
+              <Tag
+                v-if="data['systemKey']"
+                v-tooltip.top="t('productLabelDefinitions.systemLocked')"
+                :value="t('productLabelDefinitions.system')"
+                severity="info"
+              />
+            </div>
             <span v-if="col.field === 'createdAt'">{{
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
@@ -24,6 +33,7 @@
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
+              :can-delete="!data['systemKey']"
               @edit="editDefinition(data)"
               @delete="onDeleteClick(data['id'])"
               @view="viewDefinition(data)"
@@ -62,6 +72,7 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
+import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
 import { ProductLabelDefinitionsService } from '@/services'
 import Toast from 'primevue/toast'

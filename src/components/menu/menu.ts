@@ -54,6 +54,11 @@ const mainMenu = [
         labelKey: 'navigation.salesOrganizations',
         route: '/sales-organizations',
       },
+      {
+        label: 'Sales Teams',
+        labelKey: 'navigation.salesTeams',
+        route: '/sales-teams',
+      },
     ],
   },
   {

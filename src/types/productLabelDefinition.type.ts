@@ -1,3 +1,5 @@
+export type ProductLabelSystemKey = 'principal' | 'category'
+
 /**
  * Product Label Definition entity
  *
@@ -7,6 +9,11 @@
 export interface ProductLabelDefinition {
   id: number
   name: string
+  /**
+   * Set on the definitions the application relies on. Their name is locked;
+   * their options stay editable.
+   */
+  systemKey?: ProductLabelSystemKey | null
   createdAt: string
   updatedAt?: string
   createdBy?: number

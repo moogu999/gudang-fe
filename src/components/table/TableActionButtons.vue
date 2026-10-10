@@ -16,6 +16,7 @@
 
       <!-- Delete button -->
       <Button
+        v-if="canDelete"
         icon="pi pi-trash"
         severity="danger"
         @click="$emit('delete')"
@@ -51,9 +52,11 @@ import { useResponsiveSize } from '@/composables'
 
 interface Props {
   canWrite: boolean
+  /** Hides Delete for a row that can't be deleted while still allowing edits. */
+  canDelete?: boolean
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), { canDelete: true })
 
 defineEmits<{
   edit: []

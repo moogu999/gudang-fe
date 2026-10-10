@@ -16,6 +16,10 @@
           size="small"
           @click="addLabelFilter"
         />
+        <div v-if="principalDefinitionId" class="ml-3 flex items-center gap-2">
+          <Checkbox v-model="noPrincipal" input-id="noPrincipal" binary />
+          <label for="noPrincipal" class="text-sm">{{ t('products.filters.noPrincipal') }}</label>
+        </div>
       </template>
       <template #end>
         <div class="flex gap-2">
@@ -157,7 +161,8 @@ import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
-import { ref, computed } from 'vue'
+import Checkbox from 'primevue/checkbox'
+import { ref, computed, onMounted } from 'vue'
 import {
   ProductsService,
   ProductLabelDefinitionsService,
@@ -247,18 +252,35 @@ const activeLabelFilters = computed(() =>
   labelFilters.value.filter((f) => f.definitionId && f.optionId),
 )
 
+// Products without a principal. Hidden until the Principal system definition is found.
+const principalDefinitionId = ref<number | undefined>()
+const noPrincipal = ref(false)
+
+onMounted(async () => {
+  try {
+    principalDefinitionId.value = (await ProductLabelDefinitionsService.findSystem('principal'))?.id
+  } catch {
+    // Non-critical: the filter just stays hidden.
+  }
+})
+
 // Only `/v1/products` knows label filters, so the table moves there once one is
 // set. The two endpoints read different query dialects and support different
 // controls, which is why the adapter and the columns below follow this flag.
-const isLabelFiltered = computed(() => activeLabelFilters.value.length > 0)
+const isLabelFiltered = computed(
+  () => activeLabelFilters.value.length > 0 || (noPrincipal.value && !!principalDefinitionId.value),
+)
 
 const url = computed(() => {
   if (!isLabelFiltered.value) return API_ENDPOINTS.GEN_PRODUCTS
 
-  const params = activeLabelFilters.value
-    .map((f) => ProductsService.labelFilterParam(f.definitionId!, f.optionId!))
-    .join('&')
-  return `${API_ENDPOINTS.PRODUCTS_V1}?${params}`
+  const params = activeLabelFilters.value.map((f) =>
+    ProductsService.labelFilterParam(f.definitionId!, f.optionId!),
+  )
+  if (noPrincipal.value && principalDefinitionId.value) {
+    params.push(ProductsService.withoutLabelParam(principalDefinitionId.value))
+  }
+  return `${API_ENDPOINTS.PRODUCTS_V1}?${params.join('&')}`
 })
 
 // No query adapter here, unlike the customers list: `/v1/products` already

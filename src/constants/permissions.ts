@@ -137,6 +137,8 @@ export const PERMISSIONS = {
   GIRO_CLEARING_READ: 130,
   GIRO_CLEARING_WRITE: 131,
   CACHE_CLEAR: 132,
+  SALES_TEAM_READ: 133,
+  SALES_TEAM_WRITE: 134,
 } as const
 
 /**
@@ -156,6 +158,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/departments': PERMISSIONS.DEPARTMENT_READ,
   '/divisions': PERMISSIONS.DIVISION_READ,
   '/sales-organizations': PERMISSIONS.SALES_ORGANIZATION_READ,
+  '/sales-teams': PERMISSIONS.SALES_TEAM_READ,
   '/customers': PERMISSIONS.CUSTOMER_READ,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_READ,
   '/products': PERMISSIONS.PRODUCT_READ,
@@ -225,6 +228,7 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/departments': PERMISSIONS.DEPARTMENT_WRITE,
   '/divisions': PERMISSIONS.DIVISION_WRITE,
   '/sales-organizations': PERMISSIONS.SALES_ORGANIZATION_WRITE,
+  '/sales-teams': PERMISSIONS.SALES_TEAM_WRITE,
   '/customers': PERMISSIONS.CUSTOMER_WRITE,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_WRITE,
   '/products': PERMISSIONS.PRODUCT_WRITE,

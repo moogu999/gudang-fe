@@ -155,6 +155,9 @@ export const API_ENDPOINTS = {
   // Supplier endpoints
   SUPPLIERS: '/v1/suppliers',
 
+  // Sales team endpoints
+  SALES_TEAMS: '/v1/sales-teams',
+
   // File endpoints
   FILES: '/v1/files',
 

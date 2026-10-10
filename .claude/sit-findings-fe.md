@@ -14,7 +14,7 @@ Related plans already written, not repeated here:
 |---|---|---|---|
 | F1 | Approver's "Tinjau" link bounces to Home | access design (with BE) | **decided**: automatic approver access |
 | F2 | A denied route silently redirects to Home | UX bug | no |
-| F5 | Bonus items are not a separate zero-priced line | requirement mismatch | **yes** |
+| F5 | Bonus items are not a separate zero-priced line | requirement mismatch | **decided**: render as rows |
 | F7 | "Konfigurasi PO" means the Sales Order config | label | no |
 | F8 | GR form ignores the PO's branch | bug (with BE) | **yes** |
 
@@ -92,10 +92,10 @@ marker. A permitted route is unaffected.
 (its own rows, no price), and shown inside the parent line's expansion, under "Item Bonus"
 (`src/views/sales-orders/SalesOrderDetailsTable.vue:293`). It is not a line of the table.
 
-**Decision needed:**
+**Decision (2026-10-10): option 2, render bonuses as rows.**
 
-1. **Current UI is acceptable:** update the SIT expectation. No code.
-2. **Render bonuses as rows:** after their parent line, read-only, price 0, marked "Bonus" with
+1. ~~**Current UI is acceptable:** update the SIT expectation. No code.~~ Rejected.
+2. **Render bonuses as rows (chosen):** after their parent line, read-only, price 0, marked "Bonus" with
    the promotion code. Display only: they stay bonus records, not order lines, so totals and
    the payload do not change.
 

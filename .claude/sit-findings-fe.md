@@ -66,9 +66,12 @@ page falls back to the header's lite supplier through `unlessForbidden`. The SO 
 fallback: its lookups are open or already tolerate failure. No backend change was needed (BE plan
 F1, "Phase 1 outcome").
 
-**Phase 2:** mark `/goods-receipts/:id`, `/ap-invoices/:id`, `/ap-payments/:id`,
-`/credit-debit-notes/:id`, `/cash-deposits/:id`. For each page, check which lookups refuse an
-approver and wrap them in `unlessForbidden` with a fallback, like the PO supplier.
+**Phase 2 done (2026-10-10, same branch, with gudang-be#28):** `/goods-receipts/:id`,
+`/ap-invoices/:id`, `/ap-payments/:id`, `/credit-debit-notes/:id`, `/cash-deposits/:id` are
+marked. Lookups checked: only the supplier master is enforced. The GR page now names the supplier
+from its PO's lite supplier when the master is refused. The others only use it in a select whose
+fetch failure is already silent. Known gap: a manual GR (no PO) shows no supplier name to an
+approver (BE plan F1).
 
 ### Tests
 

@@ -12,7 +12,7 @@ Related plans already written, not repeated here:
 
 | # | Finding | Kind | Needs a decision first? |
 |---|---|---|---|
-| F1 | Approver's "Tinjau" link bounces to Home | access design (with BE) | **yes** |
+| F1 | Approver's "Tinjau" link bounces to Home | access design (with BE) | **decided**: automatic approver access |
 | F2 | A denied route silently redirects to Home | UX bug | no |
 | F5 | Bonus items are not a separate zero-priced line | requirement mismatch | **yes** |
 | F7 | "Konfigurasi PO" means the Sales Order config | label | no |
@@ -33,14 +33,40 @@ The guard sends a user without it to Home **before any request**, so an approver
 `APPROVAL_REQUEST_READ` + `APPROVAL_ACT` cannot open what it reviews. Once inside, the page's own
 lookups need more (the PO page needs `SUPPLIER_READ`, see BE plan F1).
 
-**Depends on the BE F1 decision:**
+**Decision (2026-10-10): approvers get read access automatically** (BE plan F1, option 2).
+The backend is the authority: it serves a document to its approvers. The frontend only has to
+stop blocking the page and cope with what the approver cannot see.
 
-- **Permissions only (BE option 1):** no FE change, beyond F2 explaining the denial.
-- **Approver-scoped read (BE option 2):** the route guard must also let through a user who is
-  an approver of that document. For example, Persetujuan Saya passes `?approval=<requestId>`,
-  and the guard (or the page) checks the request instead of the module permission. The page must
-  then tolerate lookups it cannot load (show the lite supplier from the header instead of
-  failing when `GET /v1/suppliers/{id}` is refused).
+### Design
+
+1. **Links carry the request.** `ApprovalModuleEntry.link` becomes
+   `(referenceId, requestId) => string` and appends `?approval=<requestId>`
+   (e.g. `/purchase-orders/1?approval=12`). `MyApprovalsView` passes `data.id`. Update
+   `approvalModules.spec.ts`.
+2. **Route guard** (`src/router/index.ts`, the `requiredPermission` check at `:1434`): let the
+   route through when it lacks the permission **but** `to.query.approval` is set and the user holds
+   `APPROVAL_REQUEST_READ` or `APPROVAL_ACT`. This is safe because the guard is not the security
+   boundary: the backend still answers 404 for a document the user does not approve. Only
+   **detail** routes (`/:id`, not `/:id/edit`, not lists) qualify. Mark them with
+   `meta.approverReadable: true` instead of matching paths.
+3. **Detail pages tolerate refused lookups.** On a page opened with `?approval=`:
+   - the main document load (header + details) must succeed;
+   - secondary lookups (`SuppliersService.get`, employee, branch, config, …) that fail with 403
+     fall back to the lite data embedded in the header (e.g. supplier code/name) instead of
+     failing the whole load. `PurchaseOrderForm.vue:709` is the first case.
+   - the page is read-only (it already is in VIEW mode), and Edit/back-to-list actions that would
+     lead to a list the approver cannot read are hidden.
+4. **Phasing follows the BE plan:** purchase order and sales order first, then the other five
+   modules, one page each.
+
+### Tests
+
+- Guard spec: an approver-readable route opens without the module permission when `?approval=` is
+  set and the user has an approval permission. It still redirects without `?approval=`, and for
+  `/:id/edit`.
+- `approvalModules.spec.ts`: every link carries the request id.
+- PO detail view spec: a 403 from `SuppliersService.get` still renders the PO with the header's
+  supplier name.
 
 ---
 

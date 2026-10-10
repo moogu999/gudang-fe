@@ -77,6 +77,7 @@ export default {
     salesOrganizations: 'Sales Organizations',
     salesTeams: 'Sales Teams',
     deviceBinding: 'Device Binding',
+    reasons: 'Reasons',
     customers: 'Customers',
     products: 'Products',
     unitOfMeasurements: 'Unit of Measurements',
@@ -832,6 +833,110 @@ export default {
       saved: 'Device Binding settings saved.',
       savedSubmitted:
         'Device Binding settings saved. {n} waiting request(s) submitted for approval.',
+    },
+  },
+  reasons: {
+    title: 'Reason Codes',
+    addReason: 'Add reason',
+    editReason: 'Edit reason',
+    viewReason: 'View reason',
+    types: {
+      customer_no_order: {
+        label: "Customer Didn't Order",
+        trigger: 'Appears when: checking out of a visit with no saved order.',
+        impact: 'Impact: the visit counts as a Call, not an Effective Call.',
+      },
+      outside_radius: {
+        label: 'Outside Radius',
+        trigger:
+          "Appears when: checking in where the GPS distance to the customer's geotag exceeds the tolerance.",
+        impact: 'Impact: the check-in proceeds and is flagged for supervisor review.',
+      },
+      skipped_visit: {
+        label: 'Skipped Visit',
+        trigger: 'Appears when: closing the day with journey-plan customers not visited.',
+        impact: 'Impact: must be filled per customer before the day can be closed.',
+      },
+      return: {
+        label: 'Return',
+        trigger: 'Appears when: entering return lines on mobile, and on RETURN sales orders.',
+        impact: 'Impact: sets the default stock type (Good/Bad) when the return is received.',
+      },
+      order_cancellation: {
+        label: 'Order Cancellation',
+        trigger: 'Appears when: the salesman cancels an order in the app before validation.',
+        impact:
+          "Impact: logged on the order's audit trail; aligns with sales order cancel reasons.",
+      },
+      msl_not_sold: {
+        label: 'MSL Not Sold',
+        trigger: 'Appears when: sending an order where an MSL SKU has quantity 0.',
+        impact: 'Impact: stored per SKU per order for MSL compliance reporting.',
+      },
+    },
+    fields: {
+      type: 'Type',
+      code: 'Code',
+      name: 'Name',
+      employeeTypes: 'Employee type',
+      defaultStockType: 'Default stock type',
+      requiresPhoto: 'Requires photo',
+      requiresNote: 'Requires note',
+      active: 'Active',
+      lastChanged: 'Last changed: {name} · {date}',
+      requiresPhotoHint: 'The salesman must attach a photo when picking this reason.',
+      requiresNoteHint: 'The salesman must type a note when picking this reason.',
+      activeHint: 'Inactive reasons disappear from the app after the next sync; history is kept.',
+      typeLockedHint:
+        "Type can't be changed after saving. Delete or deactivate and create a new one.",
+    },
+    codeMode: {
+      auto: 'Auto',
+      manual: 'Manual',
+    },
+    employeeTypes: {
+      salesman: 'Salesman',
+      canvass: 'Canvass',
+      salesmanShort: 'TO',
+      canvassShort: 'KV',
+    },
+    stockTypes: {
+      good: 'Good Stock',
+      bad: 'Bad Stock',
+    },
+    filters: {
+      search: 'Search code or name',
+      allEmployeeTypes: 'All employee types',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      statusAll: 'All statuses',
+    },
+    hints: {
+      order: "Display order in the app follows the order of active rows. Keep 'Other' last.",
+      employeeTypes: 'Which field-selling employee types see this reason in the app.',
+      stockTypeExample: 'Example: "Expired" → Bad Stock, "Wrong item delivered" → Good Stock.',
+      codeAssignedOnSave: 'Assigned on save.',
+      codeManual: 'Up to 32 characters, unique across all reasons.',
+    },
+    validation: {
+      nameRequired: 'Name is required.',
+      nameTooLong: 'Name can be at most 40 characters.',
+      codeRequired: 'Code is required.',
+      codeTooLong: 'Code can be at most 32 characters.',
+      noEmployeeType: 'Pick at least one employee type.',
+      stockTypeRequired: 'Pick a default stock type for return reasons.',
+    },
+    messages: {
+      created: 'Reason is created.',
+      updated: 'Reason is updated.',
+    },
+    errors: {
+      codeDuplicate: 'This code is already used by another reason.',
+      nameDuplicate: 'A reason with this name already exists in this type.',
+      lastActiveReason:
+        'This would leave an employee type with no active reason. Keep at least one active reason per employee type.',
+      inUse: 'This reason is in use. Deactivate it instead.',
+      staleOrder: 'The list changed elsewhere. It has been reloaded; try the reorder again.',
     },
   },
   auth: {

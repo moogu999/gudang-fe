@@ -177,6 +177,10 @@ export const API_ENDPOINTS = {
   DEVICE_BINDING_CONFIGS_MY_COMPANY: '/v1/device-binding-configs/my-company',
   DEVICE_BINDING_CONFIGS: (companyId: number) => `/v1/device-binding-configs/${companyId}`,
 
+  // Reason codes (master of answers the N-Force salesman picks)
+  REASONS: '/v1/reasons',
+  REASONS_REORDER: '/v1/reasons/reorder',
+
   // File endpoints
   FILES: '/v1/files',
 

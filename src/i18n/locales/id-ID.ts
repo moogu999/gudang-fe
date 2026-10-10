@@ -78,6 +78,7 @@ export default {
     salesOrganizations: 'Organisasi Penjualan',
     salesTeams: 'Tim Penjualan',
     deviceBinding: 'Device Binding',
+    reasons: 'Alasan',
     customers: 'Pelanggan',
     products: 'Produk',
     unitOfMeasurements: 'Satuan Ukuran',
@@ -832,6 +833,111 @@ export default {
       saved: 'Pengaturan Device Binding disimpan.',
       savedSubmitted:
         'Pengaturan Device Binding disimpan. {n} permintaan yang menunggu diajukan ke approval.',
+    },
+  },
+  reasons: {
+    title: 'Kode Alasan',
+    addReason: 'Tambah alasan',
+    editReason: 'Ubah alasan',
+    viewReason: 'Lihat alasan',
+    types: {
+      customer_no_order: {
+        label: 'Customer Tidak Order',
+        trigger: 'Muncul saat: check-out dari kunjungan tanpa order tersimpan.',
+        impact: 'Dampak: kunjungan dihitung sebagai Call, bukan Effective Call.',
+      },
+      outside_radius: {
+        label: 'Di Luar Radius',
+        trigger: 'Muncul saat: check-in dengan jarak GPS ke geotag customer melebihi toleransi.',
+        impact: 'Dampak: check-in tetap berjalan dan ditandai untuk ditinjau supervisor.',
+      },
+      skipped_visit: {
+        label: 'Skip Kunjungan',
+        trigger: 'Muncul saat: menutup hari dengan customer di journey plan yang belum dikunjungi.',
+        impact: 'Dampak: wajib diisi per customer sebelum hari dapat ditutup.',
+      },
+      return: {
+        label: 'Retur',
+        trigger: 'Muncul saat: mengisi baris retur di mobile, dan pada sales order RETURN.',
+        impact: 'Dampak: menentukan tipe stok default (Good/Bad) saat retur diterima.',
+      },
+      order_cancellation: {
+        label: 'Batal Order',
+        trigger: 'Muncul saat: salesman membatalkan order di aplikasi sebelum validasi.',
+        impact: 'Dampak: dicatat pada audit order; selaras dengan alasan batal sales order.',
+      },
+      msl_not_sold: {
+        label: 'MSL Tidak Terjual',
+        trigger: 'Muncul saat: mengirim order yang SKU MSL-nya berkuantitas 0.',
+        impact: 'Dampak: disimpan per SKU per order untuk laporan kepatuhan MSL.',
+      },
+    },
+    fields: {
+      type: 'Tipe',
+      code: 'Kode',
+      name: 'Nama',
+      employeeTypes: 'Tipe karyawan',
+      defaultStockType: 'Tipe stok default',
+      requiresPhoto: 'Wajib foto',
+      requiresNote: 'Wajib catatan',
+      active: 'Aktif',
+      lastChanged: 'Terakhir diubah: {name} · {date}',
+      requiresPhotoHint: 'Salesman wajib melampirkan foto saat memilih alasan ini.',
+      requiresNoteHint: 'Salesman wajib mengisi catatan saat memilih alasan ini.',
+      activeHint:
+        'Alasan non-aktif hilang dari aplikasi setelah sinkronisasi berikutnya; riwayat tetap tersimpan.',
+      typeLockedHint:
+        'Tipe tidak dapat diubah setelah disimpan. Hapus atau non-aktifkan, lalu buat yang baru.',
+    },
+    codeMode: {
+      auto: 'Otomatis',
+      manual: 'Manual',
+    },
+    employeeTypes: {
+      salesman: 'Salesman',
+      canvass: 'Kanvas',
+      salesmanShort: 'TO',
+      canvassShort: 'KV',
+    },
+    stockTypes: {
+      good: 'Stok Good',
+      bad: 'Stok Bad',
+    },
+    filters: {
+      search: 'Cari kode atau nama',
+      allEmployeeTypes: 'Semua tipe karyawan',
+      statusActive: 'Aktif',
+      statusInactive: 'Non-aktif',
+      statusAll: 'Semua status',
+    },
+    hints: {
+      order:
+        "Urutan tampil di aplikasi mengikuti urutan baris aktif. Taruh 'Lainnya' paling akhir.",
+      employeeTypes: 'Tipe karyawan penjualan lapangan yang melihat alasan ini di aplikasi.',
+      stockTypeExample:
+        'Contoh: "Kedaluwarsa" → Stok Bad, "Barang yang dikirim salah" → Stok Good.',
+      codeAssignedOnSave: 'Diberikan saat disimpan.',
+      codeManual: 'Maksimal 32 karakter, unik di semua alasan.',
+    },
+    validation: {
+      nameRequired: 'Nama wajib diisi.',
+      nameTooLong: 'Nama maksimal 40 karakter.',
+      codeRequired: 'Kode wajib diisi.',
+      codeTooLong: 'Kode maksimal 32 karakter.',
+      noEmployeeType: 'Pilih minimal satu tipe karyawan.',
+      stockTypeRequired: 'Pilih tipe stok default untuk alasan retur.',
+    },
+    messages: {
+      created: 'Alasan berhasil dibuat.',
+      updated: 'Alasan berhasil diperbarui.',
+    },
+    errors: {
+      codeDuplicate: 'Kode ini sudah dipakai alasan lain.',
+      nameDuplicate: 'Alasan dengan nama ini sudah ada pada tipe ini.',
+      lastActiveReason:
+        'Ini akan menyisakan tipe karyawan tanpa alasan aktif. Pertahankan minimal satu alasan aktif per tipe karyawan.',
+      inUse: 'Alasan ini sedang dipakai. Non-aktifkan saja.',
+      staleOrder: 'Daftar berubah di tempat lain dan sudah dimuat ulang; coba urutkan lagi.',
     },
   },
   auth: {

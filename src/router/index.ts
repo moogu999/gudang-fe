@@ -160,6 +160,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'reasons',
+          name: 'Reasons',
+          component: () => import('@/views/reasons/ReasonsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.REASON_READ,
+            titleKey: 'navigation.reasons',
+          },
+        },
+        {
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),

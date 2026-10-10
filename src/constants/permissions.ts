@@ -143,6 +143,8 @@ export const PERMISSIONS = {
   DEVICE_BINDING_WRITE: 136,
   DEVICE_BINDING_CONFIG_READ: 137,
   DEVICE_BINDING_CONFIG_WRITE: 138,
+  REASON_READ: 139,
+  REASON_WRITE: 140,
 } as const
 
 /**
@@ -165,6 +167,7 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/sales-teams': PERMISSIONS.SALES_TEAM_READ,
   '/device-binding': PERMISSIONS.DEVICE_BINDING_READ,
   '/device-binding-configs': PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
+  '/reasons': PERMISSIONS.REASON_READ,
   '/customers': PERMISSIONS.CUSTOMER_READ,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_READ,
   '/products': PERMISSIONS.PRODUCT_READ,
@@ -237,6 +240,7 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/sales-teams': PERMISSIONS.SALES_TEAM_WRITE,
   '/device-binding': PERMISSIONS.DEVICE_BINDING_WRITE,
   '/device-binding-configs': PERMISSIONS.DEVICE_BINDING_CONFIG_WRITE,
+  '/reasons': PERMISSIONS.REASON_WRITE,
   '/customers': PERMISSIONS.CUSTOMER_WRITE,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_WRITE,
   '/products': PERMISSIONS.PRODUCT_WRITE,

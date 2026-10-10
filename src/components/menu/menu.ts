@@ -64,6 +64,11 @@ const mainMenu = [
         labelKey: 'navigation.deviceBinding',
         route: '/device-binding',
       },
+      {
+        label: 'Reasons',
+        labelKey: 'navigation.reasons',
+        route: '/reasons',
+      },
     ],
   },
   {

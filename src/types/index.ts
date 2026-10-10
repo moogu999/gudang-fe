@@ -583,3 +583,4 @@ export type {
 } from './approval.type'
 export * from './salesTeam.type'
 export * from './deviceBinding.type'
+export * from './reason.type'

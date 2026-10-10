@@ -59,6 +59,17 @@ stop blocking the page and cope with what the approver cannot see.
 4. **Phasing follows the BE plan:** purchase order and sales order first, then the other five
    modules, one page each.
 
+**Phase 1 done (2026-10-10, branch `dev-rian-approver-read`):** links carry `?approval=<requestId>`
+(`approvalModules.ts`), `canEnterRoute` (`src/router/routeAccess.ts`) lets an approver onto
+`approverReadable` routes, `/sales-orders/:id` and `/purchase-orders/:id` are marked, and the PO
+page falls back to the header's lite supplier through `unlessForbidden`. The SO page needed no
+fallback: its lookups are open or already tolerate failure. No backend change was needed (BE plan
+F1, "Phase 1 outcome").
+
+**Phase 2:** mark `/goods-receipts/:id`, `/ap-invoices/:id`, `/ap-payments/:id`,
+`/credit-debit-notes/:id`, `/cash-deposits/:id`. For each page, check which lookups refuse an
+approver and wrap them in `unlessForbidden` with a fallback, like the PO supplier.
+
 ### Tests
 
 - Guard spec: an approver-readable route opens without the module permission when `?approval=` is

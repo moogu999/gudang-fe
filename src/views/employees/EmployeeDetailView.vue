@@ -492,7 +492,9 @@ import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { branchLabel } from '@/utils/branchHelper'
 import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.type'
 import { usePermissions } from '@/composables'
-import { PERMISSIONS } from '@/constants'
+import { PERMISSIONS, HttpStatus, ToastLife } from '@/constants'
+import { EMPLOYEE_TYPE_NAMES } from '@/constants/employeeTypes'
+import { ApiError } from '@/types/api.type'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -639,6 +641,7 @@ function typeIcon(name: string): string {
     Driver: 'pi pi-car',
     Collector: 'pi pi-dollar',
     Management: 'pi pi-crown',
+    [EMPLOYEE_TYPE_NAMES.SALES_SUPERVISOR]: 'pi pi-users',
   }
   return map[name] ?? 'pi pi-user'
 }
@@ -847,7 +850,11 @@ async function onFormSubmit(event: FormSubmitEvent) {
       setTimeout(() => router.replace('/employees'), 800)
     }
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    // A conflict explains what to do first (e.g. end a sales team membership), so give it time to be read.
+    const isConflict = e instanceof ApiError && e.status === HttpStatus.CONFLICT
+    toast.add(
+      commonErrorToast(e, toastGroup, isConflict ? ToastLife.FIVE_SECONDS : ToastLife.TWO_SECONDS),
+    )
   } finally {
     isLoading.value = false
     isSubmitting.value = false

@@ -434,8 +434,12 @@ function loadDefinitionNames(
         : CustomerLabelDefinitionsService.list(query)
     cached = list
       .then((res) => new Map(res.data.map((d) => [d.id, d.name])))
-      // Fall back to the bare option value rather than failing the whole dropdown.
-      .catch(() => new Map<number, string>())
+      // Fall back to the bare option value rather than failing the whole dropdown, and drop
+      // the failed entry so the next fetch tries again instead of keeping the empty map.
+      .catch(() => {
+        definitionNames.delete(code)
+        return new Map<number, string>()
+      })
     definitionNames.set(code, cached)
   }
   return cached
@@ -445,9 +449,26 @@ function qualifiedLabel(definitionName: string | undefined, value: string): stri
   return definitionName ? `${definitionName} - ${value}` : value
 }
 
+// Sorts by the definition before the dropdown's own sort (the option value), so each
+// definition's options come back together instead of interleaved by value.
+function groupByDefinition(query: string, definitionColumn: string): string {
+  const params = new URLSearchParams(query)
+  const sortBys = params.getAll('sortBy')
+  const sortOperators = params.getAll('sortOperator')
+  params.delete('sortBy')
+  params.delete('sortOperator')
+  params.append('sortBy', definitionColumn)
+  params.append('sortOperator', 'asc')
+  sortBys.forEach((by, i) => {
+    params.append('sortBy', by)
+    params.append('sortOperator', sortOperators[i] ?? 'asc')
+  })
+  return params.toString()
+}
+
 async function fetchProductLabelOptions(query: string): Promise<Base<SelectOption>> {
   const [res, names] = await Promise.all([
-    ProductLabelOptionsService.list(query),
+    ProductLabelOptionsService.list(groupByDefinition(query, 'productLabelDefinitionId')),
     loadDefinitionNames('product_label'),
   ])
   return {
@@ -461,7 +482,7 @@ async function fetchProductLabelOptions(query: string): Promise<Base<SelectOptio
 
 async function fetchCustomerLabelOptions(query: string): Promise<Base<SelectOption>> {
   const [res, names] = await Promise.all([
-    CustomerLabelOptionsService.list(query),
+    CustomerLabelOptionsService.list(groupByDefinition(query, 'customerLabelDefinitionId')),
     loadDefinitionNames('customer_label'),
   ])
   return {

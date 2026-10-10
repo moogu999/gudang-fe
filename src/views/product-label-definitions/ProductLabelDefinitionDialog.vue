@@ -18,9 +18,12 @@
             id="name"
             name="name"
             autocomplete="off"
-            :disabled="mode === DialogMode.VIEW"
+            :disabled="mode === DialogMode.VIEW || isSystem"
             class="w-full"
           />
+          <small v-if="isSystem" class="text-surface-500">{{
+            t('productLabelDefinitions.systemLocked')
+          }}</small>
           <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{
             $form.name.error.message
           }}</Message>
@@ -164,6 +167,9 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['close'])
+
+// A system definition's name is locked; its options stay editable.
+const isSystem = computed(() => !!props.definition?.systemKey)
 
 onBeforeMount(() => {
   if ((props.mode !== DialogMode.EDIT && props.mode !== DialogMode.VIEW) || !props.definition) {

@@ -87,9 +87,9 @@ const columns = computed<Column[]>(() => [
   {
     field: 'customer.name',
     header: t('salesOrders.fields.customer'),
-    sortable: true,
+    sortable: false,
     exportable: true,
-    filterable: true,
+    filterable: false,
   },
   {
     field: 'orderDate',

@@ -166,7 +166,7 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'currencyId',
     header: t('companies.fields.currency'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
   },
   {
@@ -182,7 +182,7 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'createdBy',
     header: t('common.labels.createdBy'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
   },
   {

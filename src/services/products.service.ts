@@ -48,6 +48,19 @@ export class ProductsService {
   static readonly labelFilterParam = labelFilterParam
 
   /**
+   * Spells the `/v1/products` filter for products carrying no option of a
+   * label definition, e.g. products without a principal.
+   *
+   * @example
+   * ```typescript
+   * ProductsService.withoutLabelParam(4) // 'withoutLabelDefinitionId=4'
+   * ```
+   */
+  static withoutLabelParam(definitionId: number): string {
+    return `withoutLabelDefinitionId=${definitionId}`
+  }
+
+  /**
    * Fetch paginated list of products
    * Used primarily by TableComponent for server-side data fetching
    *

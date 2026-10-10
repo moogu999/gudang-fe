@@ -140,6 +140,36 @@ const router = createRouter({
           },
         },
         {
+          path: 'sales-teams',
+          name: 'SalesTeams',
+          component: () => import('@/views/sales-teams/SalesTeamsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_TEAM_READ,
+            titleKey: 'navigation.salesTeams',
+          },
+        },
+        {
+          path: 'sales-teams/create',
+          name: 'SalesTeamCreate',
+          component: () => import('@/views/sales-teams/SalesTeamCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_TEAM_WRITE,
+            titleKey: 'navigation.salesTeams',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'sales-teams/:id/edit',
+          name: 'SalesTeamEdit',
+          component: () => import('@/views/sales-teams/SalesTeamEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_TEAM_READ,
+            titleKey: 'navigation.salesTeams',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),

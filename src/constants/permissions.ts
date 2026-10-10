@@ -137,9 +137,11 @@ export const PERMISSIONS = {
   GIRO_CLEARING_READ: 130,
   GIRO_CLEARING_WRITE: 131,
   CACHE_CLEAR: 132,
+  SALES_TEAM_READ: 133,
+  SALES_TEAM_WRITE: 134,
   // Read and edit branch-owned data (sales orders first) of every branch, not only the
   // user's own. Enforced by the backend; no screen gates on it.
-  BRANCH_SCOPE_ALL: 133,
+  BRANCH_SCOPE_ALL: 135,
 } as const
 
 /**

@@ -153,7 +153,7 @@ const columns = computed<Column[]>(() => [
     underlyingField: 'createdBy',
     header: t('common.labels.createdBy'),
     exportable: true,
-    sortable: true,
+    sortable: false,
     filterable: true,
   },
   {

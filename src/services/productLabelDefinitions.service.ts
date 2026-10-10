@@ -2,10 +2,13 @@ import ApiService from './api'
 import type { Base } from '@/types/api.type'
 import type {
   ProductLabelDefinition,
+  ProductLabelSystemKey,
   CreateProductLabelDefinitionDto,
   UpdateProductLabelDefinitionDto,
 } from '@/types/productLabelDefinition.type'
 import { API_ENDPOINTS } from '@/constants/api'
+import FilterOperator from '@/constants/filterOperator'
+import { GenericQueryBuilder } from './genericQueryBuilder'
 
 /**
  * Service for managing product label definitions
@@ -25,6 +28,23 @@ export class ProductLabelDefinitionsService {
   static async list(queryString?: string): Promise<Base<ProductLabelDefinition>> {
     const url = queryString ? `${this.BASE_URL}?${queryString}` : this.BASE_URL
     return ApiService.get<Base<ProductLabelDefinition>>(url)
+  }
+
+  /**
+   * Find the system definition the application relies on, e.g. Principal.
+   *
+   * @param systemKey - Which system definition
+   * @returns The definition, or undefined when the database has none yet
+   */
+  static async findSystem(
+    systemKey: ProductLabelSystemKey,
+  ): Promise<ProductLabelDefinition | undefined> {
+    const query = new GenericQueryBuilder()
+      .withFilter('system_key', FilterOperator.EQUAL, systemKey)
+      .withPagination(1, 1)
+      .build()
+    const res = await this.list(query)
+    return res.data[0]
   }
 
   /**

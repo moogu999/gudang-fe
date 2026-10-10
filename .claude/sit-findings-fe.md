@@ -16,7 +16,7 @@ Related plans already written, not repeated here:
 | F2 | A denied route silently redirects to Home | UX bug | no |
 | F5 | Bonus items are not a separate zero-priced line | requirement mismatch | **decided**: render as rows |
 | F7 | "Konfigurasi PO" means the Sales Order config | label | no |
-| F8 | GR form ignores the PO's branch | bug (with BE) | **yes** |
+| F8 | GR form ignores the PO's branch | bug (with BE) | **decided**: receipt must be on the PO's branch |
 
 F3, F4, F6 and F9 are backend-only; see the BE plan.
 
@@ -119,9 +119,19 @@ id-ID strings that say "PO" for a sales order (`salesOrderConfigs: {` section, `
 
 FE half of BE plan F8. `AvailablePurchaseOrder.branchId` (`src/types/goodsReceipt.type.ts:78`)
 arrives but `onPoSelect` (`src/views/goods-receipts/GoodsReceiptForm.vue:537`) does not use it.
-Once BE F8 is decided: either set the receipt's branch from the chosen PO (and lock it), or
-filter the PO picker to the receipt's branch. Coordinate with Item 1 of
-`goods-receipt-branch-warehouse-fe.md`, since the branch also filters the warehouse list.
+**Decision (2026-10-10): a receipt must be on its PO's branch** (BE plan F8).
+
+**FE design:** the receipt's branch is the one input that drives the rest. It reuses the
+`effectiveBranchId` from Item 1 of `goods-receipt-branch-warehouse-fe.md`, so build both together.
+
+1. The PO picker (`GoodsReceiptsService.listAvailablePurchaseOrders`) passes
+   `branchId=effectiveBranchId`, so only that branch's POs are offered. It is disabled until a
+   branch is known, like the warehouse select.
+2. Changing the branch clears the selected PO (and its seeded lines), as it clears the warehouse.
+3. `onPoSelect` keeps working as today. A PO from another branch can no longer be picked, and
+   the backend rejects one anyway (`ErrPurchaseOrderBranchMismatch`).
+
+**Tests:** the PO fetch carries the effective branch. A branch change clears the PO and its lines.
 
 ---
 

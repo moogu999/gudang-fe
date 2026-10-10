@@ -17,6 +17,7 @@ Related plans already written, not repeated here:
 | F5 | Bonus items are not a separate zero-priced line | requirement mismatch | **decided**: render as rows |
 | F7 | "Konfigurasi PO" means the Sales Order config | label | no |
 | F8 | GR form ignores the PO's branch | bug (with BE) | **decided**: receipt must be on the PO's branch |
+| F10 | A failed save still burns a document number | bug (FE) | no |
 
 F3, F4, F6 and F9 are backend-only; see the BE plan.
 
@@ -132,6 +133,48 @@ arrives but `onPoSelect` (`src/views/goods-receipts/GoodsReceiptForm.vue:537`) d
    the backend rejects one anyway (`ErrPurchaseOrderBranchMismatch`).
 
 **Tests:** the PO fetch carries the effective branch. A branch change clears the PO and its lines.
+
+---
+
+## F10 — A failed save still burns a document number
+
+**Found in:** SIT-02-B01 (2026-10-10 13:53). Two attempts to save a goods receipt in **auto**
+numbering mode failed (warehouse/branch mismatch, 400), and each still consumed a GR number:
+`POST /v1/number-series/37/next` → 200, then `POST /v1/goods-receipts` → 400, twice.
+
+**Not the same as** "a draft consumes a number" (memory `draft-consumes-number-series`, decided
+2026-07-26): a **saved** draft keeps its number on purpose. The problem is a save that **never
+happened** leaving a gap.
+
+**Today:** `src/composables/useNumberSeries.ts` `generateCode()` calls
+`NumberSeriesService.generateNext` (which increments the series) **before** the form sends its
+create request. 15 forms use it: AP invoice, AP payment, AR clearing, bank settlement, cash
+deposit, credit/debit note, customer, giro clearing, giro receipt, goods receipt, product,
+purchase order, sales order, sales team, supplier.
+
+**The backend already numbers itself:** for goods receipt, purchase order, sales order, AP
+invoice, AP payment, credit/debit note and cash deposit, `create_<module>.go` generates the number
+when `no` is empty. For the goods receipt this happens **after** branch and warehouse validation
+(`create_goods_receipt.go:52`), so today's failure would not have consumed anything.
+
+**Fix:**
+
+1. In **auto** mode, send `no` empty and let the backend assign it. Keep showing the
+   `preview(...)` value ("assigned on save") as now, and read the real number from the create
+   response.
+2. Forms whose backend does **not** number by itself yet (customer, product, supplier, sales
+   team, AR clearing, bank settlement, giro, …): either add the same server-side step (BE), or,
+   until then, keep `generateNext` but only call it right before a create request that has
+   passed client validation. That narrows the gap without closing it.
+3. Manual mode is unchanged (the user types the number).
+
+**Open point (BE):** server-side numbering runs before the create transaction in some modules
+(goods receipt: after validation, outside `WithTransaction`), so a failure *inside* the
+transaction can still leave a gap. Moving the series increment into the same transaction would
+make it gap-free. Decide whether gap-free numbering is a requirement (tax invoices often are).
+
+**Tests:** for a form in auto mode, a failed create makes no `generateNext` call, and the
+payload carries an empty `no`. A successful create shows the number from the response.
 
 ---
 

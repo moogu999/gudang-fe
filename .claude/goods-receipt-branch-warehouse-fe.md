@@ -30,6 +30,13 @@ will refuse, and only says so on Save.
 Reproduced locally: `admin@gudang.com` (branches BT 001, BT 002) can pick *Gudang Jelupang*
 (B02) and gets the 400. Three failed `POST /v1/goods-receipts` at 2026-10-10 08:30.
 
+Hit again in SIT-02-B01 (2026-10-10 13:53), in a quieter form: the Branch picker **defaults to
+the user's primary branch** (`users.primary_branch_id`, BT 002 for admin), and it sits **below**
+the Warehouse select. Picking *Warehouse Branch A 02* (BT 001) without noticing the default
+branch gave the same 400, twice, and burned two GR numbers (see `sit-findings-fe.md` F10).
+Design steps 1 and 4 below (effective branch drives the warehouse list, Branch above Warehouse)
+remove this case.
+
 ## Goal
 
 The Warehouse dropdown offers only warehouses of the receipt's branch, so the mismatch

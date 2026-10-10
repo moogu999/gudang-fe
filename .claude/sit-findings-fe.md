@@ -122,6 +122,10 @@ FE half of BE plan F8. `AvailablePurchaseOrder.branchId` (`src/types/goodsReceip
 arrives but `onPoSelect` (`src/views/goods-receipts/GoodsReceiptForm.vue:537`) does not use it.
 **Decision (2026-10-10): a receipt must be on its PO's branch** (BE plan F8).
 
+**Seen in SIT-02-B01 (2026-10-10):** with Branch = BT 001, the PO picker offered
+PO-202610-00003 (BT 001) **and** PO-202610-00002 (BT 002). It correctly left out
+PO-202610-00001 (`applied`), so only the branch filter is missing.
+
 **FE design:** the receipt's branch is the one input that drives the rest. It reuses the
 `effectiveBranchId` from Item 1 of `goods-receipt-branch-warehouse-fe.md`, so build both together.
 
@@ -141,6 +145,18 @@ arrives but `onPoSelect` (`src/views/goods-receipts/GoodsReceiptForm.vue:537`) d
 **Found in:** SIT-02-B01 (2026-10-10 13:53). Two attempts to save a goods receipt in **auto**
 numbering mode failed (warehouse/branch mismatch, 400), and each still consumed a GR number:
 `POST /v1/number-series/37/next` → 200, then `POST /v1/goods-receipts` → 400, twice.
+
+**Over the whole SIT-02-B run (2026-10-10), five GR numbers were burned this way:**
+
+| Burned | Failed save (400) | Next successful receipt |
+|---|---|---|
+| GR-202610-00023, -00024 | 13:53:51, 13:53:55 | GR-202610-00025 (B02–B04) |
+| GR-202610-00026 | 14:21:29 | GR-202610-00027 (B07) |
+| GR-202610-00028, -00029 | 14:25:51, 14:25:56 | GR-202610-00030 (B06) |
+
+The 13:53 failures were the warehouse/branch mismatch (P1). The causes of the 14:21 and 14:25
+ones were not captured: the API logs the status, not the body. Whatever the cause, no number
+should have been spent on them.
 
 **Not the same as** "a draft consumes a number" (memory `draft-consumes-number-series`, decided
 2026-07-26): a **saved** draft keeps its number on purpose. The problem is a save that **never

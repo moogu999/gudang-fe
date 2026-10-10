@@ -37,6 +37,11 @@ branch gave the same 400, twice, and burned two GR numbers (see `sit-findings-fe
 Design steps 1 and 4 below (effective branch drives the warehouse list, Branch above Warehouse)
 remove this case.
 
+The rest of SIT-02-B (B02–B08) passed once the branch was set to BT 001 before the warehouse,
+which confirms that order is all the form needs. Three more creates failed during that run
+(14:21, 14:25 ×2), cause not captured. If they were the same default-branch slip, P1 removes them
+too (F10 lists them).
+
 ## Goal
 
 The Warehouse dropdown offers only warehouses of the receipt's branch, so the mismatch
@@ -126,6 +131,12 @@ Per the scope rule, this goes in its own branch and PR (FE only), not inside the
 
 Status: **planned, not started.** Found during SIT (SIT-02-A01): supplier **Gangnam
 (SUP-0003, `is_active = false`)** could be picked for a new PO.
+
+It goes further than picking: **PO-202610-00003** (supplier Gangnam, inactive) was created,
+approved through both tiers (request #15) and fully received in SIT-02-B (GR-202610-00025,
+-00027), with nothing stopping it at any step. The backend check proposed below (reject an
+inactive supplier on PO create) is what would have stopped it, since the FE filter alone does not
+cover a PO created another way.
 
 ## Problem
 

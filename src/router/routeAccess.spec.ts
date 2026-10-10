@@ -24,12 +24,18 @@ describe('canEnterRoute', () => {
     expect(canEnterRoute(router.resolve('/purchase-orders/1'), holding())).toBe(false)
   })
 
-  it.each(['/purchase-orders/1?approval=12', '/sales-orders/1?approval=12'])(
-    'lets an approver open %s from an approval request',
-    (path) => {
-      expect(canEnterRoute(router.resolve(path), approver)).toBe(true)
-    },
-  )
+  // Every document page Persetujuan Saya links to (approvalModules.ts documentLink).
+  it.each([
+    '/sales-orders/1?approval=12',
+    '/purchase-orders/1?approval=12',
+    '/goods-receipts/1?approval=12',
+    '/ap-invoices/1?approval=12',
+    '/ap-payments/1?approval=12',
+    '/credit-debit-notes/1?approval=12',
+    '/cash-deposits/1?approval=12',
+  ])('lets an approver open %s from an approval request', (path) => {
+    expect(canEnterRoute(router.resolve(path), approver)).toBe(true)
+  })
 
   it('accepts either approval permission on its own', () => {
     const to = router.resolve('/purchase-orders/1?approval=12')
@@ -51,8 +57,9 @@ describe('canEnterRoute', () => {
     // Edit and list pages are not approver-readable: an approver reviews, never edits.
     '/purchase-orders/1/edit?approval=12',
     '/purchase-orders?approval=12',
-    // Not marked yet (phase 2 of F1 in sit-findings-fe.md).
-    '/goods-receipts/1?approval=12',
+    '/goods-receipts/1/edit?approval=12',
+    // Not a document of an approval module.
+    '/customers/1?approval=12',
   ])('does not open %s to an approver', (path) => {
     expect(canEnterRoute(router.resolve(path), approver)).toBe(false)
   })

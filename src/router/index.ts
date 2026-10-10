@@ -623,6 +623,7 @@ const router = createRouter({
           component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ,
+            approverReadable: true,
             titleKey: 'navigation.goodsReceipts',
             titleAction: 'view',
           },
@@ -1016,6 +1017,7 @@ const router = createRouter({
           component: () => import('@/views/ap-invoices/ApInvoiceDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            approverReadable: true,
             titleKey: 'navigation.apInvoices',
             titleAction: 'view',
           },
@@ -1072,6 +1074,7 @@ const router = createRouter({
           component: () => import('@/views/credit-debit-notes/CreditDebitNoteDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
+            approverReadable: true,
             titleKey: 'navigation.creditDebitNotes',
             titleAction: 'view',
           },
@@ -1127,6 +1130,7 @@ const router = createRouter({
           component: () => import('@/views/ap-payments/ApPaymentDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_PAYMENT_READ,
+            approverReadable: true,
             titleKey: 'navigation.apPayments',
             titleAction: 'view',
           },
@@ -1183,6 +1187,7 @@ const router = createRouter({
           component: () => import('@/views/cash-deposits/CashDepositDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            approverReadable: true,
             titleKey: 'navigation.cashDeposits',
             titleAction: 'view',
           },

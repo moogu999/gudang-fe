@@ -12,21 +12,5 @@ export interface SalesOrderType {
   updatedByUser: { email: string } | null
 }
 
-export interface CreateSalesOrderTypeDto {
-  code: string
-  name: string
-  description?: string | null
-  isActive: boolean
-  createdBy: number
-}
-
-export interface UpdateSalesOrderTypeDto {
-  code: string
-  name: string
-  description?: string | null
-  isActive: boolean
-  updatedBy: number
-}
-
 export const SALES_ORDER_TYPE_CODE_SALES = 'sales'
 export const SALES_ORDER_TYPE_CODE_RETURN = 'return'

@@ -1,4 +1,5 @@
 import { PERMISSIONS } from '@/constants'
+import { CONFIG_TABS } from '@/views/configs/configTabs'
 
 /**
  * Main navigation menu configuration
@@ -386,13 +387,10 @@ const mainMenu = [
         label: 'Config',
         labelKey: 'navigation.configs',
         route: '/configs',
+        // Every config tab's read permission, plus CACHE_CLEAR: the clear-cache button
+        // lives on this page but is not a tab, so it cannot come from CONFIG_TABS.
         permissionsAny: [
-          PERMISSIONS.SALES_ORDER_CONFIG_READ,
-          PERMISSIONS.BOOKING_ORDER_CONFIG_READ,
-          PERMISSIONS.PURCHASE_ORDER_CONFIG_READ,
-          PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
-          PERMISSIONS.AP_INVOICE_CONFIG_READ,
-          PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
+          ...CONFIG_TABS.map((tab) => tab.readPermission),
           PERMISSIONS.CACHE_CLEAR,
         ],
       },

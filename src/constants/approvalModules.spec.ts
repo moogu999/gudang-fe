@@ -3,6 +3,7 @@ import router from '@/router'
 import enUS from '@/i18n/locales/en-US'
 import idID from '@/i18n/locales/id-ID'
 import { APPROVAL_MODULES } from './approvalModules'
+import { APPROVAL_QUERY } from '@/router/routeAccess'
 
 // The backend's approval module keys (ModuleDefinition.Key in gudang-be cmd/router.go).
 // A module missing from APPROVAL_MODULES shows its raw key and id in My Approvals,
@@ -38,8 +39,23 @@ describe('APPROVAL_MODULES', () => {
 
   it.each(Object.entries(APPROVAL_MODULES))('%s links to a real route', (_key, entry) => {
     if (!entry.link) return
-    const resolved = router.resolve(entry.link(1))
+    const resolved = router.resolve(entry.link(1, 7))
     expect(resolved.matched.length).toBeGreaterThan(0)
     expect(resolved.matched.some((r) => r.name === 'NotFound')).toBe(false)
+  })
+
+  // The request id is what canEnterRoute reads to let an approver onto the page.
+  it.each([
+    ['sales_order', '/sales-orders/1'],
+    ['purchase_order', '/purchase-orders/1'],
+    ['goods_receipt', '/goods-receipts/1'],
+    ['ap_invoice', '/ap-invoices/1'],
+    ['ap_payment', '/ap-payments/1'],
+    ['credit_debit_note', '/credit-debit-notes/1'],
+    ['cash_deposit', '/cash-deposits/1'],
+  ])('%s links to its document with the request id', (key, path) => {
+    const resolved = router.resolve(APPROVAL_MODULES[key]!.link!(1, 7))
+    expect(resolved.path).toBe(path)
+    expect(resolved.query[APPROVAL_QUERY]).toBe('7')
   })
 })

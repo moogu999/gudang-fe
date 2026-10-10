@@ -3,6 +3,7 @@ import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vu
 import { useAuthStore } from '@/stores'
 import { PERMISSIONS } from '@/constants'
 import i18n from '@/i18n'
+import { canEnterRoute } from './routeAccess'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -11,6 +12,9 @@ declare module 'vue-router' {
     /** Permission required to create/edit/delete on this screen. No route-level notion
      * of "write" existed before this; see item E of permission-gating-hardening-fe.md. */
     requiredWritePermission?: number
+    /** A document detail page an approver may open from Persetujuan Saya without
+     * `requiredPermission`. See `canEnterRoute` in ./routeAccess.ts. */
+    approverReadable?: boolean
     /** i18n key resolved as the page/entity name (usually a `navigation.*` or `pageTitle.*` key). */
     titleKey?: string
     /** Optional verb composed with the entity name via `pageTitle.*` (e.g. action 'create' on entity 'Customers' → "Create Customers"). */
@@ -335,6 +339,7 @@ const router = createRouter({
           component: () => import('@/views/sales-orders/SalesOrderDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.SALES_ORDER_READ,
+            approverReadable: true,
             titleKey: 'navigation.salesOrders',
             titleAction: 'view',
           },
@@ -618,6 +623,7 @@ const router = createRouter({
           component: () => import('@/views/goods-receipts/GoodsReceiptDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.GOODS_RECEIPT_READ,
+            approverReadable: true,
             titleKey: 'navigation.goodsReceipts',
             titleAction: 'view',
           },
@@ -959,6 +965,7 @@ const router = createRouter({
           component: () => import('@/views/purchase-orders/PurchaseOrderDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.PURCHASE_ORDER_READ,
+            approverReadable: true,
             titleKey: 'navigation.purchaseOrders',
             titleAction: 'view',
           },
@@ -1010,6 +1017,7 @@ const router = createRouter({
           component: () => import('@/views/ap-invoices/ApInvoiceDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_INVOICE_READ,
+            approverReadable: true,
             titleKey: 'navigation.apInvoices',
             titleAction: 'view',
           },
@@ -1066,6 +1074,7 @@ const router = createRouter({
           component: () => import('@/views/credit-debit-notes/CreditDebitNoteDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CREDIT_DEBIT_NOTE_READ,
+            approverReadable: true,
             titleKey: 'navigation.creditDebitNotes',
             titleAction: 'view',
           },
@@ -1121,6 +1130,7 @@ const router = createRouter({
           component: () => import('@/views/ap-payments/ApPaymentDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.AP_PAYMENT_READ,
+            approverReadable: true,
             titleKey: 'navigation.apPayments',
             titleAction: 'view',
           },
@@ -1177,6 +1187,7 @@ const router = createRouter({
           component: () => import('@/views/cash-deposits/CashDepositDetailView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.CASH_DEPOSIT_READ,
+            approverReadable: true,
             titleKey: 'navigation.cashDeposits',
             titleAction: 'view',
           },
@@ -1428,10 +1439,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Check permissions (only for authenticated routes)
   if (requiresAuth && authStore.isAuthenticated) {
-    const requiredPermission = to.matched.find((record) => record.meta.requiredPermission)?.meta
-      .requiredPermission
-
-    if (requiredPermission && !authStore.hasPermission(requiredPermission as number)) {
+    if (!canEnterRoute(to, (id) => authStore.hasPermission(id))) {
       next({ name: 'Home' })
       return
     }

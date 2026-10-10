@@ -370,6 +370,7 @@ import type {
   CreatePurchaseOrderRequest,
 } from '@/types/purchaseOrder.type'
 import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
+import { unlessForbidden } from '@/utils/unlessForbidden'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
 
@@ -706,9 +707,15 @@ async function loadPurchaseOrder() {
 
     // The gen/v1 header response only nests a lite supplier (code + name) — fetch the full
     // record for the address/NPWP/PIC display line and as the InfiniteSelect's initial option.
-    const supplier = await SuppliersService.get(header.supplierId)
-    currentSupplier.value = supplier
-    initialSupplier.value = supplier
+    // An approver may read the PO but not the supplier master: fall back to the lite one,
+    // which names the supplier and only drops the address/NPWP/PIC line.
+    const supplier = await unlessForbidden(SuppliersService.get(header.supplierId))
+    if (supplier) {
+      currentSupplier.value = supplier
+      initialSupplier.value = supplier
+    } else if (header.supplier) {
+      initialSupplier.value = { ...header.supplier } as Supplier
+    }
 
     if (showBranchPicker.value) {
       const query = new GenericQueryBuilder()

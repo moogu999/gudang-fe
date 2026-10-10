@@ -60,6 +60,20 @@ stop blocking the page and cope with what the approver cannot see.
 4. **Phasing follows the BE plan:** purchase order and sales order first, then the other five
    modules, one page each.
 
+**Phase 1 done (2026-10-10, branch `dev-rian-approver-read`):** links carry `?approval=<requestId>`
+(`approvalModules.ts`), `canEnterRoute` (`src/router/routeAccess.ts`) lets an approver onto
+`approverReadable` routes, `/sales-orders/:id` and `/purchase-orders/:id` are marked, and the PO
+page falls back to the header's lite supplier through `unlessForbidden`. The SO page needed no
+fallback: its lookups are open or already tolerate failure. No backend change was needed (BE plan
+F1, "Phase 1 outcome").
+
+**Phase 2 done (2026-10-10, same branch, with gudang-be#28):** `/goods-receipts/:id`,
+`/ap-invoices/:id`, `/ap-payments/:id`, `/credit-debit-notes/:id`, `/cash-deposits/:id` are
+marked. Lookups checked: only the supplier master is enforced. The GR page now names the supplier
+from its PO's lite supplier when the master is refused. The others only use it in a select whose
+fetch failure is already silent. Known gap: a manual GR (no PO) shows no supplier name to an
+approver (BE plan F1).
+
 ### Tests
 
 - Guard spec: an approver-readable route opens without the module permission when `?approval=` is

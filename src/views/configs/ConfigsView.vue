@@ -48,6 +48,7 @@
     <AccountingPeriodConfigsView v-if="activeConfig === 'apc'" ref="apcRef" :embedded="true" />
     <CashDepositConfigsView v-if="activeConfig === 'cd'" ref="cdRef" :embedded="true" />
     <SalesmanTargetConfigsView v-if="activeConfig === 'stg'" ref="stgRef" :embedded="true" />
+    <MustSellListConfigsView v-if="activeConfig === 'msl'" ref="mslRef" :embedded="true" />
     <DeviceBindingConfigsView
       v-if="activeConfig === 'device-binding'"
       :toast-group="overlayGroup"
@@ -76,6 +77,7 @@ import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsVie
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
 import SalesmanTargetConfigsView from '@/views/salesman-target-configs/SalesmanTargetConfigsView.vue'
+import MustSellListConfigsView from '@/views/must-sell-list-configs/MustSellListConfigsView.vue'
 import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindingConfigsView.vue'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
@@ -95,6 +97,7 @@ const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payme
 const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
 const { canRead: canReadCD, canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
 const { canRead: canReadSTG, canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
+const { canRead: canReadMSL, canWrite: canWriteMSL } = usePermissions('/must-sell-list-configs')
 const { canRead: canReadDB } = usePermissions('/device-binding-configs')
 
 const configOptions = computed(() => {
@@ -111,6 +114,7 @@ const configOptions = computed(() => {
     options.push({ label: t('navigation.accountingPeriodConfigs'), value: 'apc' })
   if (canReadCD.value) options.push({ label: t('navigation.cashDepositConfigs'), value: 'cd' })
   if (canReadSTG.value) options.push({ label: t('navigation.salesmanTargetConfigs'), value: 'stg' })
+  if (canReadMSL.value) options.push({ label: t('navigation.mustSellListConfigs'), value: 'msl' })
   if (canReadDB.value)
     options.push({ label: t('navigation.deviceBindingConfigs'), value: 'device-binding' })
   return options
@@ -139,6 +143,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'apc') return canWriteAPC.value
   if (activeConfig.value === 'cd') return canWriteCD.value
   if (activeConfig.value === 'stg') return canWriteSTG.value
+  if (activeConfig.value === 'msl') return canWriteMSL.value
   // Device binding is one settings form per company, saved in place: nothing to add.
   return false
 })
@@ -189,6 +194,7 @@ const bkkRef = ref<InstanceType<typeof ApPaymentConfigsView> | null>(null)
 const apcRef = ref<InstanceType<typeof AccountingPeriodConfigsView> | null>(null)
 const cdRef = ref<InstanceType<typeof CashDepositConfigsView> | null>(null)
 const stgRef = ref<InstanceType<typeof SalesmanTargetConfigsView> | null>(null)
+const mslRef = ref<InstanceType<typeof MustSellListConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -201,5 +207,6 @@ function onAddClick() {
   else if (activeConfig.value === 'apc') apcRef.value?.openAddDialog()
   else if (activeConfig.value === 'cd') cdRef.value?.openAddDialog()
   else if (activeConfig.value === 'stg') stgRef.value?.openAddDialog()
+  else if (activeConfig.value === 'msl') mslRef.value?.openAddDialog()
 }
 </script>

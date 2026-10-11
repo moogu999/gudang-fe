@@ -155,6 +155,11 @@ export const PERMISSIONS = {
   COMPETITOR_PRODUCT_READ: 148,
   COMPETITOR_PRODUCT_WRITE: 149,
   COMPETITOR_PRODUCT_RECOMMEND: 150,
+  MSL_READ: 151,
+  MSL_WRITE: 152,
+  MSL_PUBLISH: 153,
+  MSL_CONFIG_READ: 154,
+  MSL_CONFIG_WRITE: 155,
 } as const
 
 /**
@@ -180,6 +185,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/reasons': PERMISSIONS.REASON_READ,
   '/salesman-targets': PERMISSIONS.SALESMAN_TARGET_READ,
   '/salesman-target-configs': PERMISSIONS.SALESMAN_TARGET_CONFIG_READ,
+  '/must-sell-lists': PERMISSIONS.MSL_READ,
+  '/must-sell-list-configs': PERMISSIONS.MSL_CONFIG_READ,
   '/competitor-brands': PERMISSIONS.COMPETITOR_BRAND_READ,
   '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_READ,
   '/customers': PERMISSIONS.CUSTOMER_READ,
@@ -257,6 +264,8 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/reasons': PERMISSIONS.REASON_WRITE,
   '/salesman-targets': PERMISSIONS.SALESMAN_TARGET_WRITE,
   '/salesman-target-configs': PERMISSIONS.SALESMAN_TARGET_CONFIG_WRITE,
+  '/must-sell-lists': PERMISSIONS.MSL_WRITE,
+  '/must-sell-list-configs': PERMISSIONS.MSL_CONFIG_WRITE,
   '/competitor-brands': PERMISSIONS.COMPETITOR_BRAND_WRITE,
   '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
   '/customers': PERMISSIONS.CUSTOMER_WRITE,

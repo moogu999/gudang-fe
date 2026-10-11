@@ -181,6 +181,36 @@ const router = createRouter({
           },
         },
         {
+          path: 'must-sell-lists',
+          name: 'MustSellLists',
+          component: () => import('@/views/must-sell-lists/MustSellListsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_READ,
+            titleKey: 'navigation.mustSellLists',
+          },
+        },
+        {
+          path: 'must-sell-lists/create',
+          name: 'MustSellListCreate',
+          component: () => import('@/views/must-sell-lists/MustSellListCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_WRITE,
+            titleKey: 'navigation.mustSellLists',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'must-sell-lists/:id/edit',
+          name: 'MustSellListEdit',
+          component: () => import('@/views/must-sell-lists/MustSellListEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_READ,
+            titleKey: 'navigation.mustSellLists',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'device-binding',
           name: 'DeviceBinding',
           component: () => import('@/views/device-binding/DeviceBindingView.vue'),
@@ -1199,6 +1229,10 @@ const router = createRouter({
         {
           path: 'salesman-target-configs',
           redirect: { path: '/configs', query: { tab: 'stg' } },
+        },
+        {
+          path: 'must-sell-list-configs',
+          redirect: { path: '/configs', query: { tab: 'msl' } },
         },
         {
           path: 'bank-settlements',

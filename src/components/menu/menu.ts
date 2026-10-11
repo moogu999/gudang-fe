@@ -202,6 +202,11 @@ const mainMenu = [
         route: '/salesman-targets',
       },
       {
+        label: 'Must Sell List',
+        labelKey: 'navigation.mustSellLists',
+        route: '/must-sell-lists',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',
@@ -413,6 +418,7 @@ const mainMenu = [
           PERMISSIONS.GOODS_RECEIPT_CONFIG_READ,
           PERMISSIONS.AP_INVOICE_CONFIG_READ,
           PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
+          PERMISSIONS.MSL_CONFIG_READ,
           PERMISSIONS.CACHE_CLEAR,
         ],
       },

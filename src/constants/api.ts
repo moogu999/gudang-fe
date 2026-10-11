@@ -169,6 +169,20 @@ export const API_ENDPOINTS = {
   SALESMAN_TARGET_CONFIG_MY_BRANCH: '/v1/salesman-target-configs/my-branch',
   SALESMAN_TARGET_CONFIG_BY_BRANCH: (branchId: number) => `/v1/salesman-target-configs/${branchId}`,
 
+  // Must sell list endpoints
+  MUST_SELL_LISTS: '/v1/must-sell-lists',
+  MUST_SELL_LIST_BY_ID: (id: number) => `/v1/must-sell-lists/${id}`,
+  MUST_SELL_LIST_PUBLISH: (id: number) => `/v1/must-sell-lists/${id}/publish`,
+  MUST_SELL_LIST_UNPUBLISH: (id: number) => `/v1/must-sell-lists/${id}/unpublish`,
+  MUST_SELL_LIST_END_EARLY: (id: number) => `/v1/must-sell-lists/${id}/end-early`,
+  MUST_SELL_LIST_DUPLICATE: (id: number) => `/v1/must-sell-lists/${id}/duplicate`,
+  MUST_SELL_LISTS_PREVIEW: '/v1/must-sell-lists/preview',
+  MUST_SELL_LISTS_CUSTOMERS: '/v1/must-sell-lists/customers',
+  MUST_SELL_LISTS_PRODUCT_OPTIONS: '/v1/must-sell-lists/product-options',
+  MUST_SELL_LIST_CONFIGS: '/v1/must-sell-list-configs',
+  MUST_SELL_LIST_CONFIG_MY_BRANCH: '/v1/must-sell-list-configs/my-branch',
+  MUST_SELL_LIST_CONFIG_BY_BRANCH: (branchId: number) => `/v1/must-sell-list-configs/${branchId}`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',

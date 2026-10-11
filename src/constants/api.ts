@@ -192,6 +192,11 @@ export const API_ENDPOINTS = {
   REASONS: '/v1/reasons',
   REASONS_REORDER: '/v1/reasons/reorder',
 
+  // Competitor products: brands, products and the recommendations review queue
+  COMPETITOR_BRANDS: '/v1/competitor-brands',
+  COMPETITOR_PRODUCTS: '/v1/competitor-products',
+  COMPETITOR_PRODUCT_RECOMMENDATIONS: '/v1/competitor-product-recommendations',
+
   // File endpoints
   FILES: '/v1/files',
 

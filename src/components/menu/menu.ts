@@ -69,6 +69,16 @@ const mainMenu = [
         labelKey: 'navigation.reasons',
         route: '/reasons',
       },
+      {
+        label: 'Competitor Products',
+        labelKey: 'navigation.competitorProducts',
+        route: '/competitor-products',
+      },
+      {
+        label: 'Competitor Brands',
+        labelKey: 'navigation.competitorBrands',
+        route: '/competitor-brands',
+      },
     ],
   },
   {

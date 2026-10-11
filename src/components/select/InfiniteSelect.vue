@@ -25,6 +25,9 @@
     <template v-if="$slots.option" #option="slotProps">
       <slot name="option" v-bind="slotProps" />
     </template>
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" />
+    </template>
   </Select>
 </template>
 
@@ -237,6 +240,15 @@ onMounted(async () => {
     }
   }
 })
+
+/** Reloads the first page, e.g. after the footer slot created a new option. */
+async function refresh() {
+  nextCursor.value = null
+  hasMore.value = true
+  await fetchData()
+}
+
+defineExpose({ refresh })
 
 // Watch for changes in customFilters and refetch data
 watch(

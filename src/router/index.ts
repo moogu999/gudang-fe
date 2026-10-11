@@ -199,6 +199,45 @@ const router = createRouter({
           },
         },
         {
+          path: 'competitor-brands',
+          name: 'CompetitorBrands',
+          component: () => import('@/views/competitor-brands/CompetitorBrandsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_BRAND_READ,
+            titleKey: 'navigation.competitorBrands',
+          },
+        },
+        {
+          path: 'competitor-products',
+          name: 'CompetitorProducts',
+          component: () => import('@/views/competitor-products/CompetitorProductsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_READ,
+            titleKey: 'navigation.competitorProducts',
+          },
+        },
+        {
+          path: 'competitor-products/create',
+          name: 'CompetitorProductCreate',
+          component: () => import('@/views/competitor-products/CompetitorProductCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
+            titleKey: 'navigation.competitorProducts',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'competitor-products/:id/edit',
+          name: 'CompetitorProductEdit',
+          component: () => import('@/views/competitor-products/CompetitorProductEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_READ,
+            titleKey: 'navigation.competitorProducts',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'customers',
           name: 'Customers',
           component: () => import('@/views/customers/CustomersView.vue'),

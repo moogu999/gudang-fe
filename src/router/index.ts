@@ -211,6 +211,45 @@ const router = createRouter({
           },
         },
         {
+          path: 'display-types',
+          name: 'DisplayTypes',
+          component: () => import('@/views/display-types/DisplayTypesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_TYPE_READ,
+            titleKey: 'navigation.displayTypes',
+          },
+        },
+        {
+          path: 'display-programs',
+          name: 'DisplayPrograms',
+          component: () => import('@/views/display-programs/DisplayProgramsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_READ,
+            titleKey: 'navigation.displayPrograms',
+          },
+        },
+        {
+          path: 'display-programs/create',
+          name: 'DisplayProgramCreate',
+          component: () => import('@/views/display-programs/DisplayProgramCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_WRITE,
+            titleKey: 'navigation.displayPrograms',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'display-programs/:id/edit',
+          name: 'DisplayProgramEdit',
+          component: () => import('@/views/display-programs/DisplayProgramEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_READ,
+            titleKey: 'navigation.displayPrograms',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'device-binding',
           name: 'DeviceBinding',
           component: () => import('@/views/device-binding/DeviceBindingView.vue'),

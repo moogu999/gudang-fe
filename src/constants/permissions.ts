@@ -160,6 +160,11 @@ export const PERMISSIONS = {
   MSL_PUBLISH: 153,
   MSL_CONFIG_READ: 154,
   MSL_CONFIG_WRITE: 155,
+  DISPLAY_TYPE_READ: 156,
+  DISPLAY_TYPE_WRITE: 157,
+  DISPLAY_PROGRAM_READ: 158,
+  DISPLAY_PROGRAM_WRITE: 159,
+  DISPLAY_PROGRAM_PUBLISH: 160,
 } as const
 
 /**
@@ -189,6 +194,8 @@ export const ROUTE_PERMISSIONS: Record<string, PermissionId> = {
   '/must-sell-list-configs': PERMISSIONS.MSL_CONFIG_READ,
   '/competitor-brands': PERMISSIONS.COMPETITOR_BRAND_READ,
   '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_READ,
+  '/display-types': PERMISSIONS.DISPLAY_TYPE_READ,
+  '/display-programs': PERMISSIONS.DISPLAY_PROGRAM_READ,
   '/customers': PERMISSIONS.CUSTOMER_READ,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_READ,
   '/products': PERMISSIONS.PRODUCT_READ,
@@ -268,6 +275,8 @@ export const ROUTE_WRITE_PERMISSIONS: Record<string, PermissionId> = {
   '/must-sell-list-configs': PERMISSIONS.MSL_CONFIG_WRITE,
   '/competitor-brands': PERMISSIONS.COMPETITOR_BRAND_WRITE,
   '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
+  '/display-types': PERMISSIONS.DISPLAY_TYPE_WRITE,
+  '/display-programs': PERMISSIONS.DISPLAY_PROGRAM_WRITE,
   '/customers': PERMISSIONS.CUSTOMER_WRITE,
   '/unit-of-measurements': PERMISSIONS.UNIT_OF_MEASUREMENT_WRITE,
   '/products': PERMISSIONS.PRODUCT_WRITE,

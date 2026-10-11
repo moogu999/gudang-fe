@@ -14,13 +14,13 @@
         <span
           v-if="i === 0"
           class="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 text-xs text-white"
-          >{{ t('competitorProducts.photos.main') }}</span
+          >{{ t('common.photos.main') }}</span
         >
         <button
           v-if="!readonly"
           type="button"
           class="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
-          :aria-label="t('competitorProducts.photos.remove')"
+          :aria-label="t('common.photos.remove')"
           :disabled="busyId === photo.id"
           @click="removeSaved(photo)"
         >
@@ -42,7 +42,7 @@
           v-if="!readonly"
           type="button"
           class="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
-          :aria-label="t('competitorProducts.photos.remove')"
+          :aria-label="t('common.photos.remove')"
           @click="removePending(i)"
         >
           <i class="pi pi-times text-xs" />
@@ -77,7 +77,7 @@
         @click="inputRef?.click()"
       >
         <i :class="isUploading ? 'pi pi-spinner pi-spin' : 'pi pi-camera'" class="text-xl" />
-        <span class="text-xs">{{ t('competitorProducts.photos.add') }}</span>
+        <span class="text-xs">{{ t('common.photos.add') }}</span>
       </button>
     </div>
     <input
@@ -90,7 +90,7 @@
       @change="onFilesSelected"
     />
     <small class="text-surface-500 mt-2 block">{{
-      t('competitorProducts.photos.hint', { max })
+      t('common.photos.hint', { max })
     }}</small>
 
     <Dialog v-model:visible="showDialog" modal :style="{ maxWidth: '90vw' }">
@@ -172,10 +172,10 @@ function zoom(src: string) {
 
 function messageFor(e: unknown): string {
   if (e instanceof ApiError && e.code === 'file_limit_reached') {
-    return t('competitorProducts.errors.fileLimitReached')
+    return t('common.photos.limitReached')
   }
   if (e instanceof Error && e.message) return e.message
-  return t('competitorProducts.errors.photoUploadFailed')
+  return t('common.photos.uploadFailed')
 }
 
 async function onFilesSelected(event: Event) {
@@ -186,7 +186,7 @@ async function onFilesSelected(event: Event) {
   for (const file of files) {
     if (remaining.value <= 0) break
     if (file.size > props.maxSize) {
-      emit('error', t('competitorProducts.photos.tooLarge', { size: props.maxSize / (1024 * 1024) }))
+      emit('error', t('common.photos.tooLarge', { size: props.maxSize / (1024 * 1024) }))
       continue
     }
     if (props.ownerId) {

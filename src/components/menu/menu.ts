@@ -79,6 +79,11 @@ const mainMenu = [
         labelKey: 'navigation.competitorBrands',
         route: '/competitor-brands',
       },
+      {
+        label: 'Display Types',
+        labelKey: 'navigation.displayTypes',
+        route: '/display-types',
+      },
     ],
   },
   {
@@ -205,6 +210,11 @@ const mainMenu = [
         label: 'Must Sell List',
         labelKey: 'navigation.mustSellLists',
         route: '/must-sell-lists',
+      },
+      {
+        label: 'Display Programs',
+        labelKey: 'navigation.displayPrograms',
+        route: '/display-programs',
       },
       {
         label: 'Booking Orders',

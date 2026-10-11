@@ -120,6 +120,14 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     label: 'Must Sell List Config',
     labelKey: 'auditTrails.references.must_sell_list_config',
   },
+  display_type: {
+    label: 'Display Type',
+    labelKey: 'auditTrails.references.display_type',
+  },
+  display_program: {
+    label: 'Display Program',
+    labelKey: 'auditTrails.references.display_program',
+  },
   employee_device: {
     label: 'Salesman Device',
     labelKey: 'auditTrails.references.employee_device',

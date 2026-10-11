@@ -75,6 +75,6 @@ describe('PhotoGallery', () => {
     upload.mockRejectedValue(new ApiError('limit', 409, 'file_limit_reached'))
     const wrapper = mountGallery({ ownerId: 3 })
     await pick(wrapper, [file()])
-    expect(wrapper.emitted('error')?.[0]).toEqual(['competitorProducts.errors.fileLimitReached'])
+    expect(wrapper.emitted('error')?.[0]).toEqual(['common.photos.limitReached'])
   })
 })

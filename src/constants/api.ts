@@ -208,6 +208,21 @@ export const API_ENDPOINTS = {
 
   // Competitor products: brands, products and the recommendations review queue
   COMPETITOR_BRANDS: '/v1/competitor-brands',
+  DISPLAY_TYPES: '/v1/display-types',
+  DISPLAY_TYPE_OPTIONS: '/v1/display-types/options',
+  DISPLAY_TYPE_BY_ID: (id: number) => `/v1/display-types/${id}`,
+  DISPLAY_PROGRAMS: '/v1/display-programs',
+  DISPLAY_PROGRAM_CUSTOMER_OPTIONS: '/v1/display-programs/customer-options',
+  DISPLAY_PROGRAM_BY_ID: (id: number) => `/v1/display-programs/${id}`,
+  DISPLAY_PROGRAM_PUBLISH: (id: number) => `/v1/display-programs/${id}/publish`,
+  DISPLAY_PROGRAM_UNPUBLISH: (id: number) => `/v1/display-programs/${id}/unpublish`,
+  DISPLAY_PROGRAM_END_EARLY: (id: number) => `/v1/display-programs/${id}/end-early`,
+  DISPLAY_PROGRAM_DUPLICATE: (id: number) => `/v1/display-programs/${id}/duplicate`,
+  DISPLAY_PROGRAM_PARTICIPANTS: (id: number) => `/v1/display-programs/${id}/participants`,
+  DISPLAY_PROGRAM_PARTICIPANT: (id: number, participantId: number) =>
+    `/v1/display-programs/${id}/participants/${participantId}`,
+  DISPLAY_PROGRAM_PARTICIPANT_EXIT: (id: number, participantId: number) =>
+    `/v1/display-programs/${id}/participants/${participantId}/exit`,
   COMPETITOR_PRODUCTS: '/v1/competitor-products',
   COMPETITOR_PRODUCT_RECOMMENDATIONS: '/v1/competitor-product-recommendations',
 

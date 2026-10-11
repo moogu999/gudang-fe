@@ -464,6 +464,7 @@ const router = createRouter({
           component: () => import('@/views/sales-orders/SalesOrdersView.vue'),
           meta: {
             requiredPermission: PERMISSIONS.SALES_ORDER_READ,
+            requiredWritePermission: PERMISSIONS.SALES_ORDER_WRITE,
             titleKey: 'navigation.salesOrders',
           },
         },

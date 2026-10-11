@@ -6,7 +6,11 @@
 
     <Toolbar class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('salesOrders.addSalesOrder')" @click="addSalesOrder" />
+        <ResponsiveButton
+          v-if="canWrite"
+          :label="t('salesOrders.addSalesOrder')"
+          @click="addSalesOrder"
+        />
       </template>
     </Toolbar>
 
@@ -39,7 +43,7 @@
             </div>
             <div v-else-if="col.header === t('common.labels.actions')" class="flex gap-2">
               <Button
-                v-if="data.status === 'draft' && data.salesOrderType?.code !== 'return'"
+                v-if="canWrite && data.status === 'draft' && data.salesOrderType?.code !== 'return'"
                 icon="pi pi-pencil"
                 size="small"
                 text
@@ -69,9 +73,13 @@ import ResponsiveButton from '@/components/button/ResponsiveButton.vue'
 import { API_ENDPOINTS } from '@/constants/api'
 import DateFormat from '@/constants/dateFormat'
 import type { Column, SalesOrderStatus } from '@/types'
+import { usePermissions } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
+// Add and Edit lead to routes that need SALES_ORDER_WRITE; without it the guard would
+// bounce the click to Home, so the buttons are not offered at all.
+const { canWrite } = usePermissions('/sales-orders')
 
 const url = API_ENDPOINTS.GEN_SALES_ORDER_HEADERS
 

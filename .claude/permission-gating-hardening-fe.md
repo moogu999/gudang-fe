@@ -215,6 +215,15 @@ via `router.resolve()`, mirroring `canRead`'s existing `meta.requiredPermission`
 (shared as one `permissionFor(path, metaKey)` helper); `ROUTE_WRITE_PERMISSIONS` and its
 export are deleted.
 
+**Follow-up 2026-10-11 (review on gudang-fe#13).** `/sales-orders` was wrongly in the
+dead list: `SalesOrdersView` checked nothing, so Add and Edit showed to read-only users
+and the guard bounced the click to Home. The route now declares
+`requiredWritePermission: SALES_ORDER_WRITE` and the view hides both buttons behind
+`usePermissions('/sales-orders').canWrite`. Of the other seven, the delivery-note,
+goods-issue-note, delivery-confirmation and goods-return-note views do gate with
+`hasPermission(..._WRITE)`. Booking Orders, Return Delivery Orders and the My Approvals
+approve/reject buttons do not gate in the FE (same on `main`); the backend still refuses.
+
 As a side effect, `canWrite` now denies a path matching no route at all (previously
 defaulted to allowed, since the map lookup never checked route existence) — the same
 "deny on misconfiguration" rule `canAccessRoute` already applied to reads.

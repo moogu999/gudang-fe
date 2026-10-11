@@ -111,7 +111,10 @@
 
               <span v-if="col.field === 'category.name'">{{ categoryText(data as Item) }}</span>
 
-              <div v-if="col.field === 'primaryComparison'" class="flex flex-wrap items-center gap-1">
+              <div
+                v-if="col.field === 'primaryComparison'"
+                class="flex flex-wrap items-center gap-1"
+              >
                 <template v-if="data['primaryComparison']">
                   <Tag severity="info" class="max-w-48">
                     <i class="pi pi-star-fill mr-1 text-xs" />
@@ -280,9 +283,7 @@ const url = computed(() => {
   if (filterPrincipal.value) params.set('principalOptionId', String(filterPrincipal.value))
   if (filterStatus.value !== 'all') params.set('isActive', String(filterStatus.value === 'active'))
   const qs = params.toString()
-  return qs
-    ? `${API_ENDPOINTS.COMPETITOR_PRODUCTS}?${qs}`
-    : API_ENDPOINTS.COMPETITOR_PRODUCTS
+  return qs ? `${API_ENDPOINTS.COMPETITOR_PRODUCTS}?${qs}` : API_ENDPOINTS.COMPETITOR_PRODUCTS
 })
 
 // nextTick: TableComponent must have the new url before it refetches.

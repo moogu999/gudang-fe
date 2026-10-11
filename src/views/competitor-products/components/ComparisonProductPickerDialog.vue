@@ -19,7 +19,11 @@
         />
       </IconField>
       <div v-if="categoryOptionId" class="flex items-center gap-2">
-        <ToggleSwitch v-model="sameCategoryOnly" input-id="sameCategory" data-testid="same-category" />
+        <ToggleSwitch
+          v-model="sameCategoryOnly"
+          input-id="sameCategory"
+          data-testid="same-category"
+        />
         <label for="sameCategory" class="text-sm">{{
           t('competitorProducts.comparisons.sameCategoryOnly')
         }}</label>
@@ -78,11 +82,7 @@
           t('competitorProducts.comparisons.selected', { n: selected.size })
         }}</span>
         <div class="flex gap-2">
-          <Button
-            :label="t('common.actions.cancel')"
-            severity="secondary"
-            @click="emit('close')"
-          />
+          <Button :label="t('common.actions.cancel')" severity="secondary" @click="emit('close')" />
           <Button
             :label="t('competitorProducts.comparisons.addSelected', { n: selected.size })"
             icon="pi pi-plus"
@@ -151,7 +151,9 @@ const selected = ref(new Map<number, PickedProduct>())
 
 function toPicked(p: ProductWithLabels): PickedProduct {
   const labelOf = (definitionId?: number) =>
-    definitionId ? p.labels?.find((l) => l.labelDefinitionId === definitionId)?.optionValue : undefined
+    definitionId
+      ? p.labels?.find((l) => l.labelDefinitionId === definitionId)?.optionValue
+      : undefined
   return {
     id: p.id,
     code: p.code,
@@ -169,7 +171,9 @@ async function fetchPage(p: number) {
     if (search.value.trim()) params.set('search', search.value.trim())
     const parts = [params.toString()]
     if (sameCategoryOnly.value && props.categoryOptionId && categoryDefinitionId.value) {
-      parts.push(ProductsService.labelFilterParam(categoryDefinitionId.value, props.categoryOptionId))
+      parts.push(
+        ProductsService.labelFilterParam(categoryDefinitionId.value, props.categoryOptionId),
+      )
     }
     const res = await ProductsService.searchWithLabels(parts.join('&'))
     rows.value = (res.data ?? []).map(toPicked)
@@ -185,7 +189,8 @@ const selectableOnPage = computed(() => rows.value.filter((r) => !props.excludeI
 const selectionForPage = computed(() => rows.value.filter((r) => selected.value.has(r.id)))
 const allSelectableOnPage = computed(
   () =>
-    selectableOnPage.value.length > 0 && selectableOnPage.value.every((r) => selected.value.has(r.id)),
+    selectableOnPage.value.length > 0 &&
+    selectableOnPage.value.every((r) => selected.value.has(r.id)),
 )
 
 function rowClass(row: PickedProduct) {

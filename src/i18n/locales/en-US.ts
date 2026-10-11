@@ -1216,7 +1216,7 @@ export default {
       columnReferencePrice: 'Reference price',
       noComparison: 'No comparison product',
       legend:
-        '★ = primary comparison product, used in future price comparison reports. Competitor products without a comparison product can still be surveyed but won\'t appear in comparison reports.',
+        "★ = primary comparison product, used in future price comparison reports. Competitor products without a comparison product can still be surveyed but won't appear in comparison reports.",
       primaryComparison: 'Primary comparison product',
     },
     filters: {

@@ -35,7 +35,11 @@ beforeEach(() => {
 
 describe('PhotoGallery', () => {
   it('hides the add tile once max is reached', () => {
-    expect(mountGallery({ modelValue: [photo(1)] }).find('[data-testid="add-photo"]').exists()).toBe(true)
+    expect(
+      mountGallery({ modelValue: [photo(1)] })
+        .find('[data-testid="add-photo"]')
+        .exists(),
+    ).toBe(true)
     expect(
       mountGallery({ modelValue: [photo(1), photo(2), photo(3)] })
         .find('[data-testid="add-photo"]')
@@ -49,7 +53,9 @@ describe('PhotoGallery', () => {
     expect(upload).not.toHaveBeenCalled()
 
     upload.mockResolvedValue({ id: 5, url: '/f/5.jpg' })
-    const failed = await (wrapper.vm as unknown as { flushPending(id: number): Promise<number> }).flushPending(9)
+    const failed = await (
+      wrapper.vm as unknown as { flushPending(id: number): Promise<number> }
+    ).flushPending(9)
     expect(upload).toHaveBeenCalledWith('competitor_product', 9, 'photo', expect.any(File))
     expect(failed).toBe(0)
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[{ id: 5, url: '/f/5.jpg' }]])

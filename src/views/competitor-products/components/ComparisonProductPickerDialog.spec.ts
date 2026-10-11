@@ -21,14 +21,24 @@ import ComparisonProductPickerDialog from './ComparisonProductPickerDialog.vue'
 
 function mountPicker(props: Record<string, unknown>) {
   search.mockResolvedValue({
-    data: [{ id: 1, code: 'P1', name: 'One', labels: [{ id: 1, labelDefinitionId: 5, labelOptionId: 9, optionValue: 'Goreng' }] }],
+    data: [
+      {
+        id: 1,
+        code: 'P1',
+        name: 'One',
+        labels: [{ id: 1, labelDefinitionId: 5, labelOptionId: 9, optionValue: 'Goreng' }],
+      },
+    ],
     meta: { total: 1, limit: 20, offset: 0 },
   })
   return mount(ComparisonProductPickerDialog, {
     props: { excludeIds: [], ...props },
     global: {
       plugins: [PrimeVue],
-      stubs: { DataTable: DataTableStub, Dialog: { template: '<div><slot /><slot name="footer" /></div>' } },
+      stubs: {
+        DataTable: DataTableStub,
+        Dialog: { template: '<div><slot /><slot name="footer" /></div>' },
+      },
     },
   })
 }

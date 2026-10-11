@@ -2,7 +2,12 @@
   <div>
     <Toast position="top-center" :group="toastGroup" />
 
-    <Form v-slot="$form" :initial-values="initialValues" :resolver="resolver" @submit="onFormSubmit">
+    <Form
+      v-slot="$form"
+      :initial-values="initialValues"
+      :resolver="resolver"
+      @submit="onFormSubmit"
+    >
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
         <label for="name" class="w-full text-sm font-semibold sm:text-base md:w-40">{{
           t('competitorBrands.fields.name')

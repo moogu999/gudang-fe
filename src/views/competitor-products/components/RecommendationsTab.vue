@@ -61,8 +61,8 @@
           </div>
           <dl class="text-sm text-stone-600">
             <div>
-              {{ t('competitorProducts.recommendations.submittedBy') }}:
-              {{ rec.submitter.name }} · {{ dayjs(rec.createdAt).format(DateFormat.DATE_TIME) }}
+              {{ t('competitorProducts.recommendations.submittedBy') }}: {{ rec.submitter.name }} ·
+              {{ dayjs(rec.createdAt).format(DateFormat.DATE_TIME) }}
             </div>
             <div v-if="rec.customer">
               {{ t('competitorProducts.recommendations.customer') }}: {{ rec.customer.name }}
@@ -360,7 +360,9 @@ async function confirmReject() {
       rejecting.id,
       rejectReason.value.trim() || undefined,
     )
-    toast.add(commonSuccessToast(t('competitorProducts.recommendations.rejected'), props.toastGroup))
+    toast.add(
+      commonSuccessToast(t('competitorProducts.recommendations.rejected'), props.toastGroup),
+    )
     isRejectShown.value = false
     await afterChange()
   } catch (e) {

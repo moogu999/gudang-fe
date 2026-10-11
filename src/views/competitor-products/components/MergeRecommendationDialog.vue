@@ -31,7 +31,12 @@
       </div>
 
       <div v-if="showSiblings" class="flex items-center gap-2">
-        <Checkbox v-model="includeSiblings" input-id="siblings" binary data-testid="include-siblings" />
+        <Checkbox
+          v-model="includeSiblings"
+          input-id="siblings"
+          binary
+          data-testid="include-siblings"
+        />
         <label for="siblings" class="text-sm">{{
           t('competitorProducts.recommendations.alsoMergeSiblings', { n: siblingIds.length })
         }}</label>
@@ -95,7 +100,12 @@ const suggestion = props.recommendation.suggestions?.find(
   (s) => s.competitorProductId === props.presetTargetId,
 )
 const initialTarget: Option | undefined = suggestion
-  ? { id: suggestion.competitorProductId, code: suggestion.code, name: suggestion.name, brandName: suggestion.brandName }
+  ? {
+      id: suggestion.competitorProductId,
+      code: suggestion.code,
+      name: suggestion.name,
+      brandName: suggestion.brandName,
+    }
   : undefined
 
 const targetId = ref<number | undefined>(props.presetTargetId)
@@ -111,7 +121,8 @@ function optionLabel(o: Option): string {
 const siblingIds = computed(() => props.recommendation.siblingIds ?? [])
 const bestSuggestionId = computed(() => props.recommendation.suggestions?.[0]?.competitorProductId)
 const showSiblings = computed(
-  () => siblingIds.value.length > 0 && !!targetId.value && targetId.value === bestSuggestionId.value,
+  () =>
+    siblingIds.value.length > 0 && !!targetId.value && targetId.value === bestSuggestionId.value,
 )
 const includeSiblings = ref(true)
 
@@ -119,7 +130,10 @@ async function confirm() {
   if (!targetId.value) return
   targetError.value = ''
   isLoading.value = true
-  const ids = [props.recommendation.id, ...(showSiblings.value && includeSiblings.value ? siblingIds.value : [])]
+  const ids = [
+    props.recommendation.id,
+    ...(showSiblings.value && includeSiblings.value ? siblingIds.value : []),
+  ]
   try {
     const res = await CompetitorProductRecommendationsService.merge(targetId.value, ids)
     const code = res.data[0]?.competitorProduct?.code ?? ''

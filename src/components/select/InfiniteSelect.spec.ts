@@ -151,4 +151,3 @@ describe('InfiniteSelect footer slot', () => {
     expect(wrapper.find('[data-testid="footer-btn"]').exists()).toBe(true)
   })
 })
-

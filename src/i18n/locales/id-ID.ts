@@ -1153,7 +1153,8 @@ export default {
       invalidCompensation: 'Sewa dan % comply minimum harus diisi bersamaan',
       invalidRent: 'Sewa tidak boleh negatif',
       invalidCriteria: 'Periksa kriteria: tidak boleh kosong atau kembar, maksimal 20',
-      unknownCriterion: 'Ada kriteria yang bukan lagi bagian program ini. Muat ulang lalu coba lagi.',
+      unknownCriterion:
+        'Ada kriteria yang bukan lagi bagian program ini. Muat ulang lalu coba lagi.',
       invalidPrincipal: 'Pilih principal yang valid',
       invalidDisplayType: 'Pilih tipe display yang valid',
       displayTypeInactive: 'Tipe display ini nonaktif',

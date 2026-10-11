@@ -54,7 +54,9 @@
         v-for="photo in carryOver ?? []"
         :key="`carry-${photo.id}`"
         class="relative aspect-square cursor-pointer overflow-hidden rounded-md bg-stone-100 ring-1"
-        :class="carryOverIds.includes(photo.id) ? 'ring-primary-500 ring-2' : 'opacity-60 ring-stone-200'"
+        :class="
+          carryOverIds.includes(photo.id) ? 'ring-primary-500 ring-2' : 'opacity-60 ring-stone-200'
+        "
       >
         <img :src="buildFileUrl(photo.url)" class="h-full w-full object-cover" alt="" />
         <Checkbox
@@ -89,9 +91,7 @@
       data-testid="photo-input"
       @change="onFilesSelected"
     />
-    <small class="text-surface-500 mt-2 block">{{
-      t('common.photos.hint', { max })
-    }}</small>
+    <small class="text-surface-500 mt-2 block">{{ t('common.photos.hint', { max }) }}</small>
 
     <Dialog v-model:visible="showDialog" modal :style="{ maxWidth: '90vw' }">
       <div class="flex justify-center">
@@ -160,7 +160,9 @@ const busyId = ref<number | null>(null)
 const showDialog = ref(false)
 const zoomSrc = ref('')
 
-const used = computed(() => props.modelValue.length + pending.value.length + props.carryOverIds.length)
+const used = computed(
+  () => props.modelValue.length + pending.value.length + props.carryOverIds.length,
+)
 const remaining = computed(() => props.max - used.value)
 // The big first tile only reads well once there is something else beside it.
 const layoutHero = computed(() => used.value > 1)

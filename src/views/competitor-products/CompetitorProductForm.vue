@@ -18,7 +18,9 @@
           <div class="flex flex-col gap-4">
             <!-- Photos -->
             <div class="flex flex-col gap-1">
-              <label class="text-sm font-semibold">{{ t('competitorProducts.fields.photos') }}</label>
+              <label class="text-sm font-semibold">{{
+                t('competitorProducts.fields.photos')
+              }}</label>
               <PhotoGallery
                 ref="gallery"
                 v-model="photos"
@@ -74,7 +76,9 @@
                     class="w-full font-mono"
                     :invalid="!!errors.code"
                   />
-                  <small class="text-surface-500">{{ t('competitorProducts.hints.codeManual') }}</small>
+                  <small class="text-surface-500">{{
+                    t('competitorProducts.hints.codeManual')
+                  }}</small>
                 </template>
               </template>
               <InputText v-else :value="product?.code" readonly class="w-full font-mono" />
@@ -84,8 +88,7 @@
             <!-- Name -->
             <div class="flex flex-col gap-1">
               <label for="name" class="text-sm font-semibold">
-                {{ t('competitorProducts.fields.name')
-                }}<span class="ml-0.5 text-red-500">*</span>
+                {{ t('competitorProducts.fields.name') }}<span class="ml-0.5 text-red-500">*</span>
               </label>
               <InputText
                 id="name"
@@ -104,8 +107,7 @@
             <!-- Brand -->
             <div class="flex flex-col gap-1">
               <label class="text-sm font-semibold">
-                {{ t('competitorProducts.fields.brand')
-                }}<span class="ml-0.5 text-red-500">*</span>
+                {{ t('competitorProducts.fields.brand') }}<span class="ml-0.5 text-red-500">*</span>
               </label>
               <InfiniteSelect
                 :key="`brand-${brandKey}`"
@@ -218,7 +220,9 @@
                 class="w-full"
               />
               <small v-if="observedHint" class="text-surface-500">{{ observedHint }}</small>
-              <small class="text-surface-500">{{ t('competitorProducts.hints.referencePrice') }}</small>
+              <small class="text-surface-500">{{
+                t('competitorProducts.hints.referencePrice')
+              }}</small>
               <small v-if="errors.referencePrice" class="text-red-500">{{
                 errors.referencePrice
               }}</small>
@@ -243,7 +247,9 @@
         <template #title>{{ t('competitorProducts.sections.comparisons') }}</template>
         <template #content>
           <div class="flex flex-col gap-3">
-            <p class="text-surface-500 text-sm">{{ t('competitorProducts.comparisons.subtitle') }}</p>
+            <p class="text-surface-500 text-sm">
+              {{ t('competitorProducts.comparisons.subtitle') }}
+            </p>
 
             <DataTable
               v-if="comparisons.length"
@@ -324,7 +330,11 @@
         <p class="mb-2 text-sm font-semibold">
           {{ t('competitorProducts.recommendations.alsoResolveSimilar') }}
         </p>
-        <div v-for="s in recommendation.similarPending" :key="s.id" class="mb-1 flex items-center gap-2">
+        <div
+          v-for="s in recommendation.similarPending"
+          :key="s.id"
+          class="mb-1 flex items-center gap-2"
+        >
           <Checkbox v-model="similarIds" :input-id="`similar-${s.id}`" :value="s.id" />
           <label :for="`similar-${s.id}`" class="text-sm">{{ s.name }}</label>
         </div>
@@ -426,7 +436,13 @@ const props = withDefaults(
     /** The host page's toast group, for errors raised inside the comparison picker. */
     toastGroup?: string
   }>(),
-  { toastGroup: undefined, product: undefined, recommendation: undefined, isLoading: false, readonly: false },
+  {
+    toastGroup: undefined,
+    product: undefined,
+    recommendation: undefined,
+    isLoading: false,
+    readonly: false,
+  },
 )
 
 export interface CompetitorProductSubmit {
@@ -446,8 +462,12 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { canWrite: canAddBrand } = usePermissions('/competitor-brands')
 
-const { codeMode, previewCode, loading: numberSeriesLoading, hasDefaultSeries } =
-  useNumberSeries('competitor_products')
+const {
+  codeMode,
+  previewCode,
+  loading: numberSeriesLoading,
+  hasDefaultSeries,
+} = useNumberSeries('competitor_products')
 
 const base = props.product
 const rec = props.mode === 'add' ? props.recommendation : undefined

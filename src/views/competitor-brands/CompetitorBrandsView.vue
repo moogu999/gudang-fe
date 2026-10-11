@@ -9,7 +9,10 @@
 
     <Toolbar v-if="canWrite" class="mb-5">
       <template #end>
-        <ResponsiveButton :label="t('competitorBrands.addBrand')" @click="openDialog(DialogMode.ADD)" />
+        <ResponsiveButton
+          :label="t('competitorBrands.addBrand')"
+          @click="openDialog(DialogMode.ADD)"
+        />
       </template>
     </Toolbar>
 

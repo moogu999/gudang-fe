@@ -11,7 +11,10 @@ vi.mock('primevue/usetoast', () => ({ useToast: () => ({ add: vi.fn() }) }))
 
 const list = vi.fn()
 vi.mock('@/services', () => ({
-  CompetitorProductRecommendationsService: { list: (...a: unknown[]) => list(...a), reject: vi.fn() },
+  CompetitorProductRecommendationsService: {
+    list: (...a: unknown[]) => list(...a),
+    reject: vi.fn(),
+  },
   CompetitorProductsService: {},
 }))
 
@@ -23,7 +26,15 @@ const rec = {
   status: 'pending',
   createdAt: '2026-10-11T00:00:00Z',
   submitter: { employeeId: 1, name: 'Budi' },
-  suggestions: [{ competitorProductId: 7, code: 'CP-7', name: 'Mie Sedaap Goreng', brandName: 'Sedaap', score: 0.82 }],
+  suggestions: [
+    {
+      competitorProductId: 7,
+      code: 'CP-7',
+      name: 'Mie Sedaap Goreng',
+      brandName: 'Sedaap',
+      score: 0.82,
+    },
+  ],
   siblingIds: [2, 3],
 }
 
@@ -53,7 +64,9 @@ describe('RecommendationsTab', () => {
   it('asks the server for pending recommendations by default', async () => {
     mountTab(true)
     await flushPromises()
-    expect(list).toHaveBeenCalledWith(expect.objectContaining({ status: 'pending', limit: 20, offset: 0 }))
+    expect(list).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'pending', limit: 20, offset: 0 }),
+    )
   })
 
   it('has no action column without write', async () => {

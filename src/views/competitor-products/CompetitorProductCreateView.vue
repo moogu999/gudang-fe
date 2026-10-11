@@ -39,10 +39,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import {
-  CompetitorProductRecommendationsService,
-  CompetitorProductsService,
-} from '@/services'
+import { CompetitorProductRecommendationsService, CompetitorProductsService } from '@/services'
 import { commonErrorToast, commonSuccessToast, commonWarnToast } from '@/services/toast'
 import { usePostSaveNavigation } from '@/composables'
 import type { CompetitorProduct, CompetitorProductRecommendation } from '@/types'
@@ -100,13 +97,19 @@ async function onSubmit({ payload, carryOverIds, similarIds }: CompetitorProduct
       saved = await CompetitorProductsService.create(payload)
     }
     toast.add(
-      commonSuccessToast(t('competitorProducts.messages.created', { code: saved.code }), toastGroup),
+      commonSuccessToast(
+        t('competitorProducts.messages.created', { code: saved.code }),
+        toastGroup,
+      ),
     )
 
     const failed = (await form.value?.flushPhotos(saved.id)) ?? 0
     if (failed > 0) {
       toast.add(
-        commonWarnToast(t('competitorProducts.messages.photoUploadFailed', { n: failed }), toastGroup),
+        commonWarnToast(
+          t('competitorProducts.messages.photoUploadFailed', { n: failed }),
+          toastGroup,
+        ),
       )
     }
     afterCreate({ id: saved.id })

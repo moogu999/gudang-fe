@@ -94,7 +94,9 @@ export class ProductsService {
    * @param queryString - e.g. `search=mie&page=1&limit=10&labelFilter=4%3A7`
    */
   static async searchWithLabels(queryString?: string): Promise<Base<ProductWithLabels>> {
-    const url = queryString ? `${API_ENDPOINTS.PRODUCTS_V1}?${queryString}` : API_ENDPOINTS.PRODUCTS_V1
+    const url = queryString
+      ? `${API_ENDPOINTS.PRODUCTS_V1}?${queryString}`
+      : API_ENDPOINTS.PRODUCTS_V1
     return ApiService.get<Base<ProductWithLabels>>(url)
   }
 

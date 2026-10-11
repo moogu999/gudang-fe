@@ -29,7 +29,11 @@
         class="flex items-center gap-2 rounded-lg border border-stone-200 bg-stone-50 px-2 py-1"
       >
         <Tag
-          :value="item.productId ? t('salesmanTargets.items.kindProduct') : t('salesmanTargets.items.kindCategory')"
+          :value="
+            item.productId
+              ? t('salesmanTargets.items.kindProduct')
+              : t('salesmanTargets.items.kindCategory')
+          "
           :severity="item.productId ? 'secondary' : 'info'"
         />
         <span

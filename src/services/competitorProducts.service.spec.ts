@@ -63,7 +63,9 @@ describe('CompetitorProductRecommendationsService', () => {
   it('lists pending recommendations with offset paging', async () => {
     get.mockResolvedValue({ data: [], meta: { total: 0, limit: 1, offset: 0 } })
     await CompetitorProductRecommendationsService.list({ status: 'pending', limit: 1 })
-    expect(get).toHaveBeenCalledWith('/v1/competitor-product-recommendations?status=pending&limit=1')
+    expect(get).toHaveBeenCalledWith(
+      '/v1/competitor-product-recommendations?status=pending&limit=1',
+    )
   })
 
   it('sends the merge body', async () => {

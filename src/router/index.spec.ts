@@ -124,6 +124,7 @@ const EXPECTED_WRITE_PERMISSIONS: Record<string, number> = {
   '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
   '/display-types': PERMISSIONS.DISPLAY_TYPE_WRITE,
   '/display-programs': PERMISSIONS.DISPLAY_PROGRAM_WRITE,
+  '/sales-orders': PERMISSIONS.SALES_ORDER_WRITE,
 }
 
 describe('router write-permission coverage (item E)', () => {

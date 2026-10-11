@@ -104,6 +104,30 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
       codeField: 'name',
     },
   },
+  salesman_target: {
+    label: 'Salesman Target',
+    labelKey: 'auditTrails.references.salesman_target',
+  },
+  salesman_target_config: {
+    label: 'Salesman Target Config',
+    labelKey: 'auditTrails.references.salesman_target_config',
+  },
+  must_sell_list: {
+    label: 'Must Sell List',
+    labelKey: 'auditTrails.references.must_sell_list',
+  },
+  must_sell_list_config: {
+    label: 'Must Sell List Config',
+    labelKey: 'auditTrails.references.must_sell_list_config',
+  },
+  display_type: {
+    label: 'Display Type',
+    labelKey: 'auditTrails.references.display_type',
+  },
+  display_program: {
+    label: 'Display Program',
+    labelKey: 'auditTrails.references.display_program',
+  },
   employee_device: {
     label: 'Salesman Device',
     labelKey: 'auditTrails.references.employee_device',

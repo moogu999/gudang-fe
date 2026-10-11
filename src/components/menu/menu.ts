@@ -65,6 +65,26 @@ const mainMenu = [
         labelKey: 'navigation.deviceBinding',
         route: '/device-binding',
       },
+      {
+        label: 'Reasons',
+        labelKey: 'navigation.reasons',
+        route: '/reasons',
+      },
+      {
+        label: 'Competitor Products',
+        labelKey: 'navigation.competitorProducts',
+        route: '/competitor-products',
+      },
+      {
+        label: 'Competitor Brands',
+        labelKey: 'navigation.competitorBrands',
+        route: '/competitor-brands',
+      },
+      {
+        label: 'Display Types',
+        labelKey: 'navigation.displayTypes',
+        route: '/display-types',
+      },
     ],
   },
   {
@@ -181,6 +201,21 @@ const mainMenu = [
         label: 'Sales Orders',
         labelKey: 'navigation.salesOrders',
         route: '/sales-orders',
+      },
+      {
+        label: 'Salesman Targets',
+        labelKey: 'navigation.salesmanTargets',
+        route: '/salesman-targets',
+      },
+      {
+        label: 'Must Sell List',
+        labelKey: 'navigation.mustSellLists',
+        route: '/must-sell-lists',
+      },
+      {
+        label: 'Display Programs',
+        labelKey: 'navigation.displayPrograms',
+        route: '/display-programs',
       },
       {
         label: 'Booking Orders',

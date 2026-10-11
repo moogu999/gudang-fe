@@ -158,6 +158,31 @@ export const API_ENDPOINTS = {
   // Sales team endpoints
   SALES_TEAMS: '/v1/sales-teams',
 
+  // Salesman target endpoints
+  SALESMAN_TARGETS: '/v1/salesman-targets',
+  SALESMAN_TARGET_BY_ID: (id: number) => `/v1/salesman-targets/${id}`,
+  SALESMAN_TARGET_ACTIVATE: (id: number) => `/v1/salesman-targets/${id}/activate`,
+  SALESMAN_TARGET_CLOSE: (id: number) => `/v1/salesman-targets/${id}/close`,
+  SALESMAN_TARGET_CANDIDATES: '/v1/salesman-targets/candidates',
+  SALESMAN_TARGET_ITEM_OPTIONS: '/v1/salesman-targets/item-options',
+  SALESMAN_TARGET_CONFIGS: '/v1/salesman-target-configs',
+  SALESMAN_TARGET_CONFIG_MY_BRANCH: '/v1/salesman-target-configs/my-branch',
+  SALESMAN_TARGET_CONFIG_BY_BRANCH: (branchId: number) => `/v1/salesman-target-configs/${branchId}`,
+
+  // Must sell list endpoints
+  MUST_SELL_LISTS: '/v1/must-sell-lists',
+  MUST_SELL_LIST_BY_ID: (id: number) => `/v1/must-sell-lists/${id}`,
+  MUST_SELL_LIST_PUBLISH: (id: number) => `/v1/must-sell-lists/${id}/publish`,
+  MUST_SELL_LIST_UNPUBLISH: (id: number) => `/v1/must-sell-lists/${id}/unpublish`,
+  MUST_SELL_LIST_END_EARLY: (id: number) => `/v1/must-sell-lists/${id}/end-early`,
+  MUST_SELL_LIST_DUPLICATE: (id: number) => `/v1/must-sell-lists/${id}/duplicate`,
+  MUST_SELL_LISTS_PREVIEW: '/v1/must-sell-lists/preview',
+  MUST_SELL_LISTS_CUSTOMERS: '/v1/must-sell-lists/customers',
+  MUST_SELL_LISTS_PRODUCT_OPTIONS: '/v1/must-sell-lists/product-options',
+  MUST_SELL_LIST_CONFIGS: '/v1/must-sell-list-configs',
+  MUST_SELL_LIST_CONFIG_MY_BRANCH: '/v1/must-sell-list-configs/my-branch',
+  MUST_SELL_LIST_CONFIG_BY_BRANCH: (branchId: number) => `/v1/must-sell-list-configs/${branchId}`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',
@@ -176,6 +201,30 @@ export const API_ENDPOINTS = {
   DEVICE_BINDING_REQUEST: (deviceId: number) => `/v1/device-binding/requests/${deviceId}`,
   DEVICE_BINDING_CONFIGS_MY_COMPANY: '/v1/device-binding-configs/my-company',
   DEVICE_BINDING_CONFIGS: (companyId: number) => `/v1/device-binding-configs/${companyId}`,
+
+  // Reason codes (master of answers the N-Force salesman picks)
+  REASONS: '/v1/reasons',
+  REASONS_REORDER: '/v1/reasons/reorder',
+
+  // Competitor products: brands, products and the recommendations review queue
+  COMPETITOR_BRANDS: '/v1/competitor-brands',
+  DISPLAY_TYPES: '/v1/display-types',
+  DISPLAY_TYPE_OPTIONS: '/v1/display-types/options',
+  DISPLAY_TYPE_BY_ID: (id: number) => `/v1/display-types/${id}`,
+  DISPLAY_PROGRAMS: '/v1/display-programs',
+  DISPLAY_PROGRAM_CUSTOMER_OPTIONS: '/v1/display-programs/customer-options',
+  DISPLAY_PROGRAM_BY_ID: (id: number) => `/v1/display-programs/${id}`,
+  DISPLAY_PROGRAM_PUBLISH: (id: number) => `/v1/display-programs/${id}/publish`,
+  DISPLAY_PROGRAM_UNPUBLISH: (id: number) => `/v1/display-programs/${id}/unpublish`,
+  DISPLAY_PROGRAM_END_EARLY: (id: number) => `/v1/display-programs/${id}/end-early`,
+  DISPLAY_PROGRAM_DUPLICATE: (id: number) => `/v1/display-programs/${id}/duplicate`,
+  DISPLAY_PROGRAM_PARTICIPANTS: (id: number) => `/v1/display-programs/${id}/participants`,
+  DISPLAY_PROGRAM_PARTICIPANT: (id: number, participantId: number) =>
+    `/v1/display-programs/${id}/participants/${participantId}`,
+  DISPLAY_PROGRAM_PARTICIPANT_EXIT: (id: number, participantId: number) =>
+    `/v1/display-programs/${id}/participants/${participantId}/exit`,
+  COMPETITOR_PRODUCTS: '/v1/competitor-products',
+  COMPETITOR_PRODUCT_RECOMMENDATIONS: '/v1/competitor-product-recommendations',
 
   // File endpoints
   FILES: '/v1/files',

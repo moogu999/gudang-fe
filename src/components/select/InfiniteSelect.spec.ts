@@ -31,7 +31,7 @@ const SelectStub = {
     'pt',
   ],
   emits: ['update:modelValue', 'filter'],
-  template: '<div class="select-stub" />',
+  template: '<div class="select-stub"><slot name="footer" /></div>',
 }
 
 type FetchFn = (query: string) => Promise<Base<Option>>
@@ -137,5 +137,17 @@ describe('InfiniteSelect option filtering', () => {
     })
 
     expect(renderedOptions(wrapper).map((o) => o.id)).toEqual([99, 1])
+  })
+})
+
+describe('InfiniteSelect footer slot', () => {
+  it('renders the footer slot inside the select', async () => {
+    const wrapper = mount(InfiniteSelect, {
+      props: { optionLabel: 'code', fetchFn: async () => ({ data: [], meta: meta() }) },
+      slots: { footer: '<button data-testid="footer-btn">Add</button>' },
+      global: { stubs: { Select: SelectStub } },
+    })
+    await flushPromises()
+    expect(wrapper.find('[data-testid="footer-btn"]').exists()).toBe(true)
   })
 })

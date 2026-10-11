@@ -8,6 +8,8 @@ export type AuditReferenceType =
   | 'sales_team'
   | 'sales_team_products'
   | 'sales_team_member'
+  | 'salesman_target'
+  | 'salesman_target_config'
   | 'nforce_account'
   | 'employee_device'
   | 'activation_code'

@@ -578,4 +578,11 @@ export type {
   ActApprovalRequestDto,
 } from './approval.type'
 export * from './salesTeam.type'
+export * from './salesmanTarget.type'
+export * from './mustSellList.type'
 export * from './deviceBinding.type'
+export * from './reason.type'
+export * from './competitorBrand.type'
+export * from './displayType.type'
+export * from './displayProgram.type'
+export * from './competitorProduct.type'

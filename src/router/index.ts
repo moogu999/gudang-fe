@@ -175,6 +175,109 @@ const router = createRouter({
           },
         },
         {
+          path: 'salesman-targets',
+          name: 'SalesmanTargets',
+          component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_READ,
+            requiredWritePermission: PERMISSIONS.SALESMAN_TARGET_WRITE,
+            titleKey: 'navigation.salesmanTargets',
+          },
+        },
+        {
+          path: 'salesman-targets/create',
+          name: 'SalesmanTargetCreate',
+          component: () => import('@/views/salesman-targets/SalesmanTargetCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_WRITE,
+            titleKey: 'navigation.salesmanTargets',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'salesman-targets/:id/edit',
+          name: 'SalesmanTargetEdit',
+          component: () => import('@/views/salesman-targets/SalesmanTargetEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_READ,
+            titleKey: 'navigation.salesmanTargets',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'must-sell-lists',
+          name: 'MustSellLists',
+          component: () => import('@/views/must-sell-lists/MustSellListsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_READ,
+            requiredWritePermission: PERMISSIONS.MSL_WRITE,
+            titleKey: 'navigation.mustSellLists',
+          },
+        },
+        {
+          path: 'must-sell-lists/create',
+          name: 'MustSellListCreate',
+          component: () => import('@/views/must-sell-lists/MustSellListCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_WRITE,
+            titleKey: 'navigation.mustSellLists',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'must-sell-lists/:id/edit',
+          name: 'MustSellListEdit',
+          component: () => import('@/views/must-sell-lists/MustSellListEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.MSL_READ,
+            titleKey: 'navigation.mustSellLists',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'display-types',
+          name: 'DisplayTypes',
+          component: () => import('@/views/display-types/DisplayTypesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_TYPE_READ,
+            requiredWritePermission: PERMISSIONS.DISPLAY_TYPE_WRITE,
+            titleKey: 'navigation.displayTypes',
+          },
+        },
+        {
+          path: 'display-programs',
+          name: 'DisplayPrograms',
+          component: () => import('@/views/display-programs/DisplayProgramsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_READ,
+            requiredWritePermission: PERMISSIONS.DISPLAY_PROGRAM_WRITE,
+            titleKey: 'navigation.displayPrograms',
+          },
+        },
+        {
+          path: 'display-programs/create',
+          name: 'DisplayProgramCreate',
+          component: () => import('@/views/display-programs/DisplayProgramCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_WRITE,
+            titleKey: 'navigation.displayPrograms',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'display-programs/:id/edit',
+          name: 'DisplayProgramEdit',
+          component: () => import('@/views/display-programs/DisplayProgramEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.DISPLAY_PROGRAM_READ,
+            titleKey: 'navigation.displayPrograms',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'device-binding',
           name: 'DeviceBinding',
           component: () => import('@/views/device-binding/DeviceBindingView.vue'),
@@ -182,6 +285,57 @@ const router = createRouter({
             requiredPermission: PERMISSIONS.DEVICE_BINDING_READ,
             requiredWritePermission: PERMISSIONS.DEVICE_BINDING_WRITE,
             titleKey: 'navigation.deviceBinding',
+          },
+        },
+        {
+          path: 'reasons',
+          name: 'Reasons',
+          component: () => import('@/views/reasons/ReasonsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.REASON_READ,
+            requiredWritePermission: PERMISSIONS.REASON_WRITE,
+            titleKey: 'navigation.reasons',
+          },
+        },
+        {
+          path: 'competitor-brands',
+          name: 'CompetitorBrands',
+          component: () => import('@/views/competitor-brands/CompetitorBrandsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_BRAND_READ,
+            requiredWritePermission: PERMISSIONS.COMPETITOR_BRAND_WRITE,
+            titleKey: 'navigation.competitorBrands',
+          },
+        },
+        {
+          path: 'competitor-products',
+          name: 'CompetitorProducts',
+          component: () => import('@/views/competitor-products/CompetitorProductsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_READ,
+            requiredWritePermission: PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
+            titleKey: 'navigation.competitorProducts',
+          },
+        },
+        {
+          path: 'competitor-products/create',
+          name: 'CompetitorProductCreate',
+          component: () => import('@/views/competitor-products/CompetitorProductCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
+            titleKey: 'navigation.competitorProducts',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'competitor-products/:id/edit',
+          name: 'CompetitorProductEdit',
+          component: () => import('@/views/competitor-products/CompetitorProductEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.COMPETITOR_PRODUCT_READ,
+            titleKey: 'navigation.competitorProducts',
+            titleAction: 'edit',
           },
         },
         {
@@ -1206,6 +1360,16 @@ const router = createRouter({
             requiredPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,
             requiredWritePermission: PERMISSIONS.DEVICE_BINDING_CONFIG_WRITE,
           },
+        },
+        {
+          path: 'salesman-target-configs',
+          redirect: { path: '/configs', query: { tab: 'stg' } },
+          meta: { requiredWritePermission: PERMISSIONS.SALESMAN_TARGET_CONFIG_WRITE },
+        },
+        {
+          path: 'must-sell-list-configs',
+          redirect: { path: '/configs', query: { tab: 'msl' } },
+          meta: { requiredWritePermission: PERMISSIONS.MSL_CONFIG_WRITE },
         },
         {
           path: 'bank-settlements',

@@ -115,6 +115,15 @@ const EXPECTED_WRITE_PERMISSIONS: Record<string, number> = {
   '/sales-teams': PERMISSIONS.SALES_TEAM_WRITE,
   '/device-binding': PERMISSIONS.DEVICE_BINDING_WRITE,
   '/device-binding-configs': PERMISSIONS.DEVICE_BINDING_CONFIG_WRITE,
+  '/reasons': PERMISSIONS.REASON_WRITE,
+  '/salesman-targets': PERMISSIONS.SALESMAN_TARGET_WRITE,
+  '/salesman-target-configs': PERMISSIONS.SALESMAN_TARGET_CONFIG_WRITE,
+  '/must-sell-lists': PERMISSIONS.MSL_WRITE,
+  '/must-sell-list-configs': PERMISSIONS.MSL_CONFIG_WRITE,
+  '/competitor-brands': PERMISSIONS.COMPETITOR_BRAND_WRITE,
+  '/competitor-products': PERMISSIONS.COMPETITOR_PRODUCT_WRITE,
+  '/display-types': PERMISSIONS.DISPLAY_TYPE_WRITE,
+  '/display-programs': PERMISSIONS.DISPLAY_PROGRAM_WRITE,
 }
 
 describe('router write-permission coverage (item E)', () => {

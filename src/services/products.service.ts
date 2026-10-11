@@ -1,6 +1,11 @@
 import ApiService from './api'
 import type { Base } from '@/types/api.type'
-import type { Product, CreateProductDto, UpdateProductDto } from '@/types/product.type'
+import type {
+  Product,
+  CreateProductDto,
+  UpdateProductDto,
+  ProductWithLabels,
+} from '@/types/product.type'
 import { API_ENDPOINTS } from '@/constants/api'
 import { labelFilterParam } from './labelFilter'
 
@@ -80,6 +85,19 @@ export class ProductsService {
   static async list(queryString?: string): Promise<Base<Product>> {
     const url = queryString ? `${this.BASE_URL}?${queryString}` : this.BASE_URL
     return ApiService.get<Base<Product>>(url)
+  }
+
+  /**
+   * Search `/v1/products`, the endpoint that reads label filters and returns each
+   * product's labels. It reads `search`, `page` and `limit`.
+   *
+   * @param queryString - e.g. `search=mie&page=1&limit=10&labelFilter=4%3A7`
+   */
+  static async searchWithLabels(queryString?: string): Promise<Base<ProductWithLabels>> {
+    const url = queryString
+      ? `${API_ENDPOINTS.PRODUCTS_V1}?${queryString}`
+      : API_ENDPOINTS.PRODUCTS_V1
+    return ApiService.get<Base<ProductWithLabels>>(url)
   }
 
   /**

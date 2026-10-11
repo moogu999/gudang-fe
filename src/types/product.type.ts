@@ -47,6 +47,21 @@ export interface Product {
   labels?: ProductLabelValue[]
 }
 
+/** A product as `/v1/products` returns it: with its assigned labels flattened. */
+export interface ProductWithLabels {
+  id: number
+  code: string
+  name: string
+  uomGroup?: { id?: number; name: string }
+  labels?: {
+    id: number
+    labelDefinitionId: number
+    definitionName?: string
+    labelOptionId: number
+    optionValue?: string
+  }[]
+}
+
 /**
  * DTO for creating a new Product
  */

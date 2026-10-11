@@ -61,6 +61,16 @@ export const CONFIG_TABS: ConfigTabDef[] = [
     readPermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_READ,
   },
   {
+    value: 'stg',
+    labelKey: 'navigation.salesmanTargetConfigs',
+    readPermission: PERMISSIONS.SALESMAN_TARGET_CONFIG_READ,
+  },
+  {
+    value: 'msl',
+    labelKey: 'navigation.mustSellListConfigs',
+    readPermission: PERMISSIONS.MSL_CONFIG_READ,
+  },
+  {
     value: 'device-binding',
     labelKey: 'navigation.deviceBindingConfigs',
     readPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,

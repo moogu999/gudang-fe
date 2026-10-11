@@ -158,6 +158,17 @@ export const API_ENDPOINTS = {
   // Sales team endpoints
   SALES_TEAMS: '/v1/sales-teams',
 
+  // Salesman target endpoints
+  SALESMAN_TARGETS: '/v1/salesman-targets',
+  SALESMAN_TARGET_BY_ID: (id: number) => `/v1/salesman-targets/${id}`,
+  SALESMAN_TARGET_ACTIVATE: (id: number) => `/v1/salesman-targets/${id}/activate`,
+  SALESMAN_TARGET_CLOSE: (id: number) => `/v1/salesman-targets/${id}/close`,
+  SALESMAN_TARGET_CANDIDATES: '/v1/salesman-targets/candidates',
+  SALESMAN_TARGET_ITEM_OPTIONS: '/v1/salesman-targets/item-options',
+  SALESMAN_TARGET_CONFIGS: '/v1/salesman-target-configs',
+  SALESMAN_TARGET_CONFIG_MY_BRANCH: '/v1/salesman-target-configs/my-branch',
+  SALESMAN_TARGET_CONFIG_BY_BRANCH: (branchId: number) => `/v1/salesman-target-configs/${branchId}`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',

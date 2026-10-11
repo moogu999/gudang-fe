@@ -47,6 +47,7 @@
     <ApPaymentConfigsView v-if="activeConfig === 'bkk'" ref="bkkRef" :embedded="true" />
     <AccountingPeriodConfigsView v-if="activeConfig === 'apc'" ref="apcRef" :embedded="true" />
     <CashDepositConfigsView v-if="activeConfig === 'cd'" ref="cdRef" :embedded="true" />
+    <SalesmanTargetConfigsView v-if="activeConfig === 'stg'" ref="stgRef" :embedded="true" />
     <DeviceBindingConfigsView
       v-if="activeConfig === 'device-binding'"
       :toast-group="overlayGroup"
@@ -74,6 +75,7 @@ import CreditDebitNoteConfigsView from '@/views/credit-debit-note-configs/Credit
 import ApPaymentConfigsView from '@/views/ap-payment-configs/ApPaymentConfigsView.vue'
 import AccountingPeriodConfigsView from '@/views/accounting-period-configs/AccountingPeriodConfigsView.vue'
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
+import SalesmanTargetConfigsView from '@/views/salesman-target-configs/SalesmanTargetConfigsView.vue'
 import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindingConfigsView.vue'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
@@ -92,6 +94,7 @@ const { canRead: canReadCDN, canWrite: canWriteCDN } = usePermissions('/credit-d
 const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
 const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
 const { canRead: canReadCD, canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
+const { canRead: canReadSTG, canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
 const { canRead: canReadDB } = usePermissions('/device-binding-configs')
 
 const configOptions = computed(() => {
@@ -107,6 +110,7 @@ const configOptions = computed(() => {
   if (canReadAPC.value)
     options.push({ label: t('navigation.accountingPeriodConfigs'), value: 'apc' })
   if (canReadCD.value) options.push({ label: t('navigation.cashDepositConfigs'), value: 'cd' })
+  if (canReadSTG.value) options.push({ label: t('navigation.salesmanTargetConfigs'), value: 'stg' })
   if (canReadDB.value)
     options.push({ label: t('navigation.deviceBindingConfigs'), value: 'device-binding' })
   return options
@@ -134,6 +138,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'bkk') return canWriteBKK.value
   if (activeConfig.value === 'apc') return canWriteAPC.value
   if (activeConfig.value === 'cd') return canWriteCD.value
+  if (activeConfig.value === 'stg') return canWriteSTG.value
   // Device binding is one settings form per company, saved in place: nothing to add.
   return false
 })
@@ -183,6 +188,7 @@ const cdnRef = ref<InstanceType<typeof CreditDebitNoteConfigsView> | null>(null)
 const bkkRef = ref<InstanceType<typeof ApPaymentConfigsView> | null>(null)
 const apcRef = ref<InstanceType<typeof AccountingPeriodConfigsView> | null>(null)
 const cdRef = ref<InstanceType<typeof CashDepositConfigsView> | null>(null)
+const stgRef = ref<InstanceType<typeof SalesmanTargetConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -194,5 +200,6 @@ function onAddClick() {
   else if (activeConfig.value === 'bkk') bkkRef.value?.openAddDialog()
   else if (activeConfig.value === 'apc') apcRef.value?.openAddDialog()
   else if (activeConfig.value === 'cd') cdRef.value?.openAddDialog()
+  else if (activeConfig.value === 'stg') stgRef.value?.openAddDialog()
 }
 </script>

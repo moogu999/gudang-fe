@@ -187,6 +187,11 @@ const mainMenu = [
         route: '/sales-orders',
       },
       {
+        label: 'Salesman Targets',
+        labelKey: 'navigation.salesmanTargets',
+        route: '/salesman-targets',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',

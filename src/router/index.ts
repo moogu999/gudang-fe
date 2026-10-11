@@ -151,6 +151,36 @@ const router = createRouter({
           },
         },
         {
+          path: 'salesman-targets',
+          name: 'SalesmanTargets',
+          component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_READ,
+            titleKey: 'navigation.salesmanTargets',
+          },
+        },
+        {
+          path: 'salesman-targets/create',
+          name: 'SalesmanTargetCreate',
+          component: () => import('@/views/salesman-targets/SalesmanTargetCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_WRITE,
+            titleKey: 'navigation.salesmanTargets',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'salesman-targets/:id/edit',
+          name: 'SalesmanTargetEdit',
+          component: () => import('@/views/salesman-targets/SalesmanTargetEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALESMAN_TARGET_READ,
+            titleKey: 'navigation.salesmanTargets',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'device-binding',
           name: 'DeviceBinding',
           component: () => import('@/views/device-binding/DeviceBindingView.vue'),
@@ -1126,6 +1156,10 @@ const router = createRouter({
         {
           path: 'cash-deposit-configs',
           redirect: { path: '/configs', query: { tab: 'cd' } },
+        },
+        {
+          path: 'salesman-target-configs',
+          redirect: { path: '/configs', query: { tab: 'stg' } },
         },
         {
           path: 'bank-settlements',

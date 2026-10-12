@@ -22,7 +22,7 @@
             <template #body="{ data }">
               <RouterLink
                 v-if="APPROVAL_MODULES[data.moduleKey]?.link"
-                :to="APPROVAL_MODULES[data.moduleKey]!.link!(data.referenceId)"
+                :to="APPROVAL_MODULES[data.moduleKey]!.link!(data.referenceId, data.id)"
                 class="text-primary-600 hover:underline"
               >
                 {{ t('myApprovals.review', { id: data.referenceId }) }}

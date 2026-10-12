@@ -5395,6 +5395,7 @@ export default {
       pending: 'Menunggu',
       approved: 'Disetujui',
       rejected: 'Ditolak',
+      skipped: 'Tidak dicapai',
     },
     actions: {
       submit: 'Ajukan Persetujuan',
@@ -5410,6 +5411,7 @@ export default {
     },
     timeline: {
       none: 'Tidak ada pengajuan persetujuan untuk dokumen ini.',
+      loadFailed: 'Riwayat persetujuan gagal dimuat.',
       approverPool: 'Penyetuju: {names}',
       actedAt: 'Ditindaklanjuti pada {date}',
     },
@@ -5420,6 +5422,14 @@ export default {
       cancelled: 'Pengajuan dibatalkan.',
     },
     modules: {
+      sales_order: 'Pesanan Penjualan',
+      purchase_order: 'Purchase Order',
+      goods_receipt: 'Penerimaan Barang',
+      ap_invoice: 'Faktur Pembelian',
+      ap_payment: 'Pembayaran Hutang',
+      credit_debit_note: 'Nota Kredit/Debit',
+      cash_deposit: 'Setoran Kas',
+      accounting_period_reopen: 'Pembukaan Ulang Periode Akuntansi',
       device_binding: 'Device Binding',
     },
   },

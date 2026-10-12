@@ -5375,6 +5375,7 @@ export default {
       pending: 'Pending',
       approved: 'Approved',
       rejected: 'Rejected',
+      skipped: 'Not reached',
     },
     actions: {
       submit: 'Submit for Approval',
@@ -5390,6 +5391,7 @@ export default {
     },
     timeline: {
       none: 'No approval request for this document.',
+      loadFailed: 'Could not load the approval history.',
       approverPool: 'Approver(s): {names}',
       actedAt: 'Acted at {date}',
     },
@@ -5400,6 +5402,14 @@ export default {
       cancelled: 'Request cancelled.',
     },
     modules: {
+      sales_order: 'Sales Order',
+      purchase_order: 'Purchase Order',
+      goods_receipt: 'Goods Receipt',
+      ap_invoice: 'AP Invoice',
+      ap_payment: 'AP Payment',
+      credit_debit_note: 'Credit/Debit Note',
+      cash_deposit: 'Cash Deposit',
+      accounting_period_reopen: 'Accounting Period Reopen',
       device_binding: 'Device Binding',
     },
   },

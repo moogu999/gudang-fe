@@ -82,43 +82,36 @@ import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindi
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
 import { CacheService, commonErrorToast, commonSuccessToast } from '@/services'
+import { CONFIG_TABS } from './configTabs'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const { canRead: canReadSO, canWrite: canWriteSO } = usePermissions('/sales-order-configs')
-const { canRead: canReadBO, canWrite: canWriteBO } = usePermissions('/booking-order-configs')
-const { canRead: canReadPO, canWrite: canWritePO } = usePermissions('/purchase-order-configs')
-const { canRead: canReadGR, canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
-const { canRead: canReadAP, canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
-const { canRead: canReadCDN, canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
-const { canRead: canReadBKK, canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
-const { canRead: canReadAPC, canWrite: canWriteAPC } = usePermissions('/accounting-periods')
-const { canRead: canReadCD, canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
-const { canRead: canReadSTG, canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
-const { canRead: canReadMSL, canWrite: canWriteMSL } = usePermissions('/must-sell-list-configs')
-const { canRead: canReadDB } = usePermissions('/device-binding-configs')
+const { hasPermission } = usePermissions()
 
-const configOptions = computed(() => {
-  const options: { label: string; value: string }[] = []
-  if (canReadSO.value) options.push({ label: t('navigation.salesOrderConfigs'), value: 'so' })
-  if (canReadBO.value) options.push({ label: t('navigation.bookingOrderConfigs'), value: 'bo' })
-  if (canReadPO.value) options.push({ label: t('navigation.purchaseOrderConfigs'), value: 'po' })
-  if (canReadGR.value) options.push({ label: t('navigation.goodsReceiptConfigs'), value: 'gr' })
-  if (canReadAP.value) options.push({ label: t('navigation.apInvoiceConfigs'), value: 'ap' })
-  if (canReadCDN.value)
-    options.push({ label: t('navigation.creditDebitNoteConfigs'), value: 'cdn' })
-  if (canReadBKK.value) options.push({ label: t('navigation.apPaymentConfigs'), value: 'bkk' })
-  if (canReadAPC.value)
-    options.push({ label: t('navigation.accountingPeriodConfigs'), value: 'apc' })
-  if (canReadCD.value) options.push({ label: t('navigation.cashDepositConfigs'), value: 'cd' })
-  if (canReadSTG.value) options.push({ label: t('navigation.salesmanTargetConfigs'), value: 'stg' })
-  if (canReadMSL.value) options.push({ label: t('navigation.mustSellListConfigs'), value: 'msl' })
-  if (canReadDB.value)
-    options.push({ label: t('navigation.deviceBindingConfigs'), value: 'device-binding' })
-  return options
-})
+const { canWrite: canWriteSO } = usePermissions('/sales-order-configs')
+const { canWrite: canWriteBO } = usePermissions('/booking-order-configs')
+const { canWrite: canWritePO } = usePermissions('/purchase-order-configs')
+const { canWrite: canWriteGR } = usePermissions('/goods-receipt-configs')
+const { canWrite: canWriteAP } = usePermissions('/ap-invoice-configs')
+const { canWrite: canWriteCDN } = usePermissions('/credit-debit-note-configs')
+const { canWrite: canWriteBKK } = usePermissions('/ap-payment-configs')
+const { canWrite: canWriteAPC } = usePermissions('/accounting-periods')
+const { canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
+const { canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
+const { canWrite: canWriteMSL } = usePermissions('/must-sell-list-configs')
+
+// Tabs and their read permissions come from one shared list (`CONFIG_TABS`), the same
+// one `menu.ts` reads to build the Config entry's `permissionsAny` — see item B of
+// permission-gating-hardening-fe.md. Adding a tab means editing that list once, not
+// this computed and the menu separately.
+const configOptions = computed(() =>
+  CONFIG_TABS.filter((tab) => hasPermission(tab.readPermission)).map((tab) => ({
+    label: t(tab.labelKey),
+    value: tab.value,
+  })),
+)
 
 function resolveInitialTab(): string | null {
   const tab = route.query.tab as string | undefined
@@ -148,7 +141,6 @@ const canWriteActive = computed(() => {
   return false
 })
 
-const { hasPermission } = usePermissions()
 const canClearCache = computed(() => hasPermission(PERMISSIONS.CACHE_CLEAR))
 
 const showToolbar = computed(

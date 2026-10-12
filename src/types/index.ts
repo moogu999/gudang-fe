@@ -544,12 +544,8 @@ export type { PinnedUomLevel, PinnedUom } from './pinnedUom.type'
 // Stock Movement types
 export type { StockMovement, BalanceSnapshot, StockMovementFilters } from './stockMovement.type'
 
-// Sales Order Type types
-export type {
-  SalesOrderType,
-  CreateSalesOrderTypeDto,
-  UpdateSalesOrderTypeDto,
-} from './salesOrderType.type'
+// Sales Order Type types (read-only — see salesOrderTypes.service.ts)
+export type { SalesOrderType } from './salesOrderType.type'
 export { SALES_ORDER_TYPE_CODE_SALES, SALES_ORDER_TYPE_CODE_RETURN } from './salesOrderType.type'
 
 // Return Delivery Order types

@@ -860,6 +860,11 @@ async function loadGoodsReceipt() {
         () => null,
       )
       if (po) linkedPurchaseOrderNo.value = po.no
+      // An approver may read the receipt but not the supplier master: name the supplier
+      // from the lite one the PO embeds rather than leaving the field blank.
+      if (!initialSupplier.value && po?.supplier) {
+        initialSupplier.value = { ...po.supplier } as Supplier
+      }
       await hydrateFromPurchaseOrder(receipt.purchaseOrderHeaderId, receipt.details)
     } else {
       details.value = receipt.details.map((d) => ({

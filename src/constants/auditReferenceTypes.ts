@@ -120,6 +120,14 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     label: 'Must Sell List Config',
     labelKey: 'auditTrails.references.must_sell_list_config',
   },
+  survey: {
+    label: 'Survey',
+    labelKey: 'auditTrails.references.survey',
+  },
+  survey_config: {
+    label: 'Survey Config',
+    labelKey: 'auditTrails.references.survey_config',
+  },
   display_type: {
     label: 'Display Type',
     labelKey: 'auditTrails.references.display_type',

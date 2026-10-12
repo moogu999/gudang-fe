@@ -580,6 +580,7 @@ export type {
 export * from './salesTeam.type'
 export * from './salesmanTarget.type'
 export * from './mustSellList.type'
+export * from './survey.type'
 export * from './deviceBinding.type'
 export * from './reason.type'
 export * from './competitorBrand.type'

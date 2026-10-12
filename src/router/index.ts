@@ -237,6 +237,36 @@ const router = createRouter({
           },
         },
         {
+          path: 'surveys',
+          name: 'Surveys',
+          component: () => import('@/views/surveys/SurveysView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_READ,
+            titleKey: 'navigation.surveys',
+          },
+        },
+        {
+          path: 'surveys/create',
+          name: 'SurveyCreate',
+          component: () => import('@/views/surveys/SurveyCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_WRITE,
+            titleKey: 'navigation.surveys',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'surveys/:id/edit',
+          name: 'SurveyEdit',
+          component: () => import('@/views/surveys/SurveyEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_READ,
+            titleKey: 'navigation.surveys',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'display-types',
           name: 'DisplayTypes',
           component: () => import('@/views/display-types/DisplayTypesView.vue'),
@@ -1371,6 +1401,10 @@ const router = createRouter({
           path: 'must-sell-list-configs',
           redirect: { path: '/configs', query: { tab: 'msl' } },
           meta: { requiredWritePermission: PERMISSIONS.MSL_CONFIG_WRITE },
+        },
+        {
+          path: 'survey-configs',
+          redirect: { path: '/configs', query: { tab: 'survey' } },
         },
         {
           path: 'bank-settlements',

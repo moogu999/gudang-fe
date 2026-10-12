@@ -218,6 +218,11 @@ const mainMenu = [
         route: '/display-programs',
       },
       {
+        label: 'Surveys',
+        labelKey: 'navigation.surveys',
+        route: '/surveys',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',

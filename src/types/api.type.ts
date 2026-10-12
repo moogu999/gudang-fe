@@ -12,7 +12,16 @@ export type Meta = {
   hasMore?: boolean
 }
 
-export type ErrorResponse = {
+/** Where in a submitted document a coded error points, on the endpoints that say. */
+export type ErrorDetails = {
+  field?: string
+  /** Zero-based position of the offending item in its array. */
+  index?: number
+  questionId?: number
+  productIds?: number[]
+}
+
+export type ErrorResponse = ErrorDetails & {
   message: string
   /** A stable machine-readable reason, on the endpoints that send one. */
   code?: string
@@ -28,6 +37,7 @@ export class ApiError extends Error {
     message: string,
     public readonly status?: number,
     public readonly code?: string,
+    public readonly details?: ErrorDetails,
   ) {
     super(message)
     this.name = 'ApiError'

@@ -168,6 +168,11 @@ export const PERMISSIONS = {
   // Read and edit branch-owned data (sales orders first) of every branch, not only the
   // user's own. Enforced by the backend; no screen gates on it.
   BRANCH_SCOPE_ALL: 161,
+  SURVEY_READ: 162,
+  SURVEY_WRITE: 163,
+  SURVEY_PUBLISH: 164,
+  SURVEY_CONFIG_READ: 165,
+  SURVEY_CONFIG_WRITE: 166,
 } as const
 
 /**

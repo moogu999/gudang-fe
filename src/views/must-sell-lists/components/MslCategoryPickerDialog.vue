@@ -22,10 +22,17 @@
       <p v-if="categoryOptionId" class="text-sm text-stone-600" data-testid="category-count">
         <i v-if="loading" class="pi pi-spinner pi-spin mr-1" />
         <template v-else>{{
-          t('mustSellLists.products.categoryCount', { n: products.length })
+          t(
+            principalOptionId
+              ? 'mustSellLists.products.categoryCount'
+              : 'mustSellLists.products.categoryCountAll',
+            { n: products.length },
+          )
         }}</template>
       </p>
-      <small class="text-surface-500">{{ t('mustSellLists.products.categoryHelp') }}</small>
+      <small v-if="principalOptionId" class="text-surface-500">{{
+        t('mustSellLists.products.categoryHelp')
+      }}</small>
     </div>
 
     <template #footer>
@@ -50,10 +57,19 @@ import Select from 'primevue/select'
 import { useToast } from 'primevue/usetoast'
 import { MustSellListsService } from '@/services'
 import { commonErrorToast } from '@/services/toast'
+import type { Base } from '@/types/api.type'
 import type { MslProductOption } from '@/types/mustSellList.type'
+import type { SurveyProductOptionQuery } from '@/types/survey.type'
 import { NO_LABEL, loadLabelFilterOptions } from '../../sales-teams/salesTeamHelpers'
 
-const props = defineProps<{ principalOptionId: number; toastGroup?: string }>()
+const props = defineProps<{
+  principalOptionId?: number
+  toastGroup?: string
+  /** Where the products come from; the must sell list endpoint when absent. */
+  fetcher?: ProductFetcher
+}>()
+
+type ProductFetcher = (query: SurveyProductOptionQuery) => Promise<Base<MslProductOption>>
 
 const emit = defineEmits<{ select: [products: MslProductOption[]]; close: [] }>()
 
@@ -72,7 +88,11 @@ async function loadProducts() {
   loading.value = true
   try {
     // Every product of the category that carries the principal, up to the API's cap.
-    const res = await MustSellListsService.productOptions({
+    const fetchProducts: ProductFetcher =
+      props.fetcher ??
+      ((q) =>
+        MustSellListsService.productOptions({ ...q, principalOptionId: props.principalOptionId! }))
+    const res = await fetchProducts({
       principalOptionId: props.principalOptionId,
       categoryOptionId: category,
       all: true,

@@ -93,14 +93,20 @@ import Tag from 'primevue/tag'
 import { useToast } from 'primevue/usetoast'
 import { MustSellListsService } from '@/services'
 import { commonErrorToast } from '@/services/toast'
+import type { Base } from '@/types/api.type'
 import type { MslProductOption } from '@/types/mustSellList.type'
+import type { SurveyProductOptionQuery } from '@/types/survey.type'
+
+type ProductFetcher = (query: SurveyProductOptionQuery) => Promise<Base<MslProductOption>>
 
 const props = defineProps<{
-  /** Only products carrying this principal can be listed. */
-  principalOptionId: number
+  /** Only products carrying this principal can be listed; every product when absent. */
+  principalOptionId?: number
   /** Products already in the list, shown as added and not selectable. */
   excludeIds: number[]
   toastGroup?: string
+  /** Where the products come from; the must sell list endpoint when absent. */
+  fetcher?: ProductFetcher
 }>()
 
 const emit = defineEmits<{ select: [products: MslProductOption[]]; close: [] }>()
@@ -123,7 +129,11 @@ async function fetchPage(p: number) {
   loading.value = true
   page.value = p
   try {
-    const res = await MustSellListsService.productOptions({
+    const fetchProducts: ProductFetcher =
+      props.fetcher ??
+      ((q) =>
+        MustSellListsService.productOptions({ ...q, principalOptionId: props.principalOptionId! }))
+    const res = await fetchProducts({
       principalOptionId: props.principalOptionId,
       q: search.value.trim() || undefined,
       limit: pageSize,

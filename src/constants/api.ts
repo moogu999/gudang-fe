@@ -183,6 +183,22 @@ export const API_ENDPOINTS = {
   MUST_SELL_LIST_CONFIG_MY_BRANCH: '/v1/must-sell-list-configs/my-branch',
   MUST_SELL_LIST_CONFIG_BY_BRANCH: (branchId: number) => `/v1/must-sell-list-configs/${branchId}`,
 
+  // Survey endpoints
+  SURVEYS: '/v1/surveys',
+  SURVEY_BY_ID: (id: number) => `/v1/surveys/${id}`,
+  SURVEY_PUBLISH: (id: number) => `/v1/surveys/${id}/publish`,
+  SURVEY_UNPUBLISH: (id: number) => `/v1/surveys/${id}/unpublish`,
+  SURVEY_END_EARLY: (id: number) => `/v1/surveys/${id}/end-early`,
+  SURVEY_DUPLICATE: (id: number) => `/v1/surveys/${id}/duplicate`,
+  SURVEYS_PREVIEW: '/v1/surveys/preview',
+  SURVEYS_CUSTOMERS: '/v1/surveys/customers',
+  SURVEYS_PRODUCT_OPTIONS: '/v1/surveys/product-options',
+  SURVEYS_COMPETITOR_GRID_PREVIEW: '/v1/surveys/competitor-grid-preview',
+  SURVEYS_SALES_TEAM_OPTIONS: '/v1/surveys/sales-team-options',
+  SURVEY_CONFIGS: '/v1/survey-configs',
+  SURVEY_CONFIG_MY_BRANCH: '/v1/survey-configs/my-branch',
+  SURVEY_CONFIG_BY_BRANCH: (branchId: number) => `/v1/survey-configs/${branchId}`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',

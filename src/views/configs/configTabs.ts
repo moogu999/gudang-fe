@@ -71,6 +71,11 @@ export const CONFIG_TABS: ConfigTabDef[] = [
     readPermission: PERMISSIONS.MSL_CONFIG_READ,
   },
   {
+    value: 'survey',
+    labelKey: 'navigation.surveyConfigs',
+    readPermission: PERMISSIONS.SURVEY_CONFIG_READ,
+  },
+  {
     value: 'device-binding',
     labelKey: 'navigation.deviceBindingConfigs',
     readPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,

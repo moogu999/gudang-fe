@@ -49,6 +49,7 @@
     <CashDepositConfigsView v-if="activeConfig === 'cd'" ref="cdRef" :embedded="true" />
     <SalesmanTargetConfigsView v-if="activeConfig === 'stg'" ref="stgRef" :embedded="true" />
     <MustSellListConfigsView v-if="activeConfig === 'msl'" ref="mslRef" :embedded="true" />
+    <SurveyConfigsView v-if="activeConfig === 'survey'" ref="surveyRef" :embedded="true" />
     <DeviceBindingConfigsView
       v-if="activeConfig === 'device-binding'"
       :toast-group="overlayGroup"
@@ -78,6 +79,7 @@ import AccountingPeriodConfigsView from '@/views/accounting-period-configs/Accou
 import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConfigsView.vue'
 import SalesmanTargetConfigsView from '@/views/salesman-target-configs/SalesmanTargetConfigsView.vue'
 import MustSellListConfigsView from '@/views/must-sell-list-configs/MustSellListConfigsView.vue'
+import SurveyConfigsView from '@/views/survey-configs/SurveyConfigsView.vue'
 import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindingConfigsView.vue'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
@@ -101,6 +103,7 @@ const { canWrite: canWriteAPC } = usePermissions('/accounting-periods')
 const { canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
 const { canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
 const { canWrite: canWriteMSL } = usePermissions('/must-sell-list-configs')
+const { canWrite: canWriteSurvey } = usePermissions('/survey-configs')
 
 // Tabs and their read permissions come from one shared list (`CONFIG_TABS`), the same
 // one `menu.ts` reads to build the Config entry's `permissionsAny` — see item B of
@@ -137,6 +140,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'cd') return canWriteCD.value
   if (activeConfig.value === 'stg') return canWriteSTG.value
   if (activeConfig.value === 'msl') return canWriteMSL.value
+  if (activeConfig.value === 'survey') return canWriteSurvey.value
   // Device binding is one settings form per company, saved in place: nothing to add.
   return false
 })
@@ -187,6 +191,7 @@ const apcRef = ref<InstanceType<typeof AccountingPeriodConfigsView> | null>(null
 const cdRef = ref<InstanceType<typeof CashDepositConfigsView> | null>(null)
 const stgRef = ref<InstanceType<typeof SalesmanTargetConfigsView> | null>(null)
 const mslRef = ref<InstanceType<typeof MustSellListConfigsView> | null>(null)
+const surveyRef = ref<InstanceType<typeof SurveyConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -200,5 +205,6 @@ function onAddClick() {
   else if (activeConfig.value === 'cd') cdRef.value?.openAddDialog()
   else if (activeConfig.value === 'stg') stgRef.value?.openAddDialog()
   else if (activeConfig.value === 'msl') mslRef.value?.openAddDialog()
+  else if (activeConfig.value === 'survey') surveyRef.value?.openAddDialog()
 }
 </script>

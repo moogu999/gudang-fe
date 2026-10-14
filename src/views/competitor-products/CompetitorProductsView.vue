@@ -119,6 +119,9 @@
                   <Tag severity="info" class="max-w-48">
                     <i class="pi pi-star-fill mr-1 text-xs" />
                     <span class="truncate">{{ data['primaryComparison'].name }}</span>
+                    <span v-if="data['primaryComparison'].price !== undefined" class="ml-1 shrink-0"
+                      >· {{ formatPrice(data['primaryComparison'].price, 2) }}</span
+                    >
                   </Tag>
                   <Tag
                     v-if="data['otherComparisonCount'] > 0"
@@ -313,8 +316,10 @@ function categoryText(item: Item): string {
   return item.principal ? `${item.principal.name} › ${item.category.name}` : item.category.name
 }
 
-function formatPrice(value: string): string {
-  return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Number(value))
+function formatPrice(value: string, maxFractionDigits = 0): string {
+  return new Intl.NumberFormat('id-ID', { maximumFractionDigits: maxFractionDigits }).format(
+    Number(value),
+  )
 }
 
 // None sortable: `/v1/competitor-products` orders by code and reads no sort parameter.

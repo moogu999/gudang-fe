@@ -47,6 +47,21 @@ describe('CompetitorProductsService', () => {
     await CompetitorProductsService.update(5, payload)
     expect(put).toHaveBeenCalledWith('/v1/competitor-products/5', payload)
   })
+
+  it('sends the comparison price through unchanged', async () => {
+    const payload = {
+      name: 'X',
+      brandId: 1,
+      categoryOptionId: 2,
+      uomGroupId: 3,
+      comparisons: [
+        { productId: 7, isPrimary: true, price: '3100.00' },
+        { productId: 8, isPrimary: false },
+      ],
+    }
+    await CompetitorProductsService.update(5, payload)
+    expect(put).toHaveBeenCalledWith('/v1/competitor-products/5', payload)
+  })
 })
 
 describe('CompetitorBrandsService', () => {

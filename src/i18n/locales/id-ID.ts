@@ -1250,6 +1250,7 @@ export default {
       search: 'Cari kode atau nama',
       columnCode: 'Kode',
       columnName: 'Nama',
+      columnPrice: 'Harga kita / satuan dasar',
       columnPrincipal: 'Principal',
       columnCategory: 'Kategori',
     },
@@ -1310,6 +1311,7 @@ export default {
       categoryRequired: 'Kategori wajib dipilih',
       uomGroupRequired: 'Grup satuan wajib dipilih',
       priceInvalid: 'Harga referensi minimal nol',
+      comparisonPriceInvalid: 'Harga pembanding harus nol atau lebih',
     },
     errors: {
       codeDuplicate: 'Produk kompetitor dengan kode ini sudah ada',
@@ -4473,6 +4475,7 @@ export default {
         product: 'Produk kompetitor',
         brand: 'Merek',
         comparison: 'Produk pembanding kita',
+        comparisonPrice: 'Harga kita',
         include: 'Sertakan',
       },
       pickCategories: 'Pilih minimal satu kategori.',

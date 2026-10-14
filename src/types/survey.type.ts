@@ -100,6 +100,8 @@ export interface SurveyGridProduct {
   name: string
   brandName: string
   comparisonProduct?: SurveyRef
+  /** Our live price for the comparison product, decimal string, omitted when unset. */
+  comparisonPrice?: string
   /** Set by the live preview only. */
   excluded?: boolean
 }

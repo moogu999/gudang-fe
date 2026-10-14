@@ -1247,6 +1247,7 @@ export default {
       search: 'Search code or name',
       columnCode: 'Code',
       columnName: 'Name',
+      columnPrice: 'Our price / base unit',
       columnPrincipal: 'Principal',
       columnCategory: 'Category',
     },
@@ -1307,6 +1308,7 @@ export default {
       categoryRequired: 'Category is required',
       uomGroupRequired: 'UOM group is required',
       priceInvalid: 'Reference price must be zero or more',
+      comparisonPriceInvalid: 'Comparison price must be zero or more',
     },
     errors: {
       codeDuplicate: 'A competitor product with this code already exists',
@@ -4466,6 +4468,7 @@ export default {
         product: 'Competitor product',
         brand: 'Brand',
         comparison: 'Our comparison product',
+        comparisonPrice: 'Our price',
         include: 'Include',
       },
       pickCategories: 'Pick at least one category.',

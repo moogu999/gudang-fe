@@ -104,6 +104,7 @@ export interface SurveyGridConfig {
 export interface SurveyGridProduct {
   competitorProductId: number; name: string; brandName: string
   comparisonProduct?: { id: number; name: string }
+  comparisonPrice?: string                // added 2026-10-14, live, shown in CompetitorGridEditor
   excluded?: boolean                    // preview endpoint only
 }
 export interface SurveyQuestion {

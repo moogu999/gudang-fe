@@ -312,3 +312,42 @@ competitorProducts.errors.{codeDuplicate,nameDuplicate,brandInactive,primaryRequ
 - **`InfiniteSelect`** gained a `#footer` slot and an exposed `refresh()`; the form remounts the brand picker (key bump) after inline create instead.
 - **Create-from-recommendation** reuses `CompetitorProductForm` through a `recommendation` prop; merge/reject/create actions all gate on product WRITE (149), as the backend does.
 - Shared `buildFileUrl` lives in `src/utils/fileUrl.ts`.
+
+## 10. Change 2026-10-14: "our price" per comparison (free input)
+
+**Status:** IMPLEMENTED 2026-10-14 (type-check, lint, unit green; live E2E not run). Decisions are in master plan §11. BE contract is in BE doc §10.
+
+### Types
+- `CompetitorProductComparison`: add `price?: string` and `baseUomName?: string`.
+- Comparison input: add `price?: string`.
+- `primaryComparison`: add `price?: string`.
+- `survey.type.ts` grid product: add `comparisonPrice?: string`.
+- Absent means empty. Never compare against `null`.
+
+### Form (`CompetitorProductForm.vue`)
+- New column in the comparison DataTable, between Name and the remove button. The header is `competitorProducts.comparisons.columnPrice`.
+  - Editable: `InputNumber` per row, with the same decimal props as `referencePrice` and `min=0`.
+  - Readonly: the formatted value, or `—`.
+  - Suffix: `/ {baseUomName}` when present. Rows added from the picker show no suffix until saved, because the picker doesn't return the UOM.
+- Keep the row's `price` when calling `setPrimary`, `onReorder` and `onPicked`.
+- Store the price as `number | null` locally and convert it at the edges, as `referencePrice` does.
+- Validation: a negative price on any row → `errors.comparisons = validation.priceInvalid`.
+- Payload: `comparisons: [{ productId, isPrimary, ...(price != null ? { price: price.toFixed(2) } : {}) }]`.
+- The create-from-recommendation prefill sets no comparison prices.
+
+### List (`CompetitorProductsView.vue`)
+The primary chip shows `· {formatted price}` after the name when `primaryComparison.price` is set. Use the same formatter as the reference-price column.
+
+### Survey editor (`CompetitorGridEditor.vue`)
+New column `surveys.grid.columns.comparisonPrice`: the formatted `comparisonPrice`, or `—`. `SurveyPhonePreviewDialog` is unchanged.
+
+### i18n (en-US + id-ID, same change)
+- `competitorProducts.comparisons.columnPrice`: "Our price / base unit" / "Harga kita / satuan dasar"
+- `surveys.grid.columns.comparisonPrice`: "Our price" / "Harga kita"
+- Review `competitorProducts.comparisons.subtitle` in case it implies there is no price.
+
+### Tests
+- `competitorProducts.service.spec.ts`: the payload round-trips `comparisons[].price`.
+- Adjust the CompetitorGridEditor spec if one exists.
+- Run `type-check`, `lint` and `test:unit`.
+- Live E2E: master plan §9 step 8, run only when the user says go. Type into InputNumber with `pressSequentially`.

@@ -22,6 +22,9 @@ export interface CompetitorProductComparison {
   categoryName?: string
   principalName?: string
   isPrimary: boolean
+  /** Our price per base unit of the product, decimal string, omitted when unset. */
+  price?: string
+  baseUomName?: string
 }
 
 export interface CompetitorProductListItem {
@@ -35,7 +38,7 @@ export interface CompetitorProductListItem {
   uomGroup: { id: number; name: string; baseUomName: string }
   /** Decimal string, omitted when unset. */
   referencePrice?: string
-  primaryComparison?: { productId: number; code: string; name: string }
+  primaryComparison?: { productId: number; code: string; name: string; price?: string }
   otherComparisonCount: number
   thumbnailUrl?: string
 }
@@ -62,7 +65,7 @@ export interface CompetitorProductPayload {
   uomGroupId: number
   referencePrice?: string
   isActive?: boolean
-  comparisons: { productId: number; isPrimary: boolean }[]
+  comparisons: { productId: number; isPrimary: boolean; price?: string }[]
 }
 
 export interface CompetitorProductListQuery {

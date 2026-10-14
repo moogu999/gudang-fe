@@ -72,6 +72,15 @@
         <Column :header="t('surveys.grid.columns.comparison')">
           <template #body="{ data }">{{ data.comparisonProduct?.name ?? '—' }}</template>
         </Column>
+        <Column :header="t('surveys.grid.columns.comparisonPrice')" class="text-right">
+          <template #body="{ data }">{{
+            data.comparisonPrice !== undefined
+              ? new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 }).format(
+                  Number(data.comparisonPrice),
+                )
+              : '—'
+          }}</template>
+        </Column>
         <Column v-if="!frozen" :header="t('surveys.grid.columns.include')" style="width: 7rem">
           <template #body="{ data }">
             <ToggleSwitch

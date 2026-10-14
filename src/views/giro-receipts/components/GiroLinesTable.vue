@@ -68,6 +68,7 @@
               option-value="id"
               :fetch-fn="(q) => CustomersService.list(q)"
               :custom-filters="customerFilters"
+              :disabled="!branchId"
               :initial-option="data.customer"
               :placeholder="t('giroReceipts.fields.selectCustomer')"
               show-clear
@@ -229,6 +230,8 @@ interface Props {
   readonly?: boolean
   /** VIEW mode: add a per-giro lifecycle column. */
   showStatus?: boolean
+  /** The batch's branch: customers are limited to it. */
+  branchId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), { readonly: false, showStatus: false })
@@ -239,9 +242,14 @@ const { t, locale } = useI18n()
 
 // Only customers flagged "Pays with Giro" can hand one over. `/gen/v1/customers` has no
 // FilterMap, so the column name passes through to the generic handler as-is.
-const customerFilters = [
+const customerFilters = computed(() => [
   { filterBy: 'paysWithGiro', filterOperator: FilterOperator.EQUAL, filterValue: 'true' },
-]
+  {
+    filterBy: 'branch_id',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: props.branchId ?? 0,
+  },
+])
 
 // "Required" errors stay hidden until the first submit attempt so a fresh row isn't born red.
 // Duplicates and a due date before the giro date show at once.

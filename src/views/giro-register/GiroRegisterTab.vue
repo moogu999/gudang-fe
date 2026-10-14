@@ -46,6 +46,7 @@
             option-label="name"
             option-value="id"
             :fetch-fn="(q) => CustomersService.list(q)"
+            :custom-filters="customerFilters"
             :placeholder="t('giroRegister.filters.allCustomers')"
             show-clear
             sort-by="name"
@@ -339,8 +340,24 @@ function setBucket(next: GiroBucket) {
   reload()
 }
 
+// A branch narrows the customer list; without one the user's own branches apply.
+const customerFilters = computed(() =>
+  branchId.value
+    ? [
+        {
+          filterBy: 'branch_id',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: branchId.value,
+        },
+      ]
+    : [],
+)
+
 function onBranchChange(value: unknown) {
-  branchId.value = typeof value === 'number' ? value : undefined
+  const next = typeof value === 'number' ? value : undefined
+  // The chosen customer may belong to another branch.
+  if (next !== branchId.value) customerId.value = undefined
+  branchId.value = next
   reload()
 }
 

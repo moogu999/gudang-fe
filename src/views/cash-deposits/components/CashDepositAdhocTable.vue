@@ -26,6 +26,8 @@
               option-label="name"
               option-value="id"
               :fetch-fn="(q) => CustomersService.list(q)"
+              :custom-filters="customerFilters"
+              :disabled="!branchId"
               :initial-option="data.customer"
               :placeholder="t('cashDeposits.adhoc.selectCustomer')"
               show-clear
@@ -156,6 +158,8 @@ import {
 interface Props {
   modelValue: AdhocRow[]
   readonly?: boolean
+  /** The deposit's branch: customers are limited to it. */
+  branchId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), { readonly: false })
@@ -166,6 +170,14 @@ const { t, locale } = useI18n()
 
 // Errors stay hidden until the first submit attempt so a fresh row isn't born red.
 const showErrors = ref(false)
+
+const customerFilters = computed(() => [
+  {
+    filterBy: 'branch_id',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: props.branchId ?? 0,
+  },
+])
 
 const categoryFilters = [
   { filterBy: 'is_active', filterOperator: FilterOperator.EQUAL, filterValue: 'true' },

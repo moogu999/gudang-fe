@@ -27,6 +27,9 @@ export default {
       unsavedTitle: 'Unsaved Changes',
       unsavedMessage: 'You have unsaved changes. Are you sure you want to leave?',
     },
+    errors: {
+      customerBranchMismatch: 'The customer belongs to another branch',
+    },
     labels: {
       actions: 'Actions',
       createdAt: 'Created At',
@@ -1458,6 +1461,7 @@ export default {
       operational: 'Operating Hours',
     },
     fields: {
+      branch: 'Branch',
       code: 'Customer ID',
       name: 'Customer Name',
       ownerName: 'Owner Name',
@@ -1512,6 +1516,9 @@ export default {
       assignedOnSave: 'Assigned on save',
     },
     labels: {
+      selectBranch: 'Select branch',
+      allBranches: 'All my branches',
+      selectBranchFirst: 'Select a branch first',
       selectCurrency: 'Select Currency',
       selectCountry: 'Select Country',
       selectProvince: 'Select Province',
@@ -1555,6 +1562,7 @@ export default {
       days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     },
     validation: {
+      branchRequired: 'Branch is required',
       codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
       outletTypeRequired: 'Customer type is required.',
@@ -1569,6 +1577,11 @@ export default {
       checkSections: 'Check these tabs: {sections}.',
     },
     messages: {
+      branchNotAllowed: 'You are not assigned to this branch',
+      branchChange: "A customer's branch can't be changed",
+      partnerBranchMismatch:
+        'Sell-to, deliver-to, invoice-to and collect-to must be customers of the same branch',
+      codeDuplicate: 'This code is already used',
       customerCreated: 'Customer is created.',
       customerUpdated: 'Customer is updated.',
       customerNotFound: 'Customer not found.',
@@ -2110,6 +2123,9 @@ export default {
       paymentInfo: 'Payment & Financial',
     },
 
+    labels: {
+      selectSalesmanFirst: 'Select a salesman first',
+    },
     fields: {
       no: 'Order Number',
       orderDate: 'Order Date',
@@ -4404,7 +4420,7 @@ export default {
       title: 'Reach',
       customers: 'customers',
       salesmen: 'salesmen',
-      help: 'The survey appears when both the customer and the salesman are in scope. The customer count is across all branches.',
+      help: 'The survey appears when both the customer and the salesman are in scope. The customer count covers this branch only.',
       view: 'View customers',
     },
     questions: {
@@ -4723,7 +4739,7 @@ export default {
         status: 'Status',
       },
       footnote:
-        'Customers = active customers currently matching the scope, across all branches. Status follows the period automatically.',
+        'Customers = active customers currently matching the scope in this branch. Status follows the period automatically.',
     },
     form: {
       code: 'Code',

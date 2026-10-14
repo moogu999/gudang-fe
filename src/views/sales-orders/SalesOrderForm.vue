@@ -8,6 +8,7 @@
 
   <Form
     v-else
+    ref="formRef"
     v-slot="$form"
     :initial-values="initialValues"
     :resolver="resolver"
@@ -243,8 +244,10 @@
               option-label="name"
               option-value="id"
               :fetch-fn="(query) => CustomersService.list(query)"
+              :custom-filters="customerFilters"
               :initial-option="initialCustomer"
-              :disabled="mode === DialogMode.VIEW"
+              :disabled="mode === DialogMode.VIEW || !salesmanBranchId"
+              :placeholder="salesmanBranchId ? '' : t('salesOrders.labels.selectSalesmanFirst')"
               sort-by="name"
               sort-operator="asc"
               class="w-full"
@@ -506,6 +509,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { SalesOrderConfig, SalesOrderStatus, SalesOrderType, InvoiceListItem } from '@/types'
 import type {
   SalesOrderDetailRow,
@@ -676,7 +680,7 @@ async function onSourceInvoiceSelect(invoice: InvoiceListItem) {
         }
       })
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isResolving.value = false
   }
@@ -684,6 +688,21 @@ async function onSourceInvoiceSelect(invoice: InvoiceListItem) {
 
 // Tracked for live resolve trigger (ADD mode only)
 const currentCustomerId = ref<number | undefined>()
+const formRef = ref()
+
+// The customer must belong to the salesman's branch, so the picker follows it.
+const salesmanBranchId = ref<number | undefined>()
+const customerFilters = computed(() =>
+  salesmanBranchId.value
+    ? [
+        {
+          filterBy: 'branch_id',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: salesmanBranchId.value,
+        },
+      ]
+    : [],
+)
 const currentEmployeeId = ref<number | undefined>()
 const currentOrderDate = ref<Date>(new Date())
 const currentPriceDate = ref<Date | undefined>()
@@ -1112,6 +1131,14 @@ function onCustomerSelect(opt: CustomerLite) {
 
 function onSalesmanSelect(opt: Employee) {
   currentEmployeeId.value = opt.id
+  const branchId = opt.branchId ?? opt.branch?.id
+  if (branchId !== salesmanBranchId.value) {
+    // A customer of the previous branch would be rejected on save.
+    if (formRef.value?.states?.customerId) formRef.value.states.customerId.value = undefined
+    currentCustomerId.value = undefined
+    initialCustomer.value = undefined
+  }
+  salesmanBranchId.value = branchId
   selectedSalesmanBranch.value = opt.branch?.name
   selectedSalesmanCompany.value = opt.company?.name
 }
@@ -1209,7 +1236,7 @@ async function doSubmit() {
     if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadSalesOrder()
     emit('submitted', saved)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isSaving.value = false
   }
@@ -1358,6 +1385,7 @@ async function loadSalesOrder() {
       initialSalesman.value = { id: employee.id, name: employee.name, nip: employee.nip }
       selectedSalesmanBranch.value = employee.branch?.name
       selectedSalesmanCompany.value = employee.company?.name
+      salesmanBranchId.value = employee.branchId ?? employee.branch?.id
     }
 
     const query = new GenericQueryBuilder()
@@ -1392,7 +1420,7 @@ async function loadSalesOrder() {
       }
     })
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }
@@ -1407,7 +1435,7 @@ async function onApprovalChanged() {
     const header = await SalesOrderHeadersService.getById(props.salesOrderId)
     currentStatus.value = header.status
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   }
 }
 

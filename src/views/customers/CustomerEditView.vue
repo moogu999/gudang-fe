@@ -100,6 +100,7 @@ import { CustomersService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import CustomerForm from './CustomerForm.vue'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import CustomerSetLabelsDialog from './CustomerSetLabelsDialog.vue'
 import type { Customer, CreateCustomerV1Dto, UpdateCustomerV1Dto } from '@/types/customer.type'
 
@@ -160,7 +161,7 @@ async function save(dto: CreateCustomerV1Dto | UpdateCustomerV1Dto) {
       : t('customers.messages.customerSaved')
     toast.add(commonSuccessToast(msg, toastGroup))
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }

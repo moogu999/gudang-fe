@@ -28,6 +28,9 @@ export default {
       unsavedMessage:
         'Anda memiliki perubahan yang belum disimpan. Yakin ingin meninggalkan halaman?',
     },
+    errors: {
+      customerBranchMismatch: 'Customer berasal dari cabang lain',
+    },
     labels: {
       actions: 'Aksi',
       createdAt: 'Dibuat Pada',
@@ -1462,6 +1465,7 @@ export default {
       operational: 'Jam Operasional',
     },
     fields: {
+      branch: 'Cabang',
       code: 'ID Pelanggan',
       name: 'Nama Pelanggan',
       ownerName: 'Nama Pemilik',
@@ -1516,6 +1520,9 @@ export default {
       assignedOnSave: 'Ditetapkan saat disimpan',
     },
     labels: {
+      selectBranch: 'Pilih cabang',
+      allBranches: 'Semua cabang saya',
+      selectBranchFirst: 'Pilih cabang terlebih dahulu',
       selectCurrency: 'Pilih Mata Uang',
       selectCountry: 'Pilih Negara',
       selectProvince: 'Pilih Provinsi',
@@ -1559,6 +1566,7 @@ export default {
       days: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
     },
     validation: {
+      branchRequired: 'Cabang wajib diisi',
       codeRequired: 'Kode wajib diisi.',
       nameRequired: 'Nama wajib diisi.',
       outletTypeRequired: 'Tipe pelanggan wajib diisi.',
@@ -1573,6 +1581,11 @@ export default {
       checkSections: 'Periksa tab berikut: {sections}.',
     },
     messages: {
+      branchNotAllowed: 'Anda tidak terdaftar di cabang ini',
+      branchChange: 'Cabang customer tidak dapat diubah',
+      partnerBranchMismatch:
+        'Sell-to, deliver-to, invoice-to dan collect-to harus customer dari cabang yang sama',
+      codeDuplicate: 'Kode ini sudah digunakan',
       customerCreated: 'Pelanggan berhasil dibuat.',
       customerUpdated: 'Pelanggan berhasil diperbarui.',
       customerNotFound: 'Pelanggan tidak ditemukan.',
@@ -2117,6 +2130,9 @@ export default {
       paymentInfo: 'Pembayaran & Keuangan',
     },
 
+    labels: {
+      selectSalesmanFirst: 'Pilih salesman terlebih dahulu',
+    },
     fields: {
       no: 'Nomor Pesanan',
       orderDate: 'Tanggal Pesanan',
@@ -4411,7 +4427,7 @@ export default {
       title: 'Jangkauan',
       customers: 'pelanggan',
       salesmen: 'salesman',
-      help: 'Survei muncul jika pelanggan dan salesman sama-sama dalam scope. Jumlah pelanggan mencakup semua cabang.',
+      help: 'Survei muncul jika pelanggan dan salesman sama-sama dalam scope. Jumlah pelanggan hanya mencakup cabang ini.',
       view: 'Lihat pelanggan',
     },
     questions: {
@@ -4733,7 +4749,7 @@ export default {
         status: 'Status',
       },
       footnote:
-        'Customer = customer aktif yang saat ini sesuai scope, di semua cabang. Status mengikuti periode secara otomatis.',
+        'Customer = customer aktif yang saat ini sesuai scope di cabang ini. Status mengikuti periode secara otomatis.',
     },
     form: {
       code: 'Kode',

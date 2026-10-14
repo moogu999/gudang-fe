@@ -208,6 +208,7 @@
         :readonly="mode === DialogMode.VIEW"
         :period="period"
         :candidates="giroCandidates"
+        :branch-id="selectedBranchId"
       />
       <Message
         v-for="o in overMatched"
@@ -314,6 +315,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { Branch, BranchBankAccount } from '@/types'
 import type {
   BankSettlementStatus,
@@ -440,6 +442,8 @@ async function onBranchIdUpdate(value: unknown) {
       formRef.value.states.branchBankAccountId.value = undefined
     }
     selectedBankAccountId.value = undefined
+    // Customers of the old branch would be rejected on save.
+    rows.value = rows.value.map((r) => ({ ...r, customerId: undefined, customer: undefined }))
   }
   selectedBranchId.value = next
   await resolveCompanyForBranch(next)
@@ -507,7 +511,7 @@ async function loadGiroCandidates() {
     })
   } catch (e) {
     giroCandidates.value = []
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   }
 }
 
@@ -598,7 +602,7 @@ async function doSubmit() {
     if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadBankSettlement()
     emit('submitted', saved)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isSaving.value = false
   }
@@ -740,7 +744,7 @@ async function loadBankSettlement() {
       initialBranch.value = branchResult.data[0]
     }
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }

@@ -256,6 +256,7 @@
       <CashDepositAdhocTable
         ref="adhocRef"
         v-model="adhocRows"
+        :branch-id="selectedBranchId"
         :readonly="mode === DialogMode.VIEW"
       />
     </div>
@@ -380,6 +381,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { Branch, Employee } from '@/types'
 import type {
   CashDepositStatus,
@@ -563,7 +565,16 @@ async function resolveCompanyForBranch(branchId: number | undefined) {
 }
 
 async function onBranchIdUpdate(value: unknown) {
-  selectedBranchId.value = typeof value === 'number' ? value : undefined
+  const next = typeof value === 'number' ? value : undefined
+  if (next !== selectedBranchId.value && props.mode === DialogMode.ADD) {
+    // Customers of the old branch would be rejected on save.
+    adhocRows.value = adhocRows.value.map((r) => ({
+      ...r,
+      customerId: undefined,
+      customer: undefined,
+    }))
+  }
+  selectedBranchId.value = next
   await resolveCompanyForBranch(selectedBranchId.value)
 }
 
@@ -700,7 +711,7 @@ async function doSubmit() {
     if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadCashDeposit()
     emit('submitted', saved)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
     // The config can change between page load and submit — re-check so the
     // pre-flight message stays honest.
     if (chosenStatus.value === 'approved') await loadApprovalConfig()
@@ -846,7 +857,7 @@ async function loadCashDeposit() {
       initialBranch.value = branchResult.data[0]
     }
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }
@@ -859,7 +870,7 @@ async function onApprovalChanged() {
     const deposit = await CashDepositsService.get(props.cashDepositId)
     currentStatus.value = deposit.status
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   }
 }
 

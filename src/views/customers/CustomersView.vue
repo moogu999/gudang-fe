@@ -17,6 +17,18 @@
           @click="addLabelFilter"
         />
       </template>
+      <template #center>
+        <InfiniteSelect
+          v-model="filterBranchId"
+          :fetch-fn="fetchBranches"
+          :option-label="branchLabel"
+          option-value="id"
+          :placeholder="t('customers.labels.allBranches')"
+          show-clear
+          class="min-w-48"
+          data-testid="customers-branch-filter"
+        />
+      </template>
       <template #end>
         <ResponsiveButton v-if="canWrite" :label="t('common.actions.add')" @click="addCustomer" />
       </template>
@@ -79,6 +91,10 @@
       <template #content>
         <TableComponent ref="table" :url="url" :columns="columns" :query-adapter="queryAdapter">
           <template #content="{ col, data }">
+            <span v-if="col.field === 'branch.name'">{{
+              data['branch'] ? branchLabel(data['branch']) : ''
+            }}</span>
+
             <span v-if="col.field === 'taxable'">
               <i v-if="data[col.field]" class="pi pi-check text-green-500" />
               <i v-else class="pi pi-times text-red-500" />
@@ -117,7 +133,10 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { branchLabel } from '@/utils/branchHelper'
+import { userBranchesFetcher } from '@/views/sales-teams/salesTeamHelpers'
 import {
   CustomersService,
   CustomerLabelDefinitionsService,
@@ -141,6 +160,13 @@ const { canWrite } = usePermissions('/customers')
 
 // Table
 const table = ref()
+
+// Branch filter: defaults to the user's own branch; clearing it shows every branch they can see.
+const authStore = useAuthStore()
+const fetchBranches = userBranchesFetcher(authStore.branchIds)
+const filterBranchId = ref<number | null>(
+  authStore.primaryBranchId ?? authStore.branchIds[0] ?? null,
+)
 
 // Navigation
 function addCustomer() {
@@ -181,12 +207,22 @@ const activeLabelFilters = computed(() =>
 const isLabelFiltered = computed(() => activeLabelFilters.value.length > 0)
 
 const url = computed(() => {
-  if (!isLabelFiltered.value) return API_ENDPOINTS.GEN_CUSTOMERS
+  if (!isLabelFiltered.value) {
+    if (!filterBranchId.value) return API_ENDPOINTS.GEN_CUSTOMERS
+    return `${API_ENDPOINTS.GEN_CUSTOMERS}?filterBy=branch_id&filterOperator=${FilterOperator.EQUAL}&filterValue=${filterBranchId.value}`
+  }
 
   const params = activeLabelFilters.value
     .map((f) => CustomersService.labelFilterParam(f.definitionId!, f.optionId!))
     .join('&')
-  return `${API_ENDPOINTS.CUSTOMERS_V1}?${params}`
+  const branch = filterBranchId.value ? `&branchId=${filterBranchId.value}` : ''
+  return `${API_ENDPOINTS.CUSTOMERS_V1}?${params}${branch}`
+})
+
+// nextTick: TableComponent must have the new url before it refetches.
+watch(filterBranchId, async () => {
+  await nextTick()
+  table.value?.clearSearch()
 })
 
 // `/gen/v1/customers` speaks the generic dialect TableComponent already builds;
@@ -214,6 +250,14 @@ const columns = computed<Column[]>(() => [
     exportable: true,
     sortable: supportsColumnControls.value,
     filterable: supportsColumnControls.value,
+  },
+  {
+    field: 'branch.name',
+    underlyingField: 'branchId',
+    header: t('customers.fields.branch'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'currency.code',

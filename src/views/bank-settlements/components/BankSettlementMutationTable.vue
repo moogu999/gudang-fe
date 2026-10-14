@@ -128,6 +128,8 @@
               option-label="name"
               option-value="id"
               :fetch-fn="(q) => CustomersService.list(q)"
+              :custom-filters="customerFilters"
+              :disabled="!branchId"
               :initial-option="data.customer"
               :placeholder="t('bankSettlements.table.selectCustomer')"
               show-clear
@@ -214,6 +216,7 @@ import InputNumber from 'primevue/inputnumber'
 import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import FilterOperator from '@/constants/filterOperator'
 import { CustomersService } from '@/services'
 import type { GiroClearingCandidate } from '@/types/bankSettlement.type'
 import {
@@ -234,6 +237,8 @@ interface Props {
   period?: Period | null
   /** Giro clearing batches on this account a line can be tagged to. */
   candidates?: GiroClearingCandidate[]
+  /** The settlement's branch: customers are limited to it. */
+  branchId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -245,6 +250,14 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{ 'update:modelValue': [rows: MutationRow[]] }>()
 
 const { t, locale } = useI18n()
+
+const customerFilters = computed(() => [
+  {
+    filterBy: 'branch_id',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: props.branchId ?? 0,
+  },
+])
 
 // "Required" errors stay hidden until the first submit attempt so a fresh row isn't born
 // red. An out-of-period date is always shown — narrowing the period must flag rows at once.

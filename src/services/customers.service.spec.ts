@@ -40,6 +40,12 @@ describe('CustomersService.toListQuery', () => {
     expect(params.get('isActive')).toBe('true')
   })
 
+  it('passes the branch filter through', () => {
+    const params = adapted('filterBy=branchId&filterOperator=0&filterValue=2')
+
+    expect(params.get('branchId')).toBe('2')
+  })
+
   it('drops a filter the endpoint has no parameter for', () => {
     // /v1/customers matches code only through `q`.
     expect(adapted('filterBy=code&filterOperator=0&filterValue=C-1').has('code')).toBe(false)

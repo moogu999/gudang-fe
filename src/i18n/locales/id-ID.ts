@@ -5000,6 +5000,7 @@ export default {
     tabs: {
       target: 'Target',
       history: 'Riwayat perubahan',
+      achievement: 'Pencapaian',
     },
     list: {
       create: 'Buat Target',
@@ -5013,6 +5014,7 @@ export default {
         branch: 'Cabang',
         source: 'Sumber target',
         salesmen: 'Salesman',
+        achieved: 'Tercapai',
         targetValue: 'Nilai Target',
         items: 'Item',
         status: 'Status',
@@ -5042,7 +5044,7 @@ export default {
         hasActiveOutlet: 'Customer Aktif (OA)',
       },
       valueBasis:
-        'Nilai = neto setelah semua diskon, tanpa PPN, hanya item reguler (bonus tidak dihitung). Dasar ini tetap.',
+        'Nilai = neto setelah semua diskon, tanpa PPN, hanya item reguler (bonus tidak dihitung). Pencapaian dihitung dari faktur yang sudah diterapkan menurut tanggal penerapannya.',
       notes: 'Catatan',
       missingConfig:
         'Cabang ini belum memiliki level target. Atur di Konfigurasi → Target Salesman.',
@@ -5180,6 +5182,55 @@ export default {
       deleted: 'Target berhasil dihapus.',
       notFound: 'Target tidak ditemukan.',
     },
+    achievement: {
+      cards: {
+        value: 'Nilai tercapai',
+        valueOf: '{pct} dari Rp {target}',
+        runRate: 'run rate {pct}',
+        workingDays: 'Hari kerja',
+        idealNow: 'ideal saat ini {pct}',
+        qtyOnTrack: 'Item qty',
+        onTrack: '{n} dari {m} sesuai target',
+      },
+      view: {
+        value: 'Nilai',
+        qty: 'Qty per item',
+      },
+      asOf: 'Data per {at}',
+      refresh: 'Muat ulang',
+      retry: 'Coba lagi',
+      columns: {
+        salesman: 'Salesman',
+        target: 'Target',
+        achieved: 'Pencapaian',
+        pct: '%',
+        runRate: 'Run rate',
+        total: 'Total',
+      },
+      bands: {
+        good: 'Sesuai atau di atas laju ideal',
+        warn: 'Sedikit di bawah laju ideal',
+        bad: 'Jauh di bawah laju ideal',
+      },
+      legend:
+        'Warna membandingkan pencapaian dengan progres hari kerja ({pct}): hijau di atas atau sama dengan progres, oranye mulai 70 % dari progres, merah di bawahnya. Run rate dinilai terhadap target penuh.',
+      basis:
+        'Dihitung dari faktur yang sudah diterapkan, menurut tanggal penerapannya. Retur belum dikurangkan.',
+      notActive: 'Pencapaian tampil setelah target aktif.',
+      noLines: 'Target ini belum memiliki salesman.',
+      loadFailed: 'Pencapaian tidak dapat dimuat.',
+      sku: {
+        allSalesmen: 'semua salesman',
+        analysisOnly: 'Hanya analisa, bukan target.',
+        empty: 'Tidak ada produk yang difakturkan untuk item ini.',
+        columns: {
+          code: 'Kode',
+          name: 'Produk',
+          qty: 'Qty',
+          value: 'Nilai',
+        },
+      },
+    },
     errors: {
       TARGET_INVALID_PERIOD: 'Periode harus tanggal 1 sebuah bulan.',
       TARGET_INVALID_SOURCE: 'Sumber target tidak valid.',
@@ -5213,6 +5264,7 @@ export default {
       TARGET_CLOSED: 'Target yang sudah ditutup tidak bisa diubah.',
       TARGET_NOT_DRAFT: 'Hanya target berstatus draft yang bisa melakukan ini.',
       TARGET_NOT_ACTIVE: 'Hanya target aktif yang bisa melakukan ini.',
+      TARGET_ITEM_NOT_CATEGORY: 'Hanya item kategori yang bisa dirinci per produk.',
       TARGET_NO_LINES: 'Tambahkan minimal satu salesman terlebih dahulu.',
       TARGET_PERIOD_NOT_ENDED: 'Target hanya bisa ditutup setelah periodenya berakhir.',
     },

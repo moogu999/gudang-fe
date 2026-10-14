@@ -163,6 +163,10 @@ export const API_ENDPOINTS = {
   SALESMAN_TARGET_BY_ID: (id: number) => `/v1/salesman-targets/${id}`,
   SALESMAN_TARGET_ACTIVATE: (id: number) => `/v1/salesman-targets/${id}/activate`,
   SALESMAN_TARGET_CLOSE: (id: number) => `/v1/salesman-targets/${id}/close`,
+  SALESMAN_TARGET_ACHIEVEMENT: (id: number) => `/v1/salesman-targets/${id}/achievement`,
+  SALESMAN_TARGET_ACHIEVEMENT_ITEM: (id: number, itemId: number) =>
+    `/v1/salesman-targets/${id}/achievement/items/${itemId}`,
+  SALESMAN_TARGET_ACHIEVEMENT_SUMMARIES: '/v1/salesman-targets/achievement-summaries',
   SALESMAN_TARGET_CANDIDATES: '/v1/salesman-targets/candidates',
   SALESMAN_TARGET_ITEM_OPTIONS: '/v1/salesman-targets/item-options',
   SALESMAN_TARGET_CONFIGS: '/v1/salesman-target-configs',

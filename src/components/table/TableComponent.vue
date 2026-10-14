@@ -384,6 +384,8 @@ const visibleColumns = computed(() => {
   return props.columns
 })
 
+const emit = defineEmits<{ loaded: [rows: T[]] }>()
+
 defineExpose({ clearSearch })
 
 onMounted(async () => await fetchData(currPage))
@@ -586,6 +588,7 @@ async function fetchData(page: number, sort?: Sort, search?: string, filters?: F
     const res = await ApiService.get<Base<T>>(buildQuery(page, sort, search, filters))
     items.value = res.data
     total.value = res.meta.total
+    emit('loaded', res.data)
     tableKey.value++ // Force re-render to ensure slots update properly
   } catch (e) {
     toast.add(commonErrorToast(e, toastGroup))

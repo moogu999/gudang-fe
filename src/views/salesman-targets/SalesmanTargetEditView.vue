@@ -25,6 +25,9 @@
       <Tabs v-model:value="activeTab">
         <TabList>
           <Tab value="target">{{ t('salesmanTargets.tabs.target') }}</Tab>
+          <Tab v-if="showAchievement" value="achievement">
+            {{ t('salesmanTargets.tabs.achievement') }}
+          </Tab>
           <Tab value="history">{{ t('salesmanTargets.tabs.history') }}</Tab>
         </TabList>
         <TabPanels>
@@ -44,6 +47,19 @@
               @remove="onRemove"
               @cancel="router.push('/salesman-targets')"
             />
+          </TabPanel>
+          <TabPanel v-if="showAchievement" value="achievement">
+            <ResponsiveCard>
+              <template #content>
+                <!-- Mounted only once opened, so opening a document doesn't run the invoice query. -->
+                <SalesmanTargetAchievementTab
+                  v-if="activeTab === 'achievement'"
+                  :target="target"
+                  :reload-key="historyKey"
+                  :toast-group="toastGroup"
+                />
+              </template>
+            </ResponsiveCard>
           </TabPanel>
           <TabPanel value="history">
             <ResponsiveCard>
@@ -69,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
@@ -92,6 +108,7 @@ import { ApiError } from '@/types/api.type'
 import type { SalesmanTarget, UpdateSalesmanTargetRequest } from '@/types/salesmanTarget.type'
 import { targetErrorCode, translateTargetError } from './salesmanTargetHelpers'
 import SalesmanTargetForm from './SalesmanTargetForm.vue'
+import SalesmanTargetAchievementTab from './components/SalesmanTargetAchievementTab.vue'
 import SalesmanTargetHistoryTab from './components/SalesmanTargetHistoryTab.vue'
 import SalesmanTargetStatusTag from './components/SalesmanTargetStatusTag.vue'
 
@@ -102,6 +119,7 @@ const toast = useToast()
 const confirm = useConfirm()
 const { canWrite, hasPermission } = usePermissions('/salesman-targets')
 const canActivate = hasPermission(PERMISSIONS.SALESMAN_TARGET_ACTIVATE)
+const canSeeAchievement = hasPermission(PERMISSIONS.SALESMAN_TARGET_ACHIEVEMENT_READ)
 
 const toastGroup = 'salesmanTargetEdit'
 const target = ref<SalesmanTarget | undefined>()
@@ -110,6 +128,10 @@ const isSaving = ref(false)
 const formKey = ref(0)
 const historyKey = ref(0)
 const activeTab = ref('target')
+
+const showAchievement = computed(
+  () => canSeeAchievement && !!target.value && target.value.status !== 'draft',
+)
 
 const targetId = Number(route.params.id)
 

@@ -68,6 +68,7 @@
           :url="url"
           :columns="columns"
           :query-adapter="SalesmanTargetsService.toListQuery"
+          @loaded="onLoaded"
         >
           <template #content="{ col, data }">
             <a
@@ -96,6 +97,19 @@
             <span v-if="col.field === 'totalTargetValue'">
               <template v-if="data['hasValue'] && data['totalTargetValue'] !== undefined">
                 Rp {{ formatNumber(Number(data['totalTargetValue']), locale) }}
+              </template>
+              <span v-else class="text-stone-400">—</span>
+            </span>
+
+            <span v-if="col.field === 'achieved'">
+              <Skeleton
+                v-if="achievedPending.has(data['id'] as number)"
+                width="7rem"
+                height="1rem"
+                :aria-label="t('common.messages.loading')"
+              />
+              <template v-else-if="achievedText(data as SalesmanTargetListRow)">
+                {{ achievedText(data as SalesmanTargetListRow) }}
               </template>
               <span v-else class="text-stone-400">—</span>
             </span>
@@ -140,6 +154,7 @@ import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
+import Skeleton from 'primevue/skeleton'
 import Tag from 'primevue/tag'
 import Toast from 'primevue/toast'
 import TableComponent from '@/components/table/TableComponent.vue'
@@ -150,6 +165,7 @@ import { SalesmanTargetsService } from '@/services'
 import { useConfirmDelete, usePermissions } from '@/composables'
 import { useAuthStore } from '@/stores'
 import { API_ENDPOINTS } from '@/constants/api'
+import { PERMISSIONS } from '@/constants/permissions'
 import { branchLabel } from '@/utils/branchHelper'
 import type { Column } from '@/types/table.type'
 import type { SalesmanTargetListRow, TargetStatus } from '@/types/salesmanTarget.type'
@@ -165,7 +181,8 @@ import SalesmanTargetStatusTag from './components/SalesmanTargetStatusTag.vue'
 const { t, locale } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
-const { canWrite } = usePermissions('/salesman-targets')
+const { canWrite, hasPermission } = usePermissions('/salesman-targets')
+const canSeeAchievement = hasPermission(PERMISSIONS.SALESMAN_TARGET_ACHIEVEMENT_READ)
 
 const toastGroup = 'salesmanTargetsView'
 const table = ref()
@@ -295,6 +312,46 @@ function onDeleteClick(row: SalesmanTargetListRow) {
   confirmDelete(() => SalesmanTargetsService.delete(row.id))
 }
 
+// ---------------------------------------------------------------------------
+// Achieved column: loaded after the rows, so a slow summary never holds the list
+// ---------------------------------------------------------------------------
+
+const achieved = ref(new Map<number, number>())
+// Ids whose figure is in flight; their cell shows a skeleton, not an empty dash.
+const achievedPending = ref(new Set<number>())
+// Only the latest page's answer may land; a slow earlier page is dropped.
+let achievedRequest = 0
+
+async function onLoaded(loaded: Record<string, unknown>[]) {
+  if (!canSeeAchievement) return
+  const request = ++achievedRequest
+  const ids = (loaded as unknown as SalesmanTargetListRow[])
+    .filter((r) => r.status !== 'draft' && r.hasValue && r.totalTargetValue !== undefined)
+    .map((r) => r.id)
+  achieved.value = new Map()
+  achievedPending.value = new Set(ids)
+  if (ids.length === 0) return
+  try {
+    const summaries = await SalesmanTargetsService.achievementSummaries(ids)
+    if (request !== achievedRequest) return
+    achieved.value = new Map(summaries.map((s) => [s.targetId, Number(s.achievedValue)]))
+  } catch (e) {
+    if (request !== achievedRequest) return
+    // The list stays usable without it.
+    console.error('achievement summaries failed', e)
+  } finally {
+    if (request === achievedRequest) achievedPending.value = new Set()
+  }
+}
+
+function achievedText(row: SalesmanTargetListRow): string {
+  const value = achieved.value.get(row.id)
+  if (value === undefined) return ''
+  const target = Number(row.totalTargetValue)
+  const text = `Rp ${formatNumber(value, locale.value)}`
+  return target > 0 ? `${text} (${formatNumber((value / target) * 100, locale.value, 1)} %)` : text
+}
+
 // None sortable: `/v1/salesman-targets` orders by period then code and reads no sort parameter.
 const columns = computed<Column[]>(() =>
   [
@@ -307,6 +364,15 @@ const columns = computed<Column[]>(() =>
       header: t('salesmanTargets.list.columns.targetValue'),
       hideOnMobile: true,
     },
+    ...(canSeeAchievement
+      ? [
+          {
+            field: 'achieved',
+            header: t('salesmanTargets.list.columns.achieved'),
+            hideOnMobile: true,
+          },
+        ]
+      : []),
     { field: 'itemCount', header: t('salesmanTargets.list.columns.items'), hideOnMobile: true },
     { field: 'status', header: t('salesmanTargets.list.columns.status') },
     { field: '', header: t('common.labels.actions') },

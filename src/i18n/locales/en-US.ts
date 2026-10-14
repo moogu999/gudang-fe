@@ -4311,6 +4311,7 @@ export default {
       questions: 'Questions',
       stock: 'Products & Columns',
       history: 'History',
+      achievement: 'Achievement',
     },
     list: {
       create: 'New survey',
@@ -4986,6 +4987,7 @@ export default {
     tabs: {
       target: 'Target',
       history: 'History',
+      achievement: 'Achievement',
     },
     list: {
       create: 'Create Target',
@@ -5000,6 +5002,7 @@ export default {
         source: 'Source',
         salesmen: 'Salesmen',
         targetValue: 'Target Value',
+        achieved: 'Achieved',
         items: 'Items',
         status: 'Status',
       },
@@ -5028,7 +5031,7 @@ export default {
         hasActiveOutlet: 'Active Customer (OA)',
       },
       valueBasis:
-        'Value = net after all discounts, excl. VAT, regular items only (bonus not counted). This basis is fixed.',
+        'Value = net after all discounts, excl. VAT, regular items only (bonus not counted). Achievement counts applied invoices by their applied date.',
       notes: 'Notes',
       missingConfig: 'This branch has no target level yet. Set it in Configs → Salesman Target.',
       missingConfigLink: 'Open configs',
@@ -5164,6 +5167,55 @@ export default {
       deleted: 'Target is deleted.',
       notFound: 'Target not found.',
     },
+    achievement: {
+      cards: {
+        value: 'Achieved value',
+        valueOf: '{pct} of Rp {target}',
+        runRate: 'run rate {pct}',
+        workingDays: 'Working days',
+        idealNow: 'ideal now {pct}',
+        qtyOnTrack: 'Qty items',
+        onTrack: '{n} of {m} on track',
+      },
+      view: {
+        value: 'Value',
+        qty: 'Qty per item',
+      },
+      asOf: 'Data as of {at}',
+      refresh: 'Refresh',
+      retry: 'Retry',
+      columns: {
+        salesman: 'Salesman',
+        target: 'Target',
+        achieved: 'Achieved',
+        pct: '%',
+        runRate: 'Run rate',
+        total: 'Total',
+      },
+      bands: {
+        good: 'On or above the ideal pace',
+        warn: 'Slightly behind the ideal pace',
+        bad: 'Far behind the ideal pace',
+      },
+      legend:
+        'Colour compares achievement with the working-day progress ({pct}): green at or above it, orange from 70 % of it, red below. Run rate is judged against the full target.',
+      basis:
+        'Counted from applied invoices, by the date they were applied. Returns are not deducted yet.',
+      notActive: 'Achievement is shown once the target is active.',
+      noLines: 'This target has no salesmen yet.',
+      loadFailed: 'Achievement could not be loaded.',
+      sku: {
+        allSalesmen: 'all salesmen',
+        analysisOnly: 'Analysis only; not a target.',
+        empty: 'No products were invoiced for this item.',
+        columns: {
+          code: 'Code',
+          name: 'Product',
+          qty: 'Qty',
+          value: 'Value',
+        },
+      },
+    },
     errors: {
       TARGET_INVALID_PERIOD: 'The period must be the first day of a month.',
       TARGET_INVALID_SOURCE: 'The target source is not valid.',
@@ -5197,6 +5249,7 @@ export default {
       TARGET_CLOSED: 'A closed target cannot be changed.',
       TARGET_NOT_DRAFT: 'Only a draft target can do this.',
       TARGET_NOT_ACTIVE: 'Only an active target can do this.',
+      TARGET_ITEM_NOT_CATEGORY: 'Only a category item can be broken down into products.',
       TARGET_NO_LINES: 'Add at least one salesman first.',
       TARGET_PERIOD_NOT_ENDED: 'A target can only be closed after its period has ended.',
     },

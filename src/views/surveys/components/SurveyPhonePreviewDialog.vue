@@ -13,7 +13,7 @@
         class="flex h-[40rem] w-[22.5rem] max-w-full flex-col overflow-hidden rounded-[2rem] border-8 border-stone-800 bg-white"
         data-testid="phone-frame"
       >
-        <div class="bg-primary-500 px-4 py-3 text-white">
+        <div class="bg-[var(--p-primary-500)] px-4 py-3 text-white">
           <div class="text-xs opacity-80">{{ t('surveys.preview.customer') }}</div>
           <div class="font-semibold">{{ name || t('surveys.preview.untitled') }}</div>
         </div>

@@ -1,0 +1,85 @@
+{
+  "anchor": "2026-01-05",
+  "vectors": [
+    {
+      "date": "2026-01-05",
+      "week": 1,
+      "note": "the anchor itself"
+    },
+    {
+      "date": "2026-01-04",
+      "week": 4,
+      "note": "the day before the anchor"
+    },
+    {
+      "date": "2025-12-29",
+      "week": 4,
+      "note": "week before the anchor"
+    },
+    {
+      "date": "2026-01-11",
+      "week": 1,
+      "note": "last day of week 1"
+    },
+    {
+      "date": "2026-01-12",
+      "week": 2,
+      "note": "first day of week 2"
+    },
+    {
+      "date": "2026-02-01",
+      "week": 4,
+      "note": "month boundary"
+    },
+    {
+      "date": "2026-02-02",
+      "week": 1,
+      "note": "month boundary"
+    },
+    {
+      "date": "2026-02-01",
+      "week": 4,
+      "note": "anchor+27"
+    },
+    {
+      "date": "2026-02-02",
+      "week": 1,
+      "note": "anchor+28 (cycle restarts)"
+    },
+    {
+      "date": "2026-10-15",
+      "week": 1,
+      "note": "a recent date"
+    },
+    {
+      "date": "2026-12-28",
+      "week": 4,
+      "note": "year boundary"
+    },
+    {
+      "date": "2027-01-03",
+      "week": 4,
+      "note": "year boundary"
+    },
+    {
+      "date": "2027-01-04",
+      "week": 1,
+      "note": "year boundary"
+    },
+    {
+      "date": "2028-02-29",
+      "week": 1,
+      "note": "leap day"
+    },
+    {
+      "date": "2028-03-01",
+      "week": 1,
+      "note": "day after the leap day"
+    },
+    {
+      "date": "2025-01-06",
+      "week": 1,
+      "note": "a year before the anchor"
+    }
+  ]
+}

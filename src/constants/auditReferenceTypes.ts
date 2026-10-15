@@ -152,4 +152,28 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     label: 'Device Binding Config',
     labelKey: 'auditTrails.references.device_binding_config',
   },
+  route: {
+    label: 'Route',
+    labelKey: 'auditTrails.references.route',
+  },
+  route_customer: {
+    label: 'Route Customer',
+    labelKey: 'auditTrails.references.route_customer',
+  },
+  route_salesman: {
+    label: 'Route Salesman',
+    labelKey: 'auditTrails.references.route_salesman',
+  },
+  journey_plan_config: {
+    label: 'Journey Plan Config',
+    labelKey: 'auditTrails.references.journey_plan_config',
+  },
+  journey_plan_addition: {
+    label: 'Journey Plan Addition',
+    labelKey: 'auditTrails.references.journey_plan_addition',
+  },
+  journey_plan_regenerate: {
+    label: 'Journey Plan Regenerate',
+    labelKey: 'auditTrails.references.journey_plan_regenerate',
+  },
 }

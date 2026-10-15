@@ -223,6 +223,16 @@ const mainMenu = [
         route: '/surveys',
       },
       {
+        label: 'Routes',
+        labelKey: 'navigation.routes',
+        route: '/routes',
+      },
+      {
+        label: 'Journey Plans',
+        labelKey: 'navigation.journeyPlans',
+        route: '/journey-plans',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',

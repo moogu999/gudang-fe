@@ -463,6 +463,9 @@
           </template>
         </ResponsiveCard>
 
+        <!-- Section: Rute -->
+        <EmployeeRoutesCard v-if="showRoutes" :employee-id="props.id!" />
+
         <!-- Submit Buttons -->
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
           <Button
@@ -523,6 +526,7 @@ import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.
 import { usePermissions } from '@/composables'
 import { PERMISSIONS, HttpStatus, ToastLife } from '@/constants'
 import { EMPLOYEE_TYPE_NAMES } from '@/constants/employeeTypes'
+import EmployeeRoutesCard from './components/EmployeeRoutesCard.vue'
 import { ApiError } from '@/types/api.type'
 
 const { t } = useI18n()
@@ -562,6 +566,16 @@ const usesDeviceBinding = computed(() =>
   [EMPLOYEE_TYPE_NAMES.SALESMAN, EMPLOYEE_TYPE_NAMES.CANVASS].includes(
     selectedTypeName.value as typeof EMPLOYEE_TYPE_NAMES.SALESMAN,
   ),
+)
+
+/** The routes the employee holds, for Salesman and Canvass employees who can already be read. */
+const showRoutes = computed(
+  () =>
+    props.mode === 'view' &&
+    !!employee.value &&
+    !employee.value.isDraft &&
+    usesDeviceBinding.value &&
+    hasPermission(PERMISSIONS.ROUTE_READ),
 )
 
 const showDeviceBindingLink = computed(

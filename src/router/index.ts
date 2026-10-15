@@ -175,6 +175,47 @@ const router = createRouter({
           },
         },
         {
+          path: 'routes',
+          name: 'Routes',
+          component: () => import('@/views/routes/RoutesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_READ,
+            requiredWritePermission: PERMISSIONS.ROUTE_WRITE,
+            titleKey: 'navigation.routes',
+          },
+        },
+        {
+          path: 'routes/create',
+          name: 'RouteCreate',
+          component: () => import('@/views/routes/RouteCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_WRITE,
+            titleKey: 'navigation.routes',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'routes/:id/edit',
+          name: 'RouteEdit',
+          component: () => import('@/views/routes/RouteEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_READ,
+            titleKey: 'navigation.routes',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'journey-plans',
+          name: 'JourneyPlans',
+          component: () => import('@/views/journey-plans/JourneyPlansView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.JOURNEY_PLAN_READ,
+            requiredWritePermission: PERMISSIONS.JOURNEY_PLAN_WRITE,
+            titleKey: 'navigation.journeyPlans',
+          },
+        },
+        {
           path: 'salesman-targets',
           name: 'SalesmanTargets',
           component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),
@@ -1405,6 +1446,14 @@ const router = createRouter({
         {
           path: 'survey-configs',
           redirect: { path: '/configs', query: { tab: 'survey' } },
+        },
+        {
+          path: 'journey-plan-configs',
+          redirect: { path: '/configs', query: { tab: 'journey-plan' } },
+          meta: {
+            requiredPermission: PERMISSIONS.JOURNEY_PLAN_CONFIG_READ,
+            requiredWritePermission: PERMISSIONS.JOURNEY_PLAN_CONFIG_WRITE,
+          },
         },
         {
           path: 'sales-credit-notes',

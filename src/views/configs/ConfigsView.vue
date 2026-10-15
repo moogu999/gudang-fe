@@ -50,6 +50,11 @@
     <SalesmanTargetConfigsView v-if="activeConfig === 'stg'" ref="stgRef" :embedded="true" />
     <MustSellListConfigsView v-if="activeConfig === 'msl'" ref="mslRef" :embedded="true" />
     <SurveyConfigsView v-if="activeConfig === 'survey'" ref="surveyRef" :embedded="true" />
+    <JourneyPlanConfigsView
+      v-if="activeConfig === 'journey-plan'"
+      ref="journeyPlanRef"
+      :embedded="true"
+    />
     <DeviceBindingConfigsView
       v-if="activeConfig === 'device-binding'"
       :toast-group="overlayGroup"
@@ -80,6 +85,7 @@ import CashDepositConfigsView from '@/views/cash-deposit-configs/CashDepositConf
 import SalesmanTargetConfigsView from '@/views/salesman-target-configs/SalesmanTargetConfigsView.vue'
 import MustSellListConfigsView from '@/views/must-sell-list-configs/MustSellListConfigsView.vue'
 import SurveyConfigsView from '@/views/survey-configs/SurveyConfigsView.vue'
+import JourneyPlanConfigsView from '@/views/journey-plan-configs/JourneyPlanConfigsView.vue'
 import DeviceBindingConfigsView from '@/views/device-binding-configs/DeviceBindingConfigsView.vue'
 import { usePermissions } from '@/composables'
 import { PERMISSIONS } from '@/constants/permissions'
@@ -104,6 +110,7 @@ const { canWrite: canWriteCD } = usePermissions('/cash-deposit-configs')
 const { canWrite: canWriteSTG } = usePermissions('/salesman-target-configs')
 const { canWrite: canWriteMSL } = usePermissions('/must-sell-list-configs')
 const { canWrite: canWriteSurvey } = usePermissions('/survey-configs')
+const { canWrite: canWriteJourneyPlan } = usePermissions('/journey-plan-configs')
 
 // Tabs and their read permissions come from one shared list (`CONFIG_TABS`), the same
 // one `menu.ts` reads to build the Config entry's `permissionsAny` — see item B of
@@ -141,6 +148,7 @@ const canWriteActive = computed(() => {
   if (activeConfig.value === 'stg') return canWriteSTG.value
   if (activeConfig.value === 'msl') return canWriteMSL.value
   if (activeConfig.value === 'survey') return canWriteSurvey.value
+  if (activeConfig.value === 'journey-plan') return canWriteJourneyPlan.value
   // Device binding is one settings form per company, saved in place: nothing to add.
   return false
 })
@@ -192,6 +200,7 @@ const cdRef = ref<InstanceType<typeof CashDepositConfigsView> | null>(null)
 const stgRef = ref<InstanceType<typeof SalesmanTargetConfigsView> | null>(null)
 const mslRef = ref<InstanceType<typeof MustSellListConfigsView> | null>(null)
 const surveyRef = ref<InstanceType<typeof SurveyConfigsView> | null>(null)
+const journeyPlanRef = ref<InstanceType<typeof JourneyPlanConfigsView> | null>(null)
 
 function onAddClick() {
   if (activeConfig.value === 'so') soRef.value?.openAddDialog()
@@ -206,5 +215,6 @@ function onAddClick() {
   else if (activeConfig.value === 'stg') stgRef.value?.openAddDialog()
   else if (activeConfig.value === 'msl') mslRef.value?.openAddDialog()
   else if (activeConfig.value === 'survey') surveyRef.value?.openAddDialog()
+  else if (activeConfig.value === 'journey-plan') journeyPlanRef.value?.openAddDialog()
 }
 </script>

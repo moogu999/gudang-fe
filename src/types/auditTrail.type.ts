@@ -15,6 +15,12 @@ export type AuditReferenceType =
   | 'activation_code'
   | 'device_block'
   | 'device_binding_config'
+  | 'route'
+  | 'route_customer'
+  | 'route_salesman'
+  | 'journey_plan_config'
+  | 'journey_plan_addition'
+  | 'journey_plan_regenerate'
 
 /** What happened, on the entries that record it (device binding writes them; older ones don't). */
 export const AUDIT_ACTIONS = [

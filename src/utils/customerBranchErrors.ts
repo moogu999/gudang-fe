@@ -8,6 +8,7 @@ const CUSTOMER_BRANCH_ERRORS: Record<string, string> = {
   CUSTOMER_PARTNER_BRANCH_MISMATCH: 'customers.messages.partnerBranchMismatch',
   CUSTOMER_CODE_DUPLICATE: 'customers.messages.codeDuplicate',
   CUSTOMER_BRANCH_MISMATCH: 'common.errors.customerBranchMismatch',
+  CUSTOMER_COORDINATES_INVALID: 'customers.messages.coordinatesInvalid',
 }
 
 /** The codes this module knows, for tests. */

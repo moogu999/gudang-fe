@@ -76,6 +76,11 @@ export const CONFIG_TABS: ConfigTabDef[] = [
     readPermission: PERMISSIONS.SURVEY_CONFIG_READ,
   },
   {
+    value: 'journey-plan',
+    labelKey: 'navigation.journeyPlanConfigs',
+    readPermission: PERMISSIONS.JOURNEY_PLAN_CONFIG_READ,
+  },
+  {
     value: 'device-binding',
     labelKey: 'navigation.deviceBindingConfigs',
     readPermission: PERMISSIONS.DEVICE_BINDING_CONFIG_READ,

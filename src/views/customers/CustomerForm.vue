@@ -263,6 +263,20 @@
                     }}</label>
                     <InputText v-model="formData.longitude" :disabled="disabled" class="w-full" />
                   </div>
+                  <small v-if="errors.latitude" class="text-red-500 sm:col-span-2">{{
+                    errors.latitude
+                  }}</small>
+                  <div v-if="!disabled" class="sm:col-span-2">
+                    <Button
+                      type="button"
+                      icon="pi pi-map-marker"
+                      size="small"
+                      severity="secondary"
+                      :label="t('customers.labels.pickOnMap')"
+                      data-testid="pick-on-map"
+                      @click="isLocationPickerShown = true"
+                    />
+                  </div>
                 </div>
               </div>
             </template>
@@ -626,6 +640,15 @@
       </TabPanels>
     </Tabs>
 
+    <LocationPickerDialog
+      :visible="isLocationPickerShown"
+      :latitude="formData.latitude"
+      :longitude="formData.longitude"
+      :toast-group="toastGroup ?? ''"
+      @close="isLocationPickerShown = false"
+      @apply="applyPickedLocation"
+    />
+
     <!-- ─── Action buttons ─────────────────────────────── -->
     <div v-if="!disabled" class="mt-4 flex justify-end gap-2">
       <Button
@@ -687,6 +710,7 @@ import { useNumberSeries } from '@/composables'
 import { useAuthStore } from '@/stores/auth'
 import { FilterOperator } from '@/constants'
 import { branchLabel } from '@/utils/branchHelper'
+import LocationPickerDialog from '@/components/map/LocationPickerDialog.vue'
 import { userBranchesFetcher } from '@/views/sales-teams/salesTeamHelpers'
 import { useToast } from 'primevue/usetoast'
 import ToastLife from '@/constants/toastLife'
@@ -958,6 +982,7 @@ const mainAddress = computed<AddressValue>({
 const errors = reactive<Record<string, string>>({})
 const isDraftMode = ref(false)
 const activeTab = ref('identity')
+const isLocationPickerShown = ref(false)
 
 function clearErrors() {
   for (const k of Object.keys(errors)) delete errors[k]
@@ -979,10 +1004,33 @@ function validateBranch(): void {
   }
 }
 
+function validateCoordinates(): void {
+  const lat = formData.latitude.trim()
+  const lng = formData.longitude.trim()
+  if (!lat && !lng) return
+  const latValue = Number(lat)
+  const lngValue = Number(lng)
+  const valid =
+    lat !== '' &&
+    lng !== '' &&
+    Number.isFinite(latValue) &&
+    Number.isFinite(lngValue) &&
+    Math.abs(latValue) <= 90 &&
+    Math.abs(lngValue) <= 180
+  if (!valid) errors.latitude = t('customers.validation.coordinatesInvalid')
+}
+
+function applyPickedLocation(coordinates: { latitude: string | null; longitude: string | null }) {
+  formData.latitude = coordinates.latitude ?? ''
+  formData.longitude = coordinates.longitude ?? ''
+  isLocationPickerShown.value = false
+}
+
 function validateDraft(): boolean {
   clearErrors()
   validateBranch()
   validateCode()
+  validateCoordinates()
   if (!formData.name.trim()) errors.name = t('customers.validation.nameRequired')
   return Object.keys(errors).length === 0
 }
@@ -991,6 +1039,7 @@ function validateFull(): boolean {
   clearErrors()
   validateBranch()
   validateCode()
+  validateCoordinates()
   if (!formData.name.trim()) errors.name = t('customers.validation.nameRequired')
   if (!formData.outletTypeId) errors.outletTypeId = t('customers.validation.outletTypeRequired')
   if (!formData.channelId) errors.channelId = t('customers.validation.channelRequired')
@@ -1102,6 +1151,7 @@ const errorSection: Record<string, string> = {
   outletTypeId: 'identity',
   channelId: 'identity',
   categoryId: 'identity',
+  latitude: 'location',
   addresses: 'ship-to',
   nikOwner: 'tax',
   npwp: 'tax',
@@ -1113,6 +1163,7 @@ const sectionLabelKey: Record<string, string> = {
   identity: 'customers.sections.identity',
   'ship-to': 'customers.sections.shipTo',
   tax: 'customers.sections.tax',
+  location: 'customers.sections.location',
 }
 
 // Errors can sit on tabs the user isn't looking at, so jump to the first one and

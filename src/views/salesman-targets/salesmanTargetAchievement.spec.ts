@@ -24,6 +24,15 @@ describe('runRate', () => {
   })
 })
 
+describe('a net-negative achievement (returns exceed sales)', () => {
+  it('gives a negative % rather than clamping to 0', () => {
+    expect(pct(-20, 100)).toBe(-20)
+  })
+  it('falls in the bad band', () => {
+    expect(band(-20, 20)).toBe('bad')
+  })
+})
+
 describe('idealPct', () => {
   it('is elapsed over total', () => {
     expect(idealPct({ total: 26, elapsed: 6 })).toBeCloseTo(23.08, 1)

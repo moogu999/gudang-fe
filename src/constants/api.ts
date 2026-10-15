@@ -366,6 +366,10 @@ export const API_ENDPOINTS = {
   PICKING_LIST_BY_ID: (id: number) => `/v1/picking-lists/${id}`,
 
   // Invoice endpoints
+  SALES_CREDIT_NOTES: '/v1/sales-credit-notes',
+  SALES_CREDIT_NOTE_BY_ID: (id: number) => `/v1/sales-credit-notes/${id}`,
+  SALES_CREDIT_NOTE_TAX_REFERENCE: (id: number) => `/v1/sales-credit-notes/${id}/tax-reference`,
+  GEN_SALES_CREDIT_NOTES: '/gen/v1/sales-credit-notes',
   INVOICES: '/v1/invoices',
   INVOICE_BY_ID: (id: number) => `/v1/invoices/${id}`,
 

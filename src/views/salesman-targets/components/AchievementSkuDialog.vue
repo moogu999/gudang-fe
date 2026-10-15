@@ -34,8 +34,17 @@
           <tr v-for="row in rows" :key="row.productId">
             <td class="border-b border-stone-200 px-3 py-2 font-mono">{{ row.productCode }}</td>
             <td class="border-b border-stone-200 px-3 py-2">{{ row.productName }}</td>
-            <td class="border-b border-stone-200 px-3 py-2 text-right">{{ qtyText(row.qty) }}</td>
-            <td v-if="hasValue" class="border-b border-stone-200 px-3 py-2 text-right">
+            <td
+              class="border-b border-stone-200 px-3 py-2 text-right"
+              :class="{ 'text-red-600': Number(row.qty) < 0 }"
+            >
+              {{ qtyText(row.qty) }}
+            </td>
+            <td
+              v-if="hasValue"
+              class="border-b border-stone-200 px-3 py-2 text-right"
+              :class="{ 'text-red-600': Number(row.value ?? 0) < 0 }"
+            >
               {{ valueText(row.value) }}
             </td>
           </tr>

@@ -87,7 +87,19 @@
                 detail.deliveryDate ? dayjs(detail.deliveryDate).format(DateFormat.DATE) : '-'
               }}</span>
             </div>
-            <div v-if="detail.invoiceId" class="flex flex-col gap-1">
+            <div v-if="detail.creditNoteId" class="flex flex-col gap-1">
+              <span class="text-xs font-semibold text-stone-500 uppercase">{{
+                t('deliveryOrders.fields.creditNote')
+              }}</span>
+              <RouterLink
+                v-if="hasPermission(PERMISSIONS.SALES_CREDIT_NOTE_READ)"
+                :to="{ name: 'SalesCreditNoteDetail', params: { id: detail.creditNoteId } }"
+                class="text-primary font-medium hover:underline"
+                >{{ detail.creditNoteNo }}</RouterLink
+              >
+              <span v-else class="font-medium">{{ detail.creditNoteNo }}</span>
+            </div>
+            <div v-else-if="detail.invoiceId" class="flex flex-col gap-1">
               <span class="text-xs font-semibold text-stone-500 uppercase">{{
                 t('deliveryOrders.fields.invoice')
               }}</span>
@@ -113,7 +125,7 @@
               @click="onPrintClick"
             />
             <Button
-              v-if="canCancel && detail.status === 'open'"
+              v-if="canCancel && detail.status === 'open' && !detail.creditNoteId"
               :label="t('deliveryOrders.actions.cancel')"
               severity="danger"
               icon="pi pi-times"
@@ -574,6 +586,7 @@ import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue'
 import { DeliveryOrdersService, commonSuccessToast, commonErrorToast } from '@/services'
 import { usePermissions } from '@/composables'
+import { ApiError } from '@/types/api.type'
 import { PERMISSIONS } from '@/constants'
 import type {
   DeliveryOrderDetail,
@@ -703,6 +716,17 @@ function onCancelClick() {
       toast.add(commonSuccessToast(t('deliveryOrders.messages.cancelSuccess'), toastGroup))
       await fetchDetail(id)
     } catch (e) {
+      // Stale state: the button is hidden for return DOs, but the page may predate the note.
+      if (e instanceof ApiError && e.code === 'RETURN_DO_NOT_CANCELLABLE') {
+        toast.add(
+          commonErrorToast(
+            new Error(t('deliveryOrders.messages.returnNotCancellable')),
+            toastGroup,
+          ),
+        )
+        await fetchDetail(id)
+        return
+      }
       toast.add(commonErrorToast(e, toastGroup))
     }
   }

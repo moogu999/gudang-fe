@@ -142,6 +142,7 @@ export default {
     deliveryOrders: 'Delivery Orders',
     returnDeliveryOrders: 'Return Delivery Orders',
     invoices: 'Invoices',
+    salesCreditNotes: 'Sales Credit Notes',
     deliveryNotes: 'Delivery Notes',
     pickingLists: 'Picking Lists',
     goodsIssueNotes: 'Goods Issue Notes',
@@ -2145,6 +2146,7 @@ export default {
       type: 'Order Type',
       returnSource: 'Return Source',
       sourceInvoice: 'Source Invoice',
+      creditNote: 'Credit Note',
     },
 
     type: {
@@ -2398,6 +2400,7 @@ export default {
       customers: 'Customers',
       apInvoices: 'AP Invoices',
       creditDebitNotes: 'Credit/Debit Notes',
+      salesCreditNotes: 'Sales Credit Notes',
       apPayments: 'AP Payments',
       cashDeposits: 'Cash Deposits',
       bankSettlements: 'Bank Settlements',
@@ -2867,6 +2870,7 @@ export default {
     },
     messages: {
       created: 'Return delivery order {no} created successfully.',
+      createdWithCreditNote: 'Return DO {no} created; credit note {note} issued.',
       notFound: 'Return sales order not found.',
     },
     actions: {
@@ -3858,25 +3862,26 @@ export default {
     },
     sections: {
       header: 'Clearing Information',
-      sources: 'Cash Available',
+      sources: 'Available Credit',
       invoices: 'Outstanding Invoices',
       summary: 'Summary',
     },
     sources: {
       selectCustomerFirst: 'Select a customer to see its unapplied cash.',
       date: 'Date',
-      method: 'Received Via',
+      method: 'Type',
       source: 'Document',
       description: 'Description',
       amount: 'Original Amount',
       remaining: 'Remaining',
       consumed: 'Applied',
-      empty: 'This customer has no unapplied cash.',
+      empty: 'This customer has no unapplied cash or credit.',
       partiallyAllocatedHint: 'Some lines were partially allocated in an earlier clearing.',
       type: {
         cash_deposit: 'Cash',
         bank_settlement: 'Bank Transfer',
         giro: 'Giro',
+        sales_credit_note: 'Credit Note',
       },
     },
     invoices: {
@@ -5200,7 +5205,7 @@ export default {
       legend:
         'Colour compares achievement with the working-day progress ({pct}): green at or above it, orange from 70 % of it, red below. Run rate is judged against the full target.',
       basis:
-        'Counted from applied invoices, by the date they were applied. Returns are not deducted yet.',
+        'Counted from applied invoices by the date they were applied, minus posted sales credit notes by the date they were posted.',
       notActive: 'Achievement is shown once the target is active.',
       noLines: 'This target has no salesmen yet.',
       loadFailed: 'Achievement could not be loaded.',
@@ -5482,6 +5487,70 @@ export default {
     },
     dnLink: 'View Delivery Note',
   },
+  salesCreditNotes: {
+    title: 'Sales Credit Notes',
+    list: {
+      hint: 'Credit notes are issued by return delivery orders.',
+    },
+    columns: {
+      no: 'Credit Note No.',
+      date: 'Date',
+      customer: 'Customer',
+      salesman: 'Salesman',
+      returnDo: 'Return DO',
+      sourceInvoice: 'Source Invoice',
+      total: 'Total',
+      applied: 'Applied',
+      appliedStatus: 'Applied Status',
+      taxReturnNoteNo: 'Nota Retur No.',
+    },
+    applied: {
+      none: 'Unapplied',
+      partial: 'Partly applied',
+      full: 'Fully applied',
+    },
+    fields: {
+      returnSo: 'Return Sales Order',
+      returnDo: 'Return Delivery Order',
+      sourceInvoice: 'Source Invoice',
+      postedBy: 'Posted By',
+      postedAt: 'Posted At',
+      outstanding: 'Outstanding',
+      appliedAmount: 'Applied',
+      company: 'Company',
+      branch: 'Branch',
+    },
+    lines: {
+      product: 'Product',
+      quantity: 'Quantity',
+      price: 'Price',
+      discount: 'Discount',
+      subAmount: 'Sub Amount',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+    },
+    summary: {
+      subtotal: 'Subtotal',
+      discount: 'Discount',
+      taxBase: 'Tax Base',
+      tax: 'Tax',
+      total: 'Total',
+    },
+    taxRef: {
+      edit: 'Edit Nota Retur number',
+      save: 'Save',
+      cancel: 'Cancel',
+      saved: 'Nota Retur number saved.',
+    },
+    validation: {
+      duplicateTaxReturnNoteNo:
+        'This Nota Retur number is already used by another credit note of this customer.',
+    },
+    messages: {
+      notFound: 'Sales credit note not found.',
+    },
+  },
+
   invoices: {
     title: 'Invoices',
     fields: {
@@ -5585,6 +5654,7 @@ export default {
       status: 'Status',
       remark: 'Remark',
       invoice: 'Invoice',
+      creditNote: 'Credit Note',
       soQuantity: 'Ordered Qty',
       fulfilledQuantity: 'Fulfilled Qty',
       product: 'Product',
@@ -5620,6 +5690,7 @@ export default {
     messages: {
       confirmCancel: 'This will release all reserved stock back to available inventory. Proceed?',
       cancelSuccess: 'Delivery order cancelled successfully.',
+      returnNotCancellable: 'A return delivery order cannot be cancelled.',
       notFound: 'Delivery order not found.',
     },
     bonus: {

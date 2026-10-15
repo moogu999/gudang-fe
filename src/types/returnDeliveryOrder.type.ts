@@ -8,4 +8,6 @@ export interface ReturnDeliveryOrderResult {
   salesOrderId: number
   deliveryOrderId: number
   deliveryOrderNo: string
+  creditNoteId: number
+  creditNoteNo: string
 }

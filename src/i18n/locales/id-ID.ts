@@ -143,6 +143,7 @@ export default {
     deliveryOrders: 'Pesanan Pengiriman',
     returnDeliveryOrders: 'Surat Jalan Retur',
     invoices: 'Faktur',
+    salesCreditNotes: 'Nota Retur Penjualan',
     deliveryNotes: 'Surat Jalan',
     pickingLists: 'Picking List',
     goodsIssueNotes: 'Bukti Keluar Barang',
@@ -2152,6 +2153,7 @@ export default {
       type: 'Tipe Pesanan',
       returnSource: 'Sumber Retur',
       sourceInvoice: 'Invoice Sumber',
+      creditNote: 'Nota Retur',
     },
 
     type: {
@@ -2405,6 +2407,7 @@ export default {
       customers: 'Pelanggan',
       apInvoices: 'Faktur Pembelian',
       creditDebitNotes: 'Nota Kredit/Debit',
+      salesCreditNotes: 'Nota Retur Penjualan',
       apPayments: 'Pembayaran Hutang',
       cashDeposits: 'Setoran Kas',
       bankSettlements: 'Penyelesaian Bank',
@@ -2869,6 +2872,7 @@ export default {
     },
     messages: {
       created: 'Surat jalan retur {no} berhasil dibuat.',
+      createdWithCreditNote: 'Surat jalan retur {no} dibuat; nota retur {note} diterbitkan.',
       notFound: 'Pesanan penjualan retur tidak ditemukan.',
     },
     actions: {
@@ -3865,26 +3869,27 @@ export default {
     },
     sections: {
       header: 'Informasi Pelunasan',
-      sources: 'Kas Tersedia',
+      sources: 'Dana & Kredit Tersedia',
       invoices: 'Invoice Outstanding',
       summary: 'Ringkasan',
     },
     sources: {
       selectCustomerFirst: 'Pilih pelanggan untuk melihat kas yang belum teralokasi.',
       date: 'Tanggal',
-      method: 'Diterima Via',
+      method: 'Jenis',
       source: 'Dokumen',
       description: 'Keterangan',
       amount: 'Nominal Awal',
       remaining: 'Sisa',
       consumed: 'Teralokasi',
-      empty: 'Pelanggan ini tidak memiliki kas yang belum teralokasi.',
+      empty: 'Pelanggan ini tidak memiliki kas atau kredit yang belum teralokasi.',
       partiallyAllocatedHint:
         'Sebagian baris sudah dialokasikan sebagian pada pelunasan sebelumnya.',
       type: {
         cash_deposit: 'Tunai',
         bank_settlement: 'Transfer Bank',
         giro: 'Giro',
+        sales_credit_note: 'Nota Retur',
       },
     },
     invoices: {
@@ -5215,7 +5220,7 @@ export default {
       legend:
         'Warna membandingkan pencapaian dengan progres hari kerja ({pct}): hijau di atas atau sama dengan progres, oranye mulai 70 % dari progres, merah di bawahnya. Run rate dinilai terhadap target penuh.',
       basis:
-        'Dihitung dari faktur yang sudah diterapkan, menurut tanggal penerapannya. Retur belum dikurangkan.',
+        'Dihitung dari faktur yang sudah diterapkan menurut tanggal penerapannya, dikurangi nota retur penjualan yang sudah diposting menurut tanggal postingnya.',
       notActive: 'Pencapaian tampil setelah target aktif.',
       noLines: 'Target ini belum memiliki salesman.',
       loadFailed: 'Pencapaian tidak dapat dimuat.',
@@ -5498,6 +5503,70 @@ export default {
     },
     dnLink: 'Lihat Surat Jalan',
   },
+  salesCreditNotes: {
+    title: 'Nota Retur Penjualan',
+    list: {
+      hint: 'Nota retur diterbitkan oleh surat jalan retur.',
+    },
+    columns: {
+      no: 'No. Nota Retur',
+      date: 'Tanggal',
+      customer: 'Pelanggan',
+      salesman: 'Salesman',
+      returnDo: 'Surat Jalan Retur',
+      sourceInvoice: 'Faktur Sumber',
+      total: 'Total',
+      applied: 'Teralokasi',
+      appliedStatus: 'Status Alokasi',
+      taxReturnNoteNo: 'No. Nota Retur (Pajak)',
+    },
+    applied: {
+      none: 'Belum dialokasikan',
+      partial: 'Sebagian dialokasikan',
+      full: 'Sepenuhnya dialokasikan',
+    },
+    fields: {
+      returnSo: 'Pesanan Penjualan Retur',
+      returnDo: 'Surat Jalan Retur',
+      sourceInvoice: 'Faktur Sumber',
+      postedBy: 'Diposting Oleh',
+      postedAt: 'Diposting Pada',
+      outstanding: 'Sisa',
+      appliedAmount: 'Teralokasi',
+      company: 'Perusahaan',
+      branch: 'Cabang',
+    },
+    lines: {
+      product: 'Produk',
+      quantity: 'Kuantitas',
+      price: 'Harga',
+      discount: 'Diskon',
+      subAmount: 'Sub Jumlah',
+      taxBase: 'DPP',
+      tax: 'PPN',
+    },
+    summary: {
+      subtotal: 'Subtotal',
+      discount: 'Diskon',
+      taxBase: 'DPP',
+      tax: 'PPN',
+      total: 'Total',
+    },
+    taxRef: {
+      edit: 'Ubah nomor Nota Retur',
+      save: 'Simpan',
+      cancel: 'Batal',
+      saved: 'Nomor Nota Retur tersimpan.',
+    },
+    validation: {
+      duplicateTaxReturnNoteNo:
+        'Nomor Nota Retur ini sudah dipakai nota retur lain milik pelanggan ini.',
+    },
+    messages: {
+      notFound: 'Nota retur penjualan tidak ditemukan.',
+    },
+  },
+
   invoices: {
     title: 'Faktur',
     fields: {
@@ -5602,6 +5671,7 @@ export default {
       status: 'Status',
       remark: 'Catatan',
       invoice: 'Faktur',
+      creditNote: 'Nota Retur',
       soQuantity: 'Qty Dipesan',
       fulfilledQuantity: 'Qty Terpenuhi',
       product: 'Produk',
@@ -5638,6 +5708,7 @@ export default {
       confirmCancel:
         'Ini akan melepaskan semua stok yang direservasi kembali ke inventaris tersedia. Lanjutkan?',
       cancelSuccess: 'Pesanan pengiriman berhasil dibatalkan.',
+      returnNotCancellable: 'Surat jalan retur tidak dapat dibatalkan.',
       notFound: 'Pesanan pengiriman tidak ditemukan.',
     },
     bonus: {

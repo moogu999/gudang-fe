@@ -314,6 +314,19 @@
             >{{ viewSourceInvoiceNo }}</RouterLink
           >
         </div>
+
+        <!-- Credit note issued by this return's delivery order (return type, VIEW mode only) -->
+        <div
+          v-if="isReturn && mode === DialogMode.VIEW && viewCreditNote"
+          class="flex flex-col gap-1"
+        >
+          <label class="text-sm font-semibold">{{ t('salesOrders.fields.creditNote') }}</label>
+          <RouterLink
+            :to="{ name: 'SalesCreditNoteDetail', params: { id: viewCreditNote.id } }"
+            class="text-primary font-medium hover:underline"
+            >{{ viewCreditNote.no }}</RouterLink
+          >
+        </div>
       </div>
 
       <!-- Right Column: Payment & Financial -->
@@ -503,6 +516,7 @@ import {
   SalesOrderDetailsService,
   SalesOrderTypesService,
   InvoicesService,
+  SalesCreditNotesService,
   TaxConfigurationService,
   SalesOrderConfigService,
   GenericQueryBuilder,
@@ -529,6 +543,7 @@ import {
 import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
+import { PERMISSIONS } from '@/constants'
 
 const { t, locale } = useI18n()
 const toast = useToast()
@@ -604,6 +619,20 @@ const initialSourceInvoice = ref<InvoiceListItem>()
 // Populated in VIEW mode from the loaded header, to display (not edit) the source invoice.
 const viewSourceInvoiceId = ref<number | null>(null)
 const viewSourceInvoiceNo = ref<string | null>(null)
+const viewCreditNote = ref<{ id: number; no: string } | null>(null)
+
+// The note exists once the return DO has been created, which also moves the order to applied.
+async function loadCreditNote(salesOrderId: number) {
+  viewCreditNote.value = null
+  if (!authStore.hasPermission(PERMISSIONS.SALES_CREDIT_NOTE_READ)) return
+  try {
+    const note = await SalesCreditNotesService.findBySalesOrder(salesOrderId)
+    viewCreditNote.value = note ? { id: note.id, no: note.no } : null
+  } catch {
+    // The link is a convenience; the order itself is still fully readable.
+    viewCreditNote.value = null
+  }
+}
 
 const isReturn = computed(() => currentTypeCode.value === SALES_ORDER_TYPE_CODE_RETURN)
 
@@ -1362,6 +1391,9 @@ async function loadSalesOrder() {
     viewSourceInvoiceId.value = header.sourceInvoiceId ?? null
     viewSourceInvoiceNo.value = header.sourceInvoice?.no ?? null
     currentStatus.value = header.status
+    if (currentTypeCode.value === SALES_ORDER_TYPE_CODE_RETURN && header.status === 'applied') {
+      await loadCreditNote(props.salesOrderId)
+    }
     currentOrderDate.value = new Date(header.orderDate)
     currentPriceDate.value = header.priceDate ? new Date(header.priceDate) : undefined
     currentCustomerId.value = header.customerId

@@ -392,7 +392,10 @@ async function onSubmit() {
 
     toast.add(
       commonSuccessToast(
-        t('returnDeliveryOrders.messages.created', { no: res.deliveryOrderNo }),
+        t('returnDeliveryOrders.messages.createdWithCreditNote', {
+          no: res.deliveryOrderNo,
+          note: res.creditNoteNo,
+        }),
         toastGroup,
       ),
     )

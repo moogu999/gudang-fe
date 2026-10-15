@@ -51,6 +51,40 @@ describe('autoAllocate with a cleared giro (D10)', () => {
   })
 })
 
+describe('autoAllocate with a sales credit note', () => {
+  const rows = [invoice(1, '2026-07-01', '500'), invoice(2, '2026-08-01', '500')]
+
+  it('pays the source invoice before FIFO, like a reported cash deposit', () => {
+    const note = source({
+      sourceLineId: 1,
+      unappliedAmount: '300',
+      sourceType: 'sales_credit_note',
+      hintInvoiceId: 2,
+    })
+    expect(alloc(autoAllocate([note], rows))).toEqual([0, 300])
+  })
+
+  it('ignores a hint on an invoice that is not in the list and falls back to FIFO', () => {
+    const note = source({
+      sourceLineId: 1,
+      unappliedAmount: '300',
+      sourceType: 'sales_credit_note',
+      hintInvoiceId: 99,
+    })
+    expect(alloc(autoAllocate([note], rows))).toEqual([300, 0])
+  })
+
+  it('does not honour a hint on a bank settlement source', () => {
+    const bank = source({
+      sourceLineId: 1,
+      unappliedAmount: '300',
+      sourceType: 'bank_settlement',
+      hintInvoiceId: 2,
+    })
+    expect(alloc(autoAllocate([bank], rows))).toEqual([300, 0])
+  })
+})
+
 describe('keyOf', () => {
   it('keys on the type/line pair so equal line ids from two source types do not collide', () => {
     expect(keyOf('cash_deposit', 5)).not.toBe(keyOf('bank_settlement', 5))

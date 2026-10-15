@@ -10,7 +10,7 @@
  */
 
 export type ArClearingStatus = 'draft' | 'completed' | 'voided'
-export type ArCashSourceType = 'cash_deposit' | 'bank_settlement' | 'giro'
+export type ArCashSourceType = 'cash_deposit' | 'bank_settlement' | 'giro' | 'sales_credit_note'
 
 /** One poolable cash line. `sourceLineId` is unique only within a `sourceType` — key on the pair. */
 export interface ArUnappliedCashItem {
@@ -23,9 +23,12 @@ export interface ArUnappliedCashItem {
   amount: string
   appliedAmount: string
   unappliedAmount: string
-  /** The invoice a collector reported this cash against — cash-deposit invoice lines only. */
+  /**
+   * The invoice this money relates to: the one a collector reported a cash deposit against, or
+   * the invoice a sales credit note returns goods from.
+   */
   hintInvoiceId?: number | null
-  /** `invoice | adhoc` for a cash deposit line, `bank` for a bank settlement line. */
+  /** `invoice | adhoc` for a cash deposit line, `bank` for a bank settlement line, `credit_note` for a sales credit note. */
   sourceDetail: string
   note?: string | null
   description: string

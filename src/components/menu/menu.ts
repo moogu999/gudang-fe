@@ -268,6 +268,11 @@ const mainMenu = [
         route: '/invoices',
       },
       {
+        label: 'Sales Credit Notes',
+        labelKey: 'navigation.salesCreditNotes',
+        route: '/sales-credit-notes',
+      },
+      {
         label: 'Promotions',
         labelKey: 'navigation.promotions',
         route: '/promotions',

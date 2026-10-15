@@ -498,6 +498,16 @@ export type {
   InvoiceDiscountItem,
 } from './invoice.type'
 
+// Sales credit note types
+export type {
+  SalesCreditNoteListRow,
+  SalesCreditNoteRef,
+  SalesCreditNoteLine,
+  SalesCreditNoteDetail,
+  SalesCreditNoteAppliedStatus,
+  UpdateTaxReferenceDto,
+} from './salesCreditNote.type'
+
 // Goods Issue Note types
 export type {
   GoodsIssueNoteStatus,

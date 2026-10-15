@@ -1407,6 +1407,25 @@ const router = createRouter({
           redirect: { path: '/configs', query: { tab: 'survey' } },
         },
         {
+          path: 'sales-credit-notes',
+          name: 'SalesCreditNotes',
+          component: () => import('@/views/sales-credit-notes/SalesCreditNotesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_CREDIT_NOTE_READ,
+            titleKey: 'navigation.salesCreditNotes',
+          },
+        },
+        {
+          path: 'sales-credit-notes/:id',
+          name: 'SalesCreditNoteDetail',
+          component: () => import('@/views/sales-credit-notes/SalesCreditNoteDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_CREDIT_NOTE_READ,
+            titleKey: 'navigation.salesCreditNotes',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'bank-settlements',
           name: 'BankSettlements',
           component: () => import('@/views/bank-settlements/BankSettlementsView.vue'),

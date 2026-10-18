@@ -16,7 +16,6 @@ import { PERMISSIONS } from '@/constants'
 const ALLOWED_WITHOUT_PERMISSION = new Set<string>([
   '/sign-in',
   '/',
-  '/superset',
   '/configs',
   // Gates itself via a custom `beforeEnter` (GIRO_RECEIPT_READ || GIRO_CLEARING_READ)
   // rather than a single static meta.requiredPermission — same shape as /configs

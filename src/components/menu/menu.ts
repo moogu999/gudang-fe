@@ -1,5 +1,21 @@
-import { PERMISSIONS } from '@/constants'
+import { PERMISSIONS, type PermissionId } from '@/constants'
 import { CONFIG_TABS } from '@/views/configs/configTabs'
+
+type MenuLeaf = {
+  label: string
+  labelKey: string
+  route: string
+  permissionsAny?: PermissionId[]
+}
+
+/** A sidebar section: a group of leaves, or a top-level item with its own route. */
+type MenuSection = {
+  label: string
+  labelKey: string
+  icon: string
+  route?: string
+  items?: MenuLeaf[]
+}
 
 /**
  * Main navigation menu configuration
@@ -7,7 +23,7 @@ import { CONFIG_TABS } from '@/views/configs/configTabs'
  * Each menu item includes a `labelKey` for i18n translation.
  * The `label` field is kept for backwards compatibility and as a fallback.
  */
-const mainMenu = [
+const mainMenu: MenuSection[] = [
   {
     label: 'HR',
     labelKey: 'navigation.hr',
@@ -450,12 +466,6 @@ const mainMenu = [
         ],
       },
     ],
-  },
-  {
-    label: 'Superset',
-    labelKey: 'navigation.superset',
-    icon: 'pi pi-chart-line',
-    route: '/superset',
   },
 ]
 

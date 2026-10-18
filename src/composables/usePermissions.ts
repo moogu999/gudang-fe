@@ -14,8 +14,8 @@ const NOT_FOUND_ROUTE = 'NotFound'
  * declares: there is one place to look, not a route meta plus a separate map keyed by
  * path string (see item E of permission-gating-hardening-fe.md).
  *
- * Returns `undefined` for a route that deliberately declares no permission (Home,
- * Superset, or a screen with no write action), and `null` for a path matching no route
+ * Returns `undefined` for a route that deliberately declares no permission (Home
+ * or a screen with no write action), and `null` for a path matching no route
  * at all.
  */
 function permissionFor(

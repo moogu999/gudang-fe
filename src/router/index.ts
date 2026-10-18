@@ -59,12 +59,6 @@ const router = createRouter({
           meta: { titleKey: 'navigation.home' },
         },
         {
-          path: 'superset',
-          name: 'Superset',
-          component: () => import('@/views/superset/SupersetView.vue'),
-          meta: { titleKey: 'navigation.superset' },
-        },
-        {
           path: 'users',
           name: 'Users',
           component: () => import('@/views/users/UsersView.vue'),

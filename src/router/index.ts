@@ -1711,7 +1711,7 @@ router.beforeEach(async (to, from, next) => {
 
 // --- Document title management ---
 
-const APP_NAME = 'N-Force'
+const APP_NAME = 'N-Command'
 
 /**
  * Resolves the localized page title from the matched route's `meta.titleKey`/`meta.titleAction`

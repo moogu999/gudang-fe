@@ -151,3 +151,15 @@ describe('InfiniteSelect footer slot', () => {
     expect(wrapper.find('[data-testid="footer-btn"]').exists()).toBe(true)
   })
 })
+
+describe('InfiniteSelect form binding', () => {
+  // Regression pin: modelValue's type includes boolean, so Vue casts an absent
+  // prop to `false`. Inside a PrimeVue Form that `false` wins over the form's
+  // initial value, and every picker on an edit screen rendered empty.
+  it('leaves modelValue undefined when the parent binds none', async () => {
+    const fetchFn = vi.fn<FetchFn>().mockResolvedValue({ data: [], meta: meta() })
+    const wrapper = await mountSelect(fetchFn)
+
+    expect(wrapper.findComponent(SelectStub).props('modelValue')).toBeUndefined()
+  })
+})

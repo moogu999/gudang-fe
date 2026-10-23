@@ -82,6 +82,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  // SelectValue includes boolean, so without a default Vue casts an absent
+  // modelValue to `false` and the Select never reads the form's value.
+  modelValue: undefined,
   filter: true,
   placeholder: '',
   limit: 10,

@@ -407,17 +407,9 @@ async function editUser(event: FormSubmitEvent) {
     updateData.password = event.states.password.value
   }
 
-  // Update department if it changed
-  const newDepartmentId = event.states.departmentId.value ?? null
-  if (newDepartmentId !== props.user!.departmentId) {
-    updateData.departmentId = newDepartmentId
-  }
-
-  // Update employee if it changed
-  const newEmployeeId = event.states.employeeId.value ?? null
-  if (newEmployeeId !== props.user!.employeeId) {
-    updateData.employeeId = newEmployeeId
-  }
+  // Always sent: the endpoint replaces both columns, so an omitted one is cleared.
+  updateData.departmentId = event.states.departmentId.value ?? null
+  updateData.employeeId = event.states.employeeId.value ?? null
 
   await UsersService.update(props.user!.id, updateData)
 

@@ -234,7 +234,7 @@ const resolver = computed(() =>
       name: z.string().min(1, t('companies.validation.nameRequired')),
       address: z.string().optional(),
       taxId: z.string().optional(),
-      currencyId: z.number({ required_error: t('companies.validation.currencyRequired') }),
+      currencyId: z.number({ error: t('companies.validation.currencyRequired') }),
     }),
   ),
 )

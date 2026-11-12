@@ -246,7 +246,7 @@ const resolver = computed(() =>
       openOnSaturday: z.boolean().optional(),
       openOnSunday: z.boolean().optional(),
       cogsCalculationMethodId: z.number({
-        required_error: t('branches.validation.cogsCalculationMethodRequired'),
+        error: t('branches.validation.cogsCalculationMethodRequired'),
       }),
     }),
   ),

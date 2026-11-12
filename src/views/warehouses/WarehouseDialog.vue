@@ -158,7 +158,7 @@ const resolver = computed(() =>
     z.object({
       code: z.string().min(1, t('warehouses.validation.codeRequired')),
       name: z.string().min(1, t('warehouses.validation.nameRequired')),
-      branchId: z.number({ required_error: t('warehouses.validation.branchRequired') }),
+      branchId: z.number({ error: t('warehouses.validation.branchRequired') }),
     }),
   ),
 )

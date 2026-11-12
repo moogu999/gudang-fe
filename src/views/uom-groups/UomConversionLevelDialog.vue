@@ -160,11 +160,11 @@ const initialValues = reactive({
 const resolver = computed(() =>
   zodResolver(
     z.object({
-      uomId: z.number({ required_error: t('uomGroups.levels.validation.uomRequired') }),
+      uomId: z.number({ error: t('uomGroups.levels.validation.uomRequired') }),
       qtyPerParent: isLevelOne.value
         ? z.number().optional().nullable()
         : z
-            .number({ required_error: t('uomGroups.levels.validation.qtyPerParentRequired') })
+            .number({ error: t('uomGroups.levels.validation.qtyPerParentRequired') })
             .int()
             .positive(t('uomGroups.levels.validation.qtyPerParentPositive')),
     }),

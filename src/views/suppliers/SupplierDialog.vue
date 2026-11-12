@@ -355,7 +355,7 @@ const resolver = computed(() =>
       picName: z.string().min(1, t('suppliers.validation.picNameRequired')),
       picPhone: z.string().min(1, t('suppliers.validation.picPhoneRequired')),
       paymentTermId: z.number({
-        required_error: t('suppliers.validation.paymentTermRequired'),
+        error: t('suppliers.validation.paymentTermRequired'),
       }),
       bankName: z.string().optional(),
       bankAccountNumber: z.string().optional(),

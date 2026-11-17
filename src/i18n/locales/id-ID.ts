@@ -100,6 +100,7 @@ export default {
     journeyPlanConfigs: 'Konfigurasi Journey Plan',
     deviceBinding: 'Device Binding',
     reasons: 'Alasan',
+    visitRules: 'Aturan Kunjungan',
     competitorProducts: 'Produk Kompetitor',
     competitorBrands: 'Brand Kompetitor',
     displayTypes: 'Tipe Display',
@@ -662,7 +663,7 @@ export default {
     },
     mode: {
       salesman: 'TO',
-      canvass: 'KV',
+      canvass: 'CV',
     },
     device: {
       requestedFrom: 'minta ganti dari {model}',
@@ -1391,7 +1392,7 @@ export default {
       salesman: 'Salesman',
       canvass: 'Kanvas',
       salesmanShort: 'TO',
-      canvassShort: 'KV',
+      canvassShort: 'CV',
     },
     stockTypes: {
       good: 'Stok Good',
@@ -2720,6 +2721,7 @@ export default {
       journey_plan_config: 'Konfigurasi Journey Plan',
       journey_plan_addition: 'Tambahan Journey Plan',
       journey_plan_regenerate: 'Regenerate Journey Plan',
+      visit_rules: 'Aturan Kunjungan',
     },
     system: 'Sistem',
     actions: {
@@ -2758,6 +2760,7 @@ export default {
     nforceHint:
       'Karyawan Salesman dan Canvass dengan akses N-Force otomatis mendapat kode aktivasi dan muncul di Device Binding.',
     nforceNotApplicable: 'Tipe karyawan ini tidak memakai device binding.',
+    exemptDepotCheckInHint: 'Hanya aturan ini yang bisa diatur per orang. Lihat Aturan Kunjungan.',
     openDeviceBinding: 'Device Binding',
     chips: {
       all: 'Semua',
@@ -2790,6 +2793,7 @@ export default {
       isActive: 'Status Aktif',
       accessNcommand: 'Akses N-Command',
       accessNforce: 'Akses N-Force',
+      exemptDepotCheckIn: 'Bebas check-in depo',
     },
     employmentStatus: {
       Kontrak: 'Kontrak',
@@ -4270,8 +4274,7 @@ export default {
     title: 'Rute & PJP',
     editRoute: 'Ubah Rute',
     createRoute: 'Buat Rute',
-    stats:
-      '{branch} · {routes} rute · {customers} customer di rute · minggu ini W{week}',
+    stats: '{branch} · {routes} rute · {customers} customer di rute · minggu ini W{week}',
     noSalesman: 'Tanpa salesman',
     pendingHolder: '→ {name} mulai {date}',
     startsOn: 'Mulai {date}',
@@ -4304,8 +4307,7 @@ export default {
       statusAll: 'Semua',
     },
     banner: {
-      unrouted:
-        '{n} customer aktif belum masuk rute mana pun dan tidak akan dikunjungi.',
+      unrouted: '{n} customer aktif belum masuk rute mana pun dan tidak akan dikunjungi.',
       unroutedTop: 'Terbanyak: {name}.',
       viewCustomers: 'Lihat customer',
       customNextMonth: '{n} customer berjadwal custom belum punya tanggal di {month}.',
@@ -4384,8 +4386,7 @@ export default {
       footnote:
         'Urutan = urutan kunjungan default di ponsel untuk tiap hari. Customer boleh dijadwalkan di hari yang biasanya tidak dikunjungi rute; hari rute diturunkan otomatis.',
       removeHeader: 'Keluarkan customer',
-      removeMessage:
-        'Keluarkan {name} dari rute ini? Berlaku mulai besok; rencana hari ini tetap.',
+      removeMessage: 'Keluarkan {name} dari rute ini? Berlaku mulai besok; rencana hari ini tetap.',
       columns: {
         customer: 'Customer',
         days: 'Hari',
@@ -4424,8 +4425,7 @@ export default {
       frequency: 'Frekuensi',
       week: 'Minggu',
       result: 'Hasil · {month}',
-      previewNote:
-        '{n} kunjungan di {month}. Hanya pratinjau; hari libur dilewati otomatis.',
+      previewNote: '{n} kunjungan di {month}. Hanya pratinjau; hari libur dilewati otomatis.',
       datesSelected: '{n} tanggal dipilih.',
       holiday: 'Hari libur',
       invalidDate: 'Tidak diizinkan',
@@ -4462,10 +4462,10 @@ export default {
       inTeamRoute: 'Ada di {code} {name} ({salesman}), tim yang sama',
       moveHere: 'Pindahkan ke sini…',
       alsoIn: 'Juga ada di {route} · {team} · {salesman}',
-      customHint: 'Customer custom ditambahkan tanpa tanggal. Atur tanggalnya dengan tombol kalender di setiap baris.',
+      customHint:
+        'Customer custom ditambahkan tanpa tanggal. Atur tanggalnya dengan tombol kalender di setiap baris.',
       scheduleTitle: 'Jadwal untuk customer terpilih',
-      teamRule:
-        'Customer boleh ada di rute tim yang berbeda, tetapi hanya di satu rute per tim.',
+      teamRule: 'Customer boleh ada di rute tim yang berbeda, tetapi hanya di satu rute per tim.',
       selected: '{n} dipilih',
       add: 'Tambah {n} customer',
     },
@@ -4715,6 +4715,184 @@ export default {
       6: 'Min',
     },
   },
+  visitRules: {
+    title: 'Aturan Kunjungan',
+    subtitle: 'Seberapa ketat tiap aktivitas dijalankan di ponsel: Wajib, Dianjurkan, atau Mati.',
+    lastChanged: '{company} · terakhir diubah oleh {by} {at}',
+    neverChanged: '{company} · memakai bawaan sistem',
+    company: 'Perusahaan',
+    selectCompany: 'Pilih perusahaan',
+    noCompanies: 'Tidak ada perusahaan.',
+    tabs: { default: 'Default', teams: 'Override tim', history: 'Riwayat' },
+    actions: {
+      checkSalesman: 'Cek salesman',
+      addTeamOverride: 'Tambah override tim',
+      resetAll: 'Kembalikan semua ke default',
+      followDefault: 'Ikuti default',
+      override: 'Override',
+      save: 'Simpan',
+      cancel: 'Batal',
+    },
+    columns: {
+      activity: 'Aktivitas',
+      mode: 'Mode',
+      rule: 'Aturan',
+      teamRule: 'Aturan tim',
+      default: 'Default',
+      parameter: 'Parameter',
+      setIn: 'Diatur di',
+    },
+    categories: {
+      start_of_day: 'Awal hari · mengunci Mulai Kunjungan',
+      check_in: 'Check-in · menahan check-in',
+      outlet_activity: 'Aktivitas outlet · mengunci check-out',
+    },
+    levels: {
+      mandatory: { required: 'Wajib', recommended: 'Dianjurkan', off: 'Mati' },
+      block: { required: 'Block', recommended: 'Warning + alasan', off: 'Mati' },
+    },
+    modes: {
+      taking_order: 'TO',
+      canvass: 'CV',
+      taking_orderLong: 'Taking Order',
+      canvassLong: 'Canvass',
+    },
+    sources: {
+      default: 'Bawaan sistem',
+      company: 'Default',
+      team: 'Tim',
+      employee: 'Karyawan',
+      'n/a': 'T/A',
+    },
+    lockedHint: 'Selalu {level}. Aturan ini tidak bisa diubah.',
+    radius: { unit: 'm', invalid: 'Isi radius antara 10 dan 5000 m.' },
+    pinnedWarning:
+      '{rule} di-override dengan nilai yang sama seperti default ({value}). Tim ini tetap {level} walaupun default berubah nanti. Untuk mengikuti default, pilih Ikuti default.',
+    surveyOptionalNote:
+      'Survei atau cek stok yang ditandai Opsional di master Survei selalu opsional. Aturan ini hanya mengatur survei yang ditandai Wajib.',
+    exempt: {
+      title: 'Alasan pengecualian',
+      hint: 'Jika salesman memilih salah satunya sebagai alasan tidak order, {rules} tidak mengunci check-out untuk kunjungan itu.',
+      choose: 'Pilih dari Kode Alasan',
+      inactive: 'nonaktif',
+      empty: 'Belum ada alasan pengecualian.',
+      placeholder: 'Pilih alasan',
+    },
+    teams: {
+      differ: '{n} berbeda',
+      followDefault: 'Ikuti default',
+      members: '{n} salesman | {n} salesman',
+      noTeams: 'Perusahaan ini belum punya tim.',
+      selectTeam: 'Pilih tim untuk melihat aturannya.',
+      noteLabel: 'Catatan tim',
+      notePlaceholder: 'Alasan tim ini berbeda (opsional)',
+      addTitle: 'Tambah override tim',
+      addEmpty: 'Semua tim sudah punya override.',
+      resetConfirm: 'Kembalikan {team} ke aturan default? Semua override-nya dihapus.',
+      resetTitle: 'Kembalikan ke default',
+      reset: 'Kembalikan',
+      dirtyTitle: 'Perubahan belum disimpan',
+      dirtyMessage: 'Buang perubahan yang belum disimpan?',
+      discard: 'Buang',
+    },
+    drawer: {
+      title: 'Cek salesman',
+      pick: 'Pilih karyawan',
+      mode: 'Tipe karyawan',
+      noTeam: 'Tanpa tim',
+      effective: 'Aturan efektif',
+      notApplicable: 'Tidak berlaku untuk {mode}',
+      unsavedNote: 'Hanya menampilkan aturan yang sudah disimpan.',
+      empty: 'Pilih salesman untuk melihat aturan yang berlaku baginya.',
+    },
+    history: {
+      empty: 'Belum ada perubahan tercatat.',
+      loadMore: 'Muat lagi',
+      showAll: 'Tampilkan semua {n} baris',
+      showLess: 'Tampilkan lebih sedikit',
+    },
+    messages: {
+      saved: 'Aturan kunjungan disimpan.',
+      teamSaved: 'Aturan tim disimpan.',
+      teamReset: 'Tim dikembalikan ke default.',
+    },
+    unsavedTitle: 'Perubahan belum disimpan',
+    unsavedMessage: 'Ada perubahan yang belum disimpan. Buang?',
+    rules: {
+      depot_check_in: {
+        name: 'Check-in depo',
+        description:
+          'GPS dan selfie di depo sebelum hari dimulai. Di luar radius: peringatan dan alasan.',
+        setIn: 'Titik depo: Cabang / Gudang. Bisa dikecualikan per karyawan.',
+      },
+      load_confirmation: {
+        name: 'Konfirmasi muatan',
+        description: 'Canvass mengonfirmasi stok muatan sebelum mulai. Selalu wajib.',
+        setIn: 'Dokumen muat Canvass (segera).',
+      },
+      mandatory_announcement: {
+        name: 'Pengumuman wajib',
+        description: 'Pengumuman yang ditandai wajib harus dibaca sebelum mulai.',
+        setIn: 'Modul Pengumuman (segera).',
+      },
+      outlet_radius: {
+        name: 'Radius outlet',
+        description:
+          'Check-in harus dalam radius pelanggan. Di luar radius: block, atau peringatan dengan alasan.',
+        setIn: 'Titik pelanggan: master Pelanggan. Alasan: Kode Alasan "Di Luar Radius".',
+      },
+      check_in_selfie: {
+        name: 'Selfie check-in',
+        description: 'Selfie kamera depan saat check-in. Tanpa galeri.',
+        setIn: 'Layar ini.',
+      },
+      fake_gps: {
+        name: 'GPS palsu',
+        description: 'Check-in diblokir jika terdeteksi lokasi palsu. Selalu diblokir.',
+        setIn: 'Deteksi tercatat di Device Binding.',
+      },
+      stock_check: {
+        name: 'Cek stok',
+        description: 'Isi survei Cek Stok yang ditandai Wajib.',
+        setIn: 'Master Survei.',
+      },
+      order_or_reason: {
+        name: 'Order atau alasan',
+        description: 'Transaksi, atau alasan pelanggan tidak order.',
+        setIn: 'Kode Alasan "Pelanggan Tidak Order".',
+      },
+      msl_not_sold: {
+        name: 'MSL tidak terjual',
+        description: 'Alasan untuk setiap SKU Must Sell List dengan qty 0.',
+        setIn: 'Master Must Sell List.',
+      },
+      display: {
+        name: 'Display',
+        description: 'Cek display untuk pelanggan di Program Display aktif.',
+        setIn: 'Master Program Display.',
+      },
+      survey: {
+        name: 'Survei',
+        description: 'Isi survei reguler yang ditandai Wajib.',
+        setIn: 'Master Survei.',
+      },
+    },
+    errors: {
+      VISIT_RULE_UNKNOWN_RULE: 'Aturan tidak dikenal atau duplikat.',
+      VISIT_RULE_LOCKED: 'Aturan ini terkunci dan tidak bisa diubah.',
+      VISIT_RULE_MISSING: 'Semua aturan harus dikirim.',
+      VISIT_RULE_LEVEL_NOT_ALLOWED: 'Level itu tidak diizinkan untuk aturan ini.',
+      VISIT_RULE_RADIUS_INVALID: 'Radius harus antara 10 dan 5000 m.',
+      VISIT_RULE_NOTE_TOO_LONG: 'Catatan maksimal 200 karakter.',
+      VISIT_RULE_EXEMPT_REASON_INVALID:
+        'Alasan pengecualian harus alasan "Pelanggan Tidak Order" yang aktif.',
+      VISIT_RULE_TEAM_COMPANY_UNRESOLVED: 'Cabang tim ini tidak termasuk tepat satu perusahaan.',
+      VISIT_RULE_TEAM_INACTIVE: 'Tim ini nonaktif.',
+      VISIT_RULE_COMPANY_UNRESOLVED: 'Perusahaan karyawan tidak dapat ditentukan.',
+      VISIT_RULE_NOT_FIELD_EMPLOYEE:
+        'Hanya karyawan Salesman dan Canvass yang punya aturan kunjungan.',
+    },
+  },
   surveyConfigs: {
     title: 'Konfigurasi Survei',
     addConfig: 'Tambah Konfigurasi',
@@ -4723,7 +4901,6 @@ export default {
     fields: {
       branch: 'Cabang',
       scopeLevel: 'Level Scope Pelanggan',
-      requiredMode: 'Arti Wajib di ponsel',
       stockCheckQtyDefault: 'Tanya stok toko secara default di cek stok',
       updatedAt: 'Terakhir Diperbarui',
     },
@@ -4732,16 +4909,10 @@ export default {
       channel: 'Channel',
       category: 'Kategori',
     },
-    modes: {
-      block_checkout: 'Memblokir check-out',
-      reminder: 'Hanya pengingat',
-    },
     labels: {
       selectBranch: 'Pilih Cabang',
       levelHint:
         'Hanya berlaku untuk survei baru. Survei yang sudah ada tetap memakai level saat dibuat.',
-      requiredModeHint:
-        'Berlaku untuk semua survei Wajib di cabang ini, langsung. Pengingat = check-out tetap aktif dengan konfirmasi.',
       qtyHint: 'Nonaktif = hanya Tersedia / Tidak tersedia. Hanya mengisi awal cek stok baru.',
     },
     validation: {
@@ -4803,11 +4974,7 @@ export default {
     list: {
       create: 'Survei baru',
       branch: 'Cabang',
-      summary: '{active} aktif · {scheduled} terjadwal · {draft} draft · Konfigurasi: {mode}',
-      requiredModeSummary: {
-        block_checkout: 'survei Wajib memblokir check-out',
-        reminder: 'survei Wajib hanya mengingatkan',
-      },
+      summary: '{active} aktif · {scheduled} terjadwal · {draft} draft',
       noConfig: 'Cabang ini belum punya konfigurasi survei.',
       allPrincipals: 'Semua principal',
       internal: 'Internal',
@@ -4867,10 +5034,6 @@ export default {
       frequencyHint:
         'Sekali per periode: setelah pelanggan menjawab, survei tidak muncul lagi di sana sampai periode berakhir (siapa pun salesmannya).',
       required: 'Wajib',
-      requiredHint: {
-        block_checkout: 'Konfigurasi saat ini: Wajib memblokir check-out sampai survei diisi.',
-        reminder: 'Konfigurasi saat ini: Wajib hanya mengingatkan salesman sebelum check-out.',
-      },
       notes: 'Catatan',
       activeNote: 'Perubahan pada survei aktif sampai ke ponsel saat sinkronisasi berikutnya.',
       missingConfig: 'Atur konfigurasi survei untuk cabang ini terlebih dahulu.',

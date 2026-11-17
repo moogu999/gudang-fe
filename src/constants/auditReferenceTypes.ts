@@ -176,4 +176,8 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     label: 'Journey Plan Regenerate',
     labelKey: 'auditTrails.references.journey_plan_regenerate',
   },
+  visit_rules: {
+    label: 'Visit Rules',
+    labelKey: 'auditTrails.references.visit_rules',
+  },
 }

@@ -4,7 +4,6 @@ export type SurveyStatus = 'draft' | 'published'
 export type SurveyDisplayStatus = 'draft' | 'scheduled' | 'active' | 'ended'
 export type SurveyStatusFilter = 'current' | SurveyDisplayStatus | 'all'
 export type SurveyScopeLevel = 'outlet_type' | 'channel' | 'category'
-export type SurveyRequiredMode = 'block_checkout' | 'reminder'
 export type SurveyQuestionType =
   | 'text'
   | 'number'
@@ -20,7 +19,6 @@ export interface SurveyConfig {
   branchId: number
   branchName: string
   scopeLevel: SurveyScopeLevel
-  requiredMode: SurveyRequiredMode
   stockCheckQtyDefault: boolean
   createdAt: string
   createdBy: number
@@ -30,7 +28,6 @@ export interface SurveyConfig {
 
 export interface UpsertSurveyConfigDto {
   scopeLevel: SurveyScopeLevel
-  requiredMode: SurveyRequiredMode
   stockCheckQtyDefault: boolean
 }
 

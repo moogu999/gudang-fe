@@ -363,6 +363,16 @@ const router = createRouter({
           },
         },
         {
+          path: 'visit-rules',
+          name: 'VisitRules',
+          component: () => import('@/views/visit-rules/VisitRulesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.VISIT_RULE_READ,
+            requiredWritePermission: PERMISSIONS.VISIT_RULE_WRITE,
+            titleKey: 'navigation.visitRules',
+          },
+        },
+        {
           path: 'competitor-brands',
           name: 'CompetitorBrands',
           component: () => import('@/views/competitor-brands/CompetitorBrandsView.vue'),

@@ -127,6 +127,7 @@ const EXPECTED_WRITE_PERMISSIONS: Record<string, number> = {
   '/routes': PERMISSIONS.ROUTE_WRITE,
   '/journey-plans': PERMISSIONS.JOURNEY_PLAN_WRITE,
   '/journey-plan-configs': PERMISSIONS.JOURNEY_PLAN_CONFIG_WRITE,
+  '/visit-rules': PERMISSIONS.VISIT_RULE_WRITE,
 }
 
 describe('router write-permission coverage (item E)', () => {

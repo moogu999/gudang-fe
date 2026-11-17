@@ -99,6 +99,7 @@ export default {
     journeyPlanConfigs: 'Journey Plan Config',
     deviceBinding: 'Device Binding',
     reasons: 'Reasons',
+    visitRules: 'Visit Rules',
     competitorProducts: 'Competitor Products',
     competitorBrands: 'Competitor Brands',
     displayTypes: 'Display Types',
@@ -661,7 +662,7 @@ export default {
     },
     mode: {
       salesman: 'TO',
-      canvass: 'KV',
+      canvass: 'CV',
     },
     device: {
       requestedFrom: 'requested change from {model}',
@@ -1389,7 +1390,7 @@ export default {
       salesman: 'Salesman',
       canvass: 'Canvass',
       salesmanShort: 'TO',
-      canvassShort: 'KV',
+      canvassShort: 'CV',
     },
     stockTypes: {
       good: 'Good Stock',
@@ -2718,6 +2719,7 @@ export default {
       journey_plan_config: 'Journey Plan Config',
       journey_plan_addition: 'Journey Plan Addition',
       journey_plan_regenerate: 'Journey Plan Regenerate',
+      visit_rules: 'Visit Rules',
     },
     system: 'System',
     actions: {
@@ -2756,6 +2758,7 @@ export default {
     nforceHint:
       'Salesman and Canvass employees with N-Force access get an activation code automatically and appear in Device Binding.',
     nforceNotApplicable: "This employee type doesn't use device binding.",
+    exemptDepotCheckInHint: 'Only this rule can be set per person. See Visit Rules.',
     openDeviceBinding: 'Device Binding',
     chips: {
       all: 'All',
@@ -2788,6 +2791,7 @@ export default {
       isActive: 'Active Status',
       accessNcommand: 'N-Command Access',
       accessNforce: 'N-Force Access',
+      exemptDepotCheckIn: 'Exempt from depot check-in',
     },
     employmentStatus: {
       Kontrak: 'Contract',
@@ -4261,8 +4265,7 @@ export default {
     title: 'Routes',
     editRoute: 'Edit Route',
     createRoute: 'Create Route',
-    stats:
-      '{branch} · {routes} routes · {customers} customers in routes · this week W{week}',
+    stats: '{branch} · {routes} routes · {customers} customers in routes · this week W{week}',
     noSalesman: 'No salesman',
     pendingHolder: '→ {name} from {date}',
     startsOn: 'Starts {date}',
@@ -4299,7 +4302,8 @@ export default {
         "{n} active customer is not in any route and won't be visited. | {n} active customers are not in any route and won't be visited.",
       unroutedTop: 'Most: {name}.',
       viewCustomers: 'View customers',
-      customNextMonth: '{n} custom-schedule customer has no dates in {month}. | {n} custom-schedule customers have no dates in {month}.',
+      customNextMonth:
+        '{n} custom-schedule customer has no dates in {month}. | {n} custom-schedule customers have no dates in {month}.',
       reviewAndCopy: 'Review & copy',
     },
     menu: {
@@ -4341,7 +4345,7 @@ export default {
       selectTeamFirst: 'Select a team first',
       salesmanStartsTomorrow: "Starts tomorrow. Change later with 'Change salesman'.",
       supervisor: 'Supervisor',
-      supervisorHint: "From the team master.",
+      supervisorHint: 'From the team master.',
       createInfo:
         "A route without a salesman can still get customers and schedules; its customers appear in nobody's journey plan until a salesman is set.",
       lastChanged: 'Last changed by {user} on {date}',
@@ -4414,7 +4418,8 @@ export default {
       frequency: 'Frequency',
       week: 'Week',
       result: 'Result · {month}',
-      previewNote: '{n} visit in {month}. Preview only; holidays are skipped automatically. | {n} visits in {month}. Preview only; holidays are skipped automatically.',
+      previewNote:
+        '{n} visit in {month}. Preview only; holidays are skipped automatically. | {n} visits in {month}. Preview only; holidays are skipped automatically.',
       datesSelected: '{n} date selected. | {n} dates selected.',
       holiday: 'Holiday',
       invalidDate: 'Not allowed',
@@ -4451,10 +4456,10 @@ export default {
       inTeamRoute: 'In {code} {name} ({salesman}), same team',
       moveHere: 'Move here…',
       alsoIn: 'Also in {route} · {team} · {salesman}',
-      customHint: 'Custom customers are added without dates. Set their dates with the calendar button on each row.',
+      customHint:
+        'Custom customers are added without dates. Set their dates with the calendar button on each row.',
       scheduleTitle: 'Schedule for the selected customers',
-      teamRule:
-        'A customer may be in routes of different teams, but only in one route per team.',
+      teamRule: 'A customer may be in routes of different teams, but only in one route per team.',
       selected: '{n} selected',
       add: 'Add {n} customer | Add {n} customers',
     },
@@ -4476,7 +4481,7 @@ export default {
       removeSalesman: 'Remove salesman',
       hint: '{routes} routes · {customers} customers',
       effectiveDate: 'Effective from',
-      dateHint: 'Tomorrow or later: today\'s plan is locked.',
+      dateHint: "Tomorrow or later: today's plan is locked.",
       replacesPending: 'Replaces the pending change to {name} from {date}.',
       loadWarning:
         "{name}'s load on {day} becomes {after} visits (current {current} + this route {route}), above the limit of {max}/day. Consider splitting the route or moving some customers.",
@@ -4544,7 +4549,8 @@ export default {
       activated: 'Route is activated.',
       deactivated: 'Route is deactivated.',
       notFound: 'Route not found.',
-      customersAdded: '{n} customer added. Applies from tomorrow. | {n} customers added. Applies from tomorrow.',
+      customersAdded:
+        '{n} customer added. Applies from tomorrow. | {n} customers added. Applies from tomorrow.',
       customerRemoved: 'Customer removed. Applies from tomorrow.',
       customerMoved: 'Customer moved. Applies from tomorrow.',
       scheduleSaved: 'Schedule saved. Applies from tomorrow.',
@@ -4579,8 +4585,7 @@ export default {
     title: 'Journey Plans',
     addVisit: 'Add visit',
     regenerate: 'Regenerate now',
-    regenerateMessage:
-      'Rebuilds tomorrow onward from the current routes. Today is not changed.',
+    regenerateMessage: 'Rebuilds tomorrow onward from the current routes. Today is not changed.',
     empty: 'No visits planned for this date.',
     total: '{n} visit planned | {n} visits planned',
     visits: '{n} visit | {n} visits',
@@ -4663,7 +4668,8 @@ export default {
       horizonHint: 'How many days ahead the plan is generated.',
       maxVisitsHint: 'A day above this shows a warning in the route load. It never blocks a save.',
       sundayHint: 'Monday to Saturday are always visitable. Sunday only when on.',
-      reminderHint: 'From this day of the month, routes with custom dates are reminded to fill next month.',
+      reminderHint:
+        'From this day of the month, routes with custom dates are reminded to fill next month.',
     },
     validation: {
       branchRequired: 'Branch is required.',
@@ -4701,6 +4707,184 @@ export default {
       6: 'Sun',
     },
   },
+  visitRules: {
+    title: 'Visit Rules',
+    subtitle: 'How strictly each activity is enforced on the phone: Required, Recommended or Off.',
+    lastChanged: '{company} · last changed by {by} {at}',
+    neverChanged: '{company} · using system defaults',
+    company: 'Company',
+    selectCompany: 'Select a company',
+    noCompanies: 'No companies available.',
+    tabs: { default: 'Default', teams: 'Team overrides', history: 'History' },
+    actions: {
+      checkSalesman: 'Check salesman',
+      addTeamOverride: 'Add team override',
+      resetAll: 'Reset all to default',
+      followDefault: 'Follow default',
+      override: 'Override',
+      save: 'Save',
+      cancel: 'Cancel',
+    },
+    columns: {
+      activity: 'Activity',
+      mode: 'Mode',
+      rule: 'Rule',
+      teamRule: 'Team rule',
+      default: 'Default',
+      parameter: 'Parameter',
+      setIn: 'Set in',
+    },
+    categories: {
+      start_of_day: 'Start of day · locks Start Visit',
+      check_in: 'Check-in · gates the check-in',
+      outlet_activity: 'Outlet activity · locks check-out',
+    },
+    levels: {
+      mandatory: { required: 'Required', recommended: 'Recommended', off: 'Off' },
+      block: { required: 'Block', recommended: 'Warning + reason', off: 'Off' },
+    },
+    modes: {
+      taking_order: 'TO',
+      canvass: 'CV',
+      taking_orderLong: 'Taking Order',
+      canvassLong: 'Canvass',
+    },
+    sources: {
+      default: 'System default',
+      company: 'Default',
+      team: 'Team',
+      employee: 'Employee',
+      'n/a': 'N/A',
+    },
+    lockedHint: 'Always {level}. This rule cannot be changed.',
+    radius: { unit: 'm', invalid: 'Enter a radius between 10 and 5000 m.' },
+    pinnedWarning:
+      '{rule} is overridden to the same value as the default ({value}). This team stays {level} even if the default changes later. To follow the default, choose Follow default.',
+    surveyOptionalNote:
+      'A survey or stock check flagged Optional in the Survey master is always optional. These rules only govern surveys flagged Required.',
+    exempt: {
+      title: 'Exemption reasons',
+      hint: "If the salesman picks one of these as the didn't-order reason, {rules} don't lock check-out for that visit.",
+      choose: 'Choose from Reason Code',
+      inactive: 'inactive',
+      empty: 'No exemption reasons yet.',
+      placeholder: 'Pick reasons',
+    },
+    teams: {
+      differ: '{n} differ',
+      followDefault: 'Follow default',
+      members: '{n} salesman | {n} salesmen',
+      noTeams: 'No teams for this company.',
+      selectTeam: 'Select a team to see its rules.',
+      noteLabel: 'Team note',
+      notePlaceholder: 'Why this team differs (optional)',
+      addTitle: 'Add team override',
+      addEmpty: 'Every team already has overrides.',
+      resetConfirm: 'Reset {team} to the default rules? All its overrides are removed.',
+      resetTitle: 'Reset to default',
+      reset: 'Reset',
+      dirtyTitle: 'Unsaved changes',
+      dirtyMessage: 'Discard your unsaved changes?',
+      discard: 'Discard',
+    },
+    drawer: {
+      title: 'Check salesman',
+      pick: 'Select an employee',
+      mode: 'Employee type',
+      noTeam: 'No team',
+      effective: 'Effective rule',
+      notApplicable: 'Not applicable to {mode}',
+      unsavedNote: 'Shows saved rules only.',
+      empty: 'Pick a salesman to see the rules that apply to them.',
+    },
+    history: {
+      empty: 'No changes recorded yet.',
+      loadMore: 'Load more',
+      showAll: 'Show all {n} lines',
+      showLess: 'Show less',
+    },
+    messages: {
+      saved: 'Visit rules saved.',
+      teamSaved: 'Team rules saved.',
+      teamReset: 'Team reset to default.',
+    },
+    unsavedTitle: 'Unsaved changes',
+    unsavedMessage: 'You have unsaved changes. Discard them?',
+    rules: {
+      depot_check_in: {
+        name: 'Depot check-in',
+        description:
+          'GPS and selfie at the depot before the day starts. Outside the radius: warning and a reason.',
+        setIn: 'Depot point: Branch / Warehouse. Can be exempted per employee.',
+      },
+      load_confirmation: {
+        name: 'Load confirmation',
+        description: 'Canvass confirms the loaded stock before starting. Always required.',
+        setIn: 'Canvass loading document (coming).',
+      },
+      mandatory_announcement: {
+        name: 'Mandatory announcements',
+        description: 'Announcements marked mandatory must be read before starting.',
+        setIn: 'Announcements module (coming).',
+      },
+      outlet_radius: {
+        name: 'Outlet radius',
+        description:
+          'Check-in must happen within the radius of the customer. Outside: block, or warn and ask for a reason.',
+        setIn: 'Customer point: Customer master. Reason: Reason Code "Outside Radius".',
+      },
+      check_in_selfie: {
+        name: 'Check-in selfie',
+        description: 'Front camera selfie at check-in. No gallery.',
+        setIn: 'This screen.',
+      },
+      fake_gps: {
+        name: 'Fake GPS',
+        description: 'Check-in is blocked when a mock location is detected. Always blocked.',
+        setIn: 'Detection is logged in Device Binding.',
+      },
+      stock_check: {
+        name: 'Stock check',
+        description: 'Fill in the Stock Check surveys flagged Required.',
+        setIn: 'Survey master.',
+      },
+      order_or_reason: {
+        name: 'Order or reason',
+        description: "Either a transaction, or a reason why the customer didn't order.",
+        setIn: 'Reason Code "Customer Didn\'t Order".',
+      },
+      msl_not_sold: {
+        name: 'MSL not sold',
+        description: 'A reason for every Must Sell List SKU left at quantity 0.',
+        setIn: 'Must Sell List master.',
+      },
+      display: {
+        name: 'Display',
+        description: 'Display check for customers in an active Display Program.',
+        setIn: 'Display Program master.',
+      },
+      survey: {
+        name: 'Survey',
+        description: 'Fill in the regular surveys flagged Required.',
+        setIn: 'Survey master.',
+      },
+    },
+    errors: {
+      VISIT_RULE_UNKNOWN_RULE: 'Unknown or duplicate rule.',
+      VISIT_RULE_LOCKED: 'This rule is locked and cannot be changed.',
+      VISIT_RULE_MISSING: 'Every rule must be submitted.',
+      VISIT_RULE_LEVEL_NOT_ALLOWED: 'That level is not allowed for this rule.',
+      VISIT_RULE_RADIUS_INVALID: 'Radius must be between 10 and 5000 m.',
+      VISIT_RULE_NOTE_TOO_LONG: 'The note can be at most 200 characters.',
+      VISIT_RULE_EXEMPT_REASON_INVALID:
+        'Exemption reasons must be active "Customer Didn\'t Order" reasons.',
+      VISIT_RULE_TEAM_COMPANY_UNRESOLVED:
+        "This team's branch does not belong to exactly one company.",
+      VISIT_RULE_TEAM_INACTIVE: 'This team is inactive.',
+      VISIT_RULE_COMPANY_UNRESOLVED: "The employee's company could not be determined.",
+      VISIT_RULE_NOT_FIELD_EMPLOYEE: 'Only Salesman and Canvass employees have visit rules.',
+    },
+  },
   surveyConfigs: {
     title: 'Survey Configs',
     addConfig: 'Add Config',
@@ -4709,7 +4893,6 @@ export default {
     fields: {
       branch: 'Branch',
       scopeLevel: 'Customer Scope Level',
-      requiredMode: 'What Required means on the phone',
       stockCheckQtyDefault: 'Ask store stock by default in stock checks',
       updatedAt: 'Last Updated',
     },
@@ -4718,16 +4901,10 @@ export default {
       channel: 'Channel',
       category: 'Category',
     },
-    modes: {
-      block_checkout: 'Blocks check-out',
-      reminder: 'Reminder only',
-    },
     labels: {
       selectBranch: 'Select Branch',
       levelHint:
         'Applies to new surveys only. Existing surveys keep the level they were created with.',
-      requiredModeHint:
-        'Applies to every Required survey of the branch, immediately. Reminder = check-out stays enabled with a confirmation.',
       qtyHint: 'Off = only Available / Not available. Only pre-fills new stock checks.',
     },
     validation: {
@@ -4790,11 +4967,7 @@ export default {
     list: {
       create: 'New survey',
       branch: 'Branch',
-      summary: '{active} active · {scheduled} scheduled · {draft} draft · Config: {mode}',
-      requiredModeSummary: {
-        block_checkout: 'Required surveys block check-out',
-        reminder: 'Required surveys only remind',
-      },
+      summary: '{active} active · {scheduled} scheduled · {draft} draft',
       noConfig: 'No survey config yet for this branch.',
       allPrincipals: 'All principals',
       internal: 'Internal',
@@ -4856,10 +5029,6 @@ export default {
       frequencyHint:
         "Once per period: after a customer has answered, the survey doesn't appear there again until the period ends (whoever the salesman is).",
       required: 'Required',
-      requiredHint: {
-        block_checkout: 'Current config: Required blocks check-out until the survey is filled in.',
-        reminder: 'Current config: Required only reminds the salesman before check-out.',
-      },
       notes: 'Notes',
       activeNote: 'Changes to an active survey reach phones on their next sync.',
       missingConfig: 'Configure this branch for surveys first.',

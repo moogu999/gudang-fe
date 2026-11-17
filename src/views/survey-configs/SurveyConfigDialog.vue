@@ -41,24 +41,6 @@
         </div>
       </div>
 
-      <!-- Required mode -->
-      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
-        <label class="w-full text-sm font-semibold sm:text-base md:w-48">
-          {{ t('surveyConfigs.fields.requiredMode') }}
-        </label>
-        <div class="flex w-full flex-auto flex-col gap-1">
-          <SelectButton
-            v-model="requiredMode"
-            :options="modeOptions"
-            option-label="label"
-            option-value="value"
-            :allow-empty="false"
-            :disabled="mode === DialogMode.VIEW"
-          />
-          <small class="text-surface-500">{{ t('surveyConfigs.labels.requiredModeHint') }}</small>
-        </div>
-      </div>
-
       <!-- Stock check qty default -->
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
         <label for="stockCheckQtyDefault" class="w-full text-sm font-semibold sm:text-base md:w-48">
@@ -112,7 +94,7 @@ import { useAuthStore } from '@/stores'
 import { branchLabel } from '@/utils/branchHelper'
 import { userBranchesFetcher } from '@/views/sales-teams/salesTeamHelpers'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
-import type { SurveyRequiredMode, SurveyScopeLevel, SurveyConfig } from '@/types'
+import type { SurveyScopeLevel, SurveyConfig } from '@/types'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -136,14 +118,8 @@ const isLoading = ref(false)
 // Local refs, not form state: a SelectButton doesn't repaint on programmatic writes.
 const branchId = ref<number | undefined>(undefined)
 const scopeLevel = ref<SurveyScopeLevel>(props.config?.scopeLevel ?? 'outlet_type')
-const requiredMode = ref<SurveyRequiredMode>(props.config?.requiredMode ?? 'block_checkout')
 const stockCheckQtyDefault = ref(props.config?.stockCheckQtyDefault ?? false)
 const branchError = ref('')
-
-const modeOptions = computed(() => [
-  { label: t('surveyConfigs.modes.block_checkout'), value: 'block_checkout' as SurveyRequiredMode },
-  { label: t('surveyConfigs.modes.reminder'), value: 'reminder' as SurveyRequiredMode },
-])
 
 const levelOptions = computed(() => [
   { label: t('surveyConfigs.levels.outlet_type'), value: 'outlet_type' as SurveyScopeLevel },
@@ -163,7 +139,6 @@ async function onSubmit() {
   try {
     await SurveyConfigService.upsert(target, {
       scopeLevel: scopeLevel.value,
-      requiredMode: requiredMode.value,
       stockCheckQtyDefault: stockCheckQtyDefault.value,
     })
     const message =

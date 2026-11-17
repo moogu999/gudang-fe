@@ -18,7 +18,6 @@
                 active: counts?.active ?? 0,
                 scheduled: counts?.scheduled ?? 0,
                 draft: counts?.draft ?? 0,
-                mode: t(`surveys.list.requiredModeSummary.${config.requiredMode}`),
               })
             }}
           </template>

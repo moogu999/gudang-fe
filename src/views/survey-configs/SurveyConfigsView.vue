@@ -22,14 +22,6 @@
               <Tag severity="info" :value="t(`surveyConfigs.levels.${data.scopeLevel}`)" />
             </template>
           </Column>
-          <Column :header="t('surveyConfigs.fields.requiredMode')">
-            <template #body="{ data }">
-              <Tag
-                :severity="data.requiredMode === 'block_checkout' ? 'warn' : 'secondary'"
-                :value="t(`surveyConfigs.modes.${data.requiredMode}`)"
-              />
-            </template>
-          </Column>
           <Column :header="t('surveyConfigs.fields.stockCheckQtyDefault')">
             <template #body="{ data }">
               {{ data.stockCheckQtyDefault ? t('common.labels.yes') : t('common.labels.no') }}

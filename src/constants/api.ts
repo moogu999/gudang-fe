@@ -259,6 +259,10 @@ export const API_ENDPOINTS = {
 
   // Reason codes (master of answers the N-Force salesman picks)
   REASONS: '/v1/reasons',
+  VISIT_RULES_COMPANY: (id: number) => `/v1/visit-rules/companies/${id}`,
+  VISIT_RULES_COMPANY_TEAMS: (id: number) => `/v1/visit-rules/companies/${id}/teams`,
+  VISIT_RULES_TEAM: (id: number) => `/v1/visit-rules/teams/${id}`,
+  VISIT_RULES_EFFECTIVE: '/v1/visit-rules/effective',
   REASONS_REORDER: '/v1/reasons/reorder',
 
   // Competitor products: brands, products and the recommendations review queue

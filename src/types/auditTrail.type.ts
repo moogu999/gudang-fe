@@ -21,6 +21,7 @@ export type AuditReferenceType =
   | 'journey_plan_config'
   | 'journey_plan_addition'
   | 'journey_plan_regenerate'
+  | 'visit_rules'
 
 /** What happened, on the entries that record it (device binding writes them; older ones don't). */
 export const AUDIT_ACTIONS = [

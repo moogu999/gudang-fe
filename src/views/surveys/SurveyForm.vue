@@ -261,7 +261,6 @@
                             :disabled="readonly || locks.isRequired"
                             data-testid="required"
                           />
-                          <small class="text-surface-500">{{ requiredHint }}</small>
                         </div>
                       </div>
 
@@ -653,11 +652,6 @@ const level = computed<SurveyScopeLevel | undefined>(
   () => survey?.scopeLevel ?? config.value?.scopeLevel,
 )
 const configMissing = computed(() => props.mode === 'add' && configLoaded.value && !config.value)
-
-const requiredHint = computed(() => {
-  const mode = config.value?.requiredMode
-  return mode ? t(`surveys.form.requiredHint.${mode}`) : ''
-})
 
 async function loadConfig() {
   configLoaded.value = false

@@ -45,6 +45,7 @@ export interface Employee {
   // Akses sistem
   accessNcommand: boolean
   accessNforce: boolean
+  exemptDepotCheckIn?: boolean
   isDraft: boolean
   hasUserAccount: boolean
   createdAt: string
@@ -72,6 +73,7 @@ export interface CreateEmployeeDto {
   isActive?: boolean
   accessNcommand?: boolean
   accessNforce?: boolean
+  exemptDepotCheckIn?: boolean
   isDraft: boolean
 }
 

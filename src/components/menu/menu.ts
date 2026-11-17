@@ -87,6 +87,11 @@ const mainMenu: MenuSection[] = [
         route: '/reasons',
       },
       {
+        label: 'Visit Rules',
+        labelKey: 'navigation.visitRules',
+        route: '/visit-rules',
+      },
+      {
         label: 'Competitor Products',
         labelKey: 'navigation.competitorProducts',
         route: '/competitor-products',

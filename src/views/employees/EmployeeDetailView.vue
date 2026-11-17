@@ -458,6 +458,19 @@
                 >
                   {{ t('employees.nforceNotApplicable') }}
                 </small>
+                <div v-if="usesDeviceBinding" class="flex items-center justify-between gap-4">
+                  <label for="exemptDepotCheckIn" class="text-sm font-medium sm:text-base">
+                    {{ t('employees.fields.exemptDepotCheckIn') }}
+                  </label>
+                  <ToggleSwitch id="exemptDepotCheckIn" name="exemptDepotCheckIn" />
+                </div>
+                <small
+                  v-if="usesDeviceBinding"
+                  class="-mt-2 text-stone-500"
+                  data-testid="exempt-depot-hint"
+                >
+                  {{ t('employees.exemptDepotCheckInHint') }}
+                </small>
               </div>
             </div>
           </template>
@@ -632,6 +645,7 @@ const initialValues = reactive({
   isActive: true,
   accessNcommand: false,
   accessNforce: false,
+  exemptDepotCheckIn: false,
 })
 
 // Zod schema (only used for final save)
@@ -661,6 +675,7 @@ const finalSchema = computed(() =>
       isActive: z.boolean().optional(),
       accessNcommand: z.boolean().optional(),
       accessNforce: z.boolean().optional(),
+      exemptDepotCheckIn: z.boolean().optional(),
     })
     .superRefine((data, ctx) => {
       if (requiresSalesOrg.value && !data.salesOrganizationId) {
@@ -753,6 +768,7 @@ async function loadEmployee() {
     initialValues.isActive = emp.isActive
     initialValues.accessNcommand = emp.accessNcommand
     initialValues.accessNforce = emp.accessNforce
+    initialValues.exemptDepotCheckIn = emp.exemptDepotCheckIn ?? false
 
     if (emp.birthDate) initialValues.birthDate = new Date(emp.birthDate)
     if (emp.joinDate) initialValues.joinDate = new Date(emp.joinDate)
@@ -851,6 +867,8 @@ async function onSaveDraft() {
       isActive: (states?.isActive?.value as boolean) ?? true,
       accessNcommand: (states?.accessNcommand?.value as boolean) ?? false,
       accessNforce: (states?.accessNforce?.value as boolean) ?? false,
+      exemptDepotCheckIn:
+        usesDeviceBinding.value && ((states?.exemptDepotCheckIn?.value as boolean) ?? false),
       isDraft: true,
     }
 
@@ -904,6 +922,8 @@ async function onFormSubmit(event: FormSubmitEvent) {
       isActive: s.isActive?.value ?? true,
       accessNcommand: s.accessNcommand?.value ?? false,
       accessNforce: s.accessNforce?.value ?? false,
+      // PUT replaces the employee, so the flag is always sent; it only means something for field staff.
+      exemptDepotCheckIn: usesDeviceBinding.value && (s.exemptDepotCheckIn?.value ?? false),
       isDraft: false,
     }
 

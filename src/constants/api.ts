@@ -238,6 +238,10 @@ export const API_ENDPOINTS = {
   JOURNEY_PLAN_CONFIG_MY_BRANCH: '/v1/journey-plan-configs/my-branch',
   JOURNEY_PLAN_CONFIG_BY_BRANCH: (branchId: number) => `/v1/journey-plan-configs/${branchId}`,
 
+  // Depot attendance (clock-in at the depot)
+  DEPOT_ATTENDANCES: '/v1/depot-attendances',
+  DEPOT_ATTENDANCE: (id: number) => `/v1/depot-attendances/${id}`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',

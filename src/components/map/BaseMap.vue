@@ -19,6 +19,9 @@ import Message from 'primevue/message'
 import type { Map as MapLibreMap, Marker } from 'maplibre-gl'
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_STYLE_URL } from './mapConfig'
 import { createMarkerElement, type MarkerVariant } from './NumberedMarker'
+import { circlesToGeoJson, type MapCircle } from './mapGeometry'
+
+const CIRCLE_SOURCE = 'base-map-circles'
 
 export interface MapMarker {
   id: number
@@ -35,12 +38,20 @@ export interface MapMarker {
 const props = withDefaults(
   defineProps<{
     markers?: MapMarker[]
+    /** Radii drawn as filled circles, e.g. the depot's check-in radius. */
+    circles?: MapCircle[]
     center?: { lat: number; lng: number }
     zoom?: number
     /** Fit the view to the markers whenever they change. */
     autoFit?: boolean
   }>(),
-  { markers: () => [], center: undefined, zoom: DEFAULT_MAP_ZOOM, autoFit: true },
+  {
+    markers: () => [],
+    circles: () => [],
+    center: undefined,
+    zoom: DEFAULT_MAP_ZOOM,
+    autoFit: true,
+  },
 )
 
 const emit = defineEmits<{
@@ -84,9 +95,47 @@ function renderMarkers() {
   if (props.autoFit) fitTo()
 }
 
-/** Zooms to show every marker; keeps the current view when there is none. */
+function renderCircles() {
+  if (!map || !map.isStyleLoaded()) return
+  const data = circlesToGeoJson(props.circles)
+  const source = map.getSource(CIRCLE_SOURCE) as { setData?: (d: typeof data) => void } | undefined
+  if (source?.setData) {
+    source.setData(data)
+    return
+  }
+  map.addSource(CIRCLE_SOURCE, { type: 'geojson', data })
+  map.addLayer({
+    id: `${CIRCLE_SOURCE}-fill`,
+    type: 'fill',
+    source: CIRCLE_SOURCE,
+    paint: { 'fill-color': '#0ea5e9', 'fill-opacity': 0.15 },
+  })
+  map.addLayer({
+    id: `${CIRCLE_SOURCE}-line`,
+    type: 'line',
+    source: CIRCLE_SOURCE,
+    paint: { 'line-color': '#0284c7', 'line-width': 2 },
+  })
+}
+
+function render() {
+  renderCircles()
+  renderMarkers()
+}
+
+/** Zooms to show every marker and circle; keeps the current view when there is none. */
 function fitTo() {
-  if (!map || !maplibre || props.markers.length === 0) return
+  if (!map || !maplibre) return
+  if (props.circles.length > 0) {
+    const bounds = new maplibre.LngLatBounds()
+    props.markers.forEach((m) => bounds.extend([m.lng, m.lat]))
+    for (const feature of circlesToGeoJson(props.circles).features) {
+      feature.geometry.coordinates[0]!.forEach((p) => bounds.extend(p as [number, number]))
+    }
+    map.fitBounds(bounds, { padding: 48, maxZoom: 17, duration: 0 })
+    return
+  }
+  if (props.markers.length === 0) return
   if (props.markers.length === 1) {
     const [only] = props.markers
     map.easeTo({ center: [only.lng, only.lat], zoom: Math.max(map.getZoom(), 15), duration: 0 })
@@ -105,7 +154,10 @@ onMounted(async () => {
   if (!container.value) return
   try {
     // The map and its stylesheet load together, so neither is in the main bundle.
-    const [lib] = await Promise.all([import('maplibre-gl'), import('maplibre-gl/dist/maplibre-gl.css')])
+    const [lib] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ])
     maplibre = lib
     const start = props.center ?? props.markers[0] ?? DEFAULT_MAP_CENTER
     map = new lib.Map({
@@ -118,8 +170,8 @@ onMounted(async () => {
     map.addControl(new lib.AttributionControl({ compact: true }))
     map.addControl(new lib.NavigationControl({ showCompass: false }), 'top-right')
     map.on('click', (e) => emit('map-click', { lat: e.lngLat.lat, lng: e.lngLat.lng }))
-    map.on('load', renderMarkers)
-    renderMarkers()
+    map.on('load', render)
+    render()
     resizeObserver = new ResizeObserver(() => map?.resize())
     resizeObserver.observe(container.value)
   } catch {
@@ -129,6 +181,14 @@ onMounted(async () => {
 })
 
 watch(() => props.markers, renderMarkers, { deep: true })
+watch(
+  () => props.circles,
+  () => {
+    renderCircles()
+    if (props.autoFit) fitTo()
+  },
+  { deep: true },
+)
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()

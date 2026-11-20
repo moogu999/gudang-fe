@@ -210,6 +210,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'depot-attendance',
+          name: 'DepotAttendance',
+          component: () => import('@/views/depot-attendance/DepotAttendanceView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ATTENDANCE_READ,
+            titleKey: 'navigation.depotAttendance',
+          },
+        },
+        {
           path: 'salesman-targets',
           name: 'SalesmanTargets',
           component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),

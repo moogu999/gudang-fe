@@ -96,6 +96,7 @@ export default {
     surveyConfigs: 'Survey Config',
     routes: 'Routes',
     journeyPlans: 'Journey Plans',
+    depotAttendance: 'Depot Attendance',
     journeyPlanConfigs: 'Journey Plan Config',
     deviceBinding: 'Device Binding',
     reasons: 'Reasons',
@@ -391,15 +392,21 @@ export default {
       address: 'Address',
       openOnSaturday: 'Open on Saturday',
       openOnSunday: 'Open on Sunday',
+      depotPoint: 'Depot point',
+      latitude: 'Latitude',
+      longitude: 'Longitude',
       cogsCalculationMethod: 'COGS Calculation Method',
     },
     labels: {
+      pickOnMap: 'Pick on map',
       addBranch: 'Add Branch',
       selectCogsCalculationMethod: 'Select COGS Calculation Method',
     },
     validation: {
       codeRequired: 'Code is required.',
       nameRequired: 'Name is required.',
+      coordinatesInvalid:
+        'Enter both latitude (-90 to 90) and longitude (-180 to 180), or leave both empty.',
       cogsCalculationMethodRequired: 'COGS Calculation Method is required.',
     },
     messages: {
@@ -1343,6 +1350,12 @@ export default {
         trigger:
           "Appears when: checking in where the GPS distance to the customer's geotag exceeds the tolerance.",
         impact: 'Impact: the check-in proceeds and is flagged for supervisor review.',
+      },
+      depot_outside_radius: {
+        label: 'Outside Depot',
+        trigger:
+          'Appears when: clocking in at the depot farther from the depot point than the radius.',
+        impact: 'Impact: the clock-in is saved and flagged for supervisor review.',
       },
       skipped_visit: {
         label: 'Skipped Visit',
@@ -4581,6 +4594,61 @@ export default {
       noPendingHandover: 'There is no pending change.',
     },
   },
+  depotAttendance: {
+    title: 'Depot Attendance',
+    subtitle: 'Who clocked in at the depot, and who has not. Statuses use the current visit rules.',
+    status: {
+      in_radius: 'Within radius',
+      outside_radius: 'Outside radius',
+      no_depot_point: 'Depot point not set',
+      missing: 'Missing',
+      exempt_missing: 'Exempt, not clocked in',
+      holiday: 'Holiday',
+      not_scheduled: 'No visit schedule',
+      not_required: 'Not required',
+    },
+    level: {
+      required: 'Required',
+      recommended: 'Recommended',
+      exempt: 'Exempt (no radius check)',
+    },
+    filters: {
+      dateRange: 'Date range',
+      rangeInvalid: 'Pick a range of at most 31 days, starting with the earlier date.',
+      allBranches: 'All branches',
+      allTeams: 'All teams',
+      teamNeedsBranch: 'Pick a branch first',
+      allSalesmen: 'All salesmen',
+    },
+    columns: {
+      date: 'Date',
+      salesman: 'Salesman',
+      team: 'Team',
+      depot: 'Depot',
+      clockIn: 'Clock-in (WIB)',
+      distance: 'Distance / radius',
+      status: 'Status',
+      reason: 'Reason',
+    },
+    actions: { view: 'View clock-in' },
+    drawer: {
+      title: 'Clock-in',
+      noSelfie: 'No selfie uploaded yet.',
+      noLocation: 'No GPS fix was recorded for this clock-in.',
+      noDepotPoint: 'Depot point not set',
+      clockedInHere: 'Clocked in here',
+      date: 'Date',
+      team: 'Team',
+      depot: 'Depot',
+      capturedAt: 'Captured at',
+      receivedAt: 'Received at',
+      distance: 'Distance / radius',
+      accuracy: 'GPS accuracy',
+      rule: 'Rule',
+      reason: 'Reason',
+      note: 'Note',
+    },
+  },
   journeyPlans: {
     title: 'Journey Plans',
     addVisit: 'Add visit',
@@ -4815,7 +4883,7 @@ export default {
         name: 'Depot check-in',
         description:
           'GPS and selfie at the depot before the day starts. Outside the radius: warning and a reason.',
-        setIn: 'Depot point: Branch / Warehouse. Can be exempted per employee.',
+        setIn: 'Depot point: Branch. Can be exempted per employee.',
       },
       load_confirmation: {
         name: 'Load confirmation',

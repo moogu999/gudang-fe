@@ -64,6 +64,48 @@
       </div>
 
       <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+        <label for="latitude" class="w-full text-sm font-semibold sm:text-base md:w-32">{{
+          t('branches.fields.depotPoint')
+        }}</label>
+        <div class="flex w-full flex-auto flex-col gap-2">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <InputText
+              id="latitude"
+              v-model="coordinates.latitude"
+              :placeholder="t('branches.fields.latitude')"
+              autocomplete="off"
+              :disabled="mode === DialogMode.VIEW"
+              class="w-full"
+              data-testid="branch-latitude"
+            />
+            <InputText
+              id="longitude"
+              v-model="coordinates.longitude"
+              :placeholder="t('branches.fields.longitude')"
+              autocomplete="off"
+              :disabled="mode === DialogMode.VIEW"
+              class="w-full"
+              data-testid="branch-longitude"
+            />
+          </div>
+          <Message v-if="coordinatesError" severity="error" size="small" variant="simple">{{
+            coordinatesError
+          }}</Message>
+          <div v-if="mode !== DialogMode.VIEW">
+            <Button
+              type="button"
+              icon="pi pi-map-marker"
+              size="small"
+              severity="secondary"
+              :label="t('branches.labels.pickOnMap')"
+              data-testid="branch-pick-on-map"
+              @click="isLocationPickerShown = true"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
         <label
           for="cogsCalculationMethodId"
           class="w-full text-sm font-semibold sm:text-base md:w-32"
@@ -153,6 +195,15 @@
         <BranchHolidaysTab v-if="branch" :branch="branch" :mode="mode" :toast-group="toastGroup" />
       </TabPanels>
     </Tabs>
+
+    <LocationPickerDialog
+      :visible="isLocationPickerShown"
+      :latitude="coordinates.latitude"
+      :longitude="coordinates.longitude"
+      :toast-group="toastGroup"
+      @close="isLocationPickerShown = false"
+      @apply="applyPickedLocation"
+    />
   </div>
 </template>
 
@@ -180,6 +231,8 @@ import DialogMode from '@/constants/dialogMode'
 import type { Branch } from '@/types/branch.type'
 import BranchHolidaysTab from './BranchHolidaysTab.vue'
 import InfiniteSelect from '@/components/select/InfiniteSelect.vue'
+import LocationPickerDialog from '@/components/map/LocationPickerDialog.vue'
+import { coordinatesError as validateCoordinates, toCoordinate } from './branchHelpers'
 
 const { t } = useI18n()
 
@@ -212,6 +265,8 @@ onBeforeMount(() => {
   initialValues.openOnSaturday = props.branch.openOnSaturday
   initialValues.openOnSunday = props.branch.openOnSunday
   initialValues.cogsCalculationMethodId = props.branch.cogsCalculationMethodId
+  coordinates.latitude = props.branch.latitude ?? ''
+  coordinates.longitude = props.branch.longitude ?? ''
 
   // Set initial COGS calculation method for the dropdown
   if (props.branch.cogsCalculationMethodCode) {
@@ -236,6 +291,18 @@ const initialValues = reactive({
   cogsCalculationMethodId: undefined as number | undefined,
 })
 
+// The depot point sits outside the Form: the map picker writes both fields at once.
+const coordinates = reactive({ latitude: '', longitude: '' })
+const coordinatesError = ref('')
+const isLocationPickerShown = ref(false)
+
+function applyPickedLocation(picked: { latitude: string | null; longitude: string | null }) {
+  coordinates.latitude = picked.latitude ?? ''
+  coordinates.longitude = picked.longitude ?? ''
+  coordinatesError.value = ''
+  isLocationPickerShown.value = false
+}
+
 // Validation schema
 const resolver = computed(() =>
   zodResolver(
@@ -259,7 +326,10 @@ function handleClose() {
 const isLoading = ref(false)
 
 async function onFormSubmit(event: FormSubmitEvent) {
-  if (!event.valid) {
+  coordinatesError.value = validateCoordinates(coordinates.latitude, coordinates.longitude)
+    ? t('branches.validation.coordinatesInvalid')
+    : ''
+  if (!event.valid || coordinatesError.value) {
     return
   }
 
@@ -287,6 +357,8 @@ async function addBranch(event: FormSubmitEvent) {
     address: event.states.address.value || undefined,
     openOnSaturday: event.states.openOnSaturday.value || false,
     openOnSunday: event.states.openOnSunday.value || false,
+    latitude: toCoordinate(coordinates.latitude),
+    longitude: toCoordinate(coordinates.longitude),
     cogsCalculationMethodId: event.states.cogsCalculationMethodId.value,
     createdBy: authStore.userId!,
   })
@@ -301,6 +373,8 @@ async function editBranch(event: FormSubmitEvent) {
     address: event.states.address.value || undefined,
     openOnSaturday: event.states.openOnSaturday.value || false,
     openOnSunday: event.states.openOnSunday.value || false,
+    latitude: toCoordinate(coordinates.latitude),
+    longitude: toCoordinate(coordinates.longitude),
     cogsCalculationMethodId: event.states.cogsCalculationMethodId.value,
     updatedBy: authStore.userId!,
   })

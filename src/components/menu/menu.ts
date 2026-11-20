@@ -254,6 +254,11 @@ const mainMenu: MenuSection[] = [
         route: '/journey-plans',
       },
       {
+        label: 'Depot Attendance',
+        labelKey: 'navigation.depotAttendance',
+        route: '/depot-attendance',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',

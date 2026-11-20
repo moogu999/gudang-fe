@@ -5,6 +5,9 @@ export type Branch = {
   address?: string
   openOnSaturday: boolean
   openOnSunday: boolean
+  /** Depot point for attendance; decimal strings, both set or both absent. */
+  latitude?: string | null
+  longitude?: string | null
   cogsCalculationMethodId: number
   cogsCalculationMethodCode?: string
   createdAt?: string
@@ -22,6 +25,8 @@ export type CreateBranchDto = {
   address?: string
   openOnSaturday: boolean
   openOnSunday: boolean
+  latitude?: string | null
+  longitude?: string | null
   cogsCalculationMethodId: number
   createdBy: number
 }
@@ -32,6 +37,8 @@ export type UpdateBranchDto = {
   address?: string
   openOnSaturday?: boolean
   openOnSunday?: boolean
+  latitude?: string | null
+  longitude?: string | null
   cogsCalculationMethodId?: number
   updatedBy: number
 }

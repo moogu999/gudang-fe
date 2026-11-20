@@ -219,6 +219,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'visits',
+          name: 'Visits',
+          component: () => import('@/views/visits/VisitsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.VISIT_READ,
+            titleKey: 'navigation.visits',
+          },
+        },
+        {
           path: 'salesman-targets',
           name: 'SalesmanTargets',
           component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),

@@ -265,6 +265,11 @@ const mainMenu: MenuSection[] = [
         route: '/depot-attendance',
       },
       {
+        label: 'Visits',
+        labelKey: 'navigation.visits',
+        route: '/visits',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',

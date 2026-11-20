@@ -242,6 +242,11 @@ export const API_ENDPOINTS = {
   DEPOT_ATTENDANCES: '/v1/depot-attendances',
   DEPOT_ATTENDANCE: (id: number) => `/v1/depot-attendances/${id}`,
 
+  // Visits (journey plan rows with the visit made against each)
+  VISITS: '/v1/visits',
+  VISIT: (id: number) => `/v1/visits/${id}`,
+  VISIT_CLOSE: (id: number) => `/v1/visits/${id}/close`,
+
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
   DEVICE_BINDING_SUMMARY: '/v1/device-binding/summary',

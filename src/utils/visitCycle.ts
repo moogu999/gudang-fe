@@ -58,7 +58,10 @@ export function daysInMonth(month: string): number {
 
 /** Every date of a `YYYY-MM` month. */
 export function datesOfMonth(month: string): IsoDate[] {
-  return Array.from({ length: daysInMonth(month) }, (_, i) => `${month}-${String(i + 1).padStart(2, '0')}`)
+  return Array.from(
+    { length: daysInMonth(month) },
+    (_, i) => `${month}-${String(i + 1).padStart(2, '0')}`,
+  )
 }
 
 /** The week (1..4) of the running cycle a date falls in; dates before the anchor count backwards. */
@@ -68,7 +71,11 @@ export function cycleWeek(date: IsoDate, anchor: IsoDate): number {
 }
 
 /** Whether a frequency visits in the given cycle week. */
-export function frequencyMatches(frequency: Frequency, f1Week: number | null | undefined, week: number): boolean {
+export function frequencyMatches(
+  frequency: Frequency,
+  f1Week: number | null | undefined,
+  week: number,
+): boolean {
   switch (frequency) {
     case 'F4':
       return true

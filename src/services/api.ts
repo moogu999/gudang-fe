@@ -78,8 +78,14 @@ class ApiService {
 
         if (!is401Error || !originalRequest || isRetryAttempt) {
           console.error('API error:', errorMessage)
-          const { field, index, questionId, productIds } = error.response?.data ?? {}
-          const details = { field, index, questionId, productIds }
+          const {
+            field,
+            index,
+            questionId,
+            productIds,
+            details: items,
+          } = error.response?.data ?? {}
+          const details = { field, index, questionId, productIds, items }
           return Promise.reject(new ApiError(errorMessage, status, errorCode, details))
         }
 

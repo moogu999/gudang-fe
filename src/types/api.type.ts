@@ -19,9 +19,13 @@ export type ErrorDetails = {
   index?: number
   questionId?: number
   productIds?: number[]
+  /** Per-item breakdown some coded errors carry (the response's `details`), e.g. each short product. */
+  items?: unknown
 }
 
-export type ErrorResponse = ErrorDetails & {
+export type ErrorResponse = Omit<ErrorDetails, 'items'> & {
+  /** Per-item breakdown of a coded error; surfaced to callers as `ApiError.details.items`. */
+  details?: unknown
   message: string
   /** A stable machine-readable reason, on the endpoints that send one. */
   code?: string

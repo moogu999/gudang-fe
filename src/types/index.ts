@@ -235,7 +235,12 @@ export type {
 export type { FileRecord, UploadFileDto } from './file.type'
 
 // Warehouse types
-export type { Warehouse, CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.type'
+export type {
+  Warehouse,
+  WarehouseKind,
+  CreateWarehouseDto,
+  UpdateWarehouseDto,
+} from './warehouse.type'
 
 // Vehicle types
 export type { VehicleType } from './vehicleType.type'
@@ -600,3 +605,5 @@ export * from './displayProgram.type'
 export * from './competitorProduct.type'
 export * from './route.type'
 export * from './journeyPlan.type'
+export * from './canvassLoading.type'
+export * from './canvassUnloading.type'

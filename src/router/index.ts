@@ -1432,6 +1432,100 @@ const router = createRouter({
           },
         },
         {
+          path: 'canvass',
+          name: 'Canvass',
+          component: () => import('@/views/canvass/CanvassView.vue'),
+          meta: { titleKey: 'navigation.canvass' },
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            const ok =
+              authStore.hasPermission(PERMISSIONS.CANVASS_LOADING_READ) ||
+              authStore.hasPermission(PERMISSIONS.CANVASS_UNLOADING_READ)
+            return ok || { name: 'Home' }
+          },
+        },
+        // The old list URLs land on their tab. Each keeps its own read/write meta
+        // (usePermissions('/canvass-loadings') is called directly by CanvassView and the
+        // document views).
+        {
+          path: 'canvass-loadings',
+          redirect: { path: '/canvass', query: { tab: 'loadings' } },
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_READ,
+            requiredWritePermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+          },
+        },
+        {
+          path: 'canvass-loadings/create',
+          name: 'CanvassLoadingCreate',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `canvass-loadings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'canvass-loadings/:id/edit',
+          name: 'CanvassLoadingEdit',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'canvass-loadings/:id',
+          name: 'CanvassLoadingDetail',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_READ,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'canvass-unloadings',
+          redirect: { path: '/canvass', query: { tab: 'unloadings' } },
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_READ,
+            requiredWritePermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+          },
+        },
+        {
+          path: 'canvass-unloadings/create',
+          name: 'CanvassUnloadingCreate',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `canvass-unloadings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'canvass-unloadings/:id/edit',
+          name: 'CanvassUnloadingEdit',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'canvass-unloadings/:id',
+          name: 'CanvassUnloadingDetail',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_READ,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'cash-deposit-configs',
           redirect: { path: '/configs', query: { tab: 'cd' } },
           meta: { requiredWritePermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE },

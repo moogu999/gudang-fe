@@ -180,6 +180,12 @@ const mainMenu: MenuSection[] = [
         route: '/goods-receipts',
       },
       {
+        label: 'Canvass',
+        labelKey: 'navigation.canvass',
+        route: '/canvass',
+        permissionsAny: [PERMISSIONS.CANVASS_LOADING_READ, PERMISSIONS.CANVASS_UNLOADING_READ],
+      },
+      {
         label: 'Inventory Status',
         labelKey: 'navigation.inventoryStatus',
         route: '/inventory-status',
@@ -470,10 +476,7 @@ const mainMenu: MenuSection[] = [
         route: '/configs',
         // Every config tab's read permission, plus CACHE_CLEAR: the clear-cache button
         // lives on this page but is not a tab, so it cannot come from CONFIG_TABS.
-        permissionsAny: [
-          ...CONFIG_TABS.map((tab) => tab.readPermission),
-          PERMISSIONS.CACHE_CLEAR,
-        ],
+        permissionsAny: [...CONFIG_TABS.map((tab) => tab.readPermission), PERMISSIONS.CACHE_CLEAR],
       },
     ],
   },

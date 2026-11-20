@@ -21,6 +21,8 @@ const ALLOWED_WITHOUT_PERMISSION = new Set<string>([
   // rather than a single static meta.requiredPermission — same shape as /configs
   // self-gating its tabs.
   '/giro',
+  // Self-gates via beforeEnter (CANVASS_LOADING_READ || CANVASS_UNLOADING_READ), like /giro.
+  '/canvass',
   '/:notFound(.*)',
 ])
 
@@ -36,9 +38,15 @@ describe('router permission coverage', () => {
     (path) => {
       const record = routes.find((r) => r.path === path)!
       if (ALLOWED_WITHOUT_PERMISSION.has(path)) {
-        expect(record.meta.requiredPermission, `${path} is allowlisted but now declares a permission — remove it from the allowlist`).toBeUndefined()
+        expect(
+          record.meta.requiredPermission,
+          `${path} is allowlisted but now declares a permission — remove it from the allowlist`,
+        ).toBeUndefined()
       } else {
-        expect(record.meta.requiredPermission, `${path} declares no meta.requiredPermission and is not on the allowlist`).toBeTypeOf('number')
+        expect(
+          record.meta.requiredPermission,
+          `${path} declares no meta.requiredPermission and is not on the allowlist`,
+        ).toBeTypeOf('number')
       }
     },
   )
@@ -46,7 +54,9 @@ describe('router permission coverage', () => {
   it('does not allowlist a path that no longer exists', () => {
     const paths = new Set(routes.map((record) => record.path))
     for (const allowed of ALLOWED_WITHOUT_PERMISSION) {
-      expect(paths.has(allowed), `${allowed} is allowlisted but no such route is registered`).toBe(true)
+      expect(paths.has(allowed), `${allowed} is allowlisted but no such route is registered`).toBe(
+        true,
+      )
     }
   })
 })
@@ -106,6 +116,8 @@ const EXPECTED_WRITE_PERMISSIONS: Record<string, number> = {
   '/accounting-periods': PERMISSIONS.ACCOUNTING_PERIOD_WRITE,
   '/journal-config': PERMISSIONS.JOURNAL_CONFIG_WRITE,
   '/cash-deposits': PERMISSIONS.CASH_DEPOSIT_WRITE,
+  '/canvass-loadings': PERMISSIONS.CANVASS_LOADING_WRITE,
+  '/canvass-unloadings': PERMISSIONS.CANVASS_UNLOADING_WRITE,
   '/cash-deposit-configs': PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE,
   '/bank-settlements': PERMISSIONS.BANK_SETTLEMENT_WRITE,
   '/ar-clearings': PERMISSIONS.AR_CLEARING_WRITE,

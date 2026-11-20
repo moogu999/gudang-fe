@@ -430,6 +430,16 @@ export const API_ENDPOINTS = {
 
   // Stock Movements endpoints
   STOCK_MOVEMENTS: '/v1/stock-movements',
+  CANVASS_LOADINGS: '/v1/canvass-loadings',
+  CANVASS_LOADING_BY_ID: (id: number) => `/v1/canvass-loadings/${id}`,
+  CANVASS_LOADING_SEND: (id: number) => `/v1/canvass-loadings/${id}/send`,
+  CANVASS_LOADING_CANCEL: (id: number) => `/v1/canvass-loadings/${id}/cancel`,
+  CANVASS_LOADING_AVAILABLE_STOCK: '/v1/canvass-loadings/available-stock',
+  CANVASS_UNLOADINGS: '/v1/canvass-unloadings',
+  CANVASS_UNLOADING_BY_ID: (id: number) => `/v1/canvass-unloadings/${id}`,
+  CANVASS_UNLOADING_POST: (id: number) => `/v1/canvass-unloadings/${id}/post`,
+  CANVASS_UNLOADING_CANCEL: (id: number) => `/v1/canvass-unloadings/${id}/cancel`,
+  CANVASS_UNLOADING_VAN_STOCK: '/v1/canvass-unloadings/van-stock',
 
   // Goods Return Note endpoints
   GOODS_RETURN_NOTES: '/v1/goods-return-notes',

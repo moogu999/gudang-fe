@@ -110,6 +110,9 @@ const url = computed(() => {
   if (activeFilters.value.warehouseId != null) {
     params.set('warehouseId', String(activeFilters.value.warehouseId))
   }
+  if (activeFilters.value.warehouseKind) {
+    params.set('warehouseKind', activeFilters.value.warehouseKind)
+  }
   if (activeFilters.value.stockType) {
     params.set('stockType', activeFilters.value.stockType)
   }

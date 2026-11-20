@@ -29,10 +29,30 @@ describe('weekdayBit', () => {
 
 describe('frequencyMatches', () => {
   it('matches the cycle weeks of each frequency', () => {
-    expect([1, 2, 3, 4].map((w) => frequencyMatches('F4', null, w))).toEqual([true, true, true, true])
-    expect([1, 2, 3, 4].map((w) => frequencyMatches('F2_ODD', null, w))).toEqual([true, false, true, false])
-    expect([1, 2, 3, 4].map((w) => frequencyMatches('F2_EVEN', null, w))).toEqual([false, true, false, true])
-    expect([1, 2, 3, 4].map((w) => frequencyMatches('F1', 3, w))).toEqual([false, false, true, false])
+    expect([1, 2, 3, 4].map((w) => frequencyMatches('F4', null, w))).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ])
+    expect([1, 2, 3, 4].map((w) => frequencyMatches('F2_ODD', null, w))).toEqual([
+      true,
+      false,
+      true,
+      false,
+    ])
+    expect([1, 2, 3, 4].map((w) => frequencyMatches('F2_EVEN', null, w))).toEqual([
+      false,
+      true,
+      false,
+      true,
+    ])
+    expect([1, 2, 3, 4].map((w) => frequencyMatches('F1', 3, w))).toEqual([
+      false,
+      false,
+      true,
+      false,
+    ])
   })
 })
 
@@ -92,7 +112,13 @@ describe('monthPreview', () => {
     })
     expect(off).not.toContain('2026-10-12')
     expect(off.some((d) => weekdayBit(d) === 6)).toBe(false)
-    const on = monthPreview({ ...base, month, daysMask: 1 << 6, frequency: 'F4', allowSunday: true })
+    const on = monthPreview({
+      ...base,
+      month,
+      daysMask: 1 << 6,
+      frequency: 'F4',
+      allowSunday: true,
+    })
     expect(on).toEqual(['2026-10-04', '2026-10-11', '2026-10-18', '2026-10-25'])
   })
 })

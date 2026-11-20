@@ -65,6 +65,7 @@ export interface CanvassLoading {
   vanWarehouse: CanvassRef
   salesman: CanvassSalesmanRef
   sentAt?: string
+  sentBy?: { id: number; name: string; phone?: string }
   confirmedAt?: string
   cancelledAt?: string
   createdAt: string

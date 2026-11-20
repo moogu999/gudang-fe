@@ -150,7 +150,10 @@ function employeeLabel(e: Employee): string {
 function levelText(row: EffectiveRuleRow): string {
   if (!row.level) return ''
   const label = t(levelLabelKey(row.style, row.level))
-  return row.paramKind && row.level !== 'off' && row.radiusM != null
+  if (row.paramKind === 'allow_check_all') {
+    return `${label} · ${t(row.allowCheckAll === false ? 'visitRules.checkAll.off' : 'visitRules.checkAll.on')}`
+  }
+  return row.paramKind === 'radius_m' && row.level !== 'off' && row.radiusM != null
     ? `${label} · ${row.radiusM} ${t('visitRules.radius.unit')}`
     : label
 }

@@ -22,10 +22,7 @@
         <tr
           v-for="row in group.rows"
           :key="row.key"
-          :class="[
-            'border-b border-stone-200 align-top',
-            isOverridden(row) ? 'bg-yellow-50' : '',
-          ]"
+          :class="['border-b border-stone-200 align-top', isOverridden(row) ? 'bg-yellow-50' : '']"
           :data-testid="`rule-${row.key}`"
         >
           <td class="px-3 py-2">
@@ -128,6 +125,18 @@
               </div>
               <span v-else class="text-stone-400">—</span>
             </template>
+            <template v-else-if="row.paramKind === 'allow_check_all'">
+              <label v-if="mode === 'company' || isOverridden(row)" class="flex items-center gap-2">
+                <ToggleSwitch
+                  :model-value="valueOf(row).allowCheckAll ?? true"
+                  :disabled="readonly"
+                  :data-testid="`check-all-${row.key}`"
+                  @update:model-value="(v) => setCheckAll(row, v)"
+                />
+                <span>{{ t('visitRules.checkAll.label') }}</span>
+              </label>
+              <span v-else class="text-stone-400">—</span>
+            </template>
             <span v-else class="text-stone-400">—</span>
           </td>
 
@@ -148,6 +157,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputNumber from 'primevue/inputnumber'
 import SelectButton from 'primevue/selectbutton'
 import Tag from 'primevue/tag'
+import ToggleSwitch from 'primevue/toggleswitch'
 import type {
   CompanyRuleRow,
   TeamRuleRow,
@@ -187,7 +197,11 @@ function isOverridden(row: Row): boolean {
 
 function inheritedOf(row: Row): VisitRuleValue {
   if ('inherited' in row) return row.inherited
-  return { level: row.defaultLevel, radiusM: row.defaultRadiusM }
+  return {
+    level: row.defaultLevel,
+    radiusM: row.defaultRadiusM,
+    allowCheckAll: row.defaultAllowCheckAll,
+  }
 }
 
 function valueOf(row: Row): VisitRuleValue {
@@ -199,7 +213,10 @@ function valueOf(row: Row): VisitRuleValue {
 function inheritedText(row: Row): string {
   const v = inheritedOf(row)
   const label = t(levelLabelKey(row.style, v.level))
-  return row.paramKind && v.level !== 'off' && v.radiusM != null
+  if (row.paramKind === 'allow_check_all') {
+    return `${label} · ${t(v.allowCheckAll === false ? 'visitRules.checkAll.off' : 'visitRules.checkAll.on')}`
+  }
+  return row.paramKind === 'radius_m' && v.level !== 'off' && v.radiusM != null
     ? `${label} · ${v.radiusM} ${t('visitRules.radius.unit')}`
     : label
 }
@@ -219,11 +236,19 @@ function setRadius(row: Row, radius: number | null) {
   put(row.key, { ...valueOf(row), radiusM: radius ?? undefined })
 }
 
+function setCheckAll(row: Row, on: boolean) {
+  put(row.key, { ...valueOf(row), allowCheckAll: on })
+}
+
 /** Switching to Override seeds the override from the inherited value. */
 function toggleOverride(row: Row, override: boolean) {
   if (override === isOverridden(row)) return
   if (!override) return put(row.key, undefined)
-  const { level, radiusM } = inheritedOf(row)
-  put(row.key, { level, ...(radiusM != null ? { radiusM } : {}) })
+  const { level, radiusM, allowCheckAll } = inheritedOf(row)
+  put(row.key, {
+    level,
+    ...(radiusM != null ? { radiusM } : {}),
+    ...(allowCheckAll != null ? { allowCheckAll } : {}),
+  })
 }
 </script>

@@ -3739,6 +3739,7 @@ export default {
       change: 'Perubahan',
       revision: 'Revisi',
       sentAt: 'Dikirim Pada',
+      sentBy: 'Dikirim Oleh',
       confirmedAt: 'Dikonfirmasi Pada',
       cancelledAt: 'Dibatalkan Pada',
     },
@@ -5056,6 +5057,11 @@ export default {
     },
     lockedHint: 'Selalu {level}. Aturan ini tidak bisa diubah.',
     radius: { unit: 'm', invalid: 'Isi radius antara 10 dan 5000 m.' },
+    checkAll: {
+      label: 'Izinkan centang semua',
+      on: 'Centang semua diizinkan',
+      off: 'Centang semua tidak diizinkan',
+    },
     pinnedWarning:
       '{rule} di-override dengan nilai yang sama seperti default ({value}). Tim ini tetap {level} walaupun default berubah nanti. Untuk mengikuti default, pilih Ikuti default.',
     surveyOptionalNote:

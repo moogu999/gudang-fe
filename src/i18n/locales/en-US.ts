@@ -3736,6 +3736,7 @@ export default {
       change: 'Change',
       revision: 'Revision',
       sentAt: 'Sent At',
+      sentBy: 'Sent By',
       confirmedAt: 'Confirmed At',
       cancelledAt: 'Cancelled At',
     },
@@ -5049,6 +5050,7 @@ export default {
     },
     lockedHint: 'Always {level}. This rule cannot be changed.',
     radius: { unit: 'm', invalid: 'Enter a radius between 10 and 5000 m.' },
+    checkAll: { label: 'Allow check all', on: 'Check all allowed', off: 'Check all not allowed' },
     pinnedWarning:
       '{rule} is overridden to the same value as the default ({value}). This team stays {level} even if the default changes later. To follow the default, choose Follow default.',
     surveyOptionalNote:

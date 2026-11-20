@@ -178,6 +178,14 @@ const headerItems = computed(() => {
   return [
     ...items,
     ...stamp(t('canvassLoadings.fields.sentAt'), l.sentAt),
+    ...(l.sentBy
+      ? [
+          {
+            label: t('canvassLoadings.fields.sentBy'),
+            value: l.sentBy.phone ? `${l.sentBy.name} (${l.sentBy.phone})` : l.sentBy.name,
+          },
+        ]
+      : []),
     ...stamp(t('canvassLoadings.fields.confirmedAt'), l.confirmedAt),
     ...stamp(t('canvassLoadings.fields.cancelledAt'), l.cancelledAt),
     ...(l.notes ? [{ label: t('canvass.fields.notes'), value: l.notes }] : []),

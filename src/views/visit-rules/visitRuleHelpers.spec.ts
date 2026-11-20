@@ -58,6 +58,52 @@ describe('company payload', () => {
   })
 })
 
+const checkAllRow = company({
+  key: 'load_confirmation',
+  categoryKey: 'depot',
+  paramKind: 'allow_check_all',
+  defaultAllowCheckAll: true,
+  level: 'required',
+  allowCheckAll: false,
+})
+
+describe('check-all parameter', () => {
+  it('travels only with its own rule', () => {
+    const all = [...rows, checkAllRow]
+    const payload = buildCompanyPayload(
+      all,
+      {
+        ...companyValues(all),
+        survey: { level: 'required', allowCheckAll: true },
+      },
+      [],
+    )
+    expect(payload.rules.find((r) => r.key === 'survey')).toEqual({
+      key: 'survey',
+      level: 'required',
+    })
+    expect(payload.rules.find((r) => r.key === 'load_confirmation')).toEqual({
+      key: 'load_confirmation',
+      level: 'required',
+      allowCheckAll: false,
+    })
+  })
+
+  it('seeds the default and detects a change', () => {
+    expect(withLevel(checkAllRow, 'required')).toEqual({ level: 'required', allowCheckAll: true })
+    expect(withLevel(checkAllRow, 'required', { level: 'required', allowCheckAll: false })).toEqual(
+      {
+        level: 'required',
+        allowCheckAll: false,
+      },
+    )
+    const a = companyValues([checkAllRow])
+    expect(sameValueMap(a, { load_confirmation: { level: 'required', allowCheckAll: true } })).toBe(
+      false,
+    )
+  })
+})
+
 describe('dirty diff', () => {
   it('detects level and radius changes', () => {
     const a = companyValues(rows)

@@ -1,6 +1,6 @@
 # Canvass Loading & Unloading: frontend
 
-> Status: IMPLEMENTED 2026-11-20 (unit/type/lint/build green; E2E not run). Web + BE only; mobile (salesman screens) gets its own plan later. Mockup: N-Force visit flow v1.3, section B2 (screens 11–13).
+> Status: IMPLEMENTED 2026-11-20 (unit/type/lint/build green; E2E not run). Web + BE only. F7 (mobile support) PLANNED 2026-11-20, not built; mobile plan: `gudang-mobile/.claude/canvass-loading-mobile.md`. Mockup: N-Force visit flow v1.3, section B2 (screens 11–13).
 
 Full cross-project plan: `/.claude/canvass-loading-master-plan.md`. The FE depends on the BE endpoints listed there (B4/B5).
 
@@ -112,6 +112,13 @@ List, create and detail views.
 - Unit specs for the revision-diff "changed" helper and the unloading selisih helper.
 - A warehouse dialog spec for the Canvass kind (salesman required, branch locked).
 - Run `npm run test:unit`, `type-check`, `lint` and `build`.
+
+### F7. Visit Rules "check all" toggle + Sent by (IMPLEMENTED 2026-11-20, uncommitted; unit/type/lint green)
+Needed by the mobile check list (`gudang-mobile/.claude/canvass-loading-mobile.md`); depends on BE B7.
+
+- `views/visit-rules/VisitRulesView.vue` and `components/`: the `load_confirmation` row shows a "Allow check all" / "Izinkan centang semua" switch. Company level is a switch; the team override is a tri-state of inherit, on or off. Mirror how `radius_m` is rendered and saved, and update `visitRuleHelpers.ts` and its spec.
+- The loading detail shows "Sent by {name}" next to `sentAt`.
+- Both locales get the new keys. Run unit, type-check and lint.
 
 ## Verification (end-to-end, after implementation)
 1. **BE:** `go test ./...` passes, including the integration test, and `go build ./...` is green.

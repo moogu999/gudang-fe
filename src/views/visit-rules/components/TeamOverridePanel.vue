@@ -241,7 +241,13 @@ watch(selectedId, (id) => emit('update:teamId', id))
 
 function valueText(row: TeamRuleRow): string {
   const label = t(levelLabelKey(row.style, row.inherited.level))
-  return row.paramKind && row.inherited.level !== 'off' && row.inherited.radiusM != null
+  if (row.paramKind === 'allow_check_all') {
+    const on = row.inherited.allowCheckAll !== false
+    return `${label} · ${t(on ? 'visitRules.checkAll.on' : 'visitRules.checkAll.off')}`
+  }
+  return row.paramKind === 'radius_m' &&
+    row.inherited.level !== 'off' &&
+    row.inherited.radiusM != null
     ? `${label} · ${row.inherited.radiusM} ${t('visitRules.radius.unit')}`
     : label
 }

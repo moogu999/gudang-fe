@@ -36,8 +36,32 @@ export function withLevel(
   level: VisitRuleLevel,
   current?: VisitRuleValue,
 ): VisitRuleValue {
-  if (!def.paramKind) return { level }
-  return { level, radiusM: current?.radiusM ?? def.defaultRadiusM }
+  if (def.paramKind === 'radius_m')
+    return { level, radiusM: current?.radiusM ?? def.defaultRadiusM }
+  if (def.paramKind === 'allow_check_all') {
+    return { level, allowCheckAll: current?.allowCheckAll ?? def.defaultAllowCheckAll ?? true }
+  }
+  return { level }
+}
+
+/** The parameter fields of a value, without the undefined ones. */
+function paramsOf(v: VisitRuleValue): Pick<VisitRuleValue, 'radiusM' | 'allowCheckAll'> {
+  return {
+    ...(v.radiusM != null ? { radiusM: v.radiusM } : {}),
+    ...(v.allowCheckAll != null ? { allowCheckAll: v.allowCheckAll } : {}),
+  }
+}
+
+/** Drops a parameter from inputs whose rule doesn't carry it. */
+function pruneParams(inputs: VisitRuleInput[], rows: VisitRuleDefinition[]) {
+  const radiusKeys = new Set(rows.filter((r) => r.paramKind === 'radius_m').map((r) => r.key))
+  const checkAllKeys = new Set(
+    rows.filter((r) => r.paramKind === 'allow_check_all').map((r) => r.key),
+  )
+  for (const r of inputs) {
+    if (!radiusKeys.has(r.key)) delete r.radiusM
+    if (!checkAllKeys.has(r.key)) delete r.allowCheckAll
+  }
 }
 
 /** The editable (non-locked) values of a company response, keyed by rule. */
@@ -45,7 +69,7 @@ export function companyValues(rows: CompanyRuleRow[]): ValueMap {
   const map: ValueMap = {}
   for (const r of rows) {
     if (r.locked) continue
-    map[r.key] = { level: r.level, ...(r.radiusM != null ? { radiusM: r.radiusM } : {}) }
+    map[r.key] = { level: r.level, ...paramsOf(r) }
   }
   return map
 }
@@ -55,17 +79,18 @@ export function teamOverrides(rows: TeamRuleRow[]): ValueMap {
   const map: ValueMap = {}
   for (const r of rows) {
     if (!r.override) continue
-    map[r.key] = {
-      level: r.override.level,
-      ...(r.override.radiusM != null ? { radiusM: r.override.radiusM } : {}),
-    }
+    map[r.key] = { level: r.override.level, ...paramsOf(r.override) }
   }
   return map
 }
 
 function sameValue(a?: VisitRuleValue, b?: VisitRuleValue): boolean {
   if (!a || !b) return a === b
-  return a.level === b.level && (a.radiusM ?? null) === (b.radiusM ?? null)
+  return (
+    a.level === b.level &&
+    (a.radiusM ?? null) === (b.radiusM ?? null) &&
+    (a.allowCheckAll ?? null) === (b.allowCheckAll ?? null)
+  )
 }
 
 export function sameValueMap(a: ValueMap, b: ValueMap): boolean {
@@ -85,7 +110,7 @@ function toInputs(values: ValueMap, order: string[]): VisitRuleInput[] {
   for (const key of order) {
     const v = values[key]
     if (!v) continue
-    out.push({ key, level: v.level, ...(v.radiusM != null ? { radiusM: v.radiusM } : {}) })
+    out.push({ key, level: v.level, ...paramsOf(v) })
   }
   return out
 }
@@ -98,9 +123,8 @@ export function buildCompanyPayload(
 ): PutCompanyRulesDto {
   const order = rows.filter((r) => !r.locked).map((r) => r.key)
   const rules = toInputs(values, order)
-  // The radius only travels with a radius rule.
-  const radiusKeys = new Set(rows.filter((r) => r.paramKind).map((r) => r.key))
-  for (const r of rules) if (!radiusKeys.has(r.key)) delete r.radiusM
+  // A parameter only travels with the rule that owns it.
+  pruneParams(rules, rows)
   return { rules, exemptReasonIds }
 }
 
@@ -111,9 +135,8 @@ export function buildTeamPayload(
   note: string,
 ): PutTeamRulesDto {
   const order = rows.filter((r) => !r.locked).map((r) => r.key)
-  const radiusKeys = new Set(rows.filter((r) => r.paramKind).map((r) => r.key))
   const list = toInputs(overrides, order)
-  for (const r of list) if (!radiusKeys.has(r.key)) delete r.radiusM
+  pruneParams(list, rows)
   const trimmed = note.trim()
   return { overrides: list, ...(trimmed ? { note: trimmed } : {}) }
 }
@@ -127,7 +150,7 @@ export function shouldDeleteTeam(overrides: ValueMap, note: string): boolean {
 export function radiusErrorKeys(rows: VisitRuleDefinition[], values: ValueMap): string[] {
   const bad: string[] = []
   for (const r of rows) {
-    if (!r.paramKind) continue
+    if (r.paramKind !== 'radius_m') continue
     const v = values[r.key]
     if (!v || v.level === 'off') continue
     if (!isValidRadius(v.radiusM)) bad.push(r.key)

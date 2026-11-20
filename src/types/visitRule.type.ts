@@ -11,9 +11,10 @@ export interface VisitRuleDefinition {
   locked: boolean
   appliesTakingOrder: boolean
   appliesCanvass: boolean
-  paramKind?: 'radius_m'
+  paramKind?: 'radius_m' | 'allow_check_all'
   defaultLevel: VisitRuleLevel
   defaultRadiusM?: number
+  defaultAllowCheckAll?: boolean
   exemptible: boolean
   employeeExemptible: boolean
 }
@@ -21,6 +22,7 @@ export interface VisitRuleDefinition {
 export interface VisitRuleValue {
   level: VisitRuleLevel
   radiusM?: number
+  allowCheckAll?: boolean
 }
 
 export interface VisitRuleInput extends VisitRuleValue {
@@ -96,6 +98,7 @@ export interface PutTeamRulesDto {
 export interface EffectiveRuleRow extends VisitRuleDefinition {
   level?: VisitRuleLevel
   radiusM?: number
+  allowCheckAll?: boolean
   source: VisitRuleSource
 }
 

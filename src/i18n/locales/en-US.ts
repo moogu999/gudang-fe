@@ -6177,7 +6177,7 @@ export default {
       valueHeader: 'Target value',
       valueBasis: 'Rp, net excl. VAT',
       ec: 'EC',
-      ecHint: 'visits with order',
+      ecHint: 'successful visits',
       oa: 'OA',
       oaHint: 'customers buying ≥ 1×',
       empty: 'No salesmen yet.',
@@ -6257,6 +6257,12 @@ export default {
       view: {
         value: 'Value',
         qty: 'Qty per item',
+        ec: 'Effective Call',
+      },
+      ec: {
+        target: 'Target EC',
+        achieved: 'Achieved EC',
+        basis: 'Counts completed visits checked in within the customer radius.',
       },
       asOf: 'Data as of {at}',
       refresh: 'Refresh',

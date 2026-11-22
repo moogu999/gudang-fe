@@ -103,4 +103,62 @@ describe('SalesmanTargetAchievementTab', () => {
     const wrapper = await mountTab(makeTarget())
     expect(wrapper.text()).toContain('salesmanTargets.achievement.notActive')
   })
+
+  it('has no EC option when the document has no EC target', async () => {
+    const wrapper = await mountTab(makeTarget({ hasEffectiveCall: false }))
+    expect(wrapper.text()).not.toContain('salesmanTargets.achievement.view.ec')
+  })
+
+  describe('Effective Call view', () => {
+    const ecTarget = () =>
+      makeTarget({
+        hasValue: false,
+        hasQty: false,
+        hasEffectiveCall: true,
+        lines: [
+          {
+            id: 1,
+            employeeId: 100,
+            employeeName: 'Fajar',
+            employeeActive: true,
+            effectiveCall: 100,
+            cells: {},
+          },
+          { id: 2, employeeId: 101, employeeName: 'Budi', employeeActive: true, cells: {} },
+        ],
+      } as unknown as Partial<SalesmanTarget>)
+
+    it('shows no % for an empty target but 0 achieved when the key is absent', async () => {
+      achievement.mockResolvedValue({
+        ...response,
+        lines: [{ employeeId: 100, effectiveCall: 30 }],
+        totals: { effectiveCall: 30 },
+      })
+      const wrapper = await mountTab(ecTarget())
+      const rows = wrapper.findAll('tbody tr')
+      expect(rows[0].text()).toContain('30 %')
+      const budi = rows[1].findAll('td')
+      expect(budi[1].text()).toBe('—')
+      expect(budi[2].text()).toBe('0')
+      expect(budi[3].text()).toBe('—')
+    })
+
+    it('colours the run rate against the full target', async () => {
+      // 30 of 100 after 6 of 26 days projects to 130 %: green; 5 projects to 21.7 %: red.
+      achievement.mockResolvedValue({
+        ...response,
+        lines: [{ employeeId: 100, effectiveCall: 30 }],
+        totals: { effectiveCall: 30 },
+      })
+      let wrapper = await mountTab(ecTarget())
+      expect(wrapper.findAll('tbody tr')[0].findAll('td')[4].classes()).toContain('text-green-700')
+      achievement.mockResolvedValue({
+        ...response,
+        lines: [{ employeeId: 100, effectiveCall: 5 }],
+        totals: { effectiveCall: 5 },
+      })
+      wrapper = await mountTab(ecTarget())
+      expect(wrapper.findAll('tbody tr')[0].findAll('td')[4].classes()).toContain('text-red-600')
+    })
+  })
 })

@@ -6195,7 +6195,7 @@ export default {
       valueHeader: 'Nilai target',
       valueBasis: 'Rp, neto tanpa PPN',
       ec: 'EC',
-      ecHint: 'kunjungan dengan order',
+      ecHint: 'kunjungan berhasil',
       oa: 'OA',
       oaHint: 'customer yang membeli ≥ 1×',
       empty: 'Belum ada salesman.',
@@ -6276,6 +6276,12 @@ export default {
       view: {
         value: 'Nilai',
         qty: 'Qty per item',
+        ec: 'Effective Call',
+      },
+      ec: {
+        target: 'Target EC',
+        achieved: 'Capaian EC',
+        basis: 'Menghitung kunjungan selesai yang check-in dalam radius customer.',
       },
       asOf: 'Data per {at}',
       refresh: 'Muat ulang',

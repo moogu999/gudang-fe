@@ -80,4 +80,20 @@ describe('mergeAchievement', () => {
     expect(row.targetValue).toBeNull()
     expect(row.achievedCells).toEqual({})
   })
+  it('reads EC: an empty target is null, a missing achieved key is 0', () => {
+    const ecTarget = {
+      lines: [
+        { employeeId: 1, employeeName: 'A', employeeActive: true, effectiveCall: 20, cells: {} },
+        { employeeId: 2, employeeName: 'B', employeeActive: true, cells: {} },
+      ],
+    } as unknown as SalesmanTarget
+    const ecAchievement = {
+      lines: [{ employeeId: 1, effectiveCall: 5 }, { employeeId: 2 }],
+    } as unknown as SalesmanTargetAchievement
+    const rows = mergeAchievement(ecTarget, ecAchievement)
+    expect(rows[0].targetEc).toBe(20)
+    expect(rows[0].achievedEc).toBe(5)
+    expect(rows[1].targetEc).toBeNull()
+    expect(rows[1].achievedEc).toBe(0)
+  })
 })

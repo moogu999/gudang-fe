@@ -207,6 +207,8 @@ export interface AchievementLine {
   employeeId: number
   /** Present when the document has value targets. */
   achievedValue?: string
+  /** Successful visits; present when the document has an Effective Call target. Absent means 0. */
+  effectiveCall?: number
   /** Base-unit qty per item id. A missing key is 0 achieved. */
   cells?: Record<string, string>
 }
@@ -216,7 +218,7 @@ export interface SalesmanTargetAchievement {
   asOf: string
   workingDays: { total: number; elapsed: number }
   lines: AchievementLine[]
-  totals: { achievedValue?: string; cells?: Record<string, string> }
+  totals: { achievedValue?: string; effectiveCall?: number; cells?: Record<string, string> }
 }
 
 export interface AchievementItemBreakdownRow {

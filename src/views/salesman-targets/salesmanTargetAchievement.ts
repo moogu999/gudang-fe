@@ -15,6 +15,10 @@ export interface AchievementRow {
   employeeActive: boolean
   targetValue: number | null
   achievedValue: number
+  /** Effective Call target; null when the salesman has none. */
+  targetEc: number | null
+  /** Successful visits; a missing key from the API is 0. */
+  achievedEc: number
   /** Base-unit target per item id; a missing key is not targeted. */
   targetCells: Record<string, number>
   /** Base-unit achieved qty per item id; a missing key is 0. */
@@ -85,6 +89,8 @@ export function mergeAchievement(
       employeeActive: line.employeeActive,
       targetValue: targetValue !== null && Number.isFinite(targetValue) ? targetValue : null,
       achievedValue: Number(got?.achievedValue ?? 0) || 0,
+      targetEc: line.effectiveCall ?? null,
+      achievedEc: got?.effectiveCall ?? 0,
       targetCells: toNumbers(line.cells),
       achievedCells: toNumbers(got?.cells),
     }

@@ -1,5 +1,7 @@
 # Salesman Target Achievement — Frontend Plan
 
+> 2026-11-22: EC achievement (from visits) is planned separately in `gudang-fe/.claude/salesman-target-ec-achievement-fe.md`.
+
 Companion to `.claude/salesman-target-achievement-master-plan.md` (decisions **A1–A13** are referenced by number) and `gudang-be/.claude/salesman-target-achievement-be.md`. The existing target screens are described in `.claude/salesman-target-fe.md`.
 
 Web only. The mobile app is untouched (A9).

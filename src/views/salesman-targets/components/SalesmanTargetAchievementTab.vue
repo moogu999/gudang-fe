@@ -109,8 +109,90 @@
         </div>
       </div>
 
+      <!-- Effective Call table -->
+      <div v-if="activeView === 'ec'" class="overflow-x-auto rounded border border-stone-200">
+        <table class="min-w-full border-collapse text-sm">
+          <thead class="bg-stone-50">
+            <tr>
+              <th
+                class="sticky left-0 z-10 min-w-56 border-r border-b border-stone-200 bg-stone-50 px-3 py-2 text-left font-semibold"
+              >
+                {{ t('salesmanTargets.achievement.columns.salesman') }}
+              </th>
+              <th class="border-b border-stone-200 px-3 py-2 text-right font-medium">
+                {{ t('salesmanTargets.achievement.ec.target') }}
+              </th>
+              <th class="border-b border-stone-200 px-3 py-2 text-right font-medium">
+                {{ t('salesmanTargets.achievement.ec.achieved') }}
+              </th>
+              <th class="border-b border-stone-200 px-3 py-2 text-right font-medium">
+                {{ t('salesmanTargets.achievement.columns.pct') }}
+              </th>
+              <th class="border-b border-stone-200 px-3 py-2 text-right font-medium">
+                {{ t('salesmanTargets.achievement.columns.runRate') }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in rows" :key="row.employeeId" class="hover:bg-stone-50">
+              <td class="sticky left-0 z-10 border-r border-b border-stone-200 bg-white px-3 py-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium">{{ row.employeeName }}</span>
+                  <Tag
+                    v-if="!row.employeeActive"
+                    :value="t('salesmanTargets.grid.inactive')"
+                    severity="warn"
+                  />
+                </div>
+                <div v-if="row.employeeCode" class="text-xs text-stone-500">
+                  {{ row.employeeCode }}
+                </div>
+              </td>
+              <td class="border-b border-stone-200 px-3 py-2 text-right">
+                <template v-if="row.targetEc !== null">{{ fmt(row.targetEc) }}</template>
+                <span v-else class="text-stone-400">—</span>
+              </td>
+              <td class="border-b border-stone-200 px-3 py-2 text-right">
+                {{ fmt(row.achievedEc) }}
+              </td>
+              <td
+                class="border-b border-stone-200 px-3 py-2 text-right"
+                :class="bandClass(ecPct(row))"
+                :aria-label="bandLabel(ecPct(row))"
+              >
+                {{ fmtPct(ecPct(row)) }}
+              </td>
+              <td
+                class="border-b border-stone-200 px-3 py-2 text-right"
+                :class="rateClass(runRate(row.achievedEc, row.targetEc, wd))"
+              >
+                {{ fmtPct(runRate(row.achievedEc, row.targetEc, wd)) }}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-stone-50 font-medium">
+            <tr>
+              <td class="sticky left-0 z-10 border-r border-stone-200 bg-stone-50 px-3 py-2">
+                {{ t('salesmanTargets.achievement.columns.total') }}
+              </td>
+              <td class="px-3 py-2 text-right">{{ fmt(totalTargetEc) }}</td>
+              <td class="px-3 py-2 text-right">{{ fmt(totalAchievedEc) }}</td>
+              <td class="px-3 py-2 text-right" :class="bandClass(totalEcPct)">
+                {{ fmtPct(totalEcPct) }}
+              </td>
+              <td class="px-3 py-2 text-right" :class="rateClass(totalEcRunRate)">
+                {{ fmtPct(totalEcRunRate) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
       <!-- Value table -->
-      <div v-if="activeView === 'value'" class="overflow-x-auto rounded border border-stone-200">
+      <div
+        v-else-if="activeView === 'value'"
+        class="overflow-x-auto rounded border border-stone-200"
+      >
         <table class="min-w-full border-collapse text-sm">
           <thead class="bg-stone-50">
             <tr>
@@ -317,7 +399,11 @@
         {{ t('salesmanTargets.achievement.legend', { pct: fmtPct(ideal) }) }}
       </p>
       <p class="mt-1 text-xs text-stone-500">
-        {{ t('salesmanTargets.achievement.basis') }}
+        {{
+          activeView === 'ec'
+            ? t('salesmanTargets.achievement.ec.basis')
+            : t('salesmanTargets.achievement.basis')
+        }}
       </p>
     </template>
 
@@ -375,7 +461,7 @@ const loadFailed = ref(false)
 const notActive = ref(false)
 
 // A local ref: PrimeVue's SelectButton doesn't repaint on a form-state write.
-const view = ref<'value' | 'qty'>('value')
+const view = ref<'value' | 'qty' | 'ec'>('value')
 
 const skuVisible = ref(false)
 const skuItem = ref<FormItem | undefined>()
@@ -424,9 +510,12 @@ const viewOptions = computed(() => [
   ...(showQty.value
     ? [{ label: t('salesmanTargets.achievement.view.qty'), value: 'qty' as const }]
     : []),
+  ...(props.target.hasEffectiveCall
+    ? [{ label: t('salesmanTargets.achievement.view.ec'), value: 'ec' as const }]
+    : []),
 ])
 const showToggle = computed(() => viewOptions.value.length > 1)
-const activeView = computed<'value' | 'qty'>(() => {
+const activeView = computed<'value' | 'qty' | 'ec'>(() => {
   const available = viewOptions.value.map((o) => o.value)
   return available.includes(view.value) ? view.value : (available[0] ?? 'value')
 })
@@ -450,6 +539,22 @@ const totalValueRunRate = computed(() =>
 
 function valuePct(row: AchievementRow): number | null {
   return pct(row.achievedValue, row.targetValue)
+}
+
+// ---------------------------------------------------------------------------
+// Effective Call
+// ---------------------------------------------------------------------------
+
+const totalTargetEc = computed(() => rows.value.reduce((sum, r) => sum + (r.targetEc ?? 0), 0))
+const totalAchievedEc = computed(
+  () =>
+    achievement.value?.totals.effectiveCall ?? rows.value.reduce((sum, r) => sum + r.achievedEc, 0),
+)
+const totalEcPct = computed(() => pct(totalAchievedEc.value, totalTargetEc.value))
+const totalEcRunRate = computed(() => runRate(totalAchievedEc.value, totalTargetEc.value, wd.value))
+
+function ecPct(row: AchievementRow): number | null {
+  return pct(row.achievedEc, row.targetEc)
 }
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import type { VisitDisplayStatus, VisitRow } from '@/types/visit.type'
+import type { VisitDayRow, VisitDayStatus, VisitDisplayStatus, VisitRow } from '@/types/visit.type'
 
 export type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast'
 
@@ -18,6 +18,31 @@ export function statusSeverity(status: VisitDisplayStatus): Severity {
     default:
       return 'secondary'
   }
+}
+
+/** Open days need attention (amber), closed are done, a supervisor close is neutral. */
+export function dayStatusSeverity(status: VisitDayStatus): Severity {
+  switch (status) {
+    case 'open':
+      return 'warn'
+    case 'closed':
+      return 'success'
+    default:
+      return 'secondary'
+  }
+}
+
+export function dayRowKey(row: Pick<VisitDayRow, 'employee' | 'date'>): string {
+  return `${row.date}:${row.employee.id}`
+}
+
+/** A supervisor can close a day that is still open and already past. */
+export function canCloseDay(
+  row: Pick<VisitDayRow, 'status' | 'date'>,
+  hasPermission: boolean,
+  today: string = dayjs().format('YYYY-MM-DD'),
+): boolean {
+  return hasPermission && row.status === 'open' && row.date < today
 }
 
 /** The longest range the API accepts. */

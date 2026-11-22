@@ -246,6 +246,9 @@ export const API_ENDPOINTS = {
   VISITS: '/v1/visits',
   VISIT: (id: number) => `/v1/visits/${id}`,
   VISIT_CLOSE: (id: number) => `/v1/visits/${id}/close`,
+  VISIT_DAYS: '/v1/visits/days',
+  VISIT_DAY: (employeeId: number, date: string) => `/v1/visits/days/${employeeId}/${date}`,
+  VISIT_DAYS_CLOSE: '/v1/visits/days/close',
 
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',

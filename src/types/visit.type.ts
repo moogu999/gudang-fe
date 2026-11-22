@@ -22,6 +22,9 @@ export const VISIT_DISPLAY_STATUSES: VisitDisplayStatus[] = [
   'closed',
 ]
 
+/** `close_day`: skipped while closing the day, not at the outlet. */
+export type VisitSkipSource = 'visit' | 'close_day'
+
 export type VisitLevel = 'required' | 'recommended' | 'off'
 
 export interface VisitRow {
@@ -43,6 +46,7 @@ export interface VisitRow {
   withinRadius?: boolean | null
   distanceM?: number | null
   skipReason?: string | null
+  skipSource?: VisitSkipSource | null
   stockCheckCount: number
   stockCheckMissing: boolean
 }
@@ -103,6 +107,7 @@ export interface Visit {
   skippedAt?: string | null
   skipReasonId?: number | null
   skipNote?: string | null
+  skipSource?: VisitSkipSource | null
   closedAt?: string | null
   /** User id of the supervisor who closed the visit. */
   closedBy?: number | null
@@ -142,4 +147,66 @@ export interface VisitDetail {
   closedByName?: string | null
   selfieUrl?: string | null
   stockCheck: VisitStockCheckGroup[]
+}
+
+export type VisitDayStatus = 'open' | 'closed' | 'closed_by_supervisor'
+
+export const VISIT_DAY_STATUSES: VisitDayStatus[] = ['open', 'closed', 'closed_by_supervisor']
+
+export interface VisitDayCounts {
+  planned: number
+  completed: number
+  /** Includes the ones skipped at day close. */
+  skipped: number
+  skippedAtClose: number
+  notVisited: number
+  closedVisits: number
+  firstCheckInAt?: string | null
+  lastCheckOutAt?: string | null
+}
+
+/** One salesman on one date that has visits. */
+export interface VisitDayRow {
+  rowKey?: string
+  employee: { id: number; name: string; nip?: string | null }
+  team?: { id: number; name: string } | null
+  branch: { id: number; name: string }
+  /** `YYYY-MM-DD`. */
+  date: string
+  status: VisitDayStatus
+  counts: VisitDayCounts
+  closedAt?: string | null
+  closedByName?: string | null
+  source?: 'salesman' | 'supervisor' | null
+  note?: string | null
+  hasActiveVisit: boolean
+}
+
+export interface VisitDayOutlet {
+  sequence: number
+  customer: { id: number; code: string; name: string }
+  visitId?: number | null
+  status: VisitDisplayStatus
+  skipReason?: string | null
+  skipSource?: VisitSkipSource | null
+}
+
+export interface VisitDayDetail {
+  day: VisitDayRow
+  outlets: VisitDayOutlet[]
+}
+
+export interface VisitDayListResponse {
+  data: VisitDayRow[]
+  meta: { total: number; limit: number; offset: number }
+  summary: { countsByStatus: Partial<Record<VisitDayStatus, number>> }
+}
+
+export interface VisitDayFilters {
+  dateFrom: string
+  dateTo: string
+  branchId?: number
+  teamId?: number
+  employeeId?: number
+  status?: VisitDayStatus | null
 }

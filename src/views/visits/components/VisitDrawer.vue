@@ -135,6 +135,10 @@
           <dt class="text-stone-500">{{ t('visits.drawer.rule') }}</dt>
           <dd>{{ record.radiusRuleLevel ? t(`visits.level.${record.radiusRuleLevel}`) : '—' }}</dd>
         </template>
+        <template v-if="record.status === 'skipped' && record.skipSource === 'close_day'">
+          <dt class="text-stone-500">{{ t('visits.drawer.source') }}</dt>
+          <dd data-testid="drawer-close-day-tag">{{ t('visits.skipSource.close_day') }}</dd>
+        </template>
         <dt class="text-stone-500">{{ t('visits.drawer.reason') }}</dt>
         <dd>{{ reasonText }}</dd>
         <dt class="text-stone-500">{{ t('visits.drawer.note') }}</dt>

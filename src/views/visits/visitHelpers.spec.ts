@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import dayjs from 'dayjs'
 import {
+  canCloseDay,
   checkInOutText,
+  dayRowKey,
+  dayStatusSeverity,
   distanceText,
   isValidRange,
   qtyText,
@@ -58,5 +61,25 @@ describe('text helpers', () => {
     expect(checkInOutText('2026-11-19T01:05:00Z', '2026-11-19T01:40:00Z')).toBe('08:05 – 08:40')
     expect(checkInOutText('2026-11-19T01:05:00Z', null)).toBe('08:05 –')
     expect(checkInOutText(null, null)).toBe('—')
+  })
+})
+
+describe('day helpers', () => {
+  it('maps day statuses to severities', () => {
+    expect(dayStatusSeverity('open')).toBe('warn')
+    expect(dayStatusSeverity('closed')).toBe('success')
+    expect(dayStatusSeverity('closed_by_supervisor')).toBe('secondary')
+  })
+
+  it('keys a day by date and salesman', () => {
+    expect(dayRowKey({ date: '2026-11-19', employee: { id: 4, name: 'B' } })).toBe('2026-11-19:4')
+  })
+
+  it('lets a supervisor close only an open, past day', () => {
+    const today = '2026-11-22'
+    expect(canCloseDay({ status: 'open', date: '2026-11-21' }, true, today)).toBe(true)
+    expect(canCloseDay({ status: 'open', date: today }, true, today)).toBe(false)
+    expect(canCloseDay({ status: 'closed', date: '2026-11-21' }, true, today)).toBe(false)
+    expect(canCloseDay({ status: 'open', date: '2026-11-21' }, false, today)).toBe(false)
   })
 })

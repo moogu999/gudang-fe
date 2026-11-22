@@ -1,7 +1,16 @@
 import ApiService from './api'
 import { API_ENDPOINTS } from '@/constants/api'
 import { createListQueryAdapter } from './listQueryAdapter'
-import type { Visit, VisitDetail, VisitFilters, VisitListResponse } from '@/types/visit.type'
+import type {
+  Visit,
+  VisitDayDetail,
+  VisitDayFilters,
+  VisitDayListResponse,
+  VisitDayRow,
+  VisitDetail,
+  VisitFilters,
+  VisitListResponse,
+} from '@/types/visit.type'
 
 /** `/v1/visits` reads its named filters from the url; the table adds only `q`/`limit`/`offset`. */
 const toListQuery = createListQueryAdapter([])
@@ -16,6 +25,17 @@ function filterParams(filters: VisitFilters): URLSearchParams {
   if (filters.customerId) params.set('customerId', String(filters.customerId))
   if (filters.status) params.set('status', filters.status)
   if (filters.outsideRadius) params.set('outsideRadius', 'true')
+  return params
+}
+
+function dayParams(filters: VisitDayFilters): URLSearchParams {
+  const params = new URLSearchParams()
+  params.set('dateFrom', filters.dateFrom)
+  params.set('dateTo', filters.dateTo)
+  if (filters.branchId) params.set('branchId', String(filters.branchId))
+  if (filters.teamId) params.set('teamId', String(filters.teamId))
+  if (filters.employeeId) params.set('employeeId', String(filters.employeeId))
+  if (filters.status) params.set('status', filters.status)
   return params
 }
 
@@ -42,6 +62,32 @@ export class VisitService {
     params.set('limit', '1')
     const res = await ApiService.get<VisitListResponse>(`${API_ENDPOINTS.VISITS}?${params}`)
     return res.summary
+  }
+
+  /** The days list url for `TableComponent`. */
+  static daysUrl(filters: VisitDayFilters): string {
+    return `${API_ENDPOINTS.VISIT_DAYS}?${dayParams(filters)}`
+  }
+
+  /** Counts per day status for the stat cards (the status filter is dropped). */
+  static async daysSummary(filters: VisitDayFilters): Promise<VisitDayListResponse['summary']> {
+    const params = dayParams({ ...filters, status: null })
+    params.set('limit', '1')
+    const res = await ApiService.get<VisitDayListResponse>(`${API_ENDPOINTS.VISIT_DAYS}?${params}`)
+    return res.summary
+  }
+
+  static async getDay(employeeId: number, date: string): Promise<VisitDayDetail> {
+    return ApiService.get<VisitDayDetail>(API_ENDPOINTS.VISIT_DAY(employeeId, date))
+  }
+
+  /** Close a past day for a salesman who cannot. Needs VISIT_CLOSE and a note. */
+  static async closeDay(body: {
+    employeeId: number
+    date: string
+    note: string
+  }): Promise<VisitDayRow> {
+    return ApiService.post<VisitDayRow>(API_ENDPOINTS.VISIT_DAYS_CLOSE, body)
   }
 
   static async get(id: number): Promise<VisitDetail> {

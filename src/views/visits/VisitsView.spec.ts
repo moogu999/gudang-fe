@@ -6,9 +6,10 @@ vi.mock('vue-i18n', async (importOriginal) => ({
   ...(await importOriginal<typeof import('vue-i18n')>()),
   useI18n: () => ({ t: (key: string) => key }),
 }))
+const routeQuery: Record<string, string> = {}
 vi.mock('vue-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('vue-router')>()),
-  useRoute: () => ({ query: {} }),
+  useRoute: () => ({ query: routeQuery }),
   useRouter: () => ({ replace: vi.fn() }),
 }))
 vi.mock('@/stores', () => ({ useAuthStore: () => ({ branchIds: [1] }) }))
@@ -39,6 +40,10 @@ const stubs = {
     template: '<div data-testid="table" :data-url="url" />',
   },
   VisitDrawer: true,
+  VisitDaysTab: { template: '<div data-testid="days-tab" />' },
+  Tabs: { template: '<div><slot /></div>' },
+  TabList: { template: '<div><slot /></div>' },
+  Tab: { template: '<button><slot /></button>' },
   StatFilterCard: {
     props: ['count', 'label', 'active'],
     emits: ['toggle'],
@@ -91,5 +96,14 @@ describe('VisitsView', () => {
     const cards = w.findAll('[data-testid="card"]')
     await cards[cards.length - 1]!.trigger('click')
     expect(w.get('[data-testid="table"]').attributes('data-url')).toContain('outside=1')
+  })
+
+  it('shows the Days tab instead of the visit list when linked with ?tab=days', async () => {
+    routeQuery.tab = 'days'
+    const w = mountView()
+    await flushPromises()
+    delete routeQuery.tab
+    expect(w.find('[data-testid="days-tab"]').exists()).toBe(true)
+    expect(w.find('[data-testid="table"]').exists()).toBe(false)
   })
 })

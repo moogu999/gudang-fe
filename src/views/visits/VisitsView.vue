@@ -7,162 +7,181 @@
       <p class="mt-1 text-sm text-stone-500">{{ t('visits.subtitle') }}</p>
     </div>
 
-    <!-- Stat cards double as quick filters -->
-    <div v-if="statCards.length" role="tablist" class="mb-4 flex flex-wrap gap-2">
-      <StatFilterCard
-        v-for="card in statCards"
-        :key="card.key"
-        :count="card.count"
-        :label="card.label"
-        :severity="card.severity"
-        :active="card.active"
-        @toggle="card.toggle"
-      />
-    </div>
+    <Tabs :value="activeTab" class="mb-4" @update:value="onTabChange">
+      <TabList>
+        <Tab value="visits" data-testid="tab-visits">{{ t('visits.tabs.visits') }}</Tab>
+        <Tab value="days" data-testid="tab-days">{{ t('visits.tabs.days') }}</Tab>
+      </TabList>
+    </Tabs>
 
-    <!-- Filters -->
-    <div class="mb-4 flex flex-wrap items-center gap-3">
-      <DatePicker
-        v-model="dateRange"
-        selection-mode="range"
-        show-icon
-        show-clear
-        date-format="yy-mm-dd"
-        :max-date="new Date()"
-        :placeholder="t('visits.filters.dateRange')"
-        class="w-72"
-        data-testid="date-range"
-        @update:model-value="onRangeChange"
-      />
-      <InfiniteSelect
-        v-model="filterBranchId"
-        :fetch-fn="fetchBranches"
-        :option-label="branchLabel"
-        option-value="id"
-        :placeholder="t('visits.filters.allBranches')"
-        class="min-w-48"
-        show-clear
-      />
-      <InfiniteSelect
-        :key="filterBranchId ?? 'none'"
-        v-model="filterTeamId"
-        :fetch-fn="fetchTeams"
-        option-label="name"
-        option-value="id"
-        :placeholder="
-          filterBranchId ? t('visits.filters.allTeams') : t('visits.filters.teamNeedsBranch')
-        "
-        :disabled="!filterBranchId"
-        class="min-w-44"
-        show-clear
-      />
-      <InfiniteSelect
-        v-model="filterEmployeeId"
-        :fetch-fn="(q: string) => EmployeesService.listForSelect(q)"
-        option-label="name"
-        option-value="id"
-        :placeholder="t('visits.filters.allSalesmen')"
-        class="min-w-48"
-        show-clear
-      />
-      <InfiniteSelect
-        v-model="filterCustomerId"
-        :fetch-fn="(q: string) => CustomersService.list(q)"
-        option-label="name"
-        option-value="id"
-        :placeholder="t('visits.filters.allCustomers')"
-        class="min-w-48"
-        show-clear
-      />
-    </div>
-    <Message v-if="rangeError" severity="warn" class="mb-4" data-testid="range-error">
-      {{ t('visits.filters.rangeInvalid') }}
-    </Message>
+    <VisitDaysTab v-if="activeTab === 'days'" :toast-group="toastGroup" @open-visit="openDrawer" />
 
-    <ResponsiveCard>
-      <template #content>
-        <TableComponent
-          ref="table"
-          :url="url"
-          :columns="columns"
-          data-key="rowKey"
-          :query-adapter="VisitService.toListQuery"
-          :row-class="rowClass"
-          @loaded="onLoaded"
-        >
-          <template #content="{ col, data }">
-            <span v-if="col.field === 'planDate'">{{
-              dayjs(data.planDate).format('DD MMM YYYY')
-            }}</span>
+    <template v-else>
+      <!-- Stat cards double as quick filters -->
+      <div v-if="statCards.length" role="tablist" class="mb-4 flex flex-wrap gap-2">
+        <StatFilterCard
+          v-for="card in statCards"
+          :key="card.key"
+          :count="card.count"
+          :label="card.label"
+          :severity="card.severity"
+          :active="card.active"
+          @toggle="card.toggle"
+        />
+      </div>
 
-            <div v-else-if="col.field === 'employee.name'" class="flex flex-col text-left">
-              <span class="font-medium">{{ data.employee.name }}</span>
-              <span class="text-xs text-stone-500">{{ data.employee.nip ?? '' }}</span>
-            </div>
+      <!-- Filters -->
+      <div class="mb-4 flex flex-wrap items-center gap-3">
+        <DatePicker
+          v-model="dateRange"
+          selection-mode="range"
+          show-icon
+          show-clear
+          date-format="yy-mm-dd"
+          :max-date="new Date()"
+          :placeholder="t('visits.filters.dateRange')"
+          class="w-72"
+          data-testid="date-range"
+          @update:model-value="onRangeChange"
+        />
+        <InfiniteSelect
+          v-model="filterBranchId"
+          :fetch-fn="fetchBranches"
+          :option-label="branchLabel"
+          option-value="id"
+          :placeholder="t('visits.filters.allBranches')"
+          class="min-w-48"
+          show-clear
+        />
+        <InfiniteSelect
+          :key="filterBranchId ?? 'none'"
+          v-model="filterTeamId"
+          :fetch-fn="fetchTeams"
+          option-label="name"
+          option-value="id"
+          :placeholder="
+            filterBranchId ? t('visits.filters.allTeams') : t('visits.filters.teamNeedsBranch')
+          "
+          :disabled="!filterBranchId"
+          class="min-w-44"
+          show-clear
+        />
+        <InfiniteSelect
+          v-model="filterEmployeeId"
+          :fetch-fn="(q: string) => EmployeesService.listForSelect(q)"
+          option-label="name"
+          option-value="id"
+          :placeholder="t('visits.filters.allSalesmen')"
+          class="min-w-48"
+          show-clear
+        />
+        <InfiniteSelect
+          v-model="filterCustomerId"
+          :fetch-fn="(q: string) => CustomersService.list(q)"
+          option-label="name"
+          option-value="id"
+          :placeholder="t('visits.filters.allCustomers')"
+          class="min-w-48"
+          show-clear
+        />
+      </div>
+      <Message v-if="rangeError" severity="warn" class="mb-4" data-testid="range-error">
+        {{ t('visits.filters.rangeInvalid') }}
+      </Message>
 
-            <div v-else-if="col.field === 'customer.name'" class="flex flex-col text-left">
-              <span class="font-medium">{{ data.customer.name }}</span>
-              <span class="text-xs text-stone-500">{{ data.customer.code }}</span>
-            </div>
-
-            <span v-else-if="col.field === 'sequence'">{{
-              sequenceText(data.planSequence, data.actualSequence)
-            }}</span>
-
-            <div v-else-if="col.field === 'status'" class="flex flex-col items-start gap-1">
-              <Tag
-                :severity="statusSeverity(data.status)"
-                :value="t(`visits.status.${data.status}`)"
-              />
-              <span v-if="data.skipReason" class="text-xs text-stone-500">{{
-                data.skipReason
+      <ResponsiveCard>
+        <template #content>
+          <TableComponent
+            ref="table"
+            :url="url"
+            :columns="columns"
+            data-key="rowKey"
+            :query-adapter="VisitService.toListQuery"
+            :row-class="rowClass"
+            @loaded="onLoaded"
+          >
+            <template #content="{ col, data }">
+              <span v-if="col.field === 'planDate'">{{
+                dayjs(data.planDate).format('DD MMM YYYY')
               }}</span>
-            </div>
 
-            <div v-else-if="col.field === 'checkInOut'" class="flex flex-col">
-              <span>{{ checkInOutText(data.checkedInAt, data.checkedOutAt) }}</span>
-              <span v-if="data.durationMin != null" class="text-xs text-stone-500">{{
-                t('visits.drawer.durationMin', { n: data.durationMin })
+              <div v-else-if="col.field === 'employee.name'" class="flex flex-col text-left">
+                <span class="font-medium">{{ data.employee.name }}</span>
+                <span class="text-xs text-stone-500">{{ data.employee.nip ?? '' }}</span>
+              </div>
+
+              <div v-else-if="col.field === 'customer.name'" class="flex flex-col text-left">
+                <span class="font-medium">{{ data.customer.name }}</span>
+                <span class="text-xs text-stone-500">{{ data.customer.code }}</span>
+              </div>
+
+              <span v-else-if="col.field === 'sequence'">{{
+                sequenceText(data.planSequence, data.actualSequence)
               }}</span>
-            </div>
 
-            <div v-else-if="col.field === 'radius'" class="flex flex-col items-start gap-1">
-              <Tag
-                v-if="data.withinRadius != null"
-                :severity="data.withinRadius ? 'success' : 'danger'"
-                :value="data.withinRadius ? t('visits.radius.inside') : t('visits.radius.outside')"
-              />
-              <span v-if="data.distanceM != null" class="text-xs text-stone-500">{{
-                distanceText(data.distanceM)
-              }}</span>
-              <span v-if="data.withinRadius == null && data.checkedInAt">—</span>
-            </div>
+              <div v-else-if="col.field === 'status'" class="flex flex-col items-start gap-1">
+                <Tag
+                  :severity="statusSeverity(data.status)"
+                  :value="t(`visits.status.${data.status}`)"
+                />
+                <Tag
+                  v-if="data.skipSource === 'close_day'"
+                  severity="secondary"
+                  :value="t('visits.skipSource.close_day')"
+                  data-testid="close-day-tag"
+                />
+                <span v-if="data.skipReason" class="text-xs text-stone-500">{{
+                  data.skipReason
+                }}</span>
+              </div>
 
-            <template v-else-if="col.field === 'stockCheck'">
-              <Tag
-                v-if="data.stockCheckMissing"
-                severity="warn"
-                :value="t('visits.stockCheckMissing')"
+              <div v-else-if="col.field === 'checkInOut'" class="flex flex-col">
+                <span>{{ checkInOutText(data.checkedInAt, data.checkedOutAt) }}</span>
+                <span v-if="data.durationMin != null" class="text-xs text-stone-500">{{
+                  t('visits.drawer.durationMin', { n: data.durationMin })
+                }}</span>
+              </div>
+
+              <div v-else-if="col.field === 'radius'" class="flex flex-col items-start gap-1">
+                <Tag
+                  v-if="data.withinRadius != null"
+                  :severity="data.withinRadius ? 'success' : 'danger'"
+                  :value="
+                    data.withinRadius ? t('visits.radius.inside') : t('visits.radius.outside')
+                  "
+                />
+                <span v-if="data.distanceM != null" class="text-xs text-stone-500">{{
+                  distanceText(data.distanceM)
+                }}</span>
+                <span v-if="data.withinRadius == null && data.checkedInAt">—</span>
+              </div>
+
+              <template v-else-if="col.field === 'stockCheck'">
+                <Tag
+                  v-if="data.stockCheckMissing"
+                  severity="warn"
+                  :value="t('visits.stockCheckMissing')"
+                />
+                <span v-else-if="data.stockCheckCount">{{ data.stockCheckCount }}</span>
+                <span v-else>—</span>
+              </template>
+
+              <Button
+                v-else-if="col.field === ''"
+                v-show="data.visitId"
+                icon="pi pi-eye"
+                severity="secondary"
+                text
+                rounded
+                :aria-label="t('visits.actions.view')"
+                data-testid="view-visit"
+                @click="openDrawer(data.visitId)"
               />
-              <span v-else-if="data.stockCheckCount">{{ data.stockCheckCount }}</span>
-              <span v-else>—</span>
             </template>
-
-            <Button
-              v-else-if="col.field === ''"
-              v-show="data.visitId"
-              icon="pi pi-eye"
-              severity="secondary"
-              text
-              rounded
-              :aria-label="t('visits.actions.view')"
-              data-testid="view-visit"
-              @click="openDrawer(data.visitId)"
-            />
-          </template>
-        </TableComponent>
-      </template>
-    </ResponsiveCard>
+          </TableComponent>
+        </template>
+      </ResponsiveCard>
+    </template>
 
     <VisitDrawer
       v-if="drawerId"
@@ -182,6 +201,9 @@ import dayjs from 'dayjs'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
+import Tab from 'primevue/tab'
+import TabList from 'primevue/tablist'
+import Tabs from 'primevue/tabs'
 import Tag from 'primevue/tag'
 import Toast from 'primevue/toast'
 import TableComponent from '@/components/table/TableComponent.vue'
@@ -210,6 +232,7 @@ import {
   statusSeverity,
 } from './visitHelpers'
 import VisitDrawer from './components/VisitDrawer.vue'
+import VisitDaysTab from './components/VisitDaysTab.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -218,6 +241,20 @@ const authStore = useAuthStore()
 
 const toastGroup = 'visitsView'
 const table = ref()
+
+type TabKey = 'visits' | 'days'
+const activeTab = ref<TabKey>(route.query.tab === 'days' || route.query.day ? 'days' : 'visits')
+
+function onTabChange(value: string | number) {
+  const tab: TabKey = value === 'days' ? 'days' : 'visits'
+  activeTab.value = tab
+  const query = { ...route.query }
+  delete query.visit
+  delete query.day
+  if (tab === 'days') query.tab = 'days'
+  else delete query.tab
+  router.replace({ query })
+}
 
 // ---------------------------------------------------------------------------
 // Filters

@@ -31,12 +31,20 @@ export class GoodsReceiptsService {
   /**
    * List purchase orders open for receiving (status approved/partially_received
    * with remaining quantity), for the PO-reference picker.
+   *
+   * @param branchId - the receipt's branch: a receipt must be on its PO's branch, so
+   *   only that branch's POs are listed. Without it the backend lists the POs of all
+   *   the caller's branches.
    */
   static async listAvailablePurchaseOrders(
     queryString?: string,
+    branchId?: number,
   ): Promise<Base<AvailablePurchaseOrder>> {
-    const url = queryString
-      ? `${API_ENDPOINTS.PURCHASE_ORDERS_AVAILABLE_FOR_RECEIPT}?${queryString}`
+    const params = new URLSearchParams(queryString)
+    if (branchId !== undefined) params.set('branchId', String(branchId))
+    const query = params.toString()
+    const url = query
+      ? `${API_ENDPOINTS.PURCHASE_ORDERS_AVAILABLE_FOR_RECEIPT}?${query}`
       : API_ENDPOINTS.PURCHASE_ORDERS_AVAILABLE_FOR_RECEIPT
     return ApiService.get<Base<AvailablePurchaseOrder>>(url)
   }

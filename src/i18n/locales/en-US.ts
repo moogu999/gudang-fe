@@ -3099,6 +3099,7 @@ export default {
     },
     labels: {
       selectPurchaseOrder: 'Select an open Purchase Order (optional)',
+      selectBranchFirst: 'Select a branch first',
       noPurchaseOrder: 'Not linked to a Purchase Order',
     },
     details: {

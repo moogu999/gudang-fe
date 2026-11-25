@@ -10,7 +10,13 @@ should not be valid there.
 
 # Item 1 — Goods Receipt: Connect Branch and Warehouse
 
-Status: **planned, not started.** Found during SIT (Produk dan satuan → "Di transaksi, input 2 Karton").
+Status: **done 2026-11-25** (branch `dev-rian-gr-branch-first`, together with F8 of
+`sit-findings-fe.md`). Found during SIT (Produk dan satuan → "Di transaksi, input 2 Karton").
+`effectiveBranchId` drives the warehouse filter (`branch_id` on top of the existing
+`kind = regular`) and the PO picker; Branch now sits above Warehouse; a real branch change clears
+the warehouse (`formRef.setFieldValue`) and the PO with its seeded lines. Covered by
+`GoodsReceiptForm.spec.ts` (four of its five cases fail against the previous form). Manual SIT
+verification below not run yet.
 
 ## Problem
 

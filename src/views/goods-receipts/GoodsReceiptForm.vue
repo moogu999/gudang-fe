@@ -8,6 +8,7 @@
 
   <Form
     v-else
+    ref="formRef"
     v-slot="$form"
     :initial-values="initialValues"
     :resolver="resolver"
@@ -115,34 +116,8 @@
           >
         </div>
 
-        <!-- Warehouse -->
-        <div class="flex flex-col gap-1">
-          <label for="warehouseId" class="text-sm font-semibold">{{
-            t('goodsReceipts.fields.warehouse')
-          }}</label>
-          <InfiniteSelect
-            id="warehouseId"
-            name="warehouseId"
-            option-label="name"
-            option-value="id"
-            :fetch-fn="(q) => WarehousesService.list(q)"
-            :initial-option="initialWarehouse"
-            :custom-filters="regularWarehouseFilters"
-            :disabled="mode === DialogMode.VIEW"
-            sort-by="name"
-            sort-operator="asc"
-            class="w-full"
-          />
-          <Message
-            v-if="$form.warehouseId?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ $form.warehouseId.error.message }}</Message
-          >
-        </div>
-
-        <!-- Branch — only shown when the user has more than one assigned branch -->
+        <!-- Branch — only shown when the user has more than one assigned branch. It comes
+             before Warehouse: the receipt's branch decides which warehouses and POs fit. -->
         <div v-if="showBranchPicker" class="flex flex-col gap-1">
           <label for="branchId" class="text-sm font-semibold">{{
             t('goodsReceipts.fields.branch')
@@ -158,10 +133,44 @@
             sort-by="name"
             sort-operator="asc"
             class="w-full"
+            @select-option="(opt) => onBranchSelect((opt as Branch).id)"
           />
           <Message v-if="$form.branchId?.invalid" severity="error" size="small" variant="simple">{{
             $form.branchId.error.message
           }}</Message>
+        </div>
+
+        <!-- Warehouse — only the receipt's branch's warehouses -->
+        <div class="flex flex-col gap-1">
+          <label for="warehouseId" class="text-sm font-semibold">{{
+            t('goodsReceipts.fields.warehouse')
+          }}</label>
+          <InfiniteSelect
+            id="warehouseId"
+            :key="`warehouse-${effectiveBranchId ?? 'none'}`"
+            name="warehouseId"
+            option-label="name"
+            option-value="id"
+            :fetch-fn="(q) => WarehousesService.list(q)"
+            :initial-option="initialWarehouse"
+            :custom-filters="warehouseFilters"
+            :disabled="mode === DialogMode.VIEW || effectiveBranchId === undefined"
+            :placeholder="
+              effectiveBranchId === undefined
+                ? t('goodsReceipts.labels.selectBranchFirst')
+                : undefined
+            "
+            sort-by="name"
+            sort-operator="asc"
+            class="w-full"
+          />
+          <Message
+            v-if="$form.warehouseId?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ $form.warehouseId.error.message }}</Message
+          >
         </div>
       </div>
 
@@ -176,11 +185,19 @@
           <label class="text-sm font-semibold">{{ t('goodsReceipts.fields.purchaseOrder') }}</label>
           <InfiniteSelect
             v-if="mode === DialogMode.ADD"
+            :key="`po-${effectiveBranchId ?? 'none'}`"
             :model-value="selectedPoId"
             :option-label="poOptionLabel"
             option-value="id"
-            :fetch-fn="(q) => GoodsReceiptsService.listAvailablePurchaseOrders(q)"
-            :placeholder="t('goodsReceipts.labels.selectPurchaseOrder')"
+            :fetch-fn="
+              (q) => GoodsReceiptsService.listAvailablePurchaseOrders(q, effectiveBranchId)
+            "
+            :disabled="effectiveBranchId === undefined"
+            :placeholder="
+              effectiveBranchId === undefined
+                ? t('goodsReceipts.labels.selectBranchFirst')
+                : t('goodsReceipts.labels.selectPurchaseOrder')
+            "
             show-clear
             class="w-full"
             @update:model-value="onPoUpdate"
@@ -424,9 +441,6 @@ import { useNumberSeries } from '@/composables'
 const { t, locale } = useI18n()
 const toast = useToast()
 const confirm = useConfirm()
-const regularWarehouseFilters = [
-  { filterBy: 'kind', filterOperator: FilterOperator.EQUAL, filterValue: 'regular' },
-]
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -480,12 +494,55 @@ const savedSubtotalAmount = ref(0)
 const savedTaxAmount = ref(0)
 const savedTotalAmount = ref(0)
 
+const formRef = ref()
+
 // Warehouse
 const initialWarehouse = ref<Warehouse | undefined>()
 
 // Branch — only rendered when the user has more than one assigned branch.
 const showBranchPicker = computed(() => authStore.branchIds.length > 1)
 const initialBranch = ref<Branch | undefined>()
+// The Branch picker's value (ADD), and the saved receipt's branch (VIEW / EDIT, where the
+// picker is disabled).
+const selectedBranchId = ref<number | undefined>()
+const receiptBranchId = ref<number | undefined>()
+
+// The receipt's branch, which decides the warehouses and POs on offer: the backend refuses
+// a warehouse or a PO of another branch. With one branch the picker is hidden and the
+// backend uses that branch; with none there is nothing valid to offer.
+const effectiveBranchId = computed<number | undefined>(() => {
+  if (props.mode !== DialogMode.ADD) return receiptBranchId.value
+  if (showBranchPicker.value) return selectedBranchId.value
+  return authStore.branchIds.length === 1 ? authStore.branchIds[0] : undefined
+})
+
+const warehouseFilters = computed(() => {
+  const regularOnly = {
+    filterBy: 'kind',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: 'regular',
+  }
+  if (effectiveBranchId.value === undefined) return [regularOnly]
+  return [
+    regularOnly,
+    {
+      filterBy: 'branch_id',
+      filterOperator: FilterOperator.EQUAL,
+      filterValue: effectiveBranchId.value,
+    },
+  ]
+})
+
+// A warehouse and a PO belong to exactly one branch, so neither can still be valid after the
+// branch changes: clear both, and the PO's seeded lines with it.
+function onBranchSelect(branchId: number) {
+  if (branchId === selectedBranchId.value) return
+  selectedBranchId.value = branchId
+  formRef.value?.setFieldValue('warehouseId', undefined)
+  initialWarehouse.value = undefined
+  selectedPoId.value = undefined
+  details.value = []
+}
 
 let userBranchesPromise: Promise<Branch[]> | null = null
 
@@ -834,6 +891,7 @@ async function loadGoodsReceipt() {
     initialValues.supplierDoNo = receipt.supplierDoNo || ''
     initialValues.remark = receipt.remark || ''
     initialValues.branchId = receipt.branchId
+    receiptBranchId.value = receipt.branchId
 
     currentStatus.value = receipt.status
     currentSupplierId.value = receipt.supplierId ?? undefined
@@ -924,6 +982,7 @@ onBeforeMount(async () => {
       if (defaultBranch) {
         initialValues.branchId = defaultBranch.id
         initialBranch.value = defaultBranch
+        selectedBranchId.value = defaultBranch.id
       }
     }
   } finally {

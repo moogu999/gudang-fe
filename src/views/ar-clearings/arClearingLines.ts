@@ -41,10 +41,13 @@ export function totals(
   }
 }
 
+/** Source types whose `hintInvoiceId` is a real preference: reported cash and returned goods. */
+const HINTED_SOURCES: ReadonlySet<ArCashSourceType> = new Set(['cash_deposit', 'sales_credit_note'])
+
 /**
  * Source hints first, then FIFO.
  *
- * Pass 1: every picked cash-deposit source whose `hintInvoiceId` is present in `rows` pays that
+ * Pass 1: every picked cash-deposit or credit-note source whose `hintInvoiceId` is present in `rows` pays that
  * invoice first, up to the smaller of the source remainder and the invoice's outstanding. This
  * respects what the collector actually reported.
  * Pass 2: whatever pool is left spreads over the rows sorted by `documentDate` ascending, then
@@ -71,7 +74,7 @@ export function autoAllocate(picked: SourceRow[], rows: AllocationRow[]): Alloca
   }
 
   for (const source of picked) {
-    if (source.sourceType !== 'cash_deposit' || source.hintInvoiceId == null) continue
+    if (!HINTED_SOURCES.has(source.sourceType) || source.hintInvoiceId == null) continue
     if (!room.has(source.hintInvoiceId)) continue
     pool -= give(source.hintInvoiceId, cents(num(source.unappliedAmount)))
   }

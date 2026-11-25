@@ -163,6 +163,10 @@ export const API_ENDPOINTS = {
   SALESMAN_TARGET_BY_ID: (id: number) => `/v1/salesman-targets/${id}`,
   SALESMAN_TARGET_ACTIVATE: (id: number) => `/v1/salesman-targets/${id}/activate`,
   SALESMAN_TARGET_CLOSE: (id: number) => `/v1/salesman-targets/${id}/close`,
+  SALESMAN_TARGET_ACHIEVEMENT: (id: number) => `/v1/salesman-targets/${id}/achievement`,
+  SALESMAN_TARGET_ACHIEVEMENT_ITEM: (id: number, itemId: number) =>
+    `/v1/salesman-targets/${id}/achievement/items/${itemId}`,
+  SALESMAN_TARGET_ACHIEVEMENT_SUMMARIES: '/v1/salesman-targets/achievement-summaries',
   SALESMAN_TARGET_CANDIDATES: '/v1/salesman-targets/candidates',
   SALESMAN_TARGET_ITEM_OPTIONS: '/v1/salesman-targets/item-options',
   SALESMAN_TARGET_CONFIGS: '/v1/salesman-target-configs',
@@ -182,6 +186,69 @@ export const API_ENDPOINTS = {
   MUST_SELL_LIST_CONFIGS: '/v1/must-sell-list-configs',
   MUST_SELL_LIST_CONFIG_MY_BRANCH: '/v1/must-sell-list-configs/my-branch',
   MUST_SELL_LIST_CONFIG_BY_BRANCH: (branchId: number) => `/v1/must-sell-list-configs/${branchId}`,
+
+  // Survey endpoints
+  SURVEYS: '/v1/surveys',
+  SURVEY_BY_ID: (id: number) => `/v1/surveys/${id}`,
+  SURVEY_PUBLISH: (id: number) => `/v1/surveys/${id}/publish`,
+  SURVEY_UNPUBLISH: (id: number) => `/v1/surveys/${id}/unpublish`,
+  SURVEY_END_EARLY: (id: number) => `/v1/surveys/${id}/end-early`,
+  SURVEY_DUPLICATE: (id: number) => `/v1/surveys/${id}/duplicate`,
+  SURVEYS_PREVIEW: '/v1/surveys/preview',
+  SURVEYS_CUSTOMERS: '/v1/surveys/customers',
+  SURVEYS_PRODUCT_OPTIONS: '/v1/surveys/product-options',
+  SURVEYS_COMPETITOR_GRID_PREVIEW: '/v1/surveys/competitor-grid-preview',
+  SURVEYS_SALES_TEAM_OPTIONS: '/v1/surveys/sales-team-options',
+  SURVEY_CONFIGS: '/v1/survey-configs',
+  SURVEY_CONFIG_MY_BRANCH: '/v1/survey-configs/my-branch',
+  SURVEY_CONFIG_BY_BRANCH: (branchId: number) => `/v1/survey-configs/${branchId}`,
+
+  // Route and journey plan endpoints
+  ROUTES: '/v1/routes',
+  ROUTE_BY_ID: (id: number) => `/v1/routes/${id}`,
+  ROUTES_SUMMARY: '/v1/routes/summary',
+  ROUTES_UNROUTED_CUSTOMERS: '/v1/routes/unrouted-customers',
+  ROUTES_CUSTOM_NEXT_MONTH: '/v1/routes/custom-next-month',
+  ROUTES_COPY_NEXT_MONTH: '/v1/routes/custom-dates/copy-next-month',
+  ROUTES_SALESMAN_LOAD: '/v1/routes/salesman-load',
+  ROUTES_SALESMAN_LOAD_BULK: '/v1/routes/salesman-load/bulk',
+  ROUTE_ACTIVATE: (id: number) => `/v1/routes/${id}/activate`,
+  ROUTE_DEACTIVATE: (id: number) => `/v1/routes/${id}/deactivate`,
+  ROUTE_LOAD: (id: number) => `/v1/routes/${id}/load`,
+  ROUTE_HOLIDAY_CONFLICTS: (id: number) => `/v1/routes/${id}/holiday-conflicts`,
+  ROUTE_CUSTOMER_OPTIONS: (id: number) => `/v1/routes/${id}/customer-options`,
+  ROUTE_CUSTOMERS: (id: number) => `/v1/routes/${id}/customers`,
+  ROUTE_CUSTOMERS_MOVE: (id: number) => `/v1/routes/${id}/customers/move`,
+  ROUTE_CUSTOMERS_ORDER: (id: number) => `/v1/routes/${id}/customers/order`,
+  ROUTE_CUSTOMER: (id: number, rcId: number) => `/v1/routes/${id}/customers/${rcId}`,
+  ROUTE_CUSTOMER_DATES: (id: number, rcId: number) =>
+    `/v1/routes/${id}/customers/${rcId}/custom-dates`,
+  ROUTE_CUSTOMER_COPY_NEXT_MONTH: (id: number, rcId: number) =>
+    `/v1/routes/${id}/customers/${rcId}/custom-dates/copy-next-month`,
+  ROUTE_SALESMEN: (id: number) => `/v1/routes/${id}/salesmen`,
+  ROUTE_SALESMAN: (id: number) => `/v1/routes/${id}/salesman`,
+  ROUTE_SALESMAN_CANCEL_PENDING: (id: number) => `/v1/routes/${id}/salesman/cancel-pending`,
+  JOURNEY_PLANS: '/v1/journey-plans',
+  JOURNEY_PLAN_SALESMEN: '/v1/journey-plans/salesmen',
+  JOURNEY_PLAN_STATUS: '/v1/journey-plans/status',
+  JOURNEY_PLAN_REGENERATE: '/v1/journey-plans/regenerate',
+  JOURNEY_PLAN_ADDITIONS: '/v1/journey-plans/additions',
+  JOURNEY_PLAN_ADDITION: (id: number) => `/v1/journey-plans/additions/${id}`,
+  JOURNEY_PLAN_CONFIGS: '/v1/journey-plan-configs',
+  JOURNEY_PLAN_CONFIG_MY_BRANCH: '/v1/journey-plan-configs/my-branch',
+  JOURNEY_PLAN_CONFIG_BY_BRANCH: (branchId: number) => `/v1/journey-plan-configs/${branchId}`,
+
+  // Depot attendance (clock-in at the depot)
+  DEPOT_ATTENDANCES: '/v1/depot-attendances',
+  DEPOT_ATTENDANCE: (id: number) => `/v1/depot-attendances/${id}`,
+
+  // Visits (journey plan rows with the visit made against each)
+  VISITS: '/v1/visits',
+  VISIT: (id: number) => `/v1/visits/${id}`,
+  VISIT_CLOSE: (id: number) => `/v1/visits/${id}/close`,
+  VISIT_DAYS: '/v1/visits/days',
+  VISIT_DAY: (employeeId: number, date: string) => `/v1/visits/days/${employeeId}/${date}`,
+  VISIT_DAYS_CLOSE: '/v1/visits/days/close',
 
   // Device binding endpoints (N-Force phones)
   DEVICE_BINDING: '/v1/device-binding',
@@ -204,6 +271,10 @@ export const API_ENDPOINTS = {
 
   // Reason codes (master of answers the N-Force salesman picks)
   REASONS: '/v1/reasons',
+  VISIT_RULES_COMPANY: (id: number) => `/v1/visit-rules/companies/${id}`,
+  VISIT_RULES_COMPANY_TEAMS: (id: number) => `/v1/visit-rules/companies/${id}/teams`,
+  VISIT_RULES_TEAM: (id: number) => `/v1/visit-rules/teams/${id}`,
+  VISIT_RULES_EFFECTIVE: '/v1/visit-rules/effective',
   REASONS_REORDER: '/v1/reasons/reorder',
 
   // Competitor products: brands, products and the recommendations review queue
@@ -346,6 +417,10 @@ export const API_ENDPOINTS = {
   PICKING_LIST_BY_ID: (id: number) => `/v1/picking-lists/${id}`,
 
   // Invoice endpoints
+  SALES_CREDIT_NOTES: '/v1/sales-credit-notes',
+  SALES_CREDIT_NOTE_BY_ID: (id: number) => `/v1/sales-credit-notes/${id}`,
+  SALES_CREDIT_NOTE_TAX_REFERENCE: (id: number) => `/v1/sales-credit-notes/${id}/tax-reference`,
+  GEN_SALES_CREDIT_NOTES: '/gen/v1/sales-credit-notes',
   INVOICES: '/v1/invoices',
   INVOICE_BY_ID: (id: number) => `/v1/invoices/${id}`,
 
@@ -363,6 +438,16 @@ export const API_ENDPOINTS = {
 
   // Stock Movements endpoints
   STOCK_MOVEMENTS: '/v1/stock-movements',
+  CANVASS_LOADINGS: '/v1/canvass-loadings',
+  CANVASS_LOADING_BY_ID: (id: number) => `/v1/canvass-loadings/${id}`,
+  CANVASS_LOADING_SEND: (id: number) => `/v1/canvass-loadings/${id}/send`,
+  CANVASS_LOADING_CANCEL: (id: number) => `/v1/canvass-loadings/${id}/cancel`,
+  CANVASS_LOADING_AVAILABLE_STOCK: '/v1/canvass-loadings/available-stock',
+  CANVASS_UNLOADINGS: '/v1/canvass-unloadings',
+  CANVASS_UNLOADING_BY_ID: (id: number) => `/v1/canvass-unloadings/${id}`,
+  CANVASS_UNLOADING_POST: (id: number) => `/v1/canvass-unloadings/${id}/post`,
+  CANVASS_UNLOADING_CANCEL: (id: number) => `/v1/canvass-unloadings/${id}/cancel`,
+  CANVASS_UNLOADING_VAN_STOCK: '/v1/canvass-unloadings/van-stock',
 
   // Goods Return Note endpoints
   GOODS_RETURN_NOTES: '/v1/goods-return-notes',

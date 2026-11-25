@@ -149,8 +149,14 @@ const selectedBranchId = ref<number | undefined>(undefined)
 const initialWarehouse = ref<Warehouse | undefined>(undefined)
 
 const warehouseFilters = computed(() => {
-  if (selectedBranchId.value === undefined) return []
+  const regularOnly = {
+    filterBy: 'kind',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: 'regular',
+  }
+  if (selectedBranchId.value === undefined) return [regularOnly]
   return [
+    regularOnly,
     {
       filterBy: 'branch_id',
       filterOperator: FilterOperator.EQUAL,

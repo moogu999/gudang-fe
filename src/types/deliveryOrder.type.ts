@@ -98,6 +98,9 @@ export interface DeliveryOrderDetail {
   salesmanName: string | null
   invoiceId?: number | null
   invoiceNo?: string | null
+  /** Set on a return delivery order, which issues a credit note instead of an invoice. */
+  creditNoteId?: number | null
+  creditNoteNo?: string | null
   headerDiscounts?: LineDiscount[]
   headerManualDiscounts?: ManualDiscountItem[]
   lines: DeliveryOrderViewLine[]

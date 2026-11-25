@@ -19,7 +19,7 @@ const stubs = {
   InputNumber: { template: '<input class="amount" />' },
   InfiniteSelect: {
     name: 'InfiniteSelect',
-    props: ['modelValue', 'customFilters'],
+    props: ['modelValue', 'customFilters', 'disabled'],
     emits: ['update:modelValue', 'select-option'],
     template: `<div class="customer">
       <button class="pick" @click="$emit('update:modelValue', 7); $emit('select-option', { id: 7, name: 'Toko Sumber' })" />
@@ -81,12 +81,20 @@ describe('GiroLinesTable', () => {
     expect(row.customer).toEqual({ id: 7, name: 'Toko Sumber' })
   })
 
-  it('only lists giro-enabled customers (D12)', () => {
-    const wrapper = mountTable([emptyGiroRow()])
+  it('only lists giro-enabled customers of the batch branch', () => {
+    const wrapper = mountTable([emptyGiroRow()], { branchId: 3 })
     const select = wrapper.findComponent({ name: 'InfiniteSelect' })
     expect(select.props('customFilters')).toEqual([
       { filterBy: 'paysWithGiro', filterOperator: '0', filterValue: 'true' },
+      { filterBy: 'branch_id', filterOperator: '0', filterValue: 3 },
     ])
+    expect(select.props('disabled')).toBe(false)
+  })
+
+  it('keeps the customer picker shut until a branch is known', () => {
+    const wrapper = mountTable([emptyGiroRow()])
+    const select = wrapper.findComponent({ name: 'InfiniteSelect' })
+    expect(select.props('disabled')).toBe(true)
   })
 
   it('warns, without blocking, when a due date has already passed', () => {

@@ -72,7 +72,8 @@ import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 import { MustSellListsService } from '@/services'
 import { commonErrorToast } from '@/services/toast'
-import type { MslCustomer, MslScopeLevel } from '@/types/mustSellList.type'
+import type { Base } from '@/types/api.type'
+import type { MslCustomer, MslCustomerQuery, MslScopeLevel } from '@/types/mustSellList.type'
 import { formatNumber } from '../mustSellListHelpers'
 
 const props = defineProps<{
@@ -82,6 +83,8 @@ const props = defineProps<{
   scopeAll: boolean
   scopeValueIds: number[]
   toastGroup?: string
+  /** Where the customers come from; the must sell list endpoint when absent. */
+  fetcher?: (query: MslCustomerQuery) => Promise<Base<MslCustomer>>
 }>()
 
 const emit = defineEmits<{ close: [] }>()
@@ -100,7 +103,8 @@ async function fetchPage(p: number) {
   loading.value = true
   page.value = p
   try {
-    const res = await MustSellListsService.customers({
+    const fetchCustomers = props.fetcher ?? ((q) => MustSellListsService.customers(q))
+    const res = await fetchCustomers({
       branchId: props.branchId,
       scopeLevel: props.scopeLevel,
       scopeAll: props.scopeAll,

@@ -209,6 +209,7 @@
       <GiroLinesTable
         ref="linesRef"
         v-model="rows"
+        :branch-id="selectedBranchId"
         :readonly="mode === DialogMode.VIEW"
         :show-status="mode === DialogMode.VIEW && currentStatus !== 'draft'"
       />
@@ -378,6 +379,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { Branch, Employee } from '@/types'
 import type {
   GiroReceiptStatus,
@@ -528,7 +530,12 @@ async function resolveCompanyForBranch(branchId: number | undefined) {
 }
 
 async function onBranchIdUpdate(value: unknown) {
-  selectedBranchId.value = typeof value === 'number' ? value : undefined
+  const next = typeof value === 'number' ? value : undefined
+  if (next !== selectedBranchId.value && props.mode === DialogMode.ADD) {
+    // Customers of the old branch would be rejected on save.
+    rows.value = rows.value.map((r) => ({ ...r, customerId: undefined, customer: undefined }))
+  }
+  selectedBranchId.value = next
   await resolveCompanyForBranch(selectedBranchId.value)
 }
 
@@ -627,7 +634,7 @@ async function doSubmit() {
   } catch (e) {
     // ErrCustomerNotGiroEnabled / ErrDuplicateGiro name no row, so the server's message is
     // all there is to show.
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isSaving.value = false
   }
@@ -728,7 +735,7 @@ async function onVoidConfirm() {
     toast.add(commonSuccessToast(t('giroReceipts.messages.voided'), toastGroup))
     await loadReceipt()
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isVoiding.value = false
   }
@@ -814,7 +821,7 @@ async function loadReceipt() {
       initialBranch.value = branchResult.data[0]
     }
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }

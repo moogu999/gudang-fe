@@ -458,10 +458,26 @@
                 >
                   {{ t('employees.nforceNotApplicable') }}
                 </small>
+                <div v-if="usesDeviceBinding" class="flex items-center justify-between gap-4">
+                  <label for="exemptDepotCheckIn" class="text-sm font-medium sm:text-base">
+                    {{ t('employees.fields.exemptDepotCheckIn') }}
+                  </label>
+                  <ToggleSwitch id="exemptDepotCheckIn" name="exemptDepotCheckIn" />
+                </div>
+                <small
+                  v-if="usesDeviceBinding"
+                  class="-mt-2 text-stone-500"
+                  data-testid="exempt-depot-hint"
+                >
+                  {{ t('employees.exemptDepotCheckInHint') }}
+                </small>
               </div>
             </div>
           </template>
         </ResponsiveCard>
+
+        <!-- Section: Rute -->
+        <EmployeeRoutesCard v-if="showRoutes" :employee-id="props.id!" />
 
         <!-- Submit Buttons -->
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -523,6 +539,7 @@ import type { Employee, EmployeeType, EmploymentStatus } from '@/types/employee.
 import { usePermissions } from '@/composables'
 import { PERMISSIONS, HttpStatus, ToastLife } from '@/constants'
 import { EMPLOYEE_TYPE_NAMES } from '@/constants/employeeTypes'
+import EmployeeRoutesCard from './components/EmployeeRoutesCard.vue'
 import { ApiError } from '@/types/api.type'
 
 const { t } = useI18n()
@@ -562,6 +579,16 @@ const usesDeviceBinding = computed(() =>
   [EMPLOYEE_TYPE_NAMES.SALESMAN, EMPLOYEE_TYPE_NAMES.CANVASS].includes(
     selectedTypeName.value as typeof EMPLOYEE_TYPE_NAMES.SALESMAN,
   ),
+)
+
+/** The routes the employee holds, for Salesman and Canvass employees who can already be read. */
+const showRoutes = computed(
+  () =>
+    props.mode === 'view' &&
+    !!employee.value &&
+    !employee.value.isDraft &&
+    usesDeviceBinding.value &&
+    hasPermission(PERMISSIONS.ROUTE_READ),
 )
 
 const showDeviceBindingLink = computed(
@@ -618,6 +645,7 @@ const initialValues = reactive({
   isActive: true,
   accessNcommand: false,
   accessNforce: false,
+  exemptDepotCheckIn: false,
 })
 
 // Zod schema (only used for final save)
@@ -636,10 +664,10 @@ const finalSchema = computed(() =>
       email: z.union([z.string().email(), z.literal(''), z.undefined()]),
       birthDate: z.unknown().optional(),
       address: z.string().optional(),
-      companyId: z.number({ required_error: t('employees.validation.companyRequired') }),
-      branchId: z.number({ required_error: t('employees.validation.branchRequired') }),
-      departmentId: z.number({ required_error: t('employees.validation.departmentRequired') }),
-      divisionId: z.number({ required_error: t('employees.validation.divisionRequired') }),
+      companyId: z.number({ error: t('employees.validation.companyRequired') }),
+      branchId: z.number({ error: t('employees.validation.branchRequired') }),
+      departmentId: z.number({ error: t('employees.validation.departmentRequired') }),
+      divisionId: z.number({ error: t('employees.validation.divisionRequired') }),
       salesOrganizationId: z.number().optional(),
       joinDate: z.unknown().optional(),
       employmentStatus: z.string().optional(),
@@ -647,6 +675,7 @@ const finalSchema = computed(() =>
       isActive: z.boolean().optional(),
       accessNcommand: z.boolean().optional(),
       accessNforce: z.boolean().optional(),
+      exemptDepotCheckIn: z.boolean().optional(),
     })
     .superRefine((data, ctx) => {
       if (requiresSalesOrg.value && !data.salesOrganizationId) {
@@ -739,6 +768,7 @@ async function loadEmployee() {
     initialValues.isActive = emp.isActive
     initialValues.accessNcommand = emp.accessNcommand
     initialValues.accessNforce = emp.accessNforce
+    initialValues.exemptDepotCheckIn = emp.exemptDepotCheckIn ?? false
 
     if (emp.birthDate) initialValues.birthDate = new Date(emp.birthDate)
     if (emp.joinDate) initialValues.joinDate = new Date(emp.joinDate)
@@ -837,6 +867,8 @@ async function onSaveDraft() {
       isActive: (states?.isActive?.value as boolean) ?? true,
       accessNcommand: (states?.accessNcommand?.value as boolean) ?? false,
       accessNforce: (states?.accessNforce?.value as boolean) ?? false,
+      exemptDepotCheckIn:
+        usesDeviceBinding.value && ((states?.exemptDepotCheckIn?.value as boolean) ?? false),
       isDraft: true,
     }
 
@@ -890,6 +922,8 @@ async function onFormSubmit(event: FormSubmitEvent) {
       isActive: s.isActive?.value ?? true,
       accessNcommand: s.accessNcommand?.value ?? false,
       accessNforce: s.accessNforce?.value ?? false,
+      // PUT replaces the employee, so the flag is always sent; it only means something for field staff.
+      exemptDepotCheckIn: usesDeviceBinding.value && (s.exemptDepotCheckIn?.value ?? false),
       isDraft: false,
     }
 

@@ -1,5 +1,21 @@
-import { PERMISSIONS } from '@/constants'
+import { PERMISSIONS, type PermissionId } from '@/constants'
 import { CONFIG_TABS } from '@/views/configs/configTabs'
+
+type MenuLeaf = {
+  label: string
+  labelKey: string
+  route: string
+  permissionsAny?: PermissionId[]
+}
+
+/** A sidebar section: a group of leaves, or a top-level item with its own route. */
+type MenuSection = {
+  label: string
+  labelKey: string
+  icon: string
+  route?: string
+  items?: MenuLeaf[]
+}
 
 /**
  * Main navigation menu configuration
@@ -7,7 +23,7 @@ import { CONFIG_TABS } from '@/views/configs/configTabs'
  * Each menu item includes a `labelKey` for i18n translation.
  * The `label` field is kept for backwards compatibility and as a fallback.
  */
-const mainMenu = [
+const mainMenu: MenuSection[] = [
   {
     label: 'HR',
     labelKey: 'navigation.hr',
@@ -69,6 +85,11 @@ const mainMenu = [
         label: 'Reasons',
         labelKey: 'navigation.reasons',
         route: '/reasons',
+      },
+      {
+        label: 'Visit Rules',
+        labelKey: 'navigation.visitRules',
+        route: '/visit-rules',
       },
       {
         label: 'Competitor Products',
@@ -159,6 +180,12 @@ const mainMenu = [
         route: '/goods-receipts',
       },
       {
+        label: 'Canvass',
+        labelKey: 'navigation.canvass',
+        route: '/canvass',
+        permissionsAny: [PERMISSIONS.CANVASS_LOADING_READ, PERMISSIONS.CANVASS_UNLOADING_READ],
+      },
+      {
         label: 'Inventory Status',
         labelKey: 'navigation.inventoryStatus',
         route: '/inventory-status',
@@ -218,6 +245,31 @@ const mainMenu = [
         route: '/display-programs',
       },
       {
+        label: 'Surveys',
+        labelKey: 'navigation.surveys',
+        route: '/surveys',
+      },
+      {
+        label: 'Routes',
+        labelKey: 'navigation.routes',
+        route: '/routes',
+      },
+      {
+        label: 'Journey Plans',
+        labelKey: 'navigation.journeyPlans',
+        route: '/journey-plans',
+      },
+      {
+        label: 'Depot Attendance',
+        labelKey: 'navigation.depotAttendance',
+        route: '/depot-attendance',
+      },
+      {
+        label: 'Visits',
+        labelKey: 'navigation.visits',
+        route: '/visits',
+      },
+      {
         label: 'Booking Orders',
         labelKey: 'navigation.bookingOrders',
         route: '/booking-orders',
@@ -261,6 +313,11 @@ const mainMenu = [
         label: 'Invoices',
         labelKey: 'navigation.invoices',
         route: '/invoices',
+      },
+      {
+        label: 'Sales Credit Notes',
+        labelKey: 'navigation.salesCreditNotes',
+        route: '/sales-credit-notes',
       },
       {
         label: 'Promotions',
@@ -424,18 +481,9 @@ const mainMenu = [
         route: '/configs',
         // Every config tab's read permission, plus CACHE_CLEAR: the clear-cache button
         // lives on this page but is not a tab, so it cannot come from CONFIG_TABS.
-        permissionsAny: [
-          ...CONFIG_TABS.map((tab) => tab.readPermission),
-          PERMISSIONS.CACHE_CLEAR,
-        ],
+        permissionsAny: [...CONFIG_TABS.map((tab) => tab.readPermission), PERMISSIONS.CACHE_CLEAR],
       },
     ],
-  },
-  {
-    label: 'Superset',
-    labelKey: 'navigation.superset',
-    icon: 'pi pi-chart-line',
-    route: '/superset',
   },
 ]
 

@@ -106,7 +106,7 @@ describe('canWrite', () => {
   })
 
   it('allows write on a route that declares no write permission', () => {
-    const { canWrite } = withPermissions()('/superset')
+    const { canWrite } = withPermissions()('/')
     expect(canWrite.value).toBe(true)
   })
 

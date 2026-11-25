@@ -120,6 +120,14 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
     label: 'Must Sell List Config',
     labelKey: 'auditTrails.references.must_sell_list_config',
   },
+  survey: {
+    label: 'Survey',
+    labelKey: 'auditTrails.references.survey',
+  },
+  survey_config: {
+    label: 'Survey Config',
+    labelKey: 'auditTrails.references.survey_config',
+  },
   display_type: {
     label: 'Display Type',
     labelKey: 'auditTrails.references.display_type',
@@ -143,5 +151,33 @@ export const AUDIT_REFERENCE_TYPES: Record<string, AuditReferenceTypeEntry> = {
   device_binding_config: {
     label: 'Device Binding Config',
     labelKey: 'auditTrails.references.device_binding_config',
+  },
+  route: {
+    label: 'Route',
+    labelKey: 'auditTrails.references.route',
+  },
+  route_customer: {
+    label: 'Route Customer',
+    labelKey: 'auditTrails.references.route_customer',
+  },
+  route_salesman: {
+    label: 'Route Salesman',
+    labelKey: 'auditTrails.references.route_salesman',
+  },
+  journey_plan_config: {
+    label: 'Journey Plan Config',
+    labelKey: 'auditTrails.references.journey_plan_config',
+  },
+  journey_plan_addition: {
+    label: 'Journey Plan Addition',
+    labelKey: 'auditTrails.references.journey_plan_addition',
+  },
+  journey_plan_regenerate: {
+    label: 'Journey Plan Regenerate',
+    labelKey: 'auditTrails.references.journey_plan_regenerate',
+  },
+  visit_rules: {
+    label: 'Visit Rules',
+    labelKey: 'auditTrails.references.visit_rules',
   },
 }

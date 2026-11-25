@@ -149,9 +149,10 @@
             option-label="name"
             option-value="id"
             :fetch-fn="(q) => CustomersService.list(q)"
+            :custom-filters="customerFilters"
             :initial-option="initialCustomer"
             :placeholder="t('arClearings.fields.selectCustomer')"
-            :disabled="mode === DialogMode.VIEW"
+            :disabled="mode === DialogMode.VIEW || !selectedBranchId"
             sort-by="name"
             sort-operator="asc"
             class="w-full"
@@ -361,6 +362,7 @@ import {
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { Branch, Customer } from '@/types'
 import type {
   ArClearingResponse,
@@ -421,6 +423,13 @@ function statusSeverity(status: ArClearingStatus) {
 const showBranchPicker = computed(() => authStore.branchIds.length > 1)
 const initialBranch = ref<Branch | undefined>()
 const selectedBranchId = ref<number | undefined>()
+const customerFilters = computed(() => [
+  {
+    filterBy: 'branch_id',
+    filterOperator: FilterOperator.EQUAL,
+    filterValue: selectedBranchId.value ?? 0,
+  },
+])
 
 let userBranchesPromise: Promise<Branch[]> | null = null
 
@@ -531,7 +540,8 @@ async function loadPool(saved?: ArClearingResponse) {
         saved.allocations.filter((a) => !openIds.has(a.invoiceId)).length
     }
   } catch (e) {
-    if (request === poolRequest) toast.add(commonErrorToast(e, toastGroup))
+    if (request === poolRequest)
+      toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     if (request === poolRequest) poolLoading.value = false
   }
@@ -560,6 +570,13 @@ async function onBranchIdUpdate(value: unknown) {
   const next = typeof value === 'number' ? value : undefined
   if (next === selectedBranchId.value) return
   selectedBranchId.value = next
+  // The customer must belong to the clearing's branch — a stale pick can't survive.
+  if (props.mode === DialogMode.ADD) {
+    if (formRef.value?.states?.customerId) formRef.value.states.customerId.value = undefined
+    selectedCustomerId.value = undefined
+    selectedCustomerName.value = ''
+    initialCustomer.value = undefined
+  }
   clearPool()
   await loadPool()
 }
@@ -656,7 +673,7 @@ async function doSubmit() {
     if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadClearing()
     emit('submitted', saved)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isSaving.value = false
   }
@@ -741,7 +758,7 @@ async function onVoidConfirm() {
     toast.add(commonSuccessToast(t('arClearings.messages.voided'), toastGroup))
     await loadClearing()
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isVoiding.value = false
   }
@@ -833,7 +850,7 @@ async function loadClearing() {
       await loadPool(clearing)
     }
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }

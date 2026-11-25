@@ -127,6 +127,7 @@
             option-value="id"
             :fetch-fn="(q) => WarehousesService.list(q)"
             :initial-option="initialWarehouse"
+            :custom-filters="regularWarehouseFilters"
             :disabled="mode === DialogMode.VIEW"
             sort-by="name"
             sort-operator="asc"
@@ -423,6 +424,10 @@ import { useNumberSeries } from '@/composables'
 const { t, locale } = useI18n()
 const toast = useToast()
 const confirm = useConfirm()
+const regularWarehouseFilters = [
+  { filterBy: 'kind', filterOperator: FilterOperator.EQUAL, filterValue: 'regular' },
+]
+
 const router = useRouter()
 const authStore = useAuthStore()
 

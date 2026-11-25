@@ -59,12 +59,6 @@ const router = createRouter({
           meta: { titleKey: 'navigation.home' },
         },
         {
-          path: 'superset',
-          name: 'Superset',
-          component: () => import('@/views/superset/SupersetView.vue'),
-          meta: { titleKey: 'navigation.superset' },
-        },
-        {
           path: 'users',
           name: 'Users',
           component: () => import('@/views/users/UsersView.vue'),
@@ -175,6 +169,65 @@ const router = createRouter({
           },
         },
         {
+          path: 'routes',
+          name: 'Routes',
+          component: () => import('@/views/routes/RoutesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_READ,
+            requiredWritePermission: PERMISSIONS.ROUTE_WRITE,
+            titleKey: 'navigation.routes',
+          },
+        },
+        {
+          path: 'routes/create',
+          name: 'RouteCreate',
+          component: () => import('@/views/routes/RouteCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_WRITE,
+            titleKey: 'navigation.routes',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'routes/:id/edit',
+          name: 'RouteEdit',
+          component: () => import('@/views/routes/RouteEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ROUTE_READ,
+            titleKey: 'navigation.routes',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'journey-plans',
+          name: 'JourneyPlans',
+          component: () => import('@/views/journey-plans/JourneyPlansView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.JOURNEY_PLAN_READ,
+            requiredWritePermission: PERMISSIONS.JOURNEY_PLAN_WRITE,
+            titleKey: 'navigation.journeyPlans',
+          },
+        },
+        {
+          path: 'depot-attendance',
+          name: 'DepotAttendance',
+          component: () => import('@/views/depot-attendance/DepotAttendanceView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.ATTENDANCE_READ,
+            titleKey: 'navigation.depotAttendance',
+          },
+        },
+        {
+          path: 'visits',
+          name: 'Visits',
+          component: () => import('@/views/visits/VisitsView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.VISIT_READ,
+            titleKey: 'navigation.visits',
+          },
+        },
+        {
           path: 'salesman-targets',
           name: 'SalesmanTargets',
           component: () => import('@/views/salesman-targets/SalesmanTargetsView.vue'),
@@ -237,6 +290,36 @@ const router = createRouter({
           },
         },
         {
+          path: 'surveys',
+          name: 'Surveys',
+          component: () => import('@/views/surveys/SurveysView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_READ,
+            titleKey: 'navigation.surveys',
+          },
+        },
+        {
+          path: 'surveys/create',
+          name: 'SurveyCreate',
+          component: () => import('@/views/surveys/SurveyCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_WRITE,
+            titleKey: 'navigation.surveys',
+            titleAction: 'create',
+          },
+        },
+        {
+          // Read permission only: without write the page renders read-only.
+          path: 'surveys/:id/edit',
+          name: 'SurveyEdit',
+          component: () => import('@/views/surveys/SurveyEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SURVEY_READ,
+            titleKey: 'navigation.surveys',
+            titleAction: 'edit',
+          },
+        },
+        {
           path: 'display-types',
           name: 'DisplayTypes',
           component: () => import('@/views/display-types/DisplayTypesView.vue'),
@@ -295,6 +378,16 @@ const router = createRouter({
             requiredPermission: PERMISSIONS.REASON_READ,
             requiredWritePermission: PERMISSIONS.REASON_WRITE,
             titleKey: 'navigation.reasons',
+          },
+        },
+        {
+          path: 'visit-rules',
+          name: 'VisitRules',
+          component: () => import('@/views/visit-rules/VisitRulesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.VISIT_RULE_READ,
+            requiredWritePermission: PERMISSIONS.VISIT_RULE_WRITE,
+            titleKey: 'navigation.visitRules',
           },
         },
         {
@@ -1348,6 +1441,100 @@ const router = createRouter({
           },
         },
         {
+          path: 'canvass',
+          name: 'Canvass',
+          component: () => import('@/views/canvass/CanvassView.vue'),
+          meta: { titleKey: 'navigation.canvass' },
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            const ok =
+              authStore.hasPermission(PERMISSIONS.CANVASS_LOADING_READ) ||
+              authStore.hasPermission(PERMISSIONS.CANVASS_UNLOADING_READ)
+            return ok || { name: 'Home' }
+          },
+        },
+        // The old list URLs land on their tab. Each keeps its own read/write meta
+        // (usePermissions('/canvass-loadings') is called directly by CanvassView and the
+        // document views).
+        {
+          path: 'canvass-loadings',
+          redirect: { path: '/canvass', query: { tab: 'loadings' } },
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_READ,
+            requiredWritePermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+          },
+        },
+        {
+          path: 'canvass-loadings/create',
+          name: 'CanvassLoadingCreate',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `canvass-loadings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'canvass-loadings/:id/edit',
+          name: 'CanvassLoadingEdit',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_WRITE,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'canvass-loadings/:id',
+          name: 'CanvassLoadingDetail',
+          component: () => import('@/views/canvass-loadings/CanvassLoadingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_LOADING_READ,
+            titleKey: 'navigation.canvassLoadings',
+            titleAction: 'view',
+          },
+        },
+        {
+          path: 'canvass-unloadings',
+          redirect: { path: '/canvass', query: { tab: 'unloadings' } },
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_READ,
+            requiredWritePermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+          },
+        },
+        {
+          path: 'canvass-unloadings/create',
+          name: 'CanvassUnloadingCreate',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingCreateView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'create',
+          },
+        },
+        // Declared before `canvass-unloadings/:id` — the detail route would otherwise swallow it.
+        {
+          path: 'canvass-unloadings/:id/edit',
+          name: 'CanvassUnloadingEdit',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingEditView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_WRITE,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'edit',
+          },
+        },
+        {
+          path: 'canvass-unloadings/:id',
+          name: 'CanvassUnloadingDetail',
+          component: () => import('@/views/canvass-unloadings/CanvassUnloadingDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.CANVASS_UNLOADING_READ,
+            titleKey: 'navigation.canvassUnloadings',
+            titleAction: 'view',
+          },
+        },
+        {
           path: 'cash-deposit-configs',
           redirect: { path: '/configs', query: { tab: 'cd' } },
           meta: { requiredWritePermission: PERMISSIONS.CASH_DEPOSIT_CONFIG_WRITE },
@@ -1371,6 +1558,37 @@ const router = createRouter({
           path: 'must-sell-list-configs',
           redirect: { path: '/configs', query: { tab: 'msl' } },
           meta: { requiredWritePermission: PERMISSIONS.MSL_CONFIG_WRITE },
+        },
+        {
+          path: 'survey-configs',
+          redirect: { path: '/configs', query: { tab: 'survey' } },
+        },
+        {
+          path: 'journey-plan-configs',
+          redirect: { path: '/configs', query: { tab: 'journey-plan' } },
+          meta: {
+            requiredPermission: PERMISSIONS.JOURNEY_PLAN_CONFIG_READ,
+            requiredWritePermission: PERMISSIONS.JOURNEY_PLAN_CONFIG_WRITE,
+          },
+        },
+        {
+          path: 'sales-credit-notes',
+          name: 'SalesCreditNotes',
+          component: () => import('@/views/sales-credit-notes/SalesCreditNotesView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_CREDIT_NOTE_READ,
+            titleKey: 'navigation.salesCreditNotes',
+          },
+        },
+        {
+          path: 'sales-credit-notes/:id',
+          name: 'SalesCreditNoteDetail',
+          component: () => import('@/views/sales-credit-notes/SalesCreditNoteDetailView.vue'),
+          meta: {
+            requiredPermission: PERMISSIONS.SALES_CREDIT_NOTE_READ,
+            titleKey: 'navigation.salesCreditNotes',
+            titleAction: 'view',
+          },
         },
         {
           path: 'bank-settlements',
@@ -1615,7 +1833,7 @@ router.beforeEach(async (to, from, next) => {
 
 // --- Document title management ---
 
-const APP_NAME = 'N-Force'
+const APP_NAME = 'N-Command'
 
 /**
  * Resolves the localized page title from the matched route's `meta.titleKey`/`meta.titleAction`

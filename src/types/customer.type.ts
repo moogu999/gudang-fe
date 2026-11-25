@@ -145,6 +145,8 @@ export type SubDistrictLite = {
 export type Customer = {
   id: number
   code: string
+  branchId: number
+  branch?: { id: number; code: string; name: string }
   name: string
   ownerName?: string
   outletTypeId?: number | null
@@ -299,6 +301,8 @@ export type CustomerOperatingHourDto = {
 }
 
 export type CreateCustomerV1Dto = {
+  /** Fixed at create: the update endpoint rejects a different branch. */
+  branchId?: number
   code?: string
   name: string
   ownerName?: string
@@ -339,4 +343,6 @@ export type CreateCustomerV1Dto = {
   operatingHours?: CustomerOperatingHourDto[]
 }
 
-export type UpdateCustomerV1Dto = Omit<CreateCustomerV1Dto, 'isDraft'> & { isDraft: boolean }
+export type UpdateCustomerV1Dto = Omit<CreateCustomerV1Dto, 'isDraft' | 'branchId'> & {
+  isDraft: boolean
+}

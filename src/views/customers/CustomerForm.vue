@@ -23,6 +23,35 @@
             </template>
             <template #content>
               <div class="flex flex-col gap-5 px-4 pb-4 sm:px-6 sm:pb-6">
+                <!-- Branch -->
+                <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
+                  <label class="w-full text-sm font-semibold sm:text-base md:w-40">
+                    {{ t('customers.fields.branch') }}
+                  </label>
+                  <div class="flex w-full flex-col gap-1">
+                    <InputText
+                      v-if="mode === 'edit'"
+                      :value="customer?.branch ? branchLabel(customer.branch) : ''"
+                      readonly
+                      class="w-full"
+                      data-testid="customer-branch"
+                    />
+                    <InfiniteSelect
+                      v-else
+                      class="w-full"
+                      :fetch-fn="fetchBranches"
+                      :option-label="branchLabel"
+                      option-value="id"
+                      :model-value="formData.branchId"
+                      :disabled="disabled || authStore.branchIds.length <= 1"
+                      :invalid="!!errors.branchId"
+                      :placeholder="t('customers.labels.selectBranch')"
+                      @update:model-value="onBranchChange($event)"
+                    />
+                    <small v-if="errors.branchId" class="text-red-500">{{ errors.branchId }}</small>
+                  </div>
+                </div>
+
                 <!-- Code -->
                 <div class="flex flex-col gap-2 md:flex-row md:items-start md:gap-4">
                   <label class="w-full text-sm font-semibold sm:text-base md:w-40">
@@ -234,6 +263,20 @@
                     }}</label>
                     <InputText v-model="formData.longitude" :disabled="disabled" class="w-full" />
                   </div>
+                  <small v-if="errors.latitude" class="text-red-500 sm:col-span-2">{{
+                    errors.latitude
+                  }}</small>
+                  <div v-if="!disabled" class="sm:col-span-2">
+                    <Button
+                      type="button"
+                      icon="pi pi-map-marker"
+                      size="small"
+                      severity="secondary"
+                      :label="t('customers.labels.pickOnMap')"
+                      data-testid="pick-on-map"
+                      @click="isLocationPickerShown = true"
+                    />
+                  </div>
                 </div>
               </div>
             </template>
@@ -297,9 +340,10 @@
                         option-value="id"
                         :fetch-fn="(q) => CustomersService.list(q)"
                         :initial-option="initialSellTo"
+                        :custom-filters="partnerFilters"
                         :model-value="formData.sellToId ?? null"
-                        :disabled="disabled"
-                        :placeholder="t('customers.labels.selectCustomer')"
+                        :disabled="disabled || !formData.branchId"
+                        :placeholder="partnerPlaceholder"
                         @update:model-value="
                           formData.sellToId = typeof $event === 'number' ? $event : null
                         "
@@ -317,9 +361,10 @@
                         option-value="id"
                         :fetch-fn="(q) => CustomersService.list(q)"
                         :initial-option="initialDeliverTo"
+                        :custom-filters="partnerFilters"
                         :model-value="formData.deliverToId ?? null"
-                        :disabled="disabled"
-                        :placeholder="t('customers.labels.selectCustomer')"
+                        :disabled="disabled || !formData.branchId"
+                        :placeholder="partnerPlaceholder"
                         @update:model-value="
                           formData.deliverToId = typeof $event === 'number' ? $event : null
                         "
@@ -337,9 +382,10 @@
                         option-value="id"
                         :fetch-fn="(q) => CustomersService.list(q)"
                         :initial-option="initialInvoiceTo"
+                        :custom-filters="partnerFilters"
                         :model-value="formData.invoiceToId ?? null"
-                        :disabled="disabled"
-                        :placeholder="t('customers.labels.selectCustomer')"
+                        :disabled="disabled || !formData.branchId"
+                        :placeholder="partnerPlaceholder"
                         @update:model-value="
                           formData.invoiceToId = typeof $event === 'number' ? $event : null
                         "
@@ -370,9 +416,10 @@
                         option-value="id"
                         :fetch-fn="(q) => CustomersService.list(q)"
                         :initial-option="initialCollectTo"
+                        :custom-filters="partnerFilters"
                         :model-value="formData.collectToId ?? null"
-                        :disabled="disabled"
-                        :placeholder="t('customers.labels.selectCustomer')"
+                        :disabled="disabled || !formData.branchId"
+                        :placeholder="partnerPlaceholder"
                         @update:model-value="
                           formData.collectToId = typeof $event === 'number' ? $event : null
                         "
@@ -593,6 +640,15 @@
       </TabPanels>
     </Tabs>
 
+    <LocationPickerDialog
+      :visible="isLocationPickerShown"
+      :latitude="formData.latitude"
+      :longitude="formData.longitude"
+      :toast-group="toastGroup ?? ''"
+      @close="isLocationPickerShown = false"
+      @apply="applyPickedLocation"
+    />
+
     <!-- ─── Action buttons ─────────────────────────────── -->
     <div v-if="!disabled" class="mt-4 flex justify-end gap-2">
       <Button
@@ -651,6 +707,11 @@ import {
   CustomerCategoriesService,
 } from '@/services'
 import { useNumberSeries } from '@/composables'
+import { useAuthStore } from '@/stores/auth'
+import { FilterOperator } from '@/constants'
+import { branchLabel } from '@/utils/branchHelper'
+import LocationPickerDialog from '@/components/map/LocationPickerDialog.vue'
+import { userBranchesFetcher } from '@/views/sales-teams/salesTeamHelpers'
 import { useToast } from 'primevue/usetoast'
 import ToastLife from '@/constants/toastLife'
 import type {
@@ -663,6 +724,7 @@ import type {
 
 const { t } = useI18n()
 const toast = useToast()
+const authStore = useAuthStore()
 
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 
@@ -719,6 +781,7 @@ function defaultOperatingHours(): CustomerOperatingHour[] {
 }
 
 const formData = reactive({
+  branchId: (authStore.primaryBranchId ?? authStore.branchIds[0] ?? null) as number | null,
   code: '',
   name: '',
   ownerName: '',
@@ -786,6 +849,7 @@ watch(
   () => props.customer,
   (c) => {
     if (!c) return
+    formData.branchId = c.branchId ?? null
     formData.code = c.code ?? ''
     formData.name = c.name ?? ''
     formData.ownerName = c.ownerName ?? ''
@@ -846,6 +910,46 @@ watch(
   { immediate: true },
 )
 
+// ─── Branch ───────────────────────────────────────────────────────────────────
+
+const fetchBranches = userBranchesFetcher(authStore.branchIds)
+
+// Partners must belong to the customer's branch; the picker stays shut until
+// one is chosen.
+const partnerFilters = computed(() =>
+  formData.branchId
+    ? [
+        {
+          filterBy: 'branch_id',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: formData.branchId,
+        },
+      ]
+    : [],
+)
+
+const partnerPlaceholder = computed(() =>
+  formData.branchId
+    ? t('customers.labels.selectCustomer')
+    : t('customers.labels.selectBranchFirst'),
+)
+
+function onBranchChange(value: unknown) {
+  const next = typeof value === 'number' ? value : null
+  if (next === formData.branchId) return
+  formData.branchId = next
+  delete errors.branchId
+  // Partners of the old branch would be rejected on save.
+  formData.sellToId = null
+  formData.deliverToId = null
+  formData.invoiceToId = null
+  formData.collectToId = null
+  initialSellTo.value = undefined
+  initialDeliverTo.value = undefined
+  initialInvoiceTo.value = undefined
+  initialCollectTo.value = undefined
+}
+
 // ─── AddressPicker v-model bridge (main location) ────────────────────────────
 
 const mainAddress = computed<AddressValue>({
@@ -878,6 +982,7 @@ const mainAddress = computed<AddressValue>({
 const errors = reactive<Record<string, string>>({})
 const isDraftMode = ref(false)
 const activeTab = ref('identity')
+const isLocationPickerShown = ref(false)
 
 function clearErrors() {
   for (const k of Object.keys(errors)) delete errors[k]
@@ -893,16 +998,48 @@ function validateCode(): void {
   }
 }
 
+function validateBranch(): void {
+  if (props.mode === 'add' && !formData.branchId) {
+    errors.branchId = t('customers.validation.branchRequired')
+  }
+}
+
+function validateCoordinates(): void {
+  const lat = formData.latitude.trim()
+  const lng = formData.longitude.trim()
+  if (!lat && !lng) return
+  const latValue = Number(lat)
+  const lngValue = Number(lng)
+  const valid =
+    lat !== '' &&
+    lng !== '' &&
+    Number.isFinite(latValue) &&
+    Number.isFinite(lngValue) &&
+    Math.abs(latValue) <= 90 &&
+    Math.abs(lngValue) <= 180
+  if (!valid) errors.latitude = t('customers.validation.coordinatesInvalid')
+}
+
+function applyPickedLocation(coordinates: { latitude: string | null; longitude: string | null }) {
+  formData.latitude = coordinates.latitude ?? ''
+  formData.longitude = coordinates.longitude ?? ''
+  isLocationPickerShown.value = false
+}
+
 function validateDraft(): boolean {
   clearErrors()
+  validateBranch()
   validateCode()
+  validateCoordinates()
   if (!formData.name.trim()) errors.name = t('customers.validation.nameRequired')
   return Object.keys(errors).length === 0
 }
 
 function validateFull(): boolean {
   clearErrors()
+  validateBranch()
   validateCode()
+  validateCoordinates()
   if (!formData.name.trim()) errors.name = t('customers.validation.nameRequired')
   if (!formData.outletTypeId) errors.outletTypeId = t('customers.validation.outletTypeRequired')
   if (!formData.channelId) errors.channelId = t('customers.validation.channelRequired')
@@ -928,6 +1065,8 @@ async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
   }
 
   return {
+    // The branch is fixed once the customer exists, so only create sends it.
+    branchId: props.mode === 'add' ? (formData.branchId ?? undefined) : undefined,
     code,
     name: formData.name,
     ownerName: formData.ownerName || undefined,
@@ -1006,11 +1145,13 @@ async function buildDto(isDraft: boolean): Promise<CreateCustomerV1Dto> {
 
 // Which tab each validated field lives on. Keys missing here default to identity.
 const errorSection: Record<string, string> = {
+  branchId: 'identity',
   code: 'identity',
   name: 'identity',
   outletTypeId: 'identity',
   channelId: 'identity',
   categoryId: 'identity',
+  latitude: 'location',
   addresses: 'ship-to',
   nikOwner: 'tax',
   npwp: 'tax',
@@ -1022,6 +1163,7 @@ const sectionLabelKey: Record<string, string> = {
   identity: 'customers.sections.identity',
   'ship-to': 'customers.sections.shipTo',
   tax: 'customers.sections.tax',
+  location: 'customers.sections.location',
 }
 
 // Errors can sit on tabs the user isn't looking at, so jump to the first one and

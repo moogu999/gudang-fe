@@ -10,8 +10,9 @@ import type {
 import { API_ENDPOINTS } from '@/constants/api'
 
 /**
- * Service for AR Clearing — applies one customer's pooled, already-recorded cash (approved
- * cash deposit lines, completed bank settlement lines) to that customer's outstanding invoices.
+ * Service for AR Clearing — applies one customer's pooled, already-recorded cash and credit
+ * (approved cash deposit lines, completed bank settlement lines, cleared giros, posted sales
+ * credit notes) to that customer's outstanding invoices.
  * A completed clearing is terminal; the only exit is void.
  */
 export class ArClearingsService {

@@ -68,7 +68,7 @@ export function useMenuSearch() {
         continue
       }
 
-      // Top-level item with a direct route (e.g. Superset).
+      // Top-level item with a direct route.
       if (section.route && canAccessMenuItem(section)) {
         result.push({
           label: sectionLabel,

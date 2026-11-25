@@ -785,7 +785,7 @@ const resolver = computed(() =>
   zodResolver(
     z.object({
       plateNumber: z.string().min(1, t('vehicles.validation.plateNumberRequired')),
-      vehicleTypeId: z.number({ required_error: t('vehicles.validation.vehicleTypeRequired') }),
+      vehicleTypeId: z.number({ error: t('vehicles.validation.vehicleTypeRequired') }),
       brandModel: z.string().optional(),
       color: z.string().optional(),
       year: z.number().optional(),

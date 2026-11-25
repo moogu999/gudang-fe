@@ -37,6 +37,7 @@ import { CustomersService } from '@/services'
 import { commonErrorToast, commonSuccessToast } from '@/services/toast'
 import { usePostSaveNavigation } from '@/composables'
 import CustomerForm from './CustomerForm.vue'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { CreateCustomerV1Dto } from '@/types/customer.type'
 
 const { t } = useI18n()
@@ -57,7 +58,7 @@ async function save(dto: CreateCustomerV1Dto) {
     toast.add(commonSuccessToast(msg, toastGroup))
     afterCreate(customer)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }

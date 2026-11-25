@@ -107,4 +107,23 @@ describe('MslProductPickerDialog', () => {
     expect(emitted.map((p) => p.productId)).toEqual([1])
     expect(emitted[0].units?.[0].isBase).toBe(true)
   })
+
+  it('reads from a given fetcher, with no principal, when the caller supplies one', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      data: [option(5)],
+      meta: { total: 1, limit: 20, offset: 0 },
+    })
+    productOptions.mockClear()
+    const wrapper = mount(MslProductPickerDialog, {
+      props: { excludeIds: [], fetcher },
+      global: { stubs },
+    })
+    await flushPromises()
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.objectContaining({ principalOptionId: undefined, limit: 20, offset: 0 }),
+    )
+    expect(productOptions).not.toHaveBeenCalled()
+    expect(wrapper.find('[data-row="5"]').exists()).toBe(true)
+  })
 })

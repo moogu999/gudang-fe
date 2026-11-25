@@ -1,4 +1,5 @@
 import { ApiError } from '@/types/api.type'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 
 /** Every code the display program API returns, and the form field it belongs to, if any. */
 const ERRORS: Record<string, { key: string; field?: 'code' }> = {
@@ -65,5 +66,5 @@ export function displayProgramErrorField(code: string | undefined): 'code' | und
  */
 export function translateDisplayProgramError(e: unknown, t: (key: string) => string): unknown {
   const key = displayProgramErrorKey(displayProgramErrorCode(e))
-  return key ? new Error(t(key)) : e
+  return key ? new Error(t(key)) : translateCustomerBranchError(e, t)
 }

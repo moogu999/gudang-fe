@@ -130,7 +130,7 @@ history(employeeId) · getChangeRequest(deviceId)
   - `stale24h` maps to the `stale=true` query param; the others map to `status=`.
 - **Columns:**
   - **Salesman:** avatar initials, name, and `nip · phone` beneath.
-  - **Mode:** type badge, `TO` for Salesman and `KV` for Canvass. Labels come from i18n, keyed by the `EMPLOYEE_TYPE_NAMES` constants, not hardcoded strings.
+  - **Mode:** type badge, `TO` for Salesman and `CV` for Canvass. Labels come from i18n, keyed by the `EMPLOYEE_TYPE_NAMES` constants, not hardcoded strings.
   - **Device:** `DeviceCell`.
   - **Device ID:** `shortUid(uid)` gives `9f3a…c21e`, monospace, with the full uid in a tooltip.
   - **App:** orange when `appOutdated`.

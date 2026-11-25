@@ -75,7 +75,7 @@ It is lazy and server-paged, and it has no row reorder. A type holds tens of row
 | Name | |
 | Photo | `pi pi-camera` when `requiresPhoto`, otherwise a muted dot |
 | Note | `pi pi-pencil` when `requiresNote`, otherwise a muted dot |
-| Modes | Small tags "TO" / "KV", with the full label as a tooltip |
+| Modes | Small tags "TO" / "CV", with the full label as a tooltip |
 | Default stock | **Return tab only**: a Good/Bad tag |
 | Status | Active / Inactive `Tag` (same as Payment Methods) |
 | Actions | `TableActionButtons` (view / edit / delete, `can-write`) |
@@ -145,7 +145,7 @@ reasons.types.<key>.trigger                         "Appears when …" / "Muncul
 reasons.types.<key>.impact                          "Impact: …" / "Dampak: …"
 reasons.fields.{type,code,name,sellingModes,defaultStockType,requiresPhoto,requiresNote,active,lastChanged}
 reasons.fields.{requiresPhotoHint,requiresNoteHint,activeHint,typeLockedHint}
-reasons.sellingModes.{takingOrder,canvas,takingOrderShort,canvasShort}   Taking Order/Kanvas, TO/KV
+reasons.sellingModes.{takingOrder,canvas,takingOrderShort,canvasShort}   Taking Order/Kanvas, TO/CV
 reasons.stockTypes.{good,bad}                       Good Stock / Bad Stock
 reasons.filters.{search,allModes,statusActive,statusInactive,statusAll}
 reasons.hints.{order,sellingModes,stockTypeExample,codeAssignedOnSave}

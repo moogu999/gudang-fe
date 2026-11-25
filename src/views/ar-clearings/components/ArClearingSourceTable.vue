@@ -88,11 +88,12 @@ import type { ArCashSourceType } from '@/types/arClearing.type'
 
 const SOURCE_TAG: Record<
   ArCashSourceType,
-  { severity: 'info' | 'secondary' | 'success'; icon: string }
+  { severity: 'info' | 'secondary' | 'success' | 'contrast'; icon: string }
 > = {
   cash_deposit: { severity: 'info', icon: 'pi pi-wallet' },
   bank_settlement: { severity: 'secondary', icon: 'pi pi-building-columns' },
   giro: { severity: 'success', icon: 'pi pi-file-check' },
+  sales_credit_note: { severity: 'contrast', icon: 'pi pi-replay' },
 }
 
 interface Props {

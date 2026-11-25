@@ -89,3 +89,25 @@ describe('SalesmanTargetsService', () => {
     expect(post).toHaveBeenCalledWith('/v1/salesman-targets/5/close', { version: 4 })
   })
 })
+
+describe('SalesmanTargetsService achievement calls', () => {
+  it('reads the achievement of one document', async () => {
+    await SalesmanTargetsService.achievement(7)
+    expect(lastGet().path).toBe('/v1/salesman-targets/7/achievement')
+  })
+
+  it('narrows an item breakdown to one salesman only when given one', async () => {
+    await SalesmanTargetsService.achievementItem(7, 3)
+    expect(lastGet().path).toBe('/v1/salesman-targets/7/achievement/items/3')
+    expect(lastGet().params.has('employeeId')).toBe(false)
+
+    await SalesmanTargetsService.achievementItem(7, 3, 12)
+    expect(lastGet().params.get('employeeId')).toBe('12')
+  })
+
+  it('joins the summary ids with commas', async () => {
+    await SalesmanTargetsService.achievementSummaries([4, 5, 6])
+    expect(lastGet().path).toBe('/v1/salesman-targets/achievement-summaries')
+    expect(lastGet().params.get('ids')).toBe('4,5,6')
+  })
+})

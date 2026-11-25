@@ -3,7 +3,10 @@ import { API_ENDPOINTS } from '@/constants/api'
 import { createListQueryAdapter } from './listQueryAdapter'
 import type { Base } from '@/types/api.type'
 import type {
+  AchievementItemBreakdownRow,
+  AchievementSummary,
   CreateSalesmanTargetRequest,
+  SalesmanTargetAchievement,
   SalesmanTarget,
   SalesmanTargetCandidateList,
   SalesmanTargetCandidateQuery,
@@ -100,5 +103,33 @@ export class SalesmanTargetsService {
     return ApiService.get<Base<SalesmanTargetItemOption>>(
       withQuery(API_ENDPOINTS.SALESMAN_TARGET_ITEM_OPTIONS, params),
     )
+  }
+
+  /** Computed live from applied invoices; 409 `TARGET_NOT_ACTIVE` for a draft. */
+  static async achievement(id: number): Promise<SalesmanTargetAchievement> {
+    return ApiService.get<SalesmanTargetAchievement>(API_ENDPOINTS.SALESMAN_TARGET_ACHIEVEMENT(id))
+  }
+
+  /** The products behind a category item's achievement; `employeeId` narrows it to one salesman. */
+  static async achievementItem(
+    id: number,
+    itemId: number,
+    employeeId?: number,
+  ): Promise<AchievementItemBreakdownRow[]> {
+    const params = new URLSearchParams()
+    if (employeeId) params.set('employeeId', String(employeeId))
+    const res = await ApiService.get<{ data: AchievementItemBreakdownRow[] }>(
+      withQuery(API_ENDPOINTS.SALESMAN_TARGET_ACHIEVEMENT_ITEM(id, itemId), params),
+    )
+    return res.data ?? []
+  }
+
+  /** Achieved value of several documents at once, for the list column. */
+  static async achievementSummaries(ids: number[]): Promise<AchievementSummary[]> {
+    const params = new URLSearchParams({ ids: ids.join(',') })
+    const res = await ApiService.get<{ data: AchievementSummary[] }>(
+      withQuery(API_ENDPOINTS.SALESMAN_TARGET_ACHIEVEMENT_SUMMARIES, params),
+    )
+    return res.data ?? []
   }
 }

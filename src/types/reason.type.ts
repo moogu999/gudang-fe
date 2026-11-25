@@ -1,10 +1,11 @@
 /**
- * Reason codes: the admin-managed answers a salesman picks in N-Force, in six
+ * Reason codes: the admin-managed answers a salesman picks in N-Force, in seven
  * fixed types. Mirrors `gudang-be/internal/reason`.
  */
 export type ReasonType =
   | 'customer_no_order'
   | 'outside_radius'
+  | 'depot_outside_radius'
   | 'skipped_visit'
   | 'return'
   | 'order_cancellation'
@@ -14,6 +15,7 @@ export type ReasonType =
 export const REASON_TYPES: { key: ReasonType; prefix: string }[] = [
   { key: 'customer_no_order', prefix: 'OTO' },
   { key: 'outside_radius', prefix: 'RAD' },
+  { key: 'depot_outside_radius', prefix: 'ADP' },
   { key: 'skipped_visit', prefix: 'SKP' },
   { key: 'return', prefix: 'RTR' },
   { key: 'order_cancellation', prefix: 'BTL' },

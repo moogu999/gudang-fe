@@ -30,6 +30,22 @@
       />
     </div>
 
+    <!-- Warehouse kind (regular warehouses or canvass vans) -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold">{{ t('stockMovements.filters.warehouseKind') }}</label>
+      <Select
+        v-model="selectedWarehouseKind"
+        :options="warehouseKindOptions"
+        option-label="label"
+        option-value="value"
+        :placeholder="t('stockMovements.filters.allKinds')"
+        show-clear
+        class="w-40"
+        data-testid="warehouse-kind"
+        @change="emitChange"
+      />
+    </div>
+
     <!-- Stock Type -->
     <div class="flex flex-col gap-1">
       <label class="text-sm font-semibold">{{ t('stockMovements.filters.stockType') }}</label>
@@ -85,11 +101,17 @@ const emit = defineEmits<{
 
 const selectedProductId = ref<number | undefined>(undefined)
 const selectedWarehouseId = ref<number | undefined>(undefined)
+const selectedWarehouseKind = ref<'regular' | 'canvass' | undefined>(undefined)
 const selectedStockType = ref<string | undefined>(undefined)
 const today = new Date()
 const selectedDateRange = ref<Date[] | null>([
   new Date(today.getFullYear(), today.getMonth(), 1),
   today,
+])
+
+const warehouseKindOptions = computed(() => [
+  { value: 'regular', label: t('stockMovements.warehouseKinds.regular') },
+  { value: 'canvass', label: t('stockMovements.warehouseKinds.canvass') },
 ])
 
 const stockTypeOptions = computed(() => [
@@ -103,6 +125,7 @@ function clearAll() {
   selectedProductId.value = undefined
   selectedWarehouseId.value = undefined
   selectedStockType.value = undefined
+  selectedWarehouseKind.value = undefined
   const t = new Date()
   selectedDateRange.value = [new Date(t.getFullYear(), t.getMonth(), 1), t]
   emitChange()
@@ -124,6 +147,9 @@ function emitChange() {
   }
   if (selectedWarehouseId.value != null) {
     filters.warehouseId = selectedWarehouseId.value
+  }
+  if (selectedWarehouseKind.value) {
+    filters.warehouseKind = selectedWarehouseKind.value
   }
   if (selectedStockType.value) {
     filters.stockType = selectedStockType.value

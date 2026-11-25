@@ -14,6 +14,12 @@ export interface StockMovement {
     | 'delivery'
     | 'return_receipt'
     | 'sales_return_receipt'
+    | 'transfer_out'
+    | 'transfer_revert'
+    | 'transfer_complete'
+    | 'transfer_in'
+    | 'transfer_out_direct'
+    | 'transfer_in_direct'
   onHandDelta: string
   reservedDelta: string
   inTransitDelta: string
@@ -41,6 +47,7 @@ export interface BalanceSnapshot {
 export interface StockMovementFilters {
   productId?: number
   warehouseId?: number
+  warehouseKind?: 'regular' | 'canvass'
   stockType?: string
   dateRange?: [string, string]
 }

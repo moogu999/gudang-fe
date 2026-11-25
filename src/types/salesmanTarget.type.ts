@@ -202,3 +202,34 @@ export interface SalesmanTargetItemOptionQuery {
   limit?: number
   offset?: number
 }
+
+export interface AchievementLine {
+  employeeId: number
+  /** Present when the document has value targets. */
+  achievedValue?: string
+  /** Successful visits; present when the document has an Effective Call target. Absent means 0. */
+  effectiveCall?: number
+  /** Base-unit qty per item id. A missing key is 0 achieved. */
+  cells?: Record<string, string>
+}
+
+export interface SalesmanTargetAchievement {
+  targetId: number
+  asOf: string
+  workingDays: { total: number; elapsed: number }
+  lines: AchievementLine[]
+  totals: { achievedValue?: string; effectiveCall?: number; cells?: Record<string, string> }
+}
+
+export interface AchievementItemBreakdownRow {
+  productId: number
+  productCode: string
+  productName: string
+  qty: string
+  value?: string
+}
+
+export interface AchievementSummary {
+  targetId: number
+  achievedValue: string
+}

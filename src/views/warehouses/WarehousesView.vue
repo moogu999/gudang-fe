@@ -25,6 +25,17 @@
               dayjs(data[col.field]).format(DateFormat.DATE_TIME)
             }}</span>
 
+            <Tag
+              v-if="col.field === 'kind'"
+              :severity="data.kind === 'canvass' ? 'info' : 'secondary'"
+              :value="t(`warehouses.kinds.${data.kind}`)"
+            />
+
+            <div v-if="col.field === 'salesmanName'" class="flex flex-col text-left">
+              <span>{{ data.salesmanName ?? '' }}</span>
+              <span class="text-xs text-stone-500">{{ data.salesmanNip ?? '' }}</span>
+            </div>
+
             <TableActionButtons
               v-if="col.field === ''"
               :can-write="canWrite"
@@ -66,6 +77,7 @@ import dayjs from 'dayjs'
 import ResponsiveCard from '@/components/card/ResponsiveCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Dialog from 'primevue/dialog'
+import Tag from 'primevue/tag'
 import { ref, computed } from 'vue'
 import { WarehousesService } from '@/services/warehouses.service'
 import Toast from 'primevue/toast'
@@ -150,6 +162,26 @@ const columns = computed<Column[]>(() => [
     exportable: true,
     sortable: true,
     filterable: true,
+  },
+  {
+    field: 'kind',
+    header: t('warehouses.fields.kind'),
+    exportable: true,
+    sortable: true,
+    filterable: true,
+    filterOptions: [
+      { label: t('warehouses.kinds.regular'), value: 'regular' },
+      { label: t('warehouses.kinds.canvass'), value: 'canvass' },
+    ],
+  },
+  {
+    field: 'salesmanName',
+    underlyingField: 'salesmanEmployeeId',
+    header: t('warehouses.fields.salesman'),
+    exportable: true,
+    sortable: false,
+    filterable: false,
+    hideOnMobile: true,
   },
   {
     field: 'createdAt',

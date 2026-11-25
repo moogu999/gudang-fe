@@ -235,7 +235,12 @@ export type {
 export type { FileRecord, UploadFileDto } from './file.type'
 
 // Warehouse types
-export type { Warehouse, CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.type'
+export type {
+  Warehouse,
+  WarehouseKind,
+  CreateWarehouseDto,
+  UpdateWarehouseDto,
+} from './warehouse.type'
 
 // Vehicle types
 export type { VehicleType } from './vehicleType.type'
@@ -498,6 +503,16 @@ export type {
   InvoiceDiscountItem,
 } from './invoice.type'
 
+// Sales credit note types
+export type {
+  SalesCreditNoteListRow,
+  SalesCreditNoteRef,
+  SalesCreditNoteLine,
+  SalesCreditNoteDetail,
+  SalesCreditNoteAppliedStatus,
+  UpdateTaxReferenceDto,
+} from './salesCreditNote.type'
+
 // Goods Issue Note types
 export type {
   GoodsIssueNoteStatus,
@@ -580,9 +595,16 @@ export type {
 export * from './salesTeam.type'
 export * from './salesmanTarget.type'
 export * from './mustSellList.type'
+export * from './survey.type'
 export * from './deviceBinding.type'
+export * from './depotAttendance.type'
+export * from './visit.type'
 export * from './reason.type'
 export * from './competitorBrand.type'
 export * from './displayType.type'
 export * from './displayProgram.type'
 export * from './competitorProduct.type'
+export * from './route.type'
+export * from './journeyPlan.type'
+export * from './canvassLoading.type'
+export * from './canvassUnloading.type'

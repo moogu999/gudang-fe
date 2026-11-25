@@ -467,11 +467,11 @@ const resolver = computed(() =>
       code: z.string().min(1, t('chartOfAccounts.validation.codeRequired')),
       name: z.string().min(1, t('chartOfAccounts.validation.nameRequired')),
       accountTypeId: z.number({
-        required_error: t('chartOfAccounts.validation.accountTypeRequired'),
+        error: t('chartOfAccounts.validation.accountTypeRequired'),
       }),
       isHeader: z.boolean(),
       controlAccountTypeId: hasControlAccount.value
-        ? z.number({ required_error: t('chartOfAccounts.validation.controlAccountTypeRequired') })
+        ? z.number({ error: t('chartOfAccounts.validation.controlAccountTypeRequired') })
         : z.number().optional(),
       isRetainedEarnings: z.boolean(),
       isActive: z.boolean(),

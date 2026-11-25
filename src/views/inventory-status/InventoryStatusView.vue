@@ -45,6 +45,18 @@
       <template #start>
         <div class="flex flex-wrap items-center gap-3">
           <Select
+            v-model="selectedWarehouseKind"
+            :options="warehouseKindOptions"
+            option-label="label"
+            option-value="value"
+            :placeholder="t('inventoryStatus.filters.allKinds')"
+            show-clear
+            class="w-44"
+            data-testid="warehouse-kind"
+            @change="onKindChange"
+          />
+
+          <Select
             v-model="selectedWarehouseId"
             :options="warehouses"
             option-label="name"
@@ -165,6 +177,7 @@ import Toolbar from 'primevue/toolbar'
 import { API_ENDPOINTS } from '@/constants/api'
 import FilterOperator from '@/constants/filterOperator'
 import { WarehousesService, InventoryService } from '@/services'
+import { GenericQueryBuilder } from '@/services/genericQueryBuilder'
 import type { Column } from '@/types'
 import type { InventorySummary } from '@/types/inventoryBalance.type'
 import type { Warehouse } from '@/types'
@@ -174,6 +187,11 @@ const { t } = useI18n()
 const summary = ref<InventorySummary | null>(null)
 const warehouses = ref<Warehouse[]>([])
 const selectedWarehouseId = ref<number | undefined>()
+const selectedWarehouseKind = ref<'regular' | 'canvass' | undefined>()
+const warehouseKindOptions = computed(() => [
+  { value: 'regular', label: t('inventoryStatus.warehouseKinds.regular') },
+  { value: 'canvass', label: t('inventoryStatus.warehouseKinds.canvass') },
+])
 const activeChip = ref<'all' | 'out' | 'inTransit' | 'reserved'>('all')
 
 const columns = computed<Column[]>(() => [
@@ -271,6 +289,11 @@ const tableUrl = computed(() => {
       `filterBy=warehouseId&filterOperator=${FilterOperator.EQUAL}&filterValue=${selectedWarehouseId.value}`,
     )
   }
+  if (selectedWarehouseKind.value) {
+    parts.push(
+      `filterBy=warehouseKind&filterOperator=${FilterOperator.EQUAL}&filterValue=${selectedWarehouseKind.value}`,
+    )
+  }
   if (activeChip.value === 'out') {
     parts.push(`filterBy=status&filterOperator=${FilterOperator.EQUAL}&filterValue=out`)
   }
@@ -294,11 +317,23 @@ async function loadSummary() {
 
 async function loadWarehouses() {
   try {
-    const res = await WarehousesService.list()
+    const query = selectedWarehouseKind.value
+      ? new GenericQueryBuilder()
+          .withFilter('kind', FilterOperator.EQUAL, selectedWarehouseKind.value)
+          .build()
+      : undefined
+    const res = await WarehousesService.list(query)
     warehouses.value = res.data
   } catch {
     warehouses.value = []
   }
+}
+
+// Changing the kind narrows the warehouse list too, so a warehouse of the other kind is dropped.
+function onKindChange() {
+  selectedWarehouseId.value = undefined
+  loadWarehouses()
+  loadSummary()
 }
 
 function onWarehouseChange() {

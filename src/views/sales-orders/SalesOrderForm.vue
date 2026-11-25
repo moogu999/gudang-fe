@@ -8,6 +8,7 @@
 
   <Form
     v-else
+    ref="formRef"
     v-slot="$form"
     :initial-values="initialValues"
     :resolver="resolver"
@@ -243,8 +244,10 @@
               option-label="name"
               option-value="id"
               :fetch-fn="(query) => CustomersService.list(query)"
+              :custom-filters="customerFilters"
               :initial-option="initialCustomer"
-              :disabled="mode === DialogMode.VIEW"
+              :disabled="mode === DialogMode.VIEW || !salesmanBranchId"
+              :placeholder="salesmanBranchId ? '' : t('salesOrders.labels.selectSalesmanFirst')"
               sort-by="name"
               sort-operator="asc"
               class="w-full"
@@ -309,6 +312,19 @@
             :to="{ name: 'InvoiceDetail', params: { id: viewSourceInvoiceId } }"
             class="text-primary font-medium hover:underline"
             >{{ viewSourceInvoiceNo }}</RouterLink
+          >
+        </div>
+
+        <!-- Credit note issued by this return's delivery order (return type, VIEW mode only) -->
+        <div
+          v-if="isReturn && mode === DialogMode.VIEW && viewCreditNote"
+          class="flex flex-col gap-1"
+        >
+          <label class="text-sm font-semibold">{{ t('salesOrders.fields.creditNote') }}</label>
+          <RouterLink
+            :to="{ name: 'SalesCreditNoteDetail', params: { id: viewCreditNote.id } }"
+            class="text-primary font-medium hover:underline"
+            >{{ viewCreditNote.no }}</RouterLink
           >
         </div>
       </div>
@@ -500,12 +516,14 @@ import {
   SalesOrderDetailsService,
   SalesOrderTypesService,
   InvoicesService,
+  SalesCreditNotesService,
   TaxConfigurationService,
   SalesOrderConfigService,
   GenericQueryBuilder,
   commonSuccessToast,
   commonErrorToast,
 } from '@/services'
+import { translateCustomerBranchError } from '@/utils/customerBranchErrors'
 import type { SalesOrderConfig, SalesOrderStatus, SalesOrderType, InvoiceListItem } from '@/types'
 import type {
   SalesOrderDetailRow,
@@ -525,6 +543,7 @@ import {
 import { decomposeBaseQty, pinnedToLevels } from '@/utils/uomHelper'
 import { useAuthStore } from '@/stores/auth'
 import { useNumberSeries } from '@/composables'
+import { PERMISSIONS } from '@/constants'
 
 const { t, locale } = useI18n()
 const toast = useToast()
@@ -600,6 +619,20 @@ const initialSourceInvoice = ref<InvoiceListItem>()
 // Populated in VIEW mode from the loaded header, to display (not edit) the source invoice.
 const viewSourceInvoiceId = ref<number | null>(null)
 const viewSourceInvoiceNo = ref<string | null>(null)
+const viewCreditNote = ref<{ id: number; no: string } | null>(null)
+
+// The note exists once the return DO has been created, which also moves the order to applied.
+async function loadCreditNote(salesOrderId: number) {
+  viewCreditNote.value = null
+  if (!authStore.hasPermission(PERMISSIONS.SALES_CREDIT_NOTE_READ)) return
+  try {
+    const note = await SalesCreditNotesService.findBySalesOrder(salesOrderId)
+    viewCreditNote.value = note ? { id: note.id, no: note.no } : null
+  } catch {
+    // The link is a convenience; the order itself is still fully readable.
+    viewCreditNote.value = null
+  }
+}
 
 const isReturn = computed(() => currentTypeCode.value === SALES_ORDER_TYPE_CODE_RETURN)
 
@@ -676,7 +709,7 @@ async function onSourceInvoiceSelect(invoice: InvoiceListItem) {
         }
       })
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isResolving.value = false
   }
@@ -684,6 +717,21 @@ async function onSourceInvoiceSelect(invoice: InvoiceListItem) {
 
 // Tracked for live resolve trigger (ADD mode only)
 const currentCustomerId = ref<number | undefined>()
+const formRef = ref()
+
+// The customer must belong to the salesman's branch, so the picker follows it.
+const salesmanBranchId = ref<number | undefined>()
+const customerFilters = computed(() =>
+  salesmanBranchId.value
+    ? [
+        {
+          filterBy: 'branch_id',
+          filterOperator: FilterOperator.EQUAL,
+          filterValue: salesmanBranchId.value,
+        },
+      ]
+    : [],
+)
 const currentEmployeeId = ref<number | undefined>()
 const currentOrderDate = ref<Date>(new Date())
 const currentPriceDate = ref<Date | undefined>()
@@ -1112,6 +1160,14 @@ function onCustomerSelect(opt: CustomerLite) {
 
 function onSalesmanSelect(opt: Employee) {
   currentEmployeeId.value = opt.id
+  const branchId = opt.branchId ?? opt.branch?.id
+  if (branchId !== salesmanBranchId.value) {
+    // A customer of the previous branch would be rejected on save.
+    if (formRef.value?.states?.customerId) formRef.value.states.customerId.value = undefined
+    currentCustomerId.value = undefined
+    initialCustomer.value = undefined
+  }
+  salesmanBranchId.value = branchId
   selectedSalesmanBranch.value = opt.branch?.name
   selectedSalesmanCompany.value = opt.company?.name
 }
@@ -1209,7 +1265,7 @@ async function doSubmit() {
     if (props.mode === DialogMode.EDIT && saved.status === 'draft') await loadSalesOrder()
     emit('submitted', saved)
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isSaving.value = false
   }
@@ -1335,6 +1391,9 @@ async function loadSalesOrder() {
     viewSourceInvoiceId.value = header.sourceInvoiceId ?? null
     viewSourceInvoiceNo.value = header.sourceInvoice?.no ?? null
     currentStatus.value = header.status
+    if (currentTypeCode.value === SALES_ORDER_TYPE_CODE_RETURN && header.status === 'applied') {
+      await loadCreditNote(props.salesOrderId)
+    }
     currentOrderDate.value = new Date(header.orderDate)
     currentPriceDate.value = header.priceDate ? new Date(header.priceDate) : undefined
     currentCustomerId.value = header.customerId
@@ -1358,6 +1417,7 @@ async function loadSalesOrder() {
       initialSalesman.value = { id: employee.id, name: employee.name, nip: employee.nip }
       selectedSalesmanBranch.value = employee.branch?.name
       selectedSalesmanCompany.value = employee.company?.name
+      salesmanBranchId.value = employee.branchId ?? employee.branch?.id
     }
 
     const query = new GenericQueryBuilder()
@@ -1392,7 +1452,7 @@ async function loadSalesOrder() {
       }
     })
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   } finally {
     isLoading.value = false
   }
@@ -1407,7 +1467,7 @@ async function onApprovalChanged() {
     const header = await SalesOrderHeadersService.getById(props.salesOrderId)
     currentStatus.value = header.status
   } catch (e) {
-    toast.add(commonErrorToast(e, toastGroup))
+    toast.add(commonErrorToast(translateCustomerBranchError(e, t), toastGroup))
   }
 }
 

@@ -287,6 +287,35 @@
                   </div>
                 </template>
               </Column>
+              <Column
+                :header="t('competitorProducts.comparisons.columnPrice')"
+                style="width: 14rem"
+              >
+                <template #body="{ data }">
+                  <InputNumber
+                    v-if="!readonly"
+                    v-model="data.price"
+                    mode="decimal"
+                    :min-fraction-digits="0"
+                    :max-fraction-digits="2"
+                    :min="0"
+                    :suffix="data.baseUomName ? ` / ${data.baseUomName}` : undefined"
+                    :invalid="data.price !== null && data.price < 0"
+                    :aria-label="t('competitorProducts.comparisons.columnPrice')"
+                    class="w-full"
+                    data-testid="comparison-price"
+                  />
+                  <template v-else>
+                    <template v-if="data.price !== null">
+                      {{ formatMoney(data.price) }}
+                      <span v-if="data.baseUomName" class="text-surface-500">
+                        / {{ data.baseUomName }}</span
+                      >
+                    </template>
+                    <template v-else>—</template>
+                  </template>
+                </template>
+              </Column>
               <Column v-if="!readonly" style="width: 3rem">
                 <template #body="{ data }">
                   <Button
@@ -541,7 +570,18 @@ onMounted(async () => {
 })
 
 // Comparisons
-const comparisons = ref<CompetitorProductComparison[]>([...(base?.comparisons ?? [])])
+type ComparisonRow = Omit<CompetitorProductComparison, 'price'> & { price: number | null }
+
+const comparisons = ref<ComparisonRow[]>(
+  (base?.comparisons ?? []).map((c) => ({
+    ...c,
+    price: c.price !== undefined ? Number(c.price) : null,
+  })),
+)
+
+function formatMoney(value: number): string {
+  return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 }).format(value)
+}
 const isPickerShown = ref(false)
 
 const primaryProductId = computed(() => comparisons.value.find((c) => c.isPrimary)?.productId)
@@ -560,6 +600,7 @@ function onPicked(picked: PickedProduct[]) {
       name: p.name,
       categoryName: p.categoryName,
       principalName: p.principalName,
+      price: null,
       // The first row added becomes primary.
       isPrimary: next.length === 0,
     })
@@ -576,7 +617,7 @@ function removeComparison(productId: number) {
 }
 
 function onReorder(event: DataTableRowReorderEvent) {
-  comparisons.value = event.value as CompetitorProductComparison[]
+  comparisons.value = event.value as ComparisonRow[]
 }
 
 // Inline brand create
@@ -623,7 +664,9 @@ function validate(): boolean {
   if (!uomGroupId.value) errors.uomGroupId = t('competitorProducts.validation.uomGroupRequired')
   if (referencePrice.value !== null && referencePrice.value < 0)
     errors.referencePrice = t('competitorProducts.validation.priceInvalid')
-  if (comparisons.value.length && comparisons.value.filter((c) => c.isPrimary).length !== 1)
+  if (comparisons.value.some((c) => c.price !== null && c.price < 0))
+    errors.comparisons = t('competitorProducts.validation.comparisonPriceInvalid')
+  else if (comparisons.value.length && comparisons.value.filter((c) => c.isPrimary).length !== 1)
     errors.comparisons = t('competitorProducts.errors.primaryRequired')
   return Object.keys(errors).length === 0
 }
@@ -639,7 +682,11 @@ function onSubmit() {
     uomGroupId: uomGroupId.value!,
     ...(referencePrice.value !== null ? { referencePrice: referencePrice.value.toFixed(2) } : {}),
     ...(props.mode === 'edit' ? { isActive: isActive.value } : {}),
-    comparisons: comparisons.value.map((c) => ({ productId: c.productId, isPrimary: c.isPrimary })),
+    comparisons: comparisons.value.map((c) => ({
+      productId: c.productId,
+      isPrimary: c.isPrimary,
+      ...(c.price !== null ? { price: c.price.toFixed(2) } : {}),
+    })),
   }
   emit('submit', {
     payload,

@@ -132,6 +132,12 @@ id-ID strings that say "PO" for a sales order (`salesOrderConfigs: {` section, `
 
 ## F8 — Goods receipt form ignores the PO's branch
 
+**Status: done 2026-11-25** (branch `dev-rian-gr-branch-first`, with Item 1 of
+`goods-receipt-branch-warehouse-fe.md`). The PO picker passes `branchId=effectiveBranchId`
+(`GoodsReceiptsService.listAvailablePurchaseOrders(query, branchId)`), is disabled until a branch
+is known, and a branch change clears the PO and its lines. Needs gudang-be#32 (the `branchId`
+parameter and `ErrPurchaseOrderBranchMismatch`).
+
 FE half of BE plan F8. `AvailablePurchaseOrder.branchId` (`src/types/goodsReceipt.type.ts:78`)
 arrives but `onPoSelect` (`src/views/goods-receipts/GoodsReceiptForm.vue:537`) does not use it.
 **Decision (2026-10-10): a receipt must be on its PO's branch** (BE plan F8).

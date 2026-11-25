@@ -3100,6 +3100,7 @@ export default {
     },
     labels: {
       selectPurchaseOrder: 'Pilih Purchase Order yang masih terbuka (opsional)',
+      selectBranchFirst: 'Pilih cabang terlebih dahulu',
       noPurchaseOrder: 'Tidak terhubung ke Purchase Order',
     },
     details: {
